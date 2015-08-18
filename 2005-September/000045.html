@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r975 - trunk/yake/scripts/yapp
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r975%20-%20trunk/yake/scripts/yapp&In-Reply-To=%3C200509302146.j8ULk2h6008945%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000044.html">
+   <LINK REL="Next"  HREF="000046.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r975 - trunk/yake/scripts/yapp</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r975%20-%20trunk/yake/scripts/yapp&In-Reply-To=%3C200509302146.j8ULk2h6008945%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r975 - trunk/yake/scripts/yapp">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:46:02 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000044.html">[Yake-svn] r974 - trunk/yake/scripts/yapp
+</A></li>
+        <LI>Next message: <A HREF="000046.html">[Yake-svn] r976 - trunk/yake/scripts/yapp
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#45">[ date ]</a>
+              <a href="thread.html#45">[ thread ]</a>
+              <a href="subject.html#45">[ subject ]</a>
+              <a href="author.html#45">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:46:02 +0200 (Fri, 30 Sep 2005)
+New Revision: 975
+
+Modified:
+   trunk/yake/scripts/yapp/yapp.sln
+Log:
+refactoring of yake::vehicle
+
+Modified: trunk/yake/scripts/yapp/yapp.sln
+===================================================================
+--- trunk/yake/scripts/yapp/yapp.sln	2005-09-30 21:45:28 UTC (rev 974)
++++ trunk/yake/scripts/yapp/yapp.sln	2005-09-30 21:46:02 UTC (rev 975)
+@@ -92,6 +92,10 @@
+ 	ProjectSection(ProjectDependencies) = postProject
+ 	EndProjectSection
+ EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;vehicle&quot;, &quot;vehicle.vcproj&quot;, &quot;{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}&quot;
++	ProjectSection(ProjectDependencies) = postProject
++	EndProjectSection
++EndProject
+ Global
+ 	GlobalSection(SolutionConfiguration) = preSolution
+ 		Debug = Debug
+@@ -182,6 +186,10 @@
+ 		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Debug.Build.0 = Debug|Win32
+ 		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Release.ActiveCfg = Release|Win32
+ 		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Release.Build.0 = Release|Win32
++		{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}.Debug.ActiveCfg = Debug|Win32
++		{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}.Debug.Build.0 = Debug|Win32
++		{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}.Release.ActiveCfg = Release|Win32
++		{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}.Release.Build.0 = Release|Win32
+ 	EndGlobalSection
+ 	GlobalSection(ExtensibilityGlobals) = postSolution
+ 	EndGlobalSection
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000044.html">[Yake-svn] r974 - trunk/yake/scripts/yapp
+</A></li>
+	<LI>Next message: <A HREF="000046.html">[Yake-svn] r976 - trunk/yake/scripts/yapp
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#45">[ date ]</a>
+              <a href="thread.html#45">[ thread ]</a>
+              <a href="subject.html#45">[ subject ]</a>
+              <a href="author.html#45">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,481 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1198 - trunk/yake/scripts/msvc8
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-February/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1198%20-%20trunk/yake/scripts/msvc8&In-Reply-To=%3C200602051001.k15A1kIH030080%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000269.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1198 - trunk/yake/scripts/msvc8</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1198%20-%20trunk/yake/scripts/msvc8&In-Reply-To=%3C200602051001.k15A1kIH030080%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1198 - trunk/yake/scripts/msvc8">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Feb  5 11:01:46 CET 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000269.html">[Yake-svn] r1199 - in trunk/yake/yake/net: . detail
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#268">[ date ]</a>
+              <a href="thread.html#268">[ thread ]</a>
+              <a href="subject.html#268">[ subject ]</a>
+              <a href="author.html#268">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-02-05 11:01:46 +0100 (Sun, 05 Feb 2006)
+New Revision: 1198
+
+Added:
+   trunk/yake/scripts/msvc8/net.vcproj
+Log:
+initial revision
+
+Added: trunk/yake/scripts/msvc8/net.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/net.vcproj	2006-01-30 20:09:35 UTC (rev 1197)
++++ trunk/yake/scripts/msvc8/net.vcproj	2006-02-05 10:01:46 UTC (rev 1198)
+@@ -0,0 +1,407 @@
++&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
++&lt;VisualStudioProject
++	ProjectType=&quot;Visual C++&quot;
++	Version=&quot;8,00&quot;
++	Name=&quot;net&quot;
++	ProjectGUID=&quot;{90688422-B178-44F3-824A-C8CD6F3BD86F}&quot;
++	RootNamespace=&quot;net&quot;
++	Keyword=&quot;Win32Proj&quot;
++	&gt;
++	&lt;Platforms&gt;
++		&lt;Platform
++			Name=&quot;Win32&quot;
++		/&gt;
++	&lt;/Platforms&gt;
++	&lt;ToolFiles&gt;
++	&lt;/ToolFiles&gt;
++	&lt;Configurations&gt;
++		&lt;Configuration
++			Name=&quot;Debug|Win32&quot;
++			OutputDirectory=&quot;../../common/bin/debug&quot;
++			IntermediateDirectory=&quot;../../common/obj/debug/$(ProjectName)&quot;
++			ConfigurationType=&quot;2&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				Optimization=&quot;0&quot;
++				AdditionalIncludeDirectories=&quot;../../;../../dependencies/enet/include;../../dependencies/boost/;../../dependencies/ttl/;..dependencies/tinyxml&quot;
++				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKE_NET_EXPORTS&quot;
++				MinimalRebuild=&quot;true&quot;
++				BasicRuntimeChecks=&quot;3&quot;
++				RuntimeLibrary=&quot;3&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/net/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;4&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;ws2_32.lib winmm.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
++				LinkIncremental=&quot;2&quot;
++				AdditionalLibraryDirectories=&quot;../../common/lib/debug;../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;2&quot;
++				ImportLibrary=&quot;../../common/lib/debug/$(TargetName)_d.lib&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++		&lt;Configuration
++			Name=&quot;Release|Win32&quot;
++			OutputDirectory=&quot;../../common/bin/release&quot;
++			IntermediateDirectory=&quot;../../common/obj/release/$(ProjectName)&quot;
++			ConfigurationType=&quot;2&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/;..dependencies/tinyxml&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_NET_EXPORTS&quot;
++				RuntimeLibrary=&quot;2&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/net/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;3&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;ws2_32.lib winmm.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
++				LinkIncremental=&quot;1&quot;
++				AdditionalLibraryDirectories=&quot;../../common/lib/release;../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;false&quot;
++				SubSystem=&quot;1&quot;
++				OptimizeReferences=&quot;2&quot;
++				EnableCOMDATFolding=&quot;2&quot;
++				ImportLibrary=&quot;../../common/lib/release/$(TargetName).lib&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++	&lt;/Configurations&gt;
++	&lt;References&gt;
++	&lt;/References&gt;
++	&lt;Files&gt;
++		&lt;Filter
++			Name=&quot;src&quot;
++			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
++			UniqueIdentifier=&quot;{0D71D256-4EEF-446d-BBB9-CCA1E8DCC8CB}&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\net\net.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\net\pch.cpp&quot;
++				&gt;
++				&lt;FileConfiguration
++					Name=&quot;Debug|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;1&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++				&lt;FileConfiguration
++					Name=&quot;Release|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;1&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++			&lt;/File&gt;
++			&lt;Filter
++				Name=&quot;detail&quot;
++				&gt;
++				&lt;File
++					RelativePath=&quot;..\..\src\yake\net\detail\netCommon.cpp&quot;
++					&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\src\yake\net\detail\netEnetClientPacketConnection.cpp&quot;
++					&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\src\yake\net\detail\netEnetServerPacketConnection.cpp&quot;
++					&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\src\yake\net\detail\netEventConnection.cpp&quot;
++					&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\src\yake\net\detail\netInternal.cpp&quot;
++					&gt;
++				&lt;/File&gt;
++			&lt;/Filter&gt;
++			&lt;Filter
++				Name=&quot;enet&quot;
++				&gt;
++				&lt;File
++					RelativePath=&quot;..\..\dependencies\enet\callbacks.c&quot;
++					&gt;
++					&lt;FileConfiguration
++						Name=&quot;Debug|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\dependencies\enet\host.c&quot;
++					&gt;
++					&lt;FileConfiguration
++						Name=&quot;Debug|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\dependencies\enet\list.c&quot;
++					&gt;
++					&lt;FileConfiguration
++						Name=&quot;Debug|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\dependencies\enet\packet.c&quot;
++					&gt;
++					&lt;FileConfiguration
++						Name=&quot;Debug|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\dependencies\enet\peer.c&quot;
++					&gt;
++					&lt;FileConfiguration
++						Name=&quot;Debug|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\dependencies\enet\protocol.c&quot;
++					&gt;
++					&lt;FileConfiguration
++						Name=&quot;Debug|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\dependencies\enet\win32.c&quot;
++					&gt;
++					&lt;FileConfiguration
++						Name=&quot;Debug|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
++					&lt;FileConfiguration
++						Name=&quot;Release|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
++				&lt;/File&gt;
++			&lt;/Filter&gt;
++		&lt;/Filter&gt;
++		&lt;Filter
++			Name=&quot;inc&quot;
++			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
++			UniqueIdentifier=&quot;{7EE1456A-69C2-4d63-B2FA-0C9082417A39}&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\net\net.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\net\netBitstream.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\net\netBitstream.inl&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\net\netBitstreamAdapters.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\net\netCommon.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\net\netEvent.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\net\netPacket.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\net\netPrerequisites.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\net\netTypes.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\net\pch.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;Filter
++				Name=&quot;detail&quot;
++				&gt;
++				&lt;File
++					RelativePath=&quot;..\..\yake\net\detail\netEnetClientPacketConnection.h&quot;
++					&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\yake\net\detail\netEnetServerPacketConnection.h&quot;
++					&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\yake\net\detail\netEventConnection.h&quot;
++					&gt;
++				&lt;/File&gt;
++				&lt;File
++					RelativePath=&quot;..\..\yake\net\detail\netInternal.h&quot;
++					&gt;
++				&lt;/File&gt;
++			&lt;/Filter&gt;
++		&lt;/Filter&gt;
++	&lt;/Files&gt;
++	&lt;Globals&gt;
++	&lt;/Globals&gt;
++&lt;/VisualStudioProject&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000269.html">[Yake-svn] r1199 - in trunk/yake/yake/net: . detail
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#268">[ date ]</a>
+              <a href="thread.html#268">[ thread ]</a>
+              <a href="subject.html#268">[ subject ]</a>
+              <a href="author.html#268">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1212 - in trunk/yake/src/yake/samples: . ent ent/sampleEntFsm
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1212%20-%20in%20trunk/yake/src/yake/samples%3A%20.%20ent%20ent/sampleEntFsm&In-Reply-To=%3C200603051829.k25ITXBj026469%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000281.html">
+   <LINK REL="Next"  HREF="000285.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1212 - in trunk/yake/src/yake/samples: . ent ent/sampleEntFsm</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1212%20-%20in%20trunk/yake/src/yake/samples%3A%20.%20ent%20ent/sampleEntFsm&In-Reply-To=%3C200603051829.k25ITXBj026469%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1212 - in trunk/yake/src/yake/samples: . ent ent/sampleEntFsm">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar  5 19:29:33 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000281.html">[Yake-svn] r1211 - trunk/yake/yapp
+</A></li>
+        <LI>Next message: <A HREF="000285.html">[Yake-svn] r1213 - in trunk/yake/src/yake: . ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#282">[ date ]</a>
+              <a href="thread.html#282">[ thread ]</a>
+              <a href="subject.html#282">[ subject ]</a>
+              <a href="author.html#282">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-05 19:29:22 +0100 (Sun, 05 Mar 2006)
+New Revision: 1212
+
+Added:
+   trunk/yake/src/yake/samples/ent/
+   trunk/yake/src/yake/samples/ent/sampleEntFsm/
+   trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp
+Log:
+initial revision
+
+Added: trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp	2006-03-05 01:19:39 UTC (rev 1211)
++++ trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp	2006-03-05 18:29:22 UTC (rev 1212)
+@@ -0,0 +1,81 @@
++//#include &quot;yake/base/yakePrerequisites.h&quot;
++#include &quot;yake/base/yake.h&quot;
++#include &quot;yake/ent/ent.h&quot;
++#include &quot;yake/plugins//entLua/entLua.h&quot;
++
++using namespace yake;
++
++namespace exapp {
++	// Commonly used states for this application's objects.
++	const std::string ksAwakening = &quot;awakening&quot;;
++	const std::string ksAlive = &quot;alive&quot;;
++	const std::string ksDead = &quot;dead&quot;;
++	
++	/** Listens to object manager and initializes newly created objects by adding
++		a Lua VM, adding default states and transitions to the state machine etc.
++	*/
++	struct ExampleAppObjectMgrListener : public object::ObjectManagerListener
++	{
++		ExampleAppObjectMgrListener(scripting::IScriptingSystem&amp; scriptingSys) : scriptingSys_(scriptingSys)
++		{}
++		virtual void onObjectCreated(object::Object* obj)
++		{
++			scripting::IVM* vm = scriptingSys_.createVM();
++			YAKE_ASSERT( vm );
++
++			obj-&gt;attachVM(vm,&quot;main&quot;);
++		}
++		virtual void onObjectInitialized(object::Object* obj)
++		{
++			obj-&gt;addFsmState(ksAwakening);
++			obj-&gt;addFsmState(ksAlive);
++			obj-&gt;addFsmState(ksDead);
++
++			obj-&gt;addFsmTransition(ksAwakening,&quot;spawn&quot;,ksAlive);
++			obj-&gt;addFsmTransition(ksAlive,&quot;die&quot;,ksDead);
++
++			obj-&gt;setFsmState(ksAwakening);
++		}
++	private:
++		scripting::IScriptingSystem&amp;	scriptingSys_;
++	};
++} // namespace exapp
++
++int main(int argc, char* argv[])
++{
++
++	// Create the scripting system we want to use (Lua).
++	SharedPtr&lt;scripting::IScriptingSystem&gt; luaSys = templates::create&lt;scripting::IScriptingSystem&gt;(&quot;lua&quot;);
++	YAKE_ASSERT( luaSys.get() );
++
++	// Create an object manager which manages creation, initialization and destruction of objects.
++	object::ObjectManager objMgr;
++
++	// Create &amp; attach the listener which handles the connection to the Lua VM and the bindings.
++	object::LuaObjectManagerListener luaFmsObjListener(*luaSys);
++	objMgr.attachListener( &amp;luaFmsObjListener, &quot;luaFsm&quot;, object::ObjectManager::kKeepOwnership );
++
++	// Example listener which sets the objects up for our example application :)
++	// The listener adds default states and transitions to the object's state machine, for example.
++	SharedPtr&lt;exapp::ExampleAppObjectMgrListener&gt; exappObjInitializer( new exapp::ExampleAppObjectMgrListener(*luaSys) );
++	objMgr.attachListener( exappObjInitializer.get(), &quot;exapp_listener&quot;, object::ObjectManager::kKeepOwnership );
++
++	// Let's create an object.
++	object::Object* o = objMgr.makeObject();
++	YAKE_ASSERT( o );
++
++	// NB At this point the FSM is set up by the exapp listener!
++
++	// Do some processing:
++	o-&gt;processFsmEvent(&quot;spawn&quot;);
++	objMgr.tick(); // triggers o-&gt;tick()
++	objMgr.tick();
++	o-&gt;processFsmEvent(&quot;die&quot;);
++
++	//@todo use scheduler for yield/resume functionality. (code in prototype is in fsm2_lua.cpp)
++	//o-&gt;getVM().resume();
++
++	exappObjInitializer.reset();
++	luaSys.reset();
++}
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000281.html">[Yake-svn] r1211 - trunk/yake/yapp
+</A></li>
+	<LI>Next message: <A HREF="000285.html">[Yake-svn] r1213 - in trunk/yake/src/yake: . ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#282">[ date ]</a>
+              <a href="thread.html#282">[ thread ]</a>
+              <a href="subject.html#282">[ subject ]</a>
+              <a href="author.html#282">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

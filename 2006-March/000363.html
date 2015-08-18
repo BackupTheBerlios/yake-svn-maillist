@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1292 - trunk/yake/src/yapp/raf
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1292%20-%20trunk/yake/src/yapp/raf&In-Reply-To=%3C200603162234.k2GMYOPx019127%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000361.html">
+   <LINK REL="Next"  HREF="000362.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1292 - trunk/yake/src/yapp/raf</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1292%20-%20trunk/yake/src/yapp/raf&In-Reply-To=%3C200603162234.k2GMYOPx019127%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1292 - trunk/yake/src/yapp/raf">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Mar 16 23:34:24 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000361.html">[Yake-svn] r1291 - trunk/yake/src/yake/samples/msg/sampleMsg1
+</A></li>
+        <LI>Next message: <A HREF="000362.html">[Yake-svn] r1293 - trunk/yake/yapp/raf
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#363">[ date ]</a>
+              <a href="thread.html#363">[ thread ]</a>
+              <a href="subject.html#363">[ subject ]</a>
+              <a href="author.html#363">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-16 23:34:24 +0100 (Thu, 16 Mar 2006)
+New Revision: 1292
+
+Modified:
+   trunk/yake/src/yapp/raf/yakeApplication.cpp
+   trunk/yake/src/yapp/raf/yakeApplicationState.cpp
+Log:
+ported to new yake::statemachine
+
+Modified: trunk/yake/src/yapp/raf/yakeApplication.cpp
+===================================================================
+--- trunk/yake/src/yapp/raf/yakeApplication.cpp	2006-03-16 22:33:44 UTC (rev 1291)
++++ trunk/yake/src/yapp/raf/yakeApplication.cpp	2006-03-16 22:34:24 UTC (rev 1292)
+@@ -363,7 +363,7 @@
+ #endif
+ 
+ 		// application state machine
+-		mMachine = new AppMachine( state::TH_RELAXED );
++		mMachine = new AppMachine();
+ 		YAKE_ASSERT( mMachine );
+ 		if (!mMachine)
+ 			return false;
+@@ -388,7 +388,6 @@
+ 		YAKE_ASSERT( mMachine );
+ 		if (mMachine)
+ 		{
+-			mMachine-&gt;exitAll();
+ 			YAKE_SAFE_DELETE( mMachine );
+ 		}
+ #if YAKE_RAF_USES_CEGUI == 1
+@@ -420,7 +419,7 @@
+ 		YAKE_ASSERT( mMachine );
+ 		if (!mMachine)
+ 			return false;
+-		mMachine-&gt;changeTo(&quot;main&quot;);
++		mMachine-&gt;setState(&quot;main&quot;); // initial state
+ 		mMachine-&gt;step();
+ 		return true;
+ 	}
+
+Modified: trunk/yake/src/yapp/raf/yakeApplicationState.cpp
+===================================================================
+--- trunk/yake/src/yapp/raf/yakeApplicationState.cpp	2006-03-16 22:33:44 UTC (rev 1291)
++++ trunk/yake/src/yapp/raf/yakeApplicationState.cpp	2006-03-16 22:34:24 UTC (rev 1292)
+@@ -58,16 +58,55 @@
+ 	}
+ 	void MainState::onEnter()
+ 	{
+-		std::cout &lt;&lt; &quot;MainState::onEnter()\n&quot;;
++		YAKE_LOG_INFORMATION(&quot;MainState::onEnter()&quot;);
+ 	}
+ 	void MainState::onExit()
+ 	{
+-		std::cout &lt;&lt; &quot;MainState::onExit()\n&quot;;
++		YAKE_LOG_INFORMATION(&quot;MainState::onExit()&quot;);
+ 	}
+ 	void MainState::onStep()
+ 	{
+-		std::cout &lt;&lt; &quot;MainState::onStep()\n&quot;;
++		YAKE_LOG_INFORMATION(&quot;MainState::onStep()&quot;);
+ 	}
+ 
++	//-----------------------------------------------------
++	// Class: AppMachine
++	//-----------------------------------------------------
++	AppMachine::AppMachine()
++	{}
++	AppMachine::~AppMachine()
++	{}
++	void AppMachine::addState(const String&amp; stateId, ApplicationState* state)
++	{
++		YAKE_ASSERT( !stateId.empty() );
++		YAKE_ASSERT( state );
++		YAKE_ASSERT( states_.end() == states_.find(stateId) );
++		states_.insert( state_map::value_type(stateId,SharedPtr&lt;ApplicationState&gt;(state)) );
++		machine_.addState( state );
++	}
++	void AppMachine::setState(const String&amp; stateId)
++	{
++		state_map::const_iterator it = states_.find(stateId);
++		YAKE_ASSERT( states_.end() != it );
++		machine_.setState( it-&gt;second.get() );
++	}
++	void AppMachine::addTransition(const String&amp; from, const event_type&amp; evt, const String&amp; to)
++	{
++		state_map::const_iterator itFrom = states_.find(from);
++		YAKE_ASSERT( states_.end() != itFrom );
++		state_map::const_iterator itTo = states_.find(to);
++		YAKE_ASSERT( states_.end() != itTo );
++		machine_.addTransition( itFrom-&gt;second.get(), evt, itTo-&gt;second.get() );
++	}
++	void AppMachine::processEvent(const event_type&amp; evt)
++	{
++		machine_.processEvent( evt );
++	}
++	void AppMachine::step()
++	{
++		YAKE_ASSERT( machine_.current() );
++		machine_.current()-&gt;onStep();
++	}
++
+ } // namespace raf
+ } // namespace yake
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000361.html">[Yake-svn] r1291 - trunk/yake/src/yake/samples/msg/sampleMsg1
+</A></li>
+	<LI>Next message: <A HREF="000362.html">[Yake-svn] r1293 - trunk/yake/yapp/raf
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#363">[ date ]</a>
+              <a href="thread.html#363">[ thread ]</a>
+              <a href="subject.html#363">[ subject ]</a>
+              <a href="author.html#363">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

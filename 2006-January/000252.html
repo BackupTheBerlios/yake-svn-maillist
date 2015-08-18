@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1182 - trunk/yake/src/yapp/samples/misc/scripted
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-January/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1182%20-%20trunk/yake/src/yapp/samples/misc/scripted&In-Reply-To=%3C200601151845.k0FIjbxH028231%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000251.html">
+   <LINK REL="Next"  HREF="000253.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1182 - trunk/yake/src/yapp/samples/misc/scripted</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1182%20-%20trunk/yake/src/yapp/samples/misc/scripted&In-Reply-To=%3C200601151845.k0FIjbxH028231%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1182 - trunk/yake/src/yapp/samples/misc/scripted">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Jan 15 19:45:37 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000251.html">[Yake-svn] r1181 - trunk/yake/src/yapp/plugins/entLua
+</A></li>
+        <LI>Next message: <A HREF="000253.html">[Yake-svn] r1183 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#252">[ date ]</a>
+              <a href="thread.html#252">[ thread ]</a>
+              <a href="subject.html#252">[ subject ]</a>
+              <a href="author.html#252">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-01-15 19:45:33 +0100 (Sun, 15 Jan 2006)
+New Revision: 1182
+
+Modified:
+   trunk/yake/src/yapp/samples/misc/scripted/yakeDemo.cpp
+Log:
+refactored to use yake::object
+
+Modified: trunk/yake/src/yapp/samples/misc/scripted/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/misc/scripted/yakeDemo.cpp	2006-01-15 18:45:02 UTC (rev 1181)
++++ trunk/yake/src/yapp/samples/misc/scripted/yakeDemo.cpp	2006-01-15 18:45:33 UTC (rev 1182)
+@@ -63,24 +63,31 @@
+ 		mScene-&gt;fromDotScene( mSceneFilename, mGWorld.get() );
+ 	}
+ 
+-	void initSim(ent::sim&amp; theSim)
++	void initSim(ent::Simulation&amp; theSim)
+ 	{
+-		// register entities with a specific sim
+-		ent::Pawn::reg( theSim );
+-		ent::Light::reg( theSim );
++		//@fixme: static initialization !?
++		ent::Entity::init();
++		ent::Pawn::init();
++		ent::Light::init();
+ 
+ 		// add Lua binder
+ 		ent::lua::bindSim( theSim );
+ 
++		// register entities with a specific sim
++		theSim.regClass&lt;ent::Pawn&gt;(&quot;Pawn&quot;);
++		theSim.regClass&lt;ent::Light&gt;(&quot;Light&quot;);
++
+ 		// init done!
+ 
+ 		// create entities
+-		ent::Entity* e1 = theSim.createEntity(&quot;Pawn&quot;, 
++		ent::Entity* e1 = ent::Entity::cast( 
++											theSim.createObject(&quot;Pawn&quot;, 
+ 												MakeStringPairVector() &lt;&lt; StringPair(&quot;visual&quot;,&quot;pawn.visual&quot;),
+-												MakeStringVector() &lt;&lt; &quot;../../media/samples/scripted/ent_pawn_basic.lua&quot;);
+-		ent::Entity* eLight1 = theSim.createEntity(&quot;Light&quot;, 
+-													MakeStringPairVector() &lt;&lt; StringPair(&quot;visual&quot;,&quot;light.visual&quot;), 
+-													MakeStringVector() &lt;&lt; &quot;../../media/samples/scripted/ent_light.lua&quot;);
++												MakeStringVector() &lt;&lt; &quot;../../media/samples/scripted/ent_pawn_basic.lua&quot;) );
++		ent::Entity* eLight1 = ent::Entity::cast( 
++											theSim.createObject(&quot;Light&quot;, 
++												MakeStringPairVector() &lt;&lt; StringPair(&quot;visual&quot;,&quot;light.visual&quot;), 
++												MakeStringVector() &lt;&lt; &quot;../../media/samples/scripted/ent_light.lua&quot;) );
+ 		eLight1-&gt;setProperty( &quot;position&quot;, Vector3(50,100,0) );
+ 		eLight1-&gt;setProperty( &quot;diffuseColour&quot;, Color(1,1,1,1) );
+ }
+@@ -119,7 +126,8 @@
+ 		setupScene();
+ 
+ 		// create sim
+-		ent::sim theSim( getScriptingSystem(), 10.f, mGWorld.get() );
++		ent::Simulation theSim;
++		theSim.start( &amp;getScriptingSystem(), mGWorld.get() );
+ 		initSim(theSim);
+ 
+ 		// main loop
+@@ -165,7 +173,7 @@
+ 			}
+ 		}
+ 
+-		theSim.removeAndDestroyAll();
++		theSim.stop();
+ 
+ 		//YAKE_SAFE_DELETE( mScene );	
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000251.html">[Yake-svn] r1181 - trunk/yake/src/yapp/plugins/entLua
+</A></li>
+	<LI>Next message: <A HREF="000253.html">[Yake-svn] r1183 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#252">[ date ]</a>
+              <a href="thread.html#252">[ thread ]</a>
+              <a href="subject.html#252">[ subject ]</a>
+              <a href="author.html#252">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

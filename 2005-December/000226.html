@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1156 - trunk/yake/yapp/raf
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-December/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1156%20-%20trunk/yake/yapp/raf&In-Reply-To=%3C200512072203.jB7M3wwS019712%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000227.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1156 - trunk/yake/yapp/raf</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1156%20-%20trunk/yake/yapp/raf&In-Reply-To=%3C200512072203.jB7M3wwS019712%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1156 - trunk/yake/yapp/raf">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Dec  7 23:03:58 CET 2005</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000227.html">[Yake-svn] r1157 - trunk/yake/yapp/common
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#226">[ date ]</a>
+              <a href="thread.html#226">[ thread ]</a>
+              <a href="subject.html#226">[ subject ]</a>
+              <a href="author.html#226">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-12-07 23:03:57 +0100 (Wed, 07 Dec 2005)
+New Revision: 1156
+
+Modified:
+   trunk/yake/yapp/raf/yakeApplication.h
+   trunk/yake/yapp/raf/yakePrerequisites.h
+Log:
+CEGUI support
+
+Modified: trunk/yake/yapp/raf/yakeApplication.h
+===================================================================
+--- trunk/yake/yapp/raf/yakeApplication.h	2005-11-25 20:23:49 UTC (rev 1155)
++++ trunk/yake/yapp/raf/yakeApplication.h	2005-12-07 22:03:57 UTC (rev 1156)
+@@ -38,6 +38,11 @@
+ 		class MouseDevice;
+ 		class MouseEventGenerator;
+ 	}
++#if YAKE_RAF_USES_CEGUI == 1
++	namespace ceguiadapter {
++		class RendererAdapterPlugin;
++	}
++#endif
+ namespace raf {
+ 
+ 	class Application;
+@@ -77,6 +82,10 @@
+ 			{ return MakeStringVector(); }
+ 
+ 		virtual SharedPtr&lt;graphics::IGraphicsSystem&gt; useExternalGraphicsSystem() { return SharedPtr&lt;graphics::IGraphicsSystem&gt;(); }
++#if YAKE_RAF_USES_CEGUI == 1
++		/** I could need some Dihydrogendinatriumethylendiamintetraacetat. */
++		virtual bool loadCEGUI() { return false; }
++#endif
+ 	};
+ 
+ 	class YAKE_RAF_API Application
+@@ -144,9 +153,23 @@
+ 		input::MouseDevice* getMouse();
+ 		input::MouseEventGenerator* getMouseEventGenerator();
+ 
++#if YAKE_RAF_USES_CEGUI == 1
++		void enableKeyboardInputForCEGUI(const bool yes);
++		void enableMouseInputForCEGUI(const bool yes);
++		void enableInputForCEGUI(const bool keyb = true, const bool mouse = true);
++#endif
+ 	private:
+ 		void initInput();
+ 		void initPhysics();
++#if YAKE_RAF_USES_CEGUI == 1
++		void initCEGUI();
++
++		void onKeyDown( const yake::input::KeyboardEvent&amp; rEvent );
++		void onKeyUp( const yake::input::KeyboardEvent&amp; rEvent );
++		void onMBDown( uint8 btn );
++		void onMBUp( uint8 btn );
++		void onMouseMoved( const Vector3&amp; rDelta );
++#endif
+ 	private:
+ 		typedef Deque&lt;SharedPtr&lt;base::Library&gt; &gt; LibList;
+ 		typedef AssocVector&lt;String,SharedPtr&lt;scripting::IScriptingSystem&gt; &gt; ScriptingSystemList;
+@@ -167,6 +190,14 @@
+ 		input::MouseDevice*				mMouse;
+ 		input::MouseEventGenerator*		mMouseEventGenerator;
+ 		bool							mUseExtGraphicsSystem;
++#if YAKE_RAF_USES_CEGUI == 1
++		::yake::ceguiadapter::RendererAdapterPlugin*	mCeguiRendererAdapter;
++		typedef std::deque&lt;yake::SignalConnection&gt; SigConnList;
++		SigConnList						mCeguiMouseSigConn;
++		SigConnList						mCeguiKeyboardSigConn;
++		bool							mCeguiMouseInputEnabled;
++		bool							mCeguiKeyboardInputEnabled;
++#endif
+ 	};
+ 
+ 	/** An example base application class provided for convenience.
+
+Modified: trunk/yake/yapp/raf/yakePrerequisites.h
+===================================================================
+--- trunk/yake/yapp/raf/yakePrerequisites.h	2005-11-25 20:23:49 UTC (rev 1155)
++++ trunk/yake/yapp/raf/yakePrerequisites.h	2005-12-07 22:03:57 UTC (rev 1156)
+@@ -40,6 +40,9 @@
+ #	define YAKE_RAF_API
+ #endif
+ 
++// configuration
++#define YAKE_RAF_USES_CEGUI 1
++
+ namespace yake {
+ } // namespace yake
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000227.html">[Yake-svn] r1157 - trunk/yake/yapp/common
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#226">[ date ]</a>
+              <a href="thread.html#226">[ thread ]</a>
+              <a href="subject.html#226">[ subject ]</a>
+              <a href="author.html#226">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

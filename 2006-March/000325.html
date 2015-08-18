@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1255 - trunk/yake/scripts/msvc8/plugins/ent
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1255%20-%20trunk/yake/scripts/msvc8/plugins/ent&In-Reply-To=%3C200603122203.k2CM3udE012091%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000324.html">
+   <LINK REL="Next"  HREF="000326.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1255 - trunk/yake/scripts/msvc8/plugins/ent</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1255%20-%20trunk/yake/scripts/msvc8/plugins/ent&In-Reply-To=%3C200603122203.k2CM3udE012091%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1255 - trunk/yake/scripts/msvc8/plugins/ent">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 12 23:03:56 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000324.html">[Yake-svn] r1254 - trunk/yake/scripts/msvc8
+</A></li>
+        <LI>Next message: <A HREF="000326.html">[Yake-svn] r1256 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#325">[ date ]</a>
+              <a href="thread.html#325">[ thread ]</a>
+              <a href="subject.html#325">[ subject ]</a>
+              <a href="author.html#325">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-12 23:03:56 +0100 (Sun, 12 Mar 2006)
+New Revision: 1255
+
+Modified:
+   trunk/yake/scripts/msvc8/plugins/ent/entLua.vcproj
+Log:
+replaced by yake/ent
+
+Modified: trunk/yake/scripts/msvc8/plugins/ent/entLua.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/plugins/ent/entLua.vcproj	2006-03-12 22:03:14 UTC (rev 1254)
++++ trunk/yake/scripts/msvc8/plugins/ent/entLua.vcproj	2006-03-12 22:03:56 UTC (rev 1255)
+@@ -3,7 +3,7 @@
+ 	ProjectType=&quot;Visual C++&quot;
+ 	Version=&quot;8,00&quot;
+ 	Name=&quot;entLua&quot;
+-	ProjectGUID=&quot;{3EEED188-5D62-476B-9CF3-022EBBAFFD12}&quot;
++	ProjectGUID=&quot;{89182311-DB82-446B-AA9B-C70A3A0AF035}&quot;
+ 	Keyword=&quot;Win32Proj&quot;
+ 	&gt;
+ 	&lt;Platforms&gt;
+@@ -46,7 +46,7 @@
+ 				BasicRuntimeChecks=&quot;3&quot;
+ 				RuntimeLibrary=&quot;3&quot;
+ 				RuntimeTypeInfo=&quot;true&quot;
+-				UsePrecompiledHeader=&quot;2&quot;
++				UsePrecompiledHeader=&quot;0&quot;
+ 				PrecompiledHeaderThrough=&quot;yapp/plugins/entLua/pch.h&quot;
+ 				WarningLevel=&quot;3&quot;
+ 				Detect64BitPortabilityProblems=&quot;true&quot;
+@@ -63,7 +63,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;yapp.lib ent.lib scripting.lib scriptingLua.lib luad.lib luabindd.lib&quot;
++				AdditionalDependencies=&quot;ent2.lib scripting.lib scriptingLua.lib luad.lib luabindd.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;2&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies/luabind/lib;../../../../dependencies/lua/lib;../../../../dependencies/lib&quot;
+@@ -128,7 +128,7 @@
+ 				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_ENTLUA_EXPORTS&quot;
+ 				RuntimeLibrary=&quot;2&quot;
+ 				RuntimeTypeInfo=&quot;true&quot;
+-				UsePrecompiledHeader=&quot;2&quot;
++				UsePrecompiledHeader=&quot;0&quot;
+ 				PrecompiledHeaderThrough=&quot;yapp/plugins/entLua/pch.h&quot;
+ 				WarningLevel=&quot;3&quot;
+ 				Detect64BitPortabilityProblems=&quot;true&quot;
+@@ -145,7 +145,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;yapp.lib ent.lib scripting.lib scriptingLua.lib lua.lib luabind.lib&quot;
++				AdditionalDependencies=&quot;ent2.lib scripting.lib scriptingLua.lib lua.lib luabind.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;1&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/luabind/lib;../../../../dependencies/lua/lib;../../../../dependencies/lib&quot;
+@@ -189,70 +189,22 @@
+ 		&lt;Filter
+ 			Name=&quot;src&quot;
+ 			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
+-			UniqueIdentifier=&quot;{9CB4E8A9-2FDE-4824-AE67-A41A3676A03C}&quot;
++			UniqueIdentifier=&quot;{09A10F80-1825-424a-AEA9-250CB4511F6F}&quot;
+ 			&gt;
+ 			&lt;File
+-				RelativePath=&quot;..\..\..\..\src\yapp\plugins\entLua\pch.cpp&quot;
++				RelativePath=&quot;..\..\..\..\src\yake\plugins\entLua\entLua.cpp&quot;
+ 				&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;
+-					&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;
+-					/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;
+-					&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;
+-					/&gt;
+-				&lt;/FileConfiguration&gt;
+ 			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\..\..\src\yapp\plugins\entLua\yakeEvent_lua.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\..\..\src\yapp\plugins\entLua\yakeLuaBinder.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\..\..\src\yapp\plugins\entLua\yakeStateCb_lua.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+ 		&lt;/Filter&gt;
+ 		&lt;Filter
+ 			Name=&quot;inc&quot;
+ 			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
+-			UniqueIdentifier=&quot;{C4684ADB-F16C-49c0-B735-7B03DC9337AA}&quot;
++			UniqueIdentifier=&quot;{7D1512F3-3C33-47f9-B6FE-5D846ED21130}&quot;
+ 			&gt;
+ 			&lt;File
+-				RelativePath=&quot;..\..\..\..\yapp\plugins\entLua\pch.h&quot;
++				RelativePath=&quot;..\..\..\..\yake\plugins\entLua\entLua.h&quot;
+ 				&gt;
+ 			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\..\..\yapp\plugins\entLua\yakeEntLua.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\..\..\yapp\plugins\entLua\yakeEvent_lua.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\..\..\yapp\plugins\entLua\yakeLuaBinder.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\..\..\yapp\plugins\entLua\yakePrerequisites.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\..\..\yapp\plugins\entLua\yakeStateCb_lua.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+ 		&lt;/Filter&gt;
+ 	&lt;/Files&gt;
+ 	&lt;Globals&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000324.html">[Yake-svn] r1254 - trunk/yake/scripts/msvc8
+</A></li>
+	<LI>Next message: <A HREF="000326.html">[Yake-svn] r1256 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#325">[ date ]</a>
+              <a href="thread.html#325">[ thread ]</a>
+              <a href="subject.html#325">[ subject ]</a>
+              <a href="author.html#325">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

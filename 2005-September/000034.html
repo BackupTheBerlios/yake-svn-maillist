@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r964 - trunk/yake/src/yake/plugins/graphicsOgre
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r964%20-%20trunk/yake/src/yake/plugins/graphicsOgre&In-Reply-To=%3C200509302140.j8ULecq1008178%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000033.html">
+   <LINK REL="Next"  HREF="000035.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r964 - trunk/yake/src/yake/plugins/graphicsOgre</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r964%20-%20trunk/yake/src/yake/plugins/graphicsOgre&In-Reply-To=%3C200509302140.j8ULecq1008178%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r964 - trunk/yake/src/yake/plugins/graphicsOgre">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:40:38 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000033.html">[Yake-svn] r963 - trunk/yake/yake/graphics
+</A></li>
+        <LI>Next message: <A HREF="000035.html">[Yake-svn] r965 - trunk/yake/src/yake/plugins/physicsNX
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#34">[ date ]</a>
+              <a href="thread.html#34">[ thread ]</a>
+              <a href="subject.html#34">[ subject ]</a>
+              <a href="author.html#34">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:40:37 +0200 (Fri, 30 Sep 2005)
+New Revision: 964
+
+Modified:
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp
+Log:
+added skybox, improved particle system interfaces
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.cpp	2005-09-30 21:39:53 UTC (rev 963)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.cpp	2005-09-30 21:40:37 UTC (rev 964)
+@@ -42,14 +42,83 @@
+ 	//------------------------------------------------------
+ 	OgreParticleSystem::~OgreParticleSystem()
+ 	{
++		YAKE_ASSERT( mParticleSys );
+ 		mParticleSysMgr.destroySystem( mParticleSys-&gt;getName() );
+ 	}
+ 
+ 	//------------------------------------------------------
+ 	void OgreParticleSystem::setVisible( bool visible )
+ 	{
++		YAKE_ASSERT( mParticleSys );
+ 		mParticleSys-&gt;setVisible( visible );
+ 	}
+-	
++
++	//------------------------------------------------------
++	size_t OgreParticleSystem::getNumEmitters() const
++	{
++		YAKE_ASSERT( mParticleSys );
++		return mParticleSys-&gt;getNumEmitters();
++	}
++
++	//------------------------------------------------------
++	void OgreParticleSystem::setEmissionRate( const size_t emitter, const real particlesPerSec )
++	{
++		YAKE_ASSERT( mParticleSys );
++		YAKE_ASSERT( mParticleSys-&gt;getNumEmitters() &gt; emitter );
++		Ogre::ParticleEmitter* pEmitter = mParticleSys-&gt;getEmitter(emitter);
++		YAKE_ASSERT( pEmitter );
++		pEmitter-&gt;setEmissionRate( particlesPerSec );
++	}
++
++	//------------------------------------------------------
++	real OgreParticleSystem::getEmissionRate( const size_t emitter ) const
++	{
++		YAKE_ASSERT( mParticleSys );
++		YAKE_ASSERT( mParticleSys-&gt;getNumEmitters() &gt; emitter );
++		Ogre::ParticleEmitter* pEmitter = mParticleSys-&gt;getEmitter(emitter);
++		YAKE_ASSERT( pEmitter );
++		return pEmitter-&gt;getEmissionRate();
++	}
++
++	//------------------------------------------------------
++	void OgreParticleSystem::setMinVelocity( const size_t emitter, const real vel )
++	{
++		YAKE_ASSERT( mParticleSys );
++		YAKE_ASSERT( mParticleSys-&gt;getNumEmitters() &gt; emitter );
++		Ogre::ParticleEmitter* pEmitter = mParticleSys-&gt;getEmitter(emitter);
++		YAKE_ASSERT( pEmitter );
++		pEmitter-&gt;setMinParticleVelocity( vel );
++	}
++
++	//------------------------------------------------------
++	real OgreParticleSystem::getMinVelocity( const size_t emitter ) const
++	{
++		YAKE_ASSERT( mParticleSys );
++		YAKE_ASSERT( mParticleSys-&gt;getNumEmitters() &gt; emitter );
++		Ogre::ParticleEmitter* pEmitter = mParticleSys-&gt;getEmitter(emitter);
++		YAKE_ASSERT( pEmitter );
++		return pEmitter-&gt;getMinParticleVelocity();
++	}
++
++	//------------------------------------------------------
++	void OgreParticleSystem::setMaxVelocity( const size_t emitter, const real vel )
++	{
++		YAKE_ASSERT( mParticleSys );
++		YAKE_ASSERT( mParticleSys-&gt;getNumEmitters() &gt; emitter );
++		Ogre::ParticleEmitter* pEmitter = mParticleSys-&gt;getEmitter(emitter);
++		YAKE_ASSERT( pEmitter );
++		return pEmitter-&gt;setMaxParticleVelocity(vel);
++	}
++
++	//------------------------------------------------------
++	real OgreParticleSystem::getMaxVelocity( const size_t emitter ) const
++	{
++		YAKE_ASSERT( mParticleSys );
++		YAKE_ASSERT( mParticleSys-&gt;getNumEmitters() &gt; emitter );
++		Ogre::ParticleEmitter* pEmitter = mParticleSys-&gt;getEmitter(emitter);
++		YAKE_ASSERT( pEmitter );
++		return pEmitter-&gt;getMaxParticleVelocity();
++	}
++
+ } // graphics
+ } // yake
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp	2005-09-30 21:39:53 UTC (rev 963)
++++ trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp	2005-09-30 21:40:37 UTC (rev 964)
+@@ -89,6 +89,13 @@
+ 	}
+ 
+ 	//-----------------------------------------------------
++	void GraphicalWorld::setSkyBox( const String&amp; name )
++	{
++		YAKE_ASSERT( msCore ).debug(&quot;need a core!&quot;);
++		msCore-&gt;getSceneMgr()-&gt;setSkyBox( true, name );
++	}
++
++	//-----------------------------------------------------
+ 	IEntity* GraphicalWorld::createEntity( const String&amp; mesh )
+ 	{
+ 		YAKE_ASSERT( msCore ).debug(&quot;need a core!&quot;);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000033.html">[Yake-svn] r963 - trunk/yake/yake/graphics
+</A></li>
+	<LI>Next message: <A HREF="000035.html">[Yake-svn] r965 - trunk/yake/src/yake/plugins/physicsNX
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#34">[ date ]</a>
+              <a href="thread.html#34">[ thread ]</a>
+              <a href="subject.html#34">[ subject ]</a>
+              <a href="author.html#34">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

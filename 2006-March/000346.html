@@ -1,0 +1,276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1276 - in trunk/yake/scripts/msvc8/samples: . statemachine
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1276%20-%20in%20trunk/yake/scripts/msvc8/samples%3A%20.%20statemachine&In-Reply-To=%3C200603152022.k2FKMIWk014536%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000345.html">
+   <LINK REL="Next"  HREF="000347.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1276 - in trunk/yake/scripts/msvc8/samples: . statemachine</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1276%20-%20in%20trunk/yake/scripts/msvc8/samples%3A%20.%20statemachine&In-Reply-To=%3C200603152022.k2FKMIWk014536%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1276 - in trunk/yake/scripts/msvc8/samples: . statemachine">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Mar 15 21:22:18 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000345.html">[Yake-svn] r1275 - trunk/yake/src/yake/samples/ent/sampleEntFsm
+</A></li>
+        <LI>Next message: <A HREF="000347.html">[Yake-svn] r1277 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#346">[ date ]</a>
+              <a href="thread.html#346">[ thread ]</a>
+              <a href="subject.html#346">[ subject ]</a>
+              <a href="author.html#346">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-15 21:22:16 +0100 (Wed, 15 Mar 2006)
+New Revision: 1276
+
+Added:
+   trunk/yake/scripts/msvc8/samples/statemachine/
+   trunk/yake/scripts/msvc8/samples/statemachine/sampleFsm1.vcproj
+Log:
+initial revision
+
+Added: trunk/yake/scripts/msvc8/samples/statemachine/sampleFsm1.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/statemachine/sampleFsm1.vcproj	2006-03-15 20:20:24 UTC (rev 1275)
++++ trunk/yake/scripts/msvc8/samples/statemachine/sampleFsm1.vcproj	2006-03-15 20:22:16 UTC (rev 1276)
+@@ -0,0 +1,199 @@
++&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
++&lt;VisualStudioProject
++	ProjectType=&quot;Visual C++&quot;
++	Version=&quot;8,00&quot;
++	Name=&quot;sampleFsm1&quot;
++	ProjectGUID=&quot;{F270D584-0E4B-4FF0-8EDB-4D098BE49D43}&quot;
++	Keyword=&quot;Win32Proj&quot;
++	&gt;
++	&lt;Platforms&gt;
++		&lt;Platform
++			Name=&quot;Win32&quot;
++		/&gt;
++	&lt;/Platforms&gt;
++	&lt;ToolFiles&gt;
++	&lt;/ToolFiles&gt;
++	&lt;Configurations&gt;
++		&lt;Configuration
++			Name=&quot;Debug|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/debug&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/debug/$(ProjectName)&quot;
++			ConfigurationType=&quot;1&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				Optimization=&quot;0&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/boost/;../../../../dependencies/ttl/&quot;
++				PreprocessorDefinitions=&quot;WIN32;_DEBUG;_CONSOLE&quot;
++				MinimalRebuild=&quot;true&quot;
++				BasicRuntimeChecks=&quot;3&quot;
++				RuntimeLibrary=&quot;3&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;0&quot;
++				PrecompiledHeaderThrough=&quot;yapp/samples/base/vehicle/yakePCH.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;4&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib vehicle.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
++				LinkIncremental=&quot;2&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;1&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++		&lt;Configuration
++			Name=&quot;Release|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/release&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/release/$(ProjectName)&quot;
++			ConfigurationType=&quot;1&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/boost/;../../../../dependencies/ttl/&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE&quot;
++				RuntimeLibrary=&quot;2&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;0&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;3&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib vehicle.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
++				LinkIncremental=&quot;1&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;false&quot;
++				SubSystem=&quot;1&quot;
++				OptimizeReferences=&quot;2&quot;
++				EnableCOMDATFolding=&quot;2&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++	&lt;/Configurations&gt;
++	&lt;References&gt;
++	&lt;/References&gt;
++	&lt;Files&gt;
++		&lt;Filter
++			Name=&quot;inc&quot;
++			&gt;
++		&lt;/Filter&gt;
++		&lt;Filter
++			Name=&quot;src&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\src\yake\samples\statemachine\sampleFsm1\demo.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++	&lt;/Files&gt;
++	&lt;Globals&gt;
++	&lt;/Globals&gt;
++&lt;/VisualStudioProject&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000345.html">[Yake-svn] r1275 - trunk/yake/src/yake/samples/ent/sampleEntFsm
+</A></li>
+	<LI>Next message: <A HREF="000347.html">[Yake-svn] r1277 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#346">[ date ]</a>
+              <a href="thread.html#346">[ thread ]</a>
+              <a href="subject.html#346">[ subject ]</a>
+              <a href="author.html#346">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

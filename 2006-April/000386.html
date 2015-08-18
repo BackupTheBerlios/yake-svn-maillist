@@ -1,0 +1,212 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1318 - trunk/yake/src/yake/plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1318%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200604252005.k3PK5PoR031821%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000385.html">
+   <LINK REL="Next"  HREF="000387.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1318 - trunk/yake/src/yake/plugins/physicsODE</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1318%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200604252005.k3PK5PoR031821%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1318 - trunk/yake/src/yake/plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Apr 25 22:05:25 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000385.html">[Yake-svn] r1317 - in trunk/yake: dependencies scripts/msvc8 src/yake/audio src/yake/base src/yake/base/math src/yake/base/native/Linux src/yake/base/native/win32 src/yake/data src/yake/ent src/yake/input src/yake/net src/yake/net/detail src/yake/samples/physics/demo yake/base yake/base/math yake/base/native yake/base/native/win32 yake/base/templates yake/data yake/ent yake/msg yake/net yake/net/detail yake/object yake/physics yake/plugins/graphicsOgre yake/samples/common yake/statemachine
+</A></li>
+        <LI>Next message: <A HREF="000387.html">[Yake-svn] r1319 - in trunk/yake/src/yake/samples: audio/demo1 net/roserver physics/demo
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#386">[ date ]</a>
+              <a href="thread.html#386">[ thread ]</a>
+              <a href="subject.html#386">[ subject ]</a>
+              <a href="author.html#386">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-04-25 22:05:09 +0200 (Tue, 25 Apr 2006)
+New Revision: 1318
+
+Modified:
+   trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+Log:
+fixed casts
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2006-04-23 17:54:49 UTC (rev 1317)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2006-04-25 20:05:09 UTC (rev 1318)
+@@ -105,18 +105,18 @@
+ 		if ( !pMaterial )
+ 			pMaterial = this-&gt;getCreator()-&gt;getMaterial( &quot;default&quot; );
+ 
+-		OdeMaterial* pOdeMaterial = pMaterial ? checked_cast&lt;OdeMaterial*&gt;( pMaterial ) : 0;
++		OdeMaterial* pOdeMaterial = pMaterial ? dynamic_cast&lt;OdeMaterial*&gt;( pMaterial ) : 0;
+ 		YAKE_ASSERT( pOdeMaterial );
+ 
+ 		OdeGeom* result = 0;
+ 
+-		if ( const IShape::SphereDesc* pSphereDesc = checked_cast&lt;const IShape::SphereDesc*&gt;( pShapeDesc ) )
++		if ( const IShape::SphereDesc* pSphereDesc = dynamic_cast&lt;const IShape::SphereDesc*&gt;( pShapeDesc ) )
+ 		{
+ 			OdeSphere* pSphere = new OdeSphere( mOdeWorld-&gt;_getOdeSpace(), this, pSphereDesc-&gt;radius );
+ 
+ 			result = createTransformGeom( pSphere, rShapeDesc.position, rShapeDesc.orientation );
+ 		}
+-		else if ( const IShape::BoxDesc* pBoxDesc = checked_cast&lt;const IShape::BoxDesc*&gt;( pShapeDesc ) )
++		else if ( const IShape::BoxDesc* pBoxDesc = dynamic_cast&lt;const IShape::BoxDesc*&gt;( pShapeDesc ) )
+ 		{
+ 			OdeBox* pBox = new OdeBox( mOdeWorld-&gt;_getOdeSpace(), 
+ 				this,
+@@ -125,7 +125,7 @@
+ 				pBoxDesc-&gt;dimensions.z  );
+ 			result = createTransformGeom( pBox, rShapeDesc.position, rShapeDesc.orientation );
+ 		}
+-		else if ( const IShape::PlaneDesc* pPlaneDesc = checked_cast&lt;const IShape::PlaneDesc*&gt;( pShapeDesc ) )
++		else if ( const IShape::PlaneDesc* pPlaneDesc = dynamic_cast&lt;const IShape::PlaneDesc*&gt;( pShapeDesc ) )
+ 		{
+ 			/// We are not making transform geom here.
+ 			/// Calculating absolute coordinates instead...
+@@ -142,7 +142,7 @@
+ 				d );
+ 			result = pPlane;
+ 		}
+-		else if ( const IShape::CapsuleDesc* pCapsuleDesc = checked_cast&lt;const IShape::CapsuleDesc*&gt;( pShapeDesc ) )
++		else if ( const IShape::CapsuleDesc* pCapsuleDesc = dynamic_cast&lt;const IShape::CapsuleDesc*&gt;( pShapeDesc ) )
+ 		{
+ 			OdeCCylinder* pCapsule = new OdeCCylinder( mOdeWorld-&gt;_getOdeSpace(), 
+ 				this,
+@@ -150,7 +150,7 @@
+ 				pCapsuleDesc-&gt;height  );
+ 			result = createTransformGeom( pCapsule, rShapeDesc.position, rShapeDesc.orientation );
+ 		}
+-		else if ( const IShape::TriMeshDesc* pTriMeshDesc = checked_cast&lt;const IShape::TriMeshDesc*&gt;( pShapeDesc ) )
++		else if ( const IShape::TriMeshDesc* pTriMeshDesc = dynamic_cast&lt;const IShape::TriMeshDesc*&gt;( pShapeDesc ) )
+ 		{
+ 			TriangleMeshId id = pTriMeshDesc-&gt;trimeshId_;
+ 			if (id == kTriangleMeshIdNone)
+@@ -197,7 +197,7 @@
+ 	//-----------------------------------------------------
+ 	void OdeActor::destroyShape( IShape* pShape )
+ 	{
+-		OdeGeom* pGeom = checked_cast&lt;OdeGeom*&gt;( pShape );
++		OdeGeom* pGeom = dynamic_cast&lt;OdeGeom*&gt;( pShape );
+ 		ShapeList::iterator victim = std::find( mShapes.begin(), mShapes.end(), pGeom );
+ 		mShapes.erase( victim );
+ 	}
+@@ -378,7 +378,7 @@
+ 	//-----------------------------------------------------
+ 	IShape* OdeActor::createShape( const IShape::Desc&amp; rShapeDesc, real massOrDensity, IBody::quantityType type )
+ 	{
+-		if ( mBody &amp;&amp; checked_cast&lt;const IShape::PlaneDesc*&gt;( &amp;rShapeDesc ) )
++		if ( mBody &amp;&amp; dynamic_cast&lt;const IShape::PlaneDesc*&gt;( &amp;rShapeDesc ) )
+ 			YAKE_ASSERT( false ).error( &quot;Attempted to attach immovable plane shape to movable actor!&quot; );
+ 
+ 		OdeGeom* pShape = createShapeFromDesc( rShapeDesc );
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2006-04-23 17:54:49 UTC (rev 1317)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2006-04-25 20:05:09 UTC (rev 1318)
+@@ -96,14 +96,14 @@
+ 		void parseMassDesc( const IBody::MassDesc&amp; desc, dMass* mass )
+ 		{
+ 			if ( const IBody::SphereMassDesc* sphereMassDesc =
+-				checked_cast&lt;const IBody::SphereMassDesc*&gt;( &amp;desc ) )
++				dynamic_cast&lt;const IBody::SphereMassDesc*&gt;( &amp;desc ) )
+ 			{
+ 				if ( sphereMassDesc-&gt;qType == IBody::QT_DENSITY )
+ 					dMassSetSphere( mass, sphereMassDesc-&gt;quantity, sphereMassDesc-&gt;radius );
+ 				else
+ 					dMassSetSphereTotal( mass, sphereMassDesc-&gt;quantity, sphereMassDesc-&gt;radius );
+ 			}
+-			else if ( const IBody::BoxMassDesc* boxMassDesc = checked_cast&lt;const IBody::BoxMassDesc*&gt;( &amp;desc ) )
++			else if ( const IBody::BoxMassDesc* boxMassDesc = dynamic_cast&lt;const IBody::BoxMassDesc*&gt;( &amp;desc ) )
+ 			{
+ 				if ( boxMassDesc-&gt;qType == IBody::QT_DENSITY )
+ 					dMassSetBox( mass, boxMassDesc-&gt;quantity, 
+@@ -113,7 +113,7 @@
+ 						boxMassDesc-&gt;sizeX, boxMassDesc-&gt;sizeY, boxMassDesc-&gt;sizeZ );
+ 			}
+ 			else if ( const IBody::CapsuleMassDesc* capsuleMassDesc = 
+-				checked_cast&lt;const IBody::CapsuleMassDesc*&gt;( &amp;desc ) )
++				dynamic_cast&lt;const IBody::CapsuleMassDesc*&gt;( &amp;desc ) )
+ 			{
+ 				if ( capsuleMassDesc-&gt;qType == IBody::QT_DENSITY )
+ 					dMassSetCappedCylinder( mass,
+@@ -129,7 +129,7 @@
+ 					    capsuleMassDesc-&gt;length );
+ 			}
+ 			else if ( const IBody::CylinderMassDesc* cylMassDesc = 
+-				checked_cast&lt;const IBody::CylinderMassDesc*&gt;( &amp;desc ) )
++				dynamic_cast&lt;const IBody::CylinderMassDesc*&gt;( &amp;desc ) )
+ 			{
+ 				if ( cylMassDesc-&gt;qType == IBody::QT_DENSITY )
+ 					dMassSetCylinder( mass,
+@@ -145,7 +145,7 @@
+ 						cylMassDesc-&gt;length );
+ 			}
+ 			else if ( const IBody::MassDesc* massDesc = 
+-				checked_cast&lt;const IBody::MassDesc*&gt;( &amp;desc ) )
++				dynamic_cast&lt;const IBody::MassDesc*&gt;( &amp;desc ) )
+ 			{
+ 			    // creating unit sphere
+ 			    dMassSetSphereTotal( mass, massDesc-&gt;quantity, 1 );
+@@ -163,16 +163,16 @@
+ 		{
+ 			const IShape::Desc* pShapeDesc = &amp;( rShapeDesc );
+ 			
+-			if ( const IShape::SphereDesc* pSphereDesc = checked_cast&lt;const IShape::SphereDesc*&gt;( pShapeDesc ) )
++			if ( const IShape::SphereDesc* pSphereDesc = dynamic_cast&lt;const IShape::SphereDesc*&gt;( pShapeDesc ) )
+ 			{
+ 				this-&gt;addMass( IBody::SphereMassDesc( pSphereDesc-&gt;radius, massOrDensity, pSphereDesc-&gt;position, qType ) );
+ 			}
+-			else if ( const IShape::BoxDesc* pBoxDesc = checked_cast&lt;const IShape::BoxDesc*&gt;( pShapeDesc ) )
++			else if ( const IShape::BoxDesc* pBoxDesc = dynamic_cast&lt;const IShape::BoxDesc*&gt;( pShapeDesc ) )
+ 			{
+ 				this-&gt;addMass( IBody::BoxMassDesc( pBoxDesc-&gt;dimensions.x, pBoxDesc-&gt;dimensions.y, pBoxDesc-&gt;dimensions.z, massOrDensity,
+ 					pBoxDesc-&gt;position, qType ) );
+ 			}
+-			else if ( const IShape::CapsuleDesc* pCapsuleDesc = checked_cast&lt;const IShape::CapsuleDesc*&gt;( pShapeDesc ) )
++			else if ( const IShape::CapsuleDesc* pCapsuleDesc = dynamic_cast&lt;const IShape::CapsuleDesc*&gt;( pShapeDesc ) )
+ 			{
+ 				this-&gt;addMass( IBody::CapsuleMassDesc( pCapsuleDesc-&gt;radius, pCapsuleDesc-&gt;height, massOrDensity, pCapsuleDesc-&gt;position, qType ) );
+ 			}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000385.html">[Yake-svn] r1317 - in trunk/yake: dependencies scripts/msvc8 src/yake/audio src/yake/base src/yake/base/math src/yake/base/native/Linux src/yake/base/native/win32 src/yake/data src/yake/ent src/yake/input src/yake/net src/yake/net/detail src/yake/samples/physics/demo yake/base yake/base/math yake/base/native yake/base/native/win32 yake/base/templates yake/data yake/ent yake/msg yake/net yake/net/detail yake/object yake/physics yake/plugins/graphicsOgre yake/samples/common yake/statemachine
+</A></li>
+	<LI>Next message: <A HREF="000387.html">[Yake-svn] r1319 - in trunk/yake/src/yake/samples: audio/demo1 net/roserver physics/demo
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#386">[ date ]</a>
+              <a href="thread.html#386">[ thread ]</a>
+              <a href="subject.html#386">[ subject ]</a>
+              <a href="author.html#386">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

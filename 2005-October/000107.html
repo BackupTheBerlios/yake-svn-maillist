@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1036 - trunk/yake/yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1036%20-%20trunk/yake/yapp/vehicle&In-Reply-To=%3C200510192306.j9JN62lN021519%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000106.html">
+   <LINK REL="Next"  HREF="000108.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1036 - trunk/yake/yapp/vehicle</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1036%20-%20trunk/yake/yapp/vehicle&In-Reply-To=%3C200510192306.j9JN62lN021519%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1036 - trunk/yake/yapp/vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Oct 20 01:06:02 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000106.html">[Yake-svn] r1035 - in trunk/yake/src: yake/plugins/physicsODE yapp/samples/base/vehicle yapp/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000108.html">[Yake-svn] r1037 - in trunk/yake: src/yapp/samples/misc src/yapp/samples/misc/car yapp/samples/misc yapp/samples/misc/car
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#107">[ date ]</a>
+              <a href="thread.html#107">[ thread ]</a>
+              <a href="subject.html#107">[ subject ]</a>
+              <a href="author.html#107">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-20 01:05:46 +0200 (Thu, 20 Oct 2005)
+New Revision: 1036
+
+Modified:
+   trunk/yake/yapp/vehicle/yakeDotVehicle.h
+   trunk/yake/yapp/vehicle/yakeInterfaces.h
+   trunk/yake/yapp/vehicle/yakeNativeOde.h
+   trunk/yake/yapp/vehicle/yakeTemplates.h
+Log:
+improvements for ground vehicles
+
+Modified: trunk/yake/yapp/vehicle/yakeDotVehicle.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeDotVehicle.h	2005-10-19 23:04:42 UTC (rev 1035)
++++ trunk/yake/yapp/vehicle/yakeDotVehicle.h	2005-10-19 23:05:46 UTC (rev 1036)
+@@ -58,6 +58,8 @@
+ 		    void parseShapeSphere( const data::dom::INode&amp; n );
+ 		   void parseMountPoint( const data::dom::INode&amp; n, VehicleTemplate::MountPointTpl* parentMtPt = 0 );
+ 		 void parseEngine( const data::dom::INode&amp; n );
++		  void parseRPM( vehicle::VehicleTemplate::CarEngineTpl&amp;, const data::dom::INode&amp; n );
++		  void parseGearBox( vehicle::VehicleTemplate::CarEngineTpl&amp;, const data::dom::INode&amp; n );
+ 		 //void parseAxle( const data::dom::INode&amp; n );
+ 		 void parseSteeringGroup( const data::dom::INode&amp; n );
+ 		 void parseWheel( const data::dom::INode&amp; n );
+
+Modified: trunk/yake/yapp/vehicle/yakeInterfaces.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeInterfaces.h	2005-10-19 23:04:42 UTC (rev 1035)
++++ trunk/yake/yapp/vehicle/yakeInterfaces.h	2005-10-19 23:05:46 UTC (rev 1036)
+@@ -168,6 +168,7 @@
+ 		virtual ~IWheel() {}
+ 
+ 		virtual real getRadius() const = 0;
++		virtual void brake(const real ratio) = 0;
+ 	};
+ 
+ } // namespace vehicle
+
+Modified: trunk/yake/yapp/vehicle/yakeNativeOde.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeNativeOde.h	2005-10-19 23:04:42 UTC (rev 1035)
++++ trunk/yake/yapp/vehicle/yakeNativeOde.h	2005-10-19 23:05:46 UTC (rev 1036)
+@@ -32,6 +32,35 @@
+ namespace yake {
+ namespace vehicle {
+ 
++	//-----------------------------------------------------
++	// Class: GearBox
++	//-----------------------------------------------------
++	class GearBox
++	{
++	public:
++		enum GearMode {
++			GM_REVERSE,
++			GM_NEUTRAL,
++			GM_FORWARD
++		};
++		void setSpeed( uint8 numGears );
++		uint8 getSpeed() const;
++
++		void setGearRatio( uint8 gear, real ratio );
++		void setGearMode( uint8 gear, const GearMode mode );
++		real getGearRatio( uint8 gear );
++
++		void setFromTemplate( const VehicleTemplate::GearTplList &amp; gears );
++	private:
++		struct Gear
++		{
++			real		ratio_;
++			GearMode	mode_;
++		};
++		typedef Vector&lt; Gear &gt; GearList;
++		GearList	mGears;
++	};
++
+ 	class DotVehicleParser;
+ 	class YAKE_VEH_API GenericVehicleSystem : public IVehicleSystem
+ 	{
+@@ -78,11 +107,12 @@
+ 
+ 		void _create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld);
+ 
+-		YAKE_MEMBERSIGNAL(private,void(real),UpdateThrusterSimulation);
++		YAKE_MEMBERSIGNAL(private,void(real),UpdateEngineSimulation);
+ 		YAKE_MEMBERSIGNAL(private,void(void),ApplyThrusterToTargets);
+ 
+ 	private:
+ 		void _createMountPoint(const String&amp; id, const VehicleTemplate::MountPointTpl&amp;,MountPoint* parentMtPt = 0);
++		void _applyDriveTorqueToAxles( real timeElapsed );
+ 	private:
+ 		typedef AssocVector&lt;String,IEngine*&gt; EnginePtrList;
+ 		EnginePtrList		mEngines; // owner of all engine objects
+@@ -92,6 +122,10 @@
+ 		typedef AssocVector&lt;uint32,Deque&lt;OdeWheel*&gt; &gt; SteeringGroupList;
+ 		SteeringGroupList	mSteeringGroups;
+ 
++		typedef std::pair&lt;ICarEngine*,Deque&lt;OdeWheel*&gt; &gt; CarEngineWheelsPair;
++		typedef AssocVector&lt;uint32,CarEngineWheelsPair&gt; AxleList;
++		AxleList			mAxles;
++
+ 		typedef AssocVector&lt;String,OdeWheel*&gt; WheelList;
+ 		WheelList			mWheels;
+ 
+@@ -173,8 +207,16 @@
+ 
+ 		virtual real getRadius() const;
+ 
++		virtual void brake(const real ratio);
++
+ 		void setSteering( const real s );
++
++		void _applyDriveTq( const real tq );
+ 	private:
++		void _applyTq( const Vector3 &amp; torque );
++		void _applyBrakeTq( const Vector3 &amp; torque );
++		void _applyMotor( real velocity, real fmax );
++
+ 		void _onPreStepInternal( const real dt );
+ 	private:
+ 		physics::IJointPtr		mpJoint;
+@@ -183,6 +225,7 @@
+ 		real					mTargetSteer;
+ 		real					mCurrSteer;
+ 		SignalConnection		mPostStepSigConn;
++		real					mBrakeRatio;
+ 	};
+ #endif // YAKE_VEHICLE_USE_ODE
+ 	class GenericMountPoint : public MountPoint
+
+Modified: trunk/yake/yapp/vehicle/yakeTemplates.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeTemplates.h	2005-10-19 23:04:42 UTC (rev 1035)
++++ trunk/yake/yapp/vehicle/yakeTemplates.h	2005-10-19 23:05:46 UTC (rev 1036)
+@@ -76,7 +76,7 @@
+ 		{
+ 			real				ratio_;
+ 			GearMode			mode_;
+-			GearTpl() : ratio_(1.), mode_(GM_FORWARD) {}
++			GearTpl(const real r = 1., const GearMode m = GM_FORWARD) : ratio_(r), mode_(m) {}
+ 		};
+ 		typedef Vector&lt;GearTpl&gt; GearTplList;
+ 		struct EngineTpl
+@@ -92,6 +92,7 @@
+ 		};
+ 		struct CarEngineTpl : public EngineTpl
+ 		{
++			uint32				axle_;
+ 			real				rpmMin_;
+ 			real				rpmMax_;
+ 			real				rpmRedline_;
+@@ -108,7 +109,8 @@
+ 				rpmDieOff_(real(800.)),
+ 				rpmRise_(real(2000.)),
+ 				minShiftingTime_(real(0.15)),
+-				differentialRatio(real(3.14))
++				differentialRatio(real(3.14)),
++				axle_(0)
+ 			{}
+ 		};
+ 
+@@ -130,6 +132,7 @@
+ 
+ 		struct WheelTpl
+ 		{
++			uint32			mAxle;
+ 			Vector3			mPosition;
+ 			Quaternion		mOrientation;
+ 			uint32			mSteeringGroup;
+@@ -143,12 +146,13 @@
+ 			WheelTpl(
+ 				const Vector3&amp; position = Vector3::kZero,
+ 				const Quaternion&amp; orientation = Quaternion::kIdentity,
+-				const real radius = real(0.8),
+-				const real mass = real(0.01),
++				const real radius = real(0.2),
++				const real mass = real(0.018),
+ 				const bool massRelativeToChassis = true,
+ 				const uint32 steeringGrp = SG_NO_STEERING_GROUP,
+-				const real suspensionSpring = real(1),
+-				const real suspensionDamping = real(0.9)
++				const real suspensionSpring = real(30),
++				const real suspensionDamping = real(3),
++				const uint32 axle = 0
+ 				) :
+ 				mPosition(position),
+ 				mOrientation(orientation),
+@@ -157,7 +161,8 @@
+ 				mMass(mass),
+ 				mMassRelativeToChassis(massRelativeToChassis),
+ 				mSuspensionSpring(suspensionSpring),
+-				mSuspensionDamping(suspensionDamping)
++				mSuspensionDamping(suspensionDamping),
++				mAxle(axle)
+ 			{}
+ 		};
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000106.html">[Yake-svn] r1035 - in trunk/yake/src: yake/plugins/physicsODE yapp/samples/base/vehicle yapp/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000108.html">[Yake-svn] r1037 - in trunk/yake: src/yapp/samples/misc src/yapp/samples/misc/car yapp/samples/misc yapp/samples/misc/car
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#107">[ date ]</a>
+              <a href="thread.html#107">[ thread ]</a>
+              <a href="subject.html#107">[ subject ]</a>
+              <a href="author.html#107">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

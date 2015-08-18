@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1319 - in trunk/yake/src/yake/samples: audio/demo1 net/roserver physics/demo
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1319%20-%20in%20trunk/yake/src/yake/samples%3A%20audio/demo1%20net/roserver%20physics/demo&In-Reply-To=%3C200604252006.k3PK66eM000296%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000386.html">
+   <LINK REL="Next"  HREF="000388.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1319 - in trunk/yake/src/yake/samples: audio/demo1 net/roserver physics/demo</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1319%20-%20in%20trunk/yake/src/yake/samples%3A%20audio/demo1%20net/roserver%20physics/demo&In-Reply-To=%3C200604252006.k3PK66eM000296%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1319 - in trunk/yake/src/yake/samples: audio/demo1 net/roserver physics/demo">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Apr 25 22:06:06 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000386.html">[Yake-svn] r1318 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000388.html">[Yake-svn] r1320 - in trunk/yake/src/yapp/samples: graphics/scripted misc/car misc/scripted
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#387">[ date ]</a>
+              <a href="thread.html#387">[ thread ]</a>
+              <a href="subject.html#387">[ subject ]</a>
+              <a href="author.html#387">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-04-25 22:06:03 +0200 (Tue, 25 Apr 2006)
+New Revision: 1319
+
+Modified:
+   trunk/yake/src/yake/samples/audio/demo1/demo.cpp
+   trunk/yake/src/yake/samples/net/roserver/demo.cpp
+   trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+Log:
+fixed demos
+
+Modified: trunk/yake/src/yake/samples/audio/demo1/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/audio/demo1/demo.cpp	2006-04-25 20:05:09 UTC (rev 1318)
++++ trunk/yake/src/yake/samples/audio/demo1/demo.cpp	2006-04-25 20:06:03 UTC (rev 1319)
+@@ -7,7 +7,7 @@
+ 	// loading &amp; starting plugin
+ 	using namespace yake;
+ 	SharedPtr&lt;base::Library&gt; pLib( new base::Library( &quot;audioOpenAL&quot; ) );
+-	SharedPtr&lt;audio::IAudioSystem&gt; pAudio = create_default&lt;audio::IAudioSystem&gt;();
++	SharedPtr&lt;audio::IAudioSystem&gt; pAudio = templates::create_default&lt;audio::IAudioSystem&gt;();
+ 
+ 	// create world
+ 	SharedPtr&lt;audio::IWorld&gt; pWorld;
+
+Modified: trunk/yake/src/yake/samples/net/roserver/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/roserver/demo.cpp	2006-04-25 20:05:09 UTC (rev 1318)
++++ trunk/yake/src/yake/samples/net/roserver/demo.cpp	2006-04-25 20:06:03 UTC (rev 1319)
+@@ -4,7 +4,7 @@
+ #include &lt;yake/samples/net/roserver/ROServer.h&gt;
+ 
+ #include &lt;yake/object/yakeObjects.h&gt;
+-#include &lt;yapp/ent/yakeEnt.h&gt;
++#include &lt;yake/ent/ent.h&gt;
+ 
+ int main(int argc, char* argv[])
+ {
+
+Modified: trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2006-04-25 20:05:09 UTC (rev 1318)
++++ trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2006-04-25 20:06:03 UTC (rev 1319)
+@@ -233,6 +233,7 @@
+ 
+ 	mPWorld1 = mPhysics1-&gt;createWorld();
+ 	YAKE_ASSERT( mPWorld1 ).debug(&quot;Cannot create world 1.&quot;);
++	mPWorld1-&gt;setGlobalGravity( Vector3(0,-9.81,0) );
+ 
+ 	// physics 2
+ #ifdef USE_SECOND_PHYSICS_PLUGIN
+@@ -244,6 +245,7 @@
+ 
+ 	mPWorld2 = mPhysics2-&gt;createWorld();
+ 	YAKE_ASSERT( mPWorld2 ).debug(&quot;Cannot create world 2.&quot;);
++	mPWorld2-&gt;setGlobalGravity( Vector3(0,-9.81,0) );
+ #endif
+ 	// graphics
+ 
+@@ -361,6 +363,10 @@
+ 	// create a simple static environment - world 1
+ 	IActorPtr pStaticWorldActor1 = mPWorld1-&gt;createActor(ACTOR_STATIC);
+ 	YAKE_ASSERT( pStaticWorldActor1 );
++
++#if 1
++	pStaticWorldActor1-&gt;createShape( IShape::PlaneDesc( Vector3(0,1,0), 0 ) );
++#else
+ 	/*
+ 	  3-2
+ 	  |/|
+@@ -381,6 +387,8 @@
+ 	YAKE_ASSERT( kTriangleMeshIdNone != groundMeshId );
+ 
+ 	IShape* pStaticWorldShape1 = pStaticWorldActor1-&gt;createShape( IShape::TriMeshDesc( groundMeshId ) );
++
++#endif
+ 	YAKE_ASSERT( pStaticWorldActor1-&gt;getShapes().size() == 1 )(pStaticWorldActor1-&gt;getShapes().size()).warning(&quot;no world shape!&quot;);
+ 
+ #ifdef USE_SECOND_PHYSICS_PLUGIN
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000386.html">[Yake-svn] r1318 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000388.html">[Yake-svn] r1320 - in trunk/yake/src/yapp/samples: graphics/scripted misc/car misc/scripted
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#387">[ date ]</a>
+              <a href="thread.html#387">[ thread ]</a>
+              <a href="subject.html#387">[ subject ]</a>
+              <a href="author.html#387">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

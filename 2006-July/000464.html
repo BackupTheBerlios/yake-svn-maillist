@@ -1,0 +1,405 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1396 - in trunk/yake/src/yapp/samples/misc: . vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1396%20-%20in%20trunk/yake/src/yapp/samples/misc%3A%20.%20vehicle&In-Reply-To=%3C200607192206.k6JM6565022618%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000463.html">
+   <LINK REL="Next"  HREF="000465.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1396 - in trunk/yake/src/yapp/samples/misc: . vehicle</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1396%20-%20in%20trunk/yake/src/yapp/samples/misc%3A%20.%20vehicle&In-Reply-To=%3C200607192206.k6JM6565022618%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1396 - in trunk/yake/src/yapp/samples/misc: . vehicle">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Thu Jul 20 00:06:05 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000463.html">[Yake-svn] r1395 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+        <LI>Next message: <A HREF="000465.html">[Yake-svn] r1397 - in trunk/yake/yapp/samples: base misc
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#464">[ date ]</a>
+              <a href="thread.html#464">[ thread ]</a>
+              <a href="subject.html#464">[ subject ]</a>
+              <a href="author.html#464">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-20 00:06:04 +0200 (Thu, 20 Jul 2006)
+New Revision: 1396
+
+Added:
+   trunk/yake/src/yapp/samples/misc/vehicle/
+   trunk/yake/src/yapp/samples/misc/vehicle/yakeDemo.cpp
+Removed:
+   trunk/yake/src/yapp/samples/misc/car/
+   trunk/yake/src/yapp/samples/misc/vehicle/yakeDemo.cpp
+Log:
+merged car and jet demos
+
+Copied: trunk/yake/src/yapp/samples/misc/vehicle (from rev 1347, trunk/yake/src/yapp/samples/misc/car)
+
+Deleted: trunk/yake/src/yapp/samples/misc/vehicle/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp	2006-06-20 08:05:16 UTC (rev 1347)
++++ trunk/yake/src/yapp/samples/misc/vehicle/yakeDemo.cpp	2006-07-19 22:06:04 UTC (rev 1396)
+@@ -1,321 +0,0 @@
+-#include &lt;yapp/samples/misc/car/yakePCH.h&gt;
+-#include &lt;yake/audio/yakeAudio.h&gt;
+-#include &lt;yapp/raf/yakeRaf.h&gt;
+-#include &lt;yake/model/model.h&gt;
+-#include &lt;yake/model/model_link.h&gt;
+-#include &lt;yapp/vehicle/yakeVehicle.h&gt;
+-#include &lt;yake/input/yakeInput.h&gt;
+-
+-// temporary stuff (until factory registration issues have been sorted out):
+-#include &lt;yapp/vehicle/yakeNativeOde.h&gt;
+-
+-using namespace yake;
+-
+-const input::ActionId ACTIONID_BRAKE( input::ACTIONID_USER+1, &quot;brake&quot; );
+-
+-/** Configuration of the application */
+-struct TheConfiguration : public raf::ApplicationConfiguration
+-{
+-	virtual StringVector getLibraries()
+-	{ return MakeStringVector() &lt;&lt; &quot;graphicsOgre&quot; &lt;&lt; &quot;inputOgre&quot; &lt;&lt; &quot;physicsOde&quot;; }
+-
+-	//virtual StringVector getScriptingSystems()
+-	//{ return MakeStringVector() &lt;&lt; &quot;lua&quot;; }
+-
+-	virtual StringVector getGraphicsSystems()
+-	{ return MakeStringVector() &lt;&lt; &quot;ogre3d&quot;; }
+-
+-	virtual StringVector getInputSystems()
+-	{ return MakeStringVector() &lt;&lt; &quot;ogre&quot;; }
+-
+-	virtual StringVector getPhysicsSystems()
+-	{ return MakeStringVector() &lt;&lt; &quot;ode&quot;; }
+-};
+-
+-class VehicleHumanInputController
+-{
+-public:
+-	void setVehicle(vehicle::IVehicle*);
+-};
+-
+-/** Main application state */
+-class TheMainState : public raf::RtMainState
+-{
+-public:
+-	TheMainState(raf::Application&amp; owner) :
+-		raf::RtMainState(owner),
+-		mVehicle(0),
+-		mComplex(0),
+-		mGround(0)
+-	{
+-		enableInstantQuitByKey( input::KC_ESCAPE );
+-	}
+-	~TheMainState()
+-	{
+-	}
+-private:
+-	typedef Signal2&lt;void(const uint32,const real)&gt; GraphicsUpdateSignal;
+-	GraphicsUpdateSignal	graphicsUpdateSig_;
+-	void subscribeToGraphicsUpdate(const GraphicsUpdateSignal::slot_type&amp; slot)
+-	{
+-		graphicsUpdateSig_.connect(slot);
+-	}
+-	void _triggerGraphicsUpdate(const uint32 si, const real dt)
+-	{
+-		graphicsUpdateSig_(si,dt);
+-	}
+-	void _createWheelVisual(const String&amp; wheelId, graphics::ISceneNode&amp; parentSN)
+-	{
+-		// scene node + wheel mesh
+-		graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode();
+-		graphics::IEntity* pE = getGraphicalWorld()-&gt;createEntity(&quot;wheel1.mesh&quot;);
+-		pE-&gt;setCastsShadow( true );
+-		pSN-&gt;attachEntity( pE );
+-		model::ModelMovableLink* pLink = mComplex-&gt;createLink( mVehicle-&gt;getWheelInterface(wheelId), pSN );
+-		this-&gt;subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
+-
+-		// scene node + particle system for smoke...
+-		pSN = getGraphicalWorld()-&gt;createSceneNode();
+-		graphics::IParticleSystem* pPS = getGraphicalWorld()-&gt;createParticleSystem(&quot;SkidSmoke&quot;);
+-		mWheelPs[wheelId] = pPS;
+-		mEmitterEmissionRate[wheelId] = pPS-&gt;getEmissionRate(0);
+-		pSN-&gt;attachParticleSystem( pPS );
+-		pLink = new model::ModelMovableDirectLink();
+-		pLink-&gt;setSource( mVehicle-&gt;getWheelInterface(wheelId) );
+-		pLink-&gt;subscribeToPositionChanged( pSN ); //position only!
+-		mComplex-&gt;addLink( pLink );
+-		this-&gt;subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
+-	}
+-protected:
+-	virtual void onCreateScene()
+-	{
+-		YAKE_LOG_INFORMATION(&quot;Creating scene&quot;);
+-
+-		// create a light
+-		graphics::ILight* pLight = getGraphicalWorld()-&gt;createLight();
+-		pLight-&gt;setType( graphics::ILight::LT_DIRECTIONAL );
+-		pLight-&gt;setDirection( Vector3(0,-1,1) );
+-		getGraphicalWorld()-&gt;createSceneNode(&quot;lightnode0&quot;)-&gt;attachLight( pLight );
+-
+-		getGraphicalWorld()-&gt;setShadowsEnabled( true );
+-
+-		// position camera and look at the ninja
+-		getDefaultCamera()-&gt;setNearClipDistance( 1 );
+-		getDefaultCamera()-&gt;setFixedYawAxis(Vector3::kUnitY);
+-		getDefaultCamera()-&gt;setPosition(Vector3(7,4,-7));
+-
+-		//
+-		getPhysicalWorld()-&gt;setGlobalGravity(Vector3(0,-9.81,0));
+-
+-		// create ground
+-		mGround = new model::Model();
+-		{
+-			const real groundHeight = -2;
+-			// visual
+-			graphics::ISceneNode* pGroundSN = getGraphicalWorld()-&gt;createSceneNode();
+-			graphics::IEntity* pGroundE = getGraphicalWorld()-&gt;createEntity(&quot;plane_1x1.mesh&quot;);
+-			pGroundE-&gt;setMaterial(&quot;box&quot;);
+-			pGroundE-&gt;setCastsShadow( false );
+-			pGroundSN-&gt;attachEntity( pGroundE );
+-			pGroundSN-&gt;setScale( Vector3(200,1,200) );
+-			pGroundSN-&gt;setPosition( Vector3(0,groundHeight,0) );
+-
+-			model::Graphical* pG = new model::Graphical();
+-			pG-&gt;addSceneNode( pGroundSN, &quot;groundSN&quot; );
+-			mGround-&gt;addComponent( pG );
+-
+-			// physical
+-			physics::IActorPtr pGroundPlane = getPhysicalWorld()-&gt;createActor( physics::ACTOR_STATIC );
+-			pGroundPlane-&gt;createShape( physics::IShape::PlaneDesc( Vector3(0,1,0), groundHeight ) );
+-
+-			model::Physical* pP = new model::Physical();
+-			pP-&gt;addActor( pGroundPlane, &quot;groundPlane&quot; );
+-			mGround-&gt;addComponent( pP );
+-		}
+-
+-		// create vehicle container (e.g. for graphical objects and links)
+-		mComplex = new model::Model();
+-		model::Graphical* pG = new model::Graphical();
+-		mComplex-&gt;addComponent( pG, &quot;g&quot; );
+-		model::Physical* pP = new model::Physical();
+-		mComplex-&gt;addComponent( pP, &quot;p&quot; );
+-
+-		// materials @todo read from .physics:
+-		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.01f, 0.01f, 0.01f ), &quot;chassis&quot; );
+-		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.01f, 0.2f, 0.01f ), &quot;chassisTop&quot; );
+-		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.01f, 0.25f, 0.01f ), &quot;wheel&quot; );
+-
+-		// vehicle
+-		SharedPtr&lt;vehicle::IVehicleSystem&gt; pVS = //create&lt;vehicle::IVehicleSystem&gt;(&quot;generic&quot;);
+-			SharedPtr&lt;vehicle::IVehicleSystem&gt;(new vehicle::GenericVehicleSystem());
+-
+-		pVS-&gt;loadTemplates(&quot;../../media/vehicles/delorean.xml&quot;);
+-
+-		// It's possible retrieve the template and make further adjustments to it before
+-		// instantiating vehicles.
+-		// e.g.: vehicle::VehicleTemplate* tpl = pVS-&gt;getTemplate(&quot;delorean&quot;);
+-
+-		// instantiate
+-		mVehicle = pVS-&gt;create(&quot;delorean&quot;, *getPhysicalWorld(), *pP );
+-
+-		//mVehicle-&gt;enableDebugGeometry( *getGraphicalWorld() );
+-
+-		// create visuals
+-		// - ship body
+-		graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode(&quot;root&quot;);
+-		graphics::IEntity* pE = getGraphicalWorld()-&gt;createEntity(&quot;delorean.mesh&quot;);
+-		pE-&gt;setCastsShadow( true );
+-		pSN-&gt;attachEntity( pE );
+-		//pSN-&gt;setScale( Vector3::kUnitScale * razorMeshScale );
+-		pG-&gt;addSceneNode(pSN, &quot;delorean_root&quot;);
+-
+-		// - wheel visuals
+-		if (mVehicle-&gt;getWheelInterface(&quot;leftFrontWheel&quot;))
+-		{
+-			_createWheelVisual( &quot;leftFrontWheel&quot;, *pSN );
+-			_createWheelVisual( &quot;rightFrontWheel&quot;, *pSN );
+-			_createWheelVisual( &quot;leftRearWheel&quot;, *pSN );
+-			_createWheelVisual( &quot;rightRearWheel&quot;, *pSN );
+-		}
+-
+-		// create visual &lt;-&gt; physics links
+-		model::ModelMovableLink* pLink = mComplex-&gt;createLink( mVehicle-&gt;getChassisMovable(), pSN );
+-		this-&gt;subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
+-
+-		// sky box
+-		getGraphicalWorld()-&gt;setSkyBox(&quot;Examples/SpaceSkyBox&quot;);
+-	}
+-	virtual void onDestroyScene()
+-	{
+-		YAKE_SAFE_DELETE( mGround );
+-
+-		YAKE_SAFE_DELETE( mComplex );
+-		YAKE_SAFE_DELETE( mVehicle );
+-	}
+-	virtual void onEnter()
+-	{
+-		RtMainState::onEnter();
+-		using namespace input;
+-
+-		// front wheel controls
+-
+-		mActionMap.reg( ACTIONID_LEFT,
+-			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_LEFT, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_LEFT, boost::bind(&amp;TheMainState::onFrontWheelLeft,this) );
+-
+-		mActionMap.reg( ACTIONID_RIGHT,
+-			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_RIGHT, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_RIGHT, boost::bind(&amp;TheMainState::onFrontWheelRight,this) );
+-
+-		mActionMap.reg( ACTIONID_FORWARD,
+-			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_UP, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_FORWARD, boost::bind(&amp;TheMainState::onForward,this) );
+-
+-		mActionMap.reg( ACTIONID_BRAKE,
+-			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_DOWN, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_BRAKE, boost::bind(&amp;TheMainState::onReverse,this) );
+-
+-		//mActionMap.reg( ACTIONID_UP,
+-		//	new input::KeyboardActionCondition( getApp().getKeyboard(), KC_PGUP, KAM_CONTINUOUS ) );
+-		//mActionMap.subscribeToActionId( ACTIONID_UP, boost::bind(&amp;TheMainState::onUp,this) );
+-	}
+-	virtual void onExit()
+-	{
+-	}
+-	virtual void onFrame(const real timeElapsed)
+-	{
+-		mActionMap.update();
+-
+-		vehicle::IEnginePtrList engines = mVehicle-&gt;getEngineInterfaces();
+-		ConstDequeIterator&lt; vehicle::IEnginePtrList &gt; itEngine( engines );
+-		while (itEngine.hasMoreElements())
+-		{
+-			vehicle::IEngine* pEngine = itEngine.getNext();
+-			pEngine-&gt;setInputSignal( pEngine-&gt;getInputSignal() - timeElapsed * 1.7 );
+-		}
+-
+-		real steering0 = 0;
+-		real braking0 = 0;
+-
+-		ConstDequeIterator&lt; ActionIdList &gt; itAction( mActiveActions );
+-		while (itAction.hasMoreElements())
+-		{
+-			const input::ActionId activeId = itAction.getNext();
+-			if (activeId == input::ACTIONID_FORWARD)
+-				mVehicle-&gt;getEngineInterface(&quot;main&quot;)-&gt;setInputSignal(1.);
+-			else if (activeId == ACTIONID_BRAKE)
+-				braking0 = 1.;
+-			else if (activeId == input::ACTIONID_LEFT)
+-				steering0 -= real(0.7);
+-			else if (activeId == input::ACTIONID_RIGHT)
+-				steering0 += real(0.7);
+-		}
+-		mVehicle-&gt;setSteering( 0, steering0 );
+-		mVehicle-&gt;getWheelInterface(&quot;leftFrontWheel&quot;)-&gt;brake(braking0);
+-		mVehicle-&gt;getWheelInterface(&quot;rightFrontWheel&quot;)-&gt;brake(braking0);
+-
+-		mVehicle-&gt;updateSimulation( timeElapsed );
+-		//mComplex-&gt;updatePhysics( timeElapsed );
+-
+-		ConstDequeIterator&lt; WheelPsMap &gt; itWheel( mWheelPs );
+-		while (itWheel.hasMoreElements())
+-		{
+-			const String wheelId = itWheel.getNext().first;
+-			mWheelPs[ wheelId ]-&gt;setEmissionRate( 0, mEmitterEmissionRate[wheelId] * mVehicle-&gt;getWheelInterface( wheelId )-&gt;getSkid() );
+-		}
+-
+-		getDefaultCamera()-&gt;lookAt(mVehicle-&gt;getChassisPosition());
+-		//mComplex-&gt;updateGraphics( timeElapsed );
+-
+-		this-&gt;_triggerGraphicsUpdate(0,timeElapsed);
+-
+-		mActiveActions.clear();
+-	}
+-protected:
+-	void onForward()
+-	{ mActiveActions.insert( input::ACTIONID_FORWARD ); }
+-	void onReverse()
+-	{ mActiveActions.insert( ACTIONID_BRAKE ); }
+-	void onUp()
+-	{ mActiveActions.insert( input::ACTIONID_UP ); }
+-	void onFrontWheelLeft()
+-	{ mActiveActions.insert( input::ACTIONID_LEFT ); }
+-	void onFrontWheelRight()
+-	{ mActiveActions.insert( input::ACTIONID_RIGHT ); }
+-private:
+-private:
+-	model::Model*			mGround;
+-	vehicle::IVehicle*		mVehicle;
+-	model::Model*			mComplex;
+-	typedef AssocVector&lt;String,real&gt; EmitterRealMap;
+-	EmitterRealMap			mEmitterMinVel;
+-	EmitterRealMap			mEmitterMaxVel;
+-	EmitterRealMap			mEmitterEmissionRate;
+-	typedef AssocVector&lt;String,graphics::IParticleSystem*&gt; WheelPsMap;
+-	WheelPsMap				mWheelPs;
+-	input::ActionMap		mActionMap;
+-
+-	typedef std::set&lt;input::ActionId&gt; ActionIdList;
+-	ActionIdList			mActiveActions;
+-};
+-
+-/** The mighty application itself! */
+-class TheApp : public raf::ExampleApplication&lt;TheConfiguration&gt;
+-{
+-public:
+-	TheApp() {}
+-protected:
+-	virtual raf::MainState* createMainState()
+-	{
+-		return new TheMainState(*this);
+-	}
+-};
+-
+-int main( int argc, char** argv )
+-{
+-	// Use default executor for convenience.
+-	// It's always possible to manually execute TheApp::initialise() etc.
+-	TheApp theApp;
+-	return (raf::runApplication( theApp )) ? 0 : 1;
+-}
+-
+
+Copied: trunk/yake/src/yapp/samples/misc/vehicle/yakeDemo.cpp (from rev 1395, trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp)
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000463.html">[Yake-svn] r1395 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+	<LI>Next message: <A HREF="000465.html">[Yake-svn] r1397 - in trunk/yake/yapp/samples: base misc
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#464">[ date ]</a>
+              <a href="thread.html#464">[ thread ]</a>
+              <a href="subject.html#464">[ subject ]</a>
+              <a href="author.html#464">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

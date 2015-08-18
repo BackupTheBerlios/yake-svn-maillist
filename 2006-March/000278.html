@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1208 - in trunk/yake/yake/base: . native native/win32
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1208%20-%20in%20trunk/yake/yake/base%3A%20.%20native%20native/win32&In-Reply-To=%3C200603050111.k251BT5h023212%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000279.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1208 - in trunk/yake/yake/base: . native native/win32</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1208%20-%20in%20trunk/yake/yake/base%3A%20.%20native%20native/win32&In-Reply-To=%3C200603050111.k251BT5h023212%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1208 - in trunk/yake/yake/base: . native native/win32">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar  5 02:11:29 CET 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000279.html">[Yake-svn] r1209 - in trunk/yake/src/yake/base: . native/win32
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#278">[ date ]</a>
+              <a href="thread.html#278">[ thread ]</a>
+              <a href="subject.html#278">[ subject ]</a>
+              <a href="author.html#278">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-05 02:11:22 +0100 (Sun, 05 Mar 2006)
+New Revision: 1208
+
+Modified:
+   trunk/yake/yake/base/native/win32/yakeConfig.h
+   trunk/yake/yake/base/native/win32/yakeProcessor.h
+   trunk/yake/yake/base/native/yakeNative.h
+   trunk/yake/yake/base/yakeCriticalSection.h
+   trunk/yake/yake/base/yakeProcessor.h
+Log:
+removed namespace base
+
+Modified: trunk/yake/yake/base/native/win32/yakeConfig.h
+===================================================================
+--- trunk/yake/yake/base/native/win32/yakeConfig.h	2006-02-12 16:08:15 UTC (rev 1207)
++++ trunk/yake/yake/base/native/win32/yakeConfig.h	2006-03-05 01:11:22 UTC (rev 1208)
+@@ -40,8 +40,6 @@
+ //============================================================================
+ namespace yake
+ {
+-namespace base
+-{
+ namespace native
+ {
+ namespace win32
+@@ -51,7 +49,6 @@
+ 
+ } // win32
+ } // native
+-} // base
+ } // yake
+ 
+ #endif // YAKE_BASE_NATIVE_WIN32_CONFIG_H
+
+Modified: trunk/yake/yake/base/native/win32/yakeProcessor.h
+===================================================================
+--- trunk/yake/yake/base/native/win32/yakeProcessor.h	2006-02-12 16:08:15 UTC (rev 1207)
++++ trunk/yake/yake/base/native/win32/yakeProcessor.h	2006-03-05 01:11:22 UTC (rev 1208)
+@@ -15,8 +15,6 @@
+ //============================================================================
+ namespace yake
+ {
+-namespace base
+-{
+ 
+ // Options:
+ ///////////
+@@ -159,7 +157,6 @@
+ 	bool WriteInfoTextFile(const char *strFilename);
+ };
+ 
+-} // base
+ } // yake
+ 
+ #endif
+\ No newline at end of file
+
+Modified: trunk/yake/yake/base/native/yakeNative.h
+===================================================================
+--- trunk/yake/yake/base/native/yakeNative.h	2006-02-12 16:08:15 UTC (rev 1207)
++++ trunk/yake/yake/base/native/yakeNative.h	2006-03-05 01:11:22 UTC (rev 1208)
+@@ -43,8 +43,6 @@
+ //============================================================================
+ namespace yake
+ {
+-namespace base
+-{
+ namespace native
+ {
+ 
+@@ -85,7 +83,6 @@
+ YAKE_BASE_NATIVE_API char* getApplicationDir();
+ 
+ } // native
+-} // base
+ } // yake
+ 
+ #endif // YAKE_BASE_NATIVE_NATIVE_H
+
+Modified: trunk/yake/yake/base/yakeCriticalSection.h
+===================================================================
+--- trunk/yake/yake/base/yakeCriticalSection.h	2006-02-12 16:08:15 UTC (rev 1207)
++++ trunk/yake/yake/base/yakeCriticalSection.h	2006-03-05 01:11:22 UTC (rev 1208)
+@@ -57,7 +57,7 @@
+ 
+ // Data
+ private:
+-	base::native::CriticalSectionHandle mHandle;
++	native::CriticalSectionHandle mHandle;
+ };
+ 
+ } // yake
+
+Modified: trunk/yake/yake/base/yakeProcessor.h
+===================================================================
+--- trunk/yake/yake/base/yakeProcessor.h	2006-02-12 16:08:15 UTC (rev 1207)
++++ trunk/yake/yake/base/yakeProcessor.h	2006-03-05 01:11:22 UTC (rev 1208)
+@@ -44,8 +44,6 @@
+ //============================================================================
+ namespace yake
+ {
+-namespace base
+-{
+ 
+ class Processor
+ {
+@@ -153,7 +151,6 @@
+   Info   mInfo;
+ };
+ 
+-} // base
+ } // yake
+ 
+ #endif // YAKE_BASE_PROCESSOR_H
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000279.html">[Yake-svn] r1209 - in trunk/yake/src/yake/base: . native/win32
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#278">[ date ]</a>
+              <a href="thread.html#278">[ thread ]</a>
+              <a href="subject.html#278">[ subject ]</a>
+              <a href="author.html#278">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1333 - trunk/yake/src/yake/samples/model/dotScene
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1333%20-%20trunk/yake/src/yake/samples/model/dotScene&In-Reply-To=%3C200606122126.k5CLQEhE023409%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000400.html">
+   <LINK REL="Next"  HREF="000402.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1333 - trunk/yake/src/yake/samples/model/dotScene</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1333%20-%20trunk/yake/src/yake/samples/model/dotScene&In-Reply-To=%3C200606122126.k5CLQEhE023409%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1333 - trunk/yake/src/yake/samples/model/dotScene">codeandroid at berlios.de
+       </A><BR>
+    <I>Mon Jun 12 23:26:14 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000400.html">[Yake-svn] r1332 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000402.html">[Yake-svn] r1334 - in trunk/yake/src/yake: loader model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#401">[ date ]</a>
+              <a href="thread.html#401">[ thread ]</a>
+              <a href="subject.html#401">[ subject ]</a>
+              <a href="author.html#401">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-12 23:26:14 +0200 (Mon, 12 Jun 2006)
+New Revision: 1333
+
+Modified:
+   trunk/yake/src/yake/samples/model/dotScene/demo.cpp
+Log:
+added physics and dotLink support
+
+Modified: trunk/yake/src/yake/samples/model/dotScene/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/model/dotScene/demo.cpp	2006-06-12 21:25:29 UTC (rev 1332)
++++ trunk/yake/src/yake/samples/model/dotScene/demo.cpp	2006-06-12 21:26:14 UTC (rev 1333)
+@@ -16,17 +16,18 @@
+ 
+ using namespace yake;
+ 
+-class TheApp : public yake::exapp::ExampleApplication
++class TheApp : public yake::exapp::ExampleApplication, public yake::model::CentralControllerBase
+ {
+ private:
+ 	typedef std::pair&lt;graphics::IViewport*,graphics::ICamera*&gt; ViewportCameraPair;
+ 	Vector&lt;ViewportCameraPair &gt;			mVPs;
+ 	SharedPtr&lt; graphics::IWorld &gt;		mGWorld;
++	SharedPtr&lt; physics::IWorld &gt;		mPWorld;
+ 
+ public:
+ 	TheApp() : ExampleApplication(
+ 					true /*graphics*/,
+-					false /*physics*/,
++					true /*physics*/,
+ 					false /*scripting*/,
+ 					true /*input*/,
+ 					false /*script bindings*/,
+@@ -78,6 +79,11 @@
+ 		mKeyboardEventGenerator.subscribeToKeyDown( Bind1( &amp;TheApp::onKey, this ) );
+ 		mMouseEventGenerator.subscribeToMouseButtonDown( Bind1( &amp;TheApp::onMB, this ) );
+ 
++		// physics
++		mPWorld = getPhysicsSystem().createWorld();
++		YAKE_ASSERT( mPWorld );
++		mPWorld-&gt;setGlobalGravity( Vector3(0,-1,0) );
++
+ 		// graphics
+ 		mGWorld = getGraphicsSystem().createWorld();
+ 		YAKE_ASSERT( mGWorld );
+@@ -117,13 +123,19 @@
+ 		//mGWorld-&gt;setShadowsEnabled( true );
+ 		model::ModelManager modelMgr;
+ 		modelMgr.setCreationContext_GraphicalWorld( mGWorld.get() );
++		modelMgr.setCreationContext_PhysicalWorld( mPWorld.get() );
++		modelMgr.setCreationContext_CentralController( this );
+ 
+-		model::Model* m = modelMgr.createModel(&quot;graphics/dotScene:name=gfx1;file=../../media/samples/dotScene/DotScene1.scene&quot;);
++		model::Model* m = modelMgr.createModel(&quot;m1&quot;,&quot;graphics/dotScene:name=gfx;file=../../media/samples/dotScene/DotScene1.scene&quot;);
+ 		YAKE_ASSERT( m );
++		((model::Graphical*)m-&gt;getComponentByTag(&quot;gfx&quot;))-&gt;translate(Vector3(40,20,0));
+ 
+-		m = modelMgr.createModel(&quot;graphics/dotScene:name=gfx2;file=../../media/samples/dotScene/DotScene1.scene&quot;);
++		m = modelMgr.createModel(&quot;m2&quot;,
++			&quot;graphics/dotScene:name=baseGraphical;file=../../media/samples/dotLink/DynTest/DotScene1.scene&quot;
++			&quot;|physics/dotXODE:name=basePhysical;file=../../media/samples/dotLink/DynTest/DotScene1.xode&quot;
++			&quot;|model/dotLink:file=../../media/samples/dotLink/DynTest/DotScene1.link&quot;
++			);
+ 		YAKE_ASSERT( m );
+-		((model::Graphical*)m-&gt;getComponentByTag(&quot;gfx2&quot;))-&gt;translate(Vector3(40,20,0));
+ 
+ 		// main loop
+ 		real lastTime = native::getTime();
+@@ -155,12 +167,21 @@
+ 					mVPs[iCam].second-&gt;translate( Vector3(0, 0, -distance) );
+ 			}
+ 
+-			// render the scene
++			// run sim &amp; render the scene
+ 			if (!shutdownRequested())
++			{
++				mPWorld-&gt;step( timeElapsed );
++				triggerPhysicsUpdateSignal(0,timeElapsed);
++				triggerGraphicsUpdateSignal(0,timeElapsed);
++
+ 				mGWorld-&gt;render( timeElapsed );
++			}
+ 		}
+ 
++		modelMgr.clear();
++
+ 		mGWorld.reset();
++		mPWorld.reset();
+ 	}
+ };
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000400.html">[Yake-svn] r1332 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000402.html">[Yake-svn] r1334 - in trunk/yake/src/yake: loader model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#401">[ date ]</a>
+              <a href="thread.html#401">[ thread ]</a>
+              <a href="subject.html#401">[ subject ]</a>
+              <a href="author.html#401">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

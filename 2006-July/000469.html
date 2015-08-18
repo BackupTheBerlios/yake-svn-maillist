@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1401 - trunk/yake/common/media/vehicles
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1401%20-%20trunk/yake/common/media/vehicles&In-Reply-To=%3C200607192209.k6JM9a36023055%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000468.html">
+   <LINK REL="Next"  HREF="000470.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1401 - trunk/yake/common/media/vehicles</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1401%20-%20trunk/yake/common/media/vehicles&In-Reply-To=%3C200607192209.k6JM9a36023055%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1401 - trunk/yake/common/media/vehicles">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Thu Jul 20 00:09:36 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000468.html">[Yake-svn] r1400 - trunk/yake/src/yapp/samples/misc/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000470.html">[Yake-svn] r1402 - trunk/yake/src/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#469">[ date ]</a>
+              <a href="thread.html#469">[ thread ]</a>
+              <a href="subject.html#469">[ subject ]</a>
+              <a href="author.html#469">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-20 00:09:36 +0200 (Thu, 20 Jul 2006)
+New Revision: 1401
+
+Modified:
+   trunk/yake/common/media/vehicles/jet.xml
+Log:
+fix values
+
+Modified: trunk/yake/common/media/vehicles/jet.xml
+===================================================================
+--- trunk/yake/common/media/vehicles/jet.xml	2006-07-19 22:08:41 UTC (rev 1400)
++++ trunk/yake/common/media/vehicles/jet.xml	2006-07-19 22:09:36 UTC (rev 1401)
+@@ -31,7 +31,7 @@
+ 			&lt;direction x=&quot;0&quot; y=&quot;0&quot; z=&quot;1&quot; /&gt;
+ 		&lt;/mountPoint&gt;
+ 		&lt;engine name=&quot;backward&quot; type=&quot;MountedThruster&quot; mountPoint=&quot;front&quot;&gt;
+-			&lt;forces min=&quot;0.&quot; max=&quot;10.&quot; dieOff=&quot;4&quot; rise=&quot;8&quot; /&gt;
++			&lt;forces min=&quot;0.&quot; max=&quot;20.&quot; dieOff=&quot;4&quot; rise=&quot;8&quot; /&gt;
+ 		&lt;/engine&gt;
+ 		&lt;!-- rear thruster --&gt;
+ 		&lt;mountPoint name=&quot;rear&quot;&gt;
+@@ -47,7 +47,7 @@
+ 			&lt;direction x=&quot;0&quot; y=&quot;-1&quot; z=&quot;0&quot; /&gt;
+ 		&lt;/mountPoint&gt;
+ 		&lt;engine name=&quot;upward&quot; type=&quot;MountedThruster&quot; mountPoint=&quot;bottom&quot;&gt;
+-			&lt;forces min=&quot;0.&quot; max=&quot;250.&quot; dieOff=&quot;10&quot; rise=&quot;20&quot; /&gt;
++			&lt;forces min=&quot;0.&quot; max=&quot;500.&quot; dieOff=&quot;10&quot; rise=&quot;20&quot; /&gt;
+ 		&lt;/engine&gt;
+ 		&lt;!-- bottom (downward) thruster --&gt;
+ 		&lt;mountPoint name=&quot;top&quot;&gt;
+@@ -62,13 +62,13 @@
+ 		&lt;axle name=&quot;rear&quot; /&gt;
+ 		&lt;!-- wheels - one in front for steering, two at the rear end --&gt;
+ 		&lt;steeringGroup index=&quot;0&quot; /&gt;
+-		&lt;wheel name=&quot;frontWheel&quot; axle=&quot;front&quot; steeringGroup=&quot;0&quot; radius=&quot;2.0&quot; mass=&quot;0.1&quot; massIsRelativeToChassis=&quot;yes&quot; suspensionSpring=&quot;100&quot; suspensionDamping=&quot;20&quot;&gt;
++		&lt;wheel name=&quot;frontWheel&quot; axle=&quot;front&quot; steeringGroup=&quot;0&quot; radius=&quot;1.0&quot; mass=&quot;0.05&quot; massIsRelativeToChassis=&quot;yes&quot; suspensionSpring=&quot;100&quot; suspensionDamping=&quot;20&quot;&gt;
+ 			&lt;position x=&quot;0&quot; y=&quot;-3&quot; z=&quot;5.5&quot; /&gt;
+ 		&lt;/wheel&gt;
+-		&lt;wheel name=&quot;leftRearWheel&quot; axle=&quot;rear&quot; radius=&quot;2.0&quot; mass=&quot;0.1&quot; massIsRelativeToChassis=&quot;yes&quot; suspensionSpring=&quot;150&quot; suspensionDamping=&quot;20&quot;&gt;
++		&lt;wheel name=&quot;leftRearWheel&quot; axle=&quot;rear&quot; radius=&quot;1.0&quot; mass=&quot;0.05&quot; massIsRelativeToChassis=&quot;yes&quot; suspensionSpring=&quot;150&quot; suspensionDamping=&quot;20&quot;&gt;
+ 			&lt;position x=&quot;-3&quot; y=&quot;-3&quot; z=&quot;-3&quot; /&gt;
+ 		&lt;/wheel&gt;
+-		&lt;wheel name=&quot;rightRearWheel&quot; axle=&quot;rear&quot; radius=&quot;2.0&quot; mass=&quot;0.1&quot; massIsRelativeToChassis=&quot;yes&quot; suspensionSpring=&quot;150&quot; suspensionDamping=&quot;20&quot;&gt;
++		&lt;wheel name=&quot;rightRearWheel&quot; axle=&quot;rear&quot; radius=&quot;1.0&quot; mass=&quot;0.05&quot; massIsRelativeToChassis=&quot;yes&quot; suspensionSpring=&quot;150&quot; suspensionDamping=&quot;20&quot;&gt;
+ 			&lt;position x=&quot;3&quot; y=&quot;-3&quot; z=&quot;-3&quot; /&gt;
+ 		&lt;/wheel&gt;
+ 	&lt;/vehicleTemplate&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000468.html">[Yake-svn] r1400 - trunk/yake/src/yapp/samples/misc/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000470.html">[Yake-svn] r1402 - trunk/yake/src/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#469">[ date ]</a>
+              <a href="thread.html#469">[ thread ]</a>
+              <a href="subject.html#469">[ subject ]</a>
+              <a href="author.html#469">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

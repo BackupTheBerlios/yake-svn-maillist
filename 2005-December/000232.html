@@ -1,0 +1,343 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1162 - trunk/yake/src/yake/plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-December/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1162%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200512072218.jB7MIrRP021264%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000231.html">
+   <LINK REL="Next"  HREF="000233.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1162 - trunk/yake/src/yake/plugins/physicsODE</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1162%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200512072218.jB7MIrRP021264%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1162 - trunk/yake/src/yake/plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Dec  7 23:18:53 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000231.html">[Yake-svn] r1161 - trunk/yake/yake/plugins/graphicsOgre
+</A></li>
+        <LI>Next message: <A HREF="000233.html">[Yake-svn] r1163 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#232">[ date ]</a>
+              <a href="thread.html#232">[ thread ]</a>
+              <a href="subject.html#232">[ subject ]</a>
+              <a href="author.html#232">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-12-07 23:18:53 +0100 (Wed, 07 Dec 2005)
+New Revision: 1162
+
+Added:
+   trunk/yake/src/yake/plugins/physicsODE/OdeAvatar.cpp
+Log:
+updated physics avatar
+
+Added: trunk/yake/src/yake/plugins/physicsODE/OdeAvatar.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeAvatar.cpp	2005-12-07 22:12:19 UTC (rev 1161)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeAvatar.cpp	2005-12-07 22:18:53 UTC (rev 1162)
+@@ -0,0 +1,267 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &lt;yake/plugins/physicsODE/yakePCH.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeWorld.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeJoint.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeBody.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeActor.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeAvatar.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeShapes.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeRay.h&gt;
++
++namespace yake {
++namespace physics {
++
++    //-----------------------------------------------------
++    //	OdeAvatar
++    //-----------------------------------------------------
++	
++    //-----------------------------------------------------
++    OdeAvatar::OdeAvatar( OdeWorld* pWorld ) :
++		mOdeWorld(pWorld),
++		mRay(0),
++		mActor(0),
++		mDynamicsInfluence( real(0.8) ),
++		mHeightAboveGround( real(1.0) ),
++		mHeightAboveGroundDuck( real(0.5) ),
++		mJumping(false),
++		mJumpStartInProgress(false),
++		mDucking(false),
++		mJumpApplies(0),
++		mJumpTime(real(0.))
++    {
++    }
++
++    //-----------------------------------------------------
++    OdeAvatar::~OdeAvatar()
++    {
++		mPreStepConn.disconnect();
++		mPostStepConn.disconnect();
++		YAKE_SAFE_DELETE( mRay );
++		mOdeWorld-&gt;destroyActor( mActor );
++		mActor = 0;
++		mOdeWorld = 0;
++    }
++
++    //-----------------------------------------------------
++	bool OdeAvatar::init( const IAvatar::Desc&amp; desc )
++    {
++		YAKE_ASSERT( mOdeWorld );
++		YAKE_ASSERT( !mActor );
++		YAKE_ASSERT( !mRay );
++
++		mPosition = desc.position;
++		mOrientation = desc.orientation;
++		mDimensions = desc.dimensions;
++
++		mHeightAboveGround = mDimensions.y*real(0.75);
++		mHeightAboveGroundDuck = 0.5 * mHeightAboveGround;
++
++		mSphereRadius = mDimensions.x * real(0.5);
++		mSphereOffset = Vector3(0,mHeightAboveGround,0);
++		mRayLength = 100.; // set to expected maximum height above ground... or better...
++
++		mActor = static_cast&lt;OdeActor*&gt;(static_cast&lt;IWorld*&gt;(mOdeWorld)-&gt;createActor( ACTOR_DYNAMIC ));
++		YAKE_ASSERT( mActor );
++		OdeGeom* pShape = static_cast&lt;OdeGeom*&gt;(mActor-&gt;createShape( IShape::SphereDesc( real(mSphereRadius) ) ));
++		mActor-&gt;setPosition( mPosition + mSphereOffset );
++
++		mRay = new OdeRay( mOdeWorld, real(mRayLength) );
++		mRay-&gt;setDirection( -Vector3::kUnitY );
++		mRay-&gt;ignore( pShape-&gt;_getOdeGeomID() );
++
++		mPreStepConn = mOdeWorld-&gt;subscribeToPreStepInternal( boost::bind(&amp;OdeAvatar::onPreStepInternal,this,_1) );
++		mPostStepConn = mOdeWorld-&gt;subscribeToPostStepInternal( boost::bind(&amp;OdeAvatar::onPostStepInternal,this,_1) );
++		return true;
++    }
++
++	//-----------------------------------------------------
++	void OdeAvatar::onPostStepInternal(const real dt)
++	{
++		if (dt &lt;= 0)
++			return;
++		// gather information
++
++		mPosition = mActor-&gt;getPosition();
++		mOrientation = mActor-&gt;getOrientation();
++
++		const real targetHeightAboveGround = mDucking ? 
++						mHeightAboveGroundDuck : mHeightAboveGround;
++
++		const Vector3 currLinVel = mActor-&gt;getBody().getLinearVelocity();
++		const real currVel = currLinVel.y;
++		const Vector3 currPos = mActor-&gt;getPosition();
++
++		// let's do some real work:
++
++		Vector3 targetVel = 2 * (mTargetVelocity - currLinVel) * dt;
++		targetVel.y = 0.; // !
++		Vector3 f(0,0,0);
++		if (mJumpStartInProgress)
++		{
++			if (mJumpTime &gt; 0.)
++			{
++				// &quot;Starting phase&quot; (we apply force)
++				mJumpTime -= dt;
++
++				f += Vector3(0,100,0);
++				++mJumpApplies;
++			}
++			else
++			{
++				// &quot;Jumping phase&quot;
++				const real minGlobalHeight = mRay-&gt;intersectionPoint().y + targetHeightAboveGround;
++				std::cout &lt;&lt; &quot;JUMPWAITING (applied=&quot; &lt;&lt; mJumpApplies &lt;&lt; &quot;)&quot; &lt;&lt; currPos.y &lt;&lt; &quot; &gt; 0.1 + &quot; &lt;&lt; minGlobalHeight &lt;&lt; &quot;\n&quot;;
++				if (currVel &lt; -0.01 || currPos.y &gt; (minGlobalHeight + 0.1))
++				{
++					mJumpStartInProgress = false; // we're going downwards again.
++				}
++			}
++		}
++		if (mRay-&gt;intersects())
++		{
++			if (mJumping &amp;&amp; !mJumpStartInProgress)
++			{
++				if (mRay-&gt;intersectionDepth() &lt; targetHeightAboveGround)
++					mJumping = false;
++			}
++			if (!mJumping)
++			{
++				const Vector3 targetPoint = mRay-&gt;intersectionPoint()
++										+ Vector3::kUnitY * targetHeightAboveGround;
++
++				const real distToTarget = (targetPoint.y - currPos.y);
++
++				//@todo make all these spring and damping stuff configurable...
++				const real k = real(1.0);
++				const real f1 = k * real(20.) * distToTarget;
++				const real f2 = k * real(15.) * currVel;
++
++				f = Vector3::kUnitY * (f1 - f2);
++			}
++		}
++		const Vector3 force =
++			(dt == 0.) ? Vector3::kZero : 
++				(f + (mActor-&gt;getBody().getMass() * (targetVel / dt)));
++		mActor-&gt;getBody().addForce( 1./*mDynamicsInfluence?*/ * force );
++	}
++
++	//-----------------------------------------------------
++	void OdeAvatar::onPreStepInternal(const real dt)
++	{
++		_updateRayData();
++		mRay-&gt;_clearIntersection();
++	}
++
++	//-----------------------------------------------------
++	void OdeAvatar::_updateRayData()
++	{
++		mRay-&gt;setPosition( mPosition/*ball position*/ );
++	}
++
++	//-----------------------------------------------------
++	void OdeAvatar::setDimensions( const Vector3&amp; dim )
++    {
++		mDimensions = dim;
++    }
++
++    //-----------------------------------------------------
++	void OdeAvatar::setInfluenceByDynamics( const real ratio )
++    {
++		mDynamicsInfluence = ratio;
++    }
++
++    //-----------------------------------------------------
++	void OdeAvatar::setTargetVelocity( const Vector3&amp; vel )
++    {
++		mTargetVelocity = vel;
++    }
++
++    //-----------------------------------------------------
++	void OdeAvatar::jump()
++    {
++		if (mJumping)
++			return;
++		mDucking = false;
++		mJumpApplies = 0;
++		mJumpTime = real(0.08);
++		mJumping = true;
++		mJumpStartInProgress = true;
++    }
++
++    //-----------------------------------------------------
++	bool OdeAvatar::isJumping() const
++    {
++		return mJumping;
++    }
++
++    //-----------------------------------------------------
++	void OdeAvatar::duck(const bool yes)
++    {
++		mDucking = yes;
++    }
++
++    //-----------------------------------------------------
++	bool OdeAvatar::isDucking() const
++    {
++		return mDucking;
++    }
++
++	//-----------------------------------------------------
++    void OdeAvatar::setPosition( const Vector3&amp; rPosition )
++    {
++		mPosition = rPosition;
++		if (mActor)
++			mActor-&gt;setPosition( mPosition );
++    }
++
++    //-----------------------------------------------------
++    void OdeAvatar::setOrientation( const Quaternion&amp; rOrientation )
++    {
++		mOrientation = rOrientation;
++		if (mActor)
++			mActor-&gt;setOrientation( mOrientation );
++    }
++
++    //-----------------------------------------------------
++    Vector3 OdeAvatar::getPosition() const
++    {
++		if (mActor)
++			mPosition = mActor-&gt;getPosition();
++		return mPosition;
++    }
++
++    //-----------------------------------------------------
++    Quaternion OdeAvatar::getOrientation() const
++    {
++		if (mActor)
++			mOrientation = mActor-&gt;getOrientation();
++		return mOrientation;
++    }
++
++} // physics
++} // yake
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000231.html">[Yake-svn] r1161 - trunk/yake/yake/plugins/graphicsOgre
+</A></li>
+	<LI>Next message: <A HREF="000233.html">[Yake-svn] r1163 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#232">[ date ]</a>
+              <a href="thread.html#232">[ thread ]</a>
+              <a href="subject.html#232">[ subject ]</a>
+              <a href="author.html#232">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

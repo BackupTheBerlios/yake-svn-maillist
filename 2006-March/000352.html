@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1282 - in trunk/yake/src/yake/base/native: Linux win32
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1282%20-%20in%20trunk/yake/src/yake/base/native%3A%20Linux%20win32&In-Reply-To=%3C200603152058.k2FKwkSx023433%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000351.html">
+   <LINK REL="Next"  HREF="000353.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1282 - in trunk/yake/src/yake/base/native: Linux win32</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1282%20-%20in%20trunk/yake/src/yake/base/native%3A%20Linux%20win32&In-Reply-To=%3C200603152058.k2FKwkSx023433%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1282 - in trunk/yake/src/yake/base/native: Linux win32">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Mar 15 21:58:46 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000351.html">[Yake-svn] r1281 - in trunk/yake/src/yapp/samples: graphics/dotScene gui/console model/XODE model/sync1
+</A></li>
+        <LI>Next message: <A HREF="000353.html">[Yake-svn] r1283 - trunk/yake/src/yapp/samples/model/dotLink
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#352">[ date ]</a>
+              <a href="thread.html#352">[ thread ]</a>
+              <a href="subject.html#352">[ subject ]</a>
+              <a href="author.html#352">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-15 21:58:45 +0100 (Wed, 15 Mar 2006)
+New Revision: 1282
+
+Modified:
+   trunk/yake/src/yake/base/native/Linux/yakeApplication.cpp
+   trunk/yake/src/yake/base/native/win32/yakeApplication.cpp
+Log:
+removed namespace base
+
+Modified: trunk/yake/src/yake/base/native/Linux/yakeApplication.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/Linux/yakeApplication.cpp	2006-03-15 20:52:43 UTC (rev 1281)
++++ trunk/yake/src/yake/base/native/Linux/yakeApplication.cpp	2006-03-15 20:58:45 UTC (rev 1282)
+@@ -47,12 +47,10 @@
+ //============================================================================
+ namespace yake
+ {
+-namespace base
+-{
+ namespace native
+ {
+ 
+-char* getApplicationDir()
++const char* getApplicationDir()
+ {
+ 	static char path[ PATH_MAX ] = &quot;&quot;;
+ 
+@@ -73,5 +71,4 @@
+ 
+ 
+ } // native
+-} // base
+ } // yake
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeApplication.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeApplication.cpp	2006-03-15 20:52:43 UTC (rev 1281)
++++ trunk/yake/src/yake/base/native/win32/yakeApplication.cpp	2006-03-15 20:58:45 UTC (rev 1282)
+@@ -44,12 +44,10 @@
+ //============================================================================
+ namespace yake
+ {
+-namespace base
+-{
+ namespace native
+ {
+ 
+-char* getApplicationDir()
++const char* getApplicationDir()
+ {
+ 	static char szBuffer[ MAX_PATH ] = &quot;&quot;;
+ 
+@@ -64,5 +62,4 @@
+ 
+ 
+ } // native
+-} // base
+ } // yake
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000351.html">[Yake-svn] r1281 - in trunk/yake/src/yapp/samples: graphics/dotScene gui/console model/XODE model/sync1
+</A></li>
+	<LI>Next message: <A HREF="000353.html">[Yake-svn] r1283 - trunk/yake/src/yapp/samples/model/dotLink
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#352">[ date ]</a>
+              <a href="thread.html#352">[ thread ]</a>
+              <a href="subject.html#352">[ subject ]</a>
+              <a href="author.html#352">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

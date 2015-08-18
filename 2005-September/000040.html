@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r970 - trunk/yake/yake/input
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r970%20-%20trunk/yake/yake/input&In-Reply-To=%3C200509302143.j8ULhbmZ008624%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000039.html">
+   <LINK REL="Next"  HREF="000041.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r970 - trunk/yake/yake/input</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r970%20-%20trunk/yake/yake/input&In-Reply-To=%3C200509302143.j8ULhbmZ008624%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r970 - trunk/yake/yake/input">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:43:37 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000039.html">[Yake-svn] r969 - trunk/yake/src/yake/input
+</A></li>
+        <LI>Next message: <A HREF="000041.html">[Yake-svn] r971 - trunk/yake/yake/physics
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#40">[ date ]</a>
+              <a href="thread.html#40">[ thread ]</a>
+              <a href="subject.html#40">[ subject ]</a>
+              <a href="author.html#40">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:43:36 +0200 (Fri, 30 Sep 2005)
+New Revision: 970
+
+Modified:
+   trunk/yake/yake/input/yakeActionMap.h
+Log:
+new ids,
+operator &lt; for ActionId
+
+Modified: trunk/yake/yake/input/yakeActionMap.h
+===================================================================
+--- trunk/yake/yake/input/yakeActionMap.h	2005-09-30 21:43:16 UTC (rev 969)
++++ trunk/yake/yake/input/yakeActionMap.h	2005-09-30 21:43:36 UTC (rev 970)
+@@ -74,6 +74,10 @@
+ 	{
+ 		return lhs.id() + rhs;
+ 	}
++	inline bool operator &lt; (const ActionId &amp; lhs, const ActionId&amp; rhs)
++	{
++		return lhs.id() &lt; rhs.id();
++	}
+ 
+ 	class YAKE_INPUT_API ActionIdRegistry
+ 	{
+@@ -89,6 +93,13 @@
+ 	extern YAKE_INPUT_API const ActionId ACTIONID_FORWARD;
+ 	extern YAKE_INPUT_API const ActionId ACTIONID_REVERSE;
+ 	extern YAKE_INPUT_API const ActionId ACTIONID_STRAFE_LEFT;
++	extern YAKE_INPUT_API const ActionId ACTIONID_STRAFE_RIGHT;
++	extern YAKE_INPUT_API const ActionId ACTIONID_ROTATE_LEFT;
++	extern YAKE_INPUT_API const ActionId ACTIONID_ROTATE_RIGHT;
++	extern YAKE_INPUT_API const ActionId ACTIONID_UP;
++	extern YAKE_INPUT_API const ActionId ACTIONID_DOWN;
++	extern YAKE_INPUT_API const ActionId ACTIONID_PITCH_UP;
++	extern YAKE_INPUT_API const ActionId ACTIONID_PITCH_DOWN;
+ 	extern YAKE_INPUT_API const ActionId ACTIONID_USER;
+ 	// example for a user defined action id:
+ 	//const ActionId ACTIONID_USER_CheerWildly( ACTIONID_USER+1, &quot;cheerwildly&quot; );
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000039.html">[Yake-svn] r969 - trunk/yake/src/yake/input
+</A></li>
+	<LI>Next message: <A HREF="000041.html">[Yake-svn] r971 - trunk/yake/yake/physics
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#40">[ date ]</a>
+              <a href="thread.html#40">[ thread ]</a>
+              <a href="subject.html#40">[ subject ]</a>
+              <a href="author.html#40">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

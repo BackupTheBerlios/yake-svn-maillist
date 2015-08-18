@@ -1,0 +1,1194 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1368 - in trunk/yake: src/yake/net/detail src/yake/plugins/physicsODE yake/net
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1368%20-%20in%20trunk/yake%3A%20src/yake/net/detail%20src/yake/plugins/physicsODE%20yake/net&In-Reply-To=%3C200607042112.k64LCkf8018422%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000435.html">
+   <LINK REL="Next"  HREF="000437.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1368 - in trunk/yake: src/yake/net/detail src/yake/plugins/physicsODE yake/net</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1368%20-%20in%20trunk/yake%3A%20src/yake/net/detail%20src/yake/plugins/physicsODE%20yake/net&In-Reply-To=%3C200607042112.k64LCkf8018422%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1368 - in trunk/yake: src/yake/net/detail src/yake/plugins/physicsODE yake/net">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Jul  4 23:12:46 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000435.html">[Yake-svn] r1367 - trunk/yake/src/yake/plugins/scriptingLua
+</A></li>
+        <LI>Next message: <A HREF="000437.html">[Yake-svn] r1369 - trunk/yake/dependencies
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#436">[ date ]</a>
+              <a href="thread.html#436">[ thread ]</a>
+              <a href="subject.html#436">[ subject ]</a>
+              <a href="author.html#436">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-04 23:12:45 +0200 (Tue, 04 Jul 2006)
+New Revision: 1368
+
+Modified:
+   trunk/yake/src/yake/net/detail/netEventConnection.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+   trunk/yake/yake/net/netBitstream.h
+   trunk/yake/yake/net/netBitstream.inl
+   trunk/yake/yake/net/netBitstreamAdapters.h
+   trunk/yake/yake/net/netEvent.h
+   trunk/yake/yake/net/netPrerequisites.h
+Log:
+new bit stream implementation
+
+Modified: trunk/yake/src/yake/net/detail/netEventConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-07-04 21:11:40 UTC (rev 1367)
++++ trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-07-04 21:12:45 UTC (rev 1368)
+@@ -140,7 +140,7 @@
+ 			return;
+ 
+ 		bitstream_data data; // data container
+-		bitstream_sink dataSink(data); // sink adapter
++		bitstream_sink dataSink(&amp;data); // sink adapter
+ 		obitstream out(&amp;dataSink); // stream interface
+ 
+ 		out.write( evt.id(), sizeof(NetEvent::id_type)*8 ) ;
+@@ -167,7 +167,7 @@
+ 			data[i] = ((const uint8*)(dataPtr))[i];
+ 
+ 		// attach stream
+-		bitstream_source dataSource(data);
++		bitstream_source dataSource(&amp;data);
+ 		ibitstream in(&amp;dataSource);
+ 
+ 		// extract event id
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2006-07-04 21:11:40 UTC (rev 1367)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2006-07-04 21:12:45 UTC (rev 1368)
+@@ -283,7 +283,7 @@
+ 		// if materials are not supposed to produce any contact forces
+ 		// This is the case if we just want some collision detection and without
+ 		// any contact joints...
+-		if ( pMatA == NULL || pMatB == NULL )
++		if ( !pMatA || !pMatB )
+ 		{
+ #ifdef DEBUG_COLLISIONS
+ 			YAKE_LOG( &quot;collision detection without materials...&quot; );
+
+Modified: trunk/yake/yake/net/netBitstream.h
+===================================================================
+--- trunk/yake/yake/net/netBitstream.h	2006-07-04 21:11:40 UTC (rev 1367)
++++ trunk/yake/yake/net/netBitstream.h	2006-07-04 21:12:45 UTC (rev 1368)
+@@ -1,93 +1,540 @@
+ #ifndef NET_BITSTREAM_H
+ #define NET_BITSTREAM_H
+ 
+-#include &lt;bitset&gt;
++#include &quot;netPrerequisites.h&quot;
+ 
++template&lt;typename T&gt;
++struct type_bit_size
++{
++	static const size_t size = sizeof(T)*8;
++};
++
+ namespace net {
+ 
+-	/**
+-		\todo - optimize: use bit masks ? =&gt; have to profile this. newer processor
+-					architectures aren't that fast with bit operations...
+-				- optimize: remove casts
++	/** Generic output bitstream.
++		@note When using it has to be specialized for a sink type.
++		@note It outputs data in single bytes via the specified sink.
++		@todo Make more generic to support different sizes of underlying storage primitives (not just uint8).
++		@sa ibitstream_base
+ 	*/
+-	template&lt;typename DataStreamType&gt;
+-	class ibstream_base
++	template&lt;typename DataSinkType&gt;
++	struct obitstream_base
+ 	{
+-	public:
+-		ibstream_base&amp; operator = (const ibstream_base&amp;);
+-		ibstream_base(const ibstream_base&amp;);
+-		ibstream_base( DataStreamType* pds = 0 );
+-		~ibstream_base();
+-		void setDataSource( DataStreamType*, const bool takeOwnership = false );
+-		uint8 read( bool&amp; );
+-		uint8 read( void* pd, size_t numBits );
+-		uint8 read( uint8&amp;, uint8 numBits );
+-		uint8 read( float&amp;, size_t numBits );
++		typedef DataSinkType sink_type;
++
++		obitstream_base(sink_type* sink = 0) :
++			sink_(sink),
++			byte_(0),
++			bitPos_(0),
++			totalBits_(0)
++		{}
++		/** Specify a different sink for receiving the storage primitives.
++			@note Do always flush the stream before changing to a different sink!
++			@note If you want to reset the total bit counter then call reset()
++				before setSink().
++		*/
++		void setSink(sink_type* sink)
++		{
++			flush();
++			sink_ = sink;
++		}
++		/** Write a single bit into the stream. */
++		void write(const bool bit)
++		{
++			assert(sink_);
++			byte_ |= ((bit?1:0) &lt;&lt; bitPos_++);
++
++			assert(bitPos_ &lt;= 8);
++			if (bitPos_==8)
++				flushByte();
++		}
++		/** Write any number of bits into the stream.
++			@note The implementation takes care to use special algorithms to improve
++				performance when possible (e.g. for byte aligned writes).
++		*/
++		void write(const void* data, const size_t numBits)
++		{
++			const uint8* ps = reinterpret_cast&lt;const uint8*&gt;(data);
++			assert(ps);
++			assert(numBits&gt;0);
++			assert(sink_);
++
++			assert( bitPos_ &lt;= 7 );
++			uint8 leftShift = uint8(bitPos_ &amp; 0x7); // aka upShift
++			uint8 rightShift = 8 - leftShift; // aka downShift
++
++			// if numBits &lt; 8 and if it fits into the current byte_:
++			//if (rightShift &gt;= numBits)
++			if (numBits + bitPos_ &lt;= 8)
++			{
++				assert(numBits&lt;=8);
++				uint8 mask = ((1 &lt;&lt; uint8(numBits))-1); // used to mask 'source' byte
++				byte_ |= ((*ps &amp; mask) &lt;&lt; leftShift) &amp; 0xff;
++				bitPos_ += numBits;
++				flushByte();
++				return;
++			}
++
++			// byte aligned writes
++			if (bitPos_ == 0)
++			{
++				// copy full bytes
++				size_t leftOver = bitPos_ + numBits;
++				for (; leftOver&gt;=8; leftOver-=8)
++				{
++					byte_ = *ps++ &amp; 0xff;
++					*sink_ &lt;&lt; byte_;
++					totalBits_ += 8; // Have to do this as we don't use flushByte() here!
++				}
++				byte_ = 0;
++				// copy remaining bits (if any)
++				if (leftOver)
++				{
++					const uint8 mask = (1 &lt;&lt; uint8(leftOver)) - 1;
++					byte_ |= (*ps &amp; mask) &amp; 0xff;
++					bitPos_ += leftOver;
++					flushByte();
++				}
++				return;
++			}
++
++			// non byte aligned writes
++			size_t leftOver = numBits;
++			for (; leftOver&gt;=8; leftOver-=8)
++			{
++				// write first bunch of bits
++				uint8 mask = ((1 &lt;&lt; rightShift)-1); //@todo cache this?
++				// mask to be used for source!
++
++
++				byte_ |= ((*ps &amp; mask) &lt;&lt; leftShift) &amp; 0xff;
++
++				bitPos_ += rightShift;
++
++				// flush byte
++				assert( bitPos_ == 8 );
++				flushByte();
++
++				// write second bunch of bits
++				mask = ~mask;
++				byte_ |= ((*ps &amp; mask) &gt;&gt; rightShift) &amp; 0xff;
++				
++				bitPos_ += leftShift;
++
++				++ps;
++			}
++
++			// copy remaining bits (if any)
++			if (leftOver &lt;= rightShift) // fits into remaining bits
++			{
++				assert(leftOver&lt;8);
++				uint8 mask = ((1&lt;&lt;uint8(leftOver))-1) &lt;&lt; uint8(bitPos_);
++				byte_ |= ((*ps &amp; mask) &amp; 0xff); //@todo verify: is that here working correctly?
++				bitPos_ += leftOver;
++			}
++			else // write remaining bits into current and next byte
++			{
++				assert(leftOver &lt;= 8);
++				// write first bunch of bits into remaining (=rightShift) bits of destination byte
++				uint8 mask = ((1 &lt;&lt; rightShift)-1);
++				byte_ |= ((*ps &amp; mask ) &lt;&lt; leftShift) &amp; 0xff;
++
++				bitPos_ += rightShift;
++				leftOver -= rightShift;
++
++				// flush byte
++				assert( bitPos_ == 8 );
++				flushByte();
++
++				// write remaining bits (if any)
++				if (leftOver)
++				{
++					assert(leftOver&lt;8);
++					uint8 mask = ((1&lt;&lt;uint8(leftOver))-1) &lt;&lt; rightShift;
++					byte_ |= ((*ps &amp; mask) &gt;&gt; rightShift) &amp; 0xff;
++					bitPos_ += leftOver;
++				}
++			}
++			assert( bitPos_ &lt;= 8 );
++			flushByte();
++		}
++		/** Flush any remaining cached bits into the sink.
++			@note This fills the remaining bits up with 0's.
++			@sa setSink()
++		*/
++		void flush()
++		{
++			if (bitPos_)
++			{
++				assert( sink_ );
++				*sink_ &lt;&lt; byte_;
++				totalBits_ += bitPos_;
++				bitPos_ = 0;
++				byte_ = 0;
++			}
++		}
++		/** Return the total number of bits (!) written into the stream.
++		*/
++		size_t size() const
++		{
++			return totalBits_;
++		}
++		/** Flushes and resets the stream as well as the count of total bits written.
++			@note Use this if you want to reuse the bit stream for a new set of writing operations.
++		*/
++		void reset()
++		{
++			flush();
++			totalBits_ = 0;
++		}
++		/*
++		template&lt;typename T&gt;
++		void write(const T value, const size_t numBits = type_bit_size&lt;T&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;T&gt;::size );
++			this-&gt;write(&amp;value,numBits);
++		}
++		*/
++		void write(const float value, const size_t numBits = type_bit_size&lt;float&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;float&gt;::size );
++			this-&gt;write(&amp;value,numBits);
++		}
++		void write(const double value, const size_t numBits = type_bit_size&lt;double&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;double&gt;::size );
++			this-&gt;write(&amp;value,numBits);
++		}
++		void write(const char value, const size_t numBits = type_bit_size&lt;char&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;char&gt;::size );
++			this-&gt;write(&amp;value,numBits);
++		}
++		void write(const wchar_t value, const size_t numBits = type_bit_size&lt;wchar_t&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;wchar_t&gt;::size );
++			this-&gt;write(&amp;value,numBits);
++		}
++		void write(const uint16 value, const size_t numBits = type_bit_size&lt;uint16&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;int16&gt;::size );
++			this-&gt;write(&amp;value,numBits);
++		}
++		void write(const int16 value, const size_t numBits = type_bit_size&lt;int16&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;int16&gt;::size );
++			this-&gt;write(&amp;value,numBits);
++		}
++		void write(const uint32 value, const size_t numBits = type_bit_size&lt;uint32&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;int32&gt;::size );
++			this-&gt;write(&amp;value,numBits);
++		}
++		void write(const int32 value, const size_t numBits = type_bit_size&lt;int32&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;int32&gt;::size );
++			this-&gt;write(&amp;value,numBits);
++		}
+ 	private:
+-		bool _inByte( uint8&amp; );
+-		DataStreamType*	mSource;
+-		uint8					mBitPos;
+-		std::bitset&lt;8&gt;		mBuf;
+-		size_t				mTotalBits;
+-		size_t				mTotalBytes;
+-		bool					mDestroyDataStream;
++		obitstream_base(const obitstream_base&amp;);
++		obitstream_base&amp; operator=(const obitstream_base&amp;);
++	private:
++		void flushByte()
++		{
++			assert( bitPos_ &lt;= 8 );
++			if (bitPos_ == 8)
++			{
++				assert(sink_);
++				*sink_ &lt;&lt; byte_;
++				byte_ = 0;
++				totalBits_ += bitPos_;
++				bitPos_ = 0;
++			}
++		}
++	private:
++		sink_type*			sink_;
++		uint8				byte_;
++		size_t				bitPos_;
++		size_t				totalBits_;
+ 	};
+ 
+-	template&lt;class DataStreamType&gt;
+-	class obstream_base
++	/** Generic input bit stream.
++		@note It has to be specialized for a specific byte source to be used in client code.
++		@todo Make more generic to support different storage primitives (not just uint8 streams).
++		@sa obitstream_base
++	*/
++	template&lt;typename DataSourceType&gt;
++	struct ibitstream_base
+ 	{
++		typedef DataSourceType source_type;
++
++		ibitstream_base(source_type* source = 0) :
++			source_(source),
++			byte_(0),
++			bitPos_(8),
++			totalBitsRead_(0)
++		{}
++		void setSource(source_type* source)
++		{
++			source_ = source;
++		}
++
++		/** Reads a single bit from the stream and returns it in &quot;bit&quot;.
++			@return Number of bits read, i.e. 1 or 0 (if an error occurred).
++		*/
++		size_t read(bool&amp; bit)
++		{
++			assert(source_);
++			if (!updateByte())
++				return 0;
++			assert( bitPos_ &lt; 8 );
++			const uint8 mask = (1 &lt;&lt; uint8(bitPos_++));
++			bit = (byte_ &amp; mask) != 0;
++			++totalBitsRead_;
++			return 1;
++		}
++	private:
++		bool updateByte()
++		{
++			assert(bitPos_&lt;=8);
++			if (bitPos_ == 8)
++			{
++				if (!readByteFromSource())
++				{
++					assert(&quot;out of data&quot; &amp;&amp; 0);
++					return false;
++				}
++			}
++			return true;
++		}
+ 	public:
+-		obstream_base&amp; operator = (const obstream_base&amp;);
+-		obstream_base(const obstream_base&amp;);
+-		obstream_base( DataStreamType* pds = 0 );
+-		~obstream_base();
+-		void setDataSink( DataStreamType* s, const bool takeOwnership = false );
+-		uint8 write( const uint8, uint8 numBits );
+-		void write( const bool );
+-		void write( const void*, size_t numBits );
++		/** Reads the specified number of bits into the specified buffer.
++			@return The number of bits read. If all goes well it should be equal to
++				numBits. If it is not then an error occurred, e.g. the stream (source)
++				could not deliver any more data.
++			@note This methods takes care of using optimized implementations for, for example,
++				byte aligned reads.
++		*/
++		size_t read(void* data, const size_t numBits)
++		{
++			assert(data);
++			assert(bitPos_ &lt;= 8);
++			if (!updateByte())
++				return 0;
++			assert(bitPos_ &lt; 8);
+ 
+-		void write( const uint16, uint8 numBits );
+-		void write( const uint32, uint8 numBits );
+-		void write( const float, uint8 numBits );
+-		void write( const double, uint8 numBits );
+-		void flush();
++			uint8* pd = (uint8*)data;
++			const uint8 leftShift = uint8(bitPos_) &amp; 0x7;
++			const uint8 rightShift = 8 - leftShift;
+ 
+-		size_t numBits() const;
+-		//size_t numBytes() const; //pre or post flush?
++			// case: requested bits are completely within the cached byte
++			if (numBits + bitPos_ &lt;= 8)
++			{
++				const uint8 mask = ((1 &lt;&lt; uint8(numBits))-1) &lt;&lt; leftShift;
++				*pd |= (byte_ &amp; mask) &gt;&gt; leftShift;
++				bitPos_ += numBits;
++				totalBitsRead_ += numBits;
++				return numBits;
++			}
+ 
+-		void setNumBits(const uint8 numBitsForNextStreamOperations);
+-		obstream_base&amp; operator &lt;&lt; (const uint8);
+-		obstream_base&amp; operator &lt;&lt; (const uint16);
+-		obstream_base&amp; operator &lt;&lt; (const uint32);
+-		obstream_base&amp; operator &lt;&lt; (const int8);
+-		obstream_base&amp; operator &lt;&lt; (const int16);
+-		obstream_base&amp; operator &lt;&lt; (const int32);
+-		obstream_base&amp; operator &lt;&lt; (const float);
+-		obstream_base&amp; operator &lt;&lt; (const double);
++			// case: requested bits start byte-aligned
++			size_t bitsRead = 0;
++			if (!leftShift)
++			{
++				// read full bytes
++				size_t leftOver = bitPos_ + numBits;
++				while (leftOver&gt;=8)
++				{
++					*pd++ = byte_;
++					bitsRead += 8;
++					leftOver-=8;
++					bitPos_+= 8;
++					if (leftOver)
++					{
++						if (!updateByte())
++						{
++							assert(0 &amp;&amp; &quot;failed to read&quot;);
++							totalBitsRead_ += bitsRead;
++							return bitsRead;
++						}
++					}
++				}
++				//byte_ = 0;
++				// read remaining bits (if any)
++				if (leftOver)
++				{
++					if (!updateByte())
++					{
++						assert(0 &amp;&amp; &quot;failed to read&quot;);
++						totalBitsRead_ += bitsRead;
++						return bitsRead;
++					}
++					const uint8 mask = (1 &lt;&lt; uint8(leftOver)) - 1;
++
++					//++pd;
++
++					*pd |= (byte_ &amp; mask);
++
++					bitsRead += leftOver;
++					bitPos_ += leftOver;
++				}
++				assert( bitsRead == numBits );
++				totalBitsRead_ += bitsRead;
++				return bitsRead;
++			}
++
++			// case: non-byte-aligned
++			size_t leftOver = numBits;
++			for (; leftOver&gt;=8; leftOver-=8)
++			{
++				// read first bits
++				uint8 mask = ((1&lt;&lt;rightShift)-1) &lt;&lt; leftShift;
++				*pd |= (byte_ &amp; mask) &gt;&gt; leftShift; // NB Set to = instead of |= if the destination
++													// should be cleared (set to 0's).
++				bitPos_ += rightShift;
++				bitsRead += rightShift;
++
++				// request next byte to read from
++				if (!updateByte())
++				{
++					assert(0 &amp;&amp; &quot;failed to read&quot;);
++					totalBitsRead_ += bitsRead;
++					return bitsRead;
++				}
++
++				// read second bunch of bits
++				mask = (~mask);
++
++				*pd |= (byte_ &amp; mask) &lt;&lt; rightShift;
++
++				bitPos_ += leftShift;
++				bitsRead += leftShift;
++
++				++pd;
++			}
++
++			// remaining bits (if any)
++			if (leftOver &lt;= rightShift) // fits into remaining bits
++			{
++				assert(leftOver&lt;8);
++				const uint8 mask = ((1&lt;&lt;uint8(leftOver))-1) &lt;&lt; uint8(bitPos_);
++				*pd |= (byte_ &amp; mask);
++
++				bitsRead += leftOver;
++				bitPos_ += leftOver;
++			}
++			else // read remaining bits of current and next byte into a single destination byte
++			{
++				// read first bunch of bits (current byte)
++				uint8 mask = ((1&lt;&lt;rightShift)-1) &lt;&lt; leftShift;
++				*pd |= (byte_ &amp; mask) &gt;&gt; leftShift; // NB Use = instead of |= if the destination
++													// should be cleared (set to 0's by default)!
++
++				bitPos_ += rightShift;
++				bitsRead += rightShift;
++				leftOver -= rightShift;
++
++				// get next byte
++				assert( bitPos_ == 8 );
++				if (!updateByte())
++				{
++					assert(0 &amp;&amp; &quot;failed to read&quot;);
++					totalBitsRead_ += bitsRead;
++					return bitsRead;
++				}
++
++				// read remaining bits (&quot;next&quot; byte)
++				if (leftOver)
++				{
++					assert(leftOver&lt;8);
++					uint8 mask = ((1&lt;&lt;uint8(leftOver))-1);
++					*pd |= (byte_ &amp; mask) &lt;&lt; rightShift;
++					bitPos_ += leftOver;
++					bitsRead += leftOver;
++				}
++			}
++			assert( bitsRead == numBits );
++			totalBitsRead_ += bitsRead;
++			return bitsRead;
++		}
++		/** Resets the ibitstream_base object for a new set of operations.
++			@note Also resets the counter of &quot;total bits read&quot;.
++		*/
++		void reset()
++		{
++			byte_ = 0;
++			bitPos_ = 0;
++			totalBitsRead_ = 0;
++		}
++		size_t size() const
++		{
++			return totalBitsRead_;
++		}
++		size_t read(float&amp; value, const size_t numBits = type_bit_size&lt;float&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;float&gt;::size );
++			return this-&gt;read(&amp;value,numBits);
++		}
++		size_t read(double&amp; value, const size_t numBits = type_bit_size&lt;double&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;double&gt;::size );
++			return this-&gt;read(&amp;value,numBits);
++		}
++		size_t read(char&amp; value, const size_t numBits = type_bit_size&lt;char&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;char&gt;::size );
++			return this-&gt;read(&amp;value,numBits);
++		}
++		size_t read(wchar_t&amp; value, const size_t numBits = type_bit_size&lt;wchar_t&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;wchar_t&gt;::size );
++			return this-&gt;read(&amp;value,numBits);
++		}
++		size_t read(uint8&amp; value, const size_t numBits = type_bit_size&lt;uint8&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;uint8&gt;::size );
++			return this-&gt;read(&amp;value,numBits);
++		}
++		size_t read(int8&amp; value, const size_t numBits = type_bit_size&lt;int8&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;int8&gt;::size );
++			return this-&gt;read(&amp;value,numBits);
++		}
++		size_t read(uint16&amp; value, const size_t numBits = type_bit_size&lt;uint16&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;uint16&gt;::size );
++			return this-&gt;read(&amp;value,numBits);
++		}
++		size_t read(int16&amp; value, const size_t numBits = type_bit_size&lt;int16&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;int16&gt;::size );
++			return this-&gt;read(&amp;value,numBits);
++		}
++		size_t read(uint32&amp; value, const size_t numBits = type_bit_size&lt;uint32&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;uint32&gt;::size );
++			return this-&gt;read(&amp;value,numBits);
++		}
++		size_t read(int32&amp; value, const size_t numBits = type_bit_size&lt;int32&gt;::size)
++		{
++			assert( numBits &lt;= type_bit_size&lt;int32&gt;::size );
++			return this-&gt;read(&amp;value,numBits);
++		}
+ 	private:
+-		void _outByte( uint8 );
+-		//std::ostream*	mStream;
+-		DataStreamType*	mStream;
+-		uint8					mBitPos;
+-		std::bitset&lt;8&gt;		mBuf;
+-		size_t				mTotalBits;
+-		size_t				mTotalBytes;
+-		uint8					mNumBitsForNextStreamOperations;
+-		bool					mDestroyDataStream;
++		bool readByteFromSource()
++		{
++			assert(source_);
++			*source_ &gt;&gt; byte_;
++			bitPos_ = 0;
++			return true;
++		}
++	private:
++		source_type*		source_;
++		uint8				byte_;
++		size_t				bitPos_;
++		size_t				totalBitsRead_;
+ 	};
+ 
+-	struct setNumBits
+-	{
+-		setNumBits(uint8 numBits) : b(numBits)
+-		{}
+-		uint8 b;
+-	};
+-	template&lt;class ostream_type&gt;
+-	inline ostream_type&amp; operator &lt;&lt; (ostream_type&amp; lhs, const setNumBits&amp; rhs)
+-	{
+-		lhs.setNumBits(rhs.b);
+-		return lhs;
+-	}
+ } // namespace net
+ 
+ #include &quot;netBitStream.inl&quot;
+
+Modified: trunk/yake/yake/net/netBitstream.inl
+===================================================================
+--- trunk/yake/yake/net/netBitstream.inl	2006-07-04 21:11:40 UTC (rev 1367)
++++ trunk/yake/yake/net/netBitstream.inl	2006-07-04 21:12:45 UTC (rev 1368)
+@@ -3,322 +3,7 @@
+ 
+ namespace net {
+ 
+-	//--------------------------------------------------------------------------
+-	// Class: ibstream
+-	//--------------------------------------------------------------------------
+-	template&lt;class DataStreamType&gt;
+-	ibstream_base&lt;DataStreamType&gt;&amp; ibstream_base&lt;DataStreamType&gt;::operator = (const ibstream_base&lt;DataStreamType&gt;&amp; other)
+-	{
+-		mSource			= other.mSource;
+-		mBitPos			= other.mBitPos;
+-		mBuf				= other.mBuf;
+-		mTotalBits		= other.mTotalBits;
+-		mTotalBytes		= other.mTotalBytes;
+-		mDestroyDataStream = other.mDestroyDataStream;
+-		return *this;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	ibstream_base&lt;DataStreamType&gt;::ibstream_base(const ibstream_base&lt;DataStreamType&gt;&amp; other)
+-	{
+-		mSource			= other.mSource;
+-		mBitPos			= other.mBitPos;
+-		mBuf				= other.mBuf;
+-		mTotalBits		= other.mTotalBits;
+-		mTotalBytes		= other.mTotalBytes;
+-		mDestroyDataStream = other.mDestroyDataStream;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	ibstream_base&lt;DataStreamType&gt;::ibstream_base( DataStreamType* pds /*= 0*/ ) : mSource(pds), mBitPos(8), mTotalBits(0), mTotalBytes(0), mDestroyDataStream(false)
+-	{
+-		mBuf.set(0);
+-	}
+-	template&lt;class DataStreamType&gt;
+-	ibstream_base&lt;DataStreamType&gt;::~ibstream_base()
+-	{
+-		if (mDestroyDataStream &amp;&amp; mSource)
+-			delete mSource;
+-	#ifdef _OUTPUT_DEBUG_STUFF
+-		std::cout &lt;&lt; &quot;ibstream: &quot; &lt;&lt; uint32(mTotalBits) &lt;&lt; &quot; bits read.\n&quot;;
+-		std::cout &lt;&lt; &quot;ibstream: &quot; &lt;&lt; uint32(mTotalBytes) &lt;&lt; &quot; bytes read.\n&quot;;
+-	#endif
+-	}
+-	template&lt;class DataStreamType&gt;
+-	void ibstream_base&lt;DataStreamType&gt;::setDataSource( DataStreamType* s, const bool takeOwnership )
+-	{
+-		if (mDestroyDataStream &amp;&amp; mSource)
+-			delete mSource;
+-		mDestroyDataStream = takeOwnership;
+-		mSource = s;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	bool ibstream_base&lt;DataStreamType&gt;::_inByte( uint8&amp; c )
+-	{
+-		if (!mSource)
+-			return false;
+-		if (!mSource-&gt;hasMoreData())
+-			return false;
+-		if (!mSource-&gt;read( c ))
+-			return false;
+-		++mTotalBytes;
+-		return true;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	uint8 ibstream_base&lt;DataStreamType&gt;::read( uint8&amp; bits, uint8 numBits )
+-	{
+-		if (!mSource)
+-			return 0;
+-		if (numBits &gt; 8)
+-			numBits = 8;
+ 
+-		std::bitset&lt;8&gt; d(0);
+-		//for (uint8 i = numBits-1; i != 0xff; i--)
+-		for (uint8 i = 0; i &lt; numBits; ++i)
+-		{
+-			bool b;
+-			read(b);
+-			d[i] = b;
+-	#ifdef _OUTPUT_DEBUG_STUFF
+-			std::cout &lt;&lt; &quot;reading bit &quot; &lt;&lt; uint32(i) &lt;&lt; &quot; = &quot; &lt;&lt; d[i] &lt;&lt; &quot;\n&quot;;
+-	#endif
+-			mTotalBits++;
+-		}
+-
+-		bits = uint8(d.to_ulong() &amp; 0xFF);
+-
+-		return numBits;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	uint8 ibstream_base&lt;DataStreamType&gt;::read( bool&amp; bit )
+-	{
+-		if (mBitPos == 8)
+-		{
+-			uint8 c;
+-			_inByte( c );
+-			mBuf = c;
+-			mBitPos = 0;
+-		}
+-
+-		bit = mBuf[mBitPos++];
+-		return 1;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	uint8 ibstream_base&lt;DataStreamType&gt;::read( void* pd, size_t numBits )
+-	{
+-		uint8* pc = static_cast&lt;uint8*&gt;(pd);
+-		uint8* pe = pc+(numBits &gt;&gt; 3);
+-		if (pc == pe)
+-		{
+-			read( *pc, uint8(numBits) );
+-			return uint8(numBits);
+-		}
+-
+-		size_t toread = numBits;
+-		while (pc != pe)
+-			toread -= read( *pc++, (toread &gt; 8) ? 8 : uint8(toread) );
+-
+-		if (toread &gt; 0)
+-			read( *pc, uint8(toread) );
+-
+-		return uint8(numBits);
+-	}
+-	template&lt;class DataStreamType&gt;
+-	uint8 ibstream_base&lt;DataStreamType&gt;::read( float&amp; d, size_t numBits )
+-	{
+-		return read( &amp;d, numBits );
+-	}
+-
+-	//--------------------------------------------------------------------------
+-	// Class: obstream
+-	//--------------------------------------------------------------------------
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator = (const obstream_base&lt;DataStreamType&gt;&amp; other)
+-	{
+-		mStream			= other.mStream;
+-		mBitPos			= other.mBitPos;
+-		mBuf				= other.mBuf;
+-		mTotalBits		= other.mTotalBits;
+-		mTotalBytes		= other.mTotalBytes;
+-		mDestroyDataStream = other.mDestroyDataStream;
+-		mNumBitsForNextStreamOperations = other.mNumBitsForNextStreamOperations;
+-		return *this;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;::obstream_base(const obstream_base&lt;DataStreamType&gt;&amp; other)
+-	{
+-		mStream			= other.mStream;
+-		mBitPos			= other.mBitPos;
+-		mBuf				= other.mBuf;
+-		mTotalBits		= other.mTotalBits;
+-		mTotalBytes		= other.mTotalBytes;
+-		mDestroyDataStream = other.mDestroyDataStream;
+-		mNumBitsForNextStreamOperations = other.mNumBitsForNextStreamOperations;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const uint8 rhs)
+-	{
+-		write( rhs, mNumBitsForNextStreamOperations );
+-		return *this;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const uint16 rhs)
+-	{
+-		write( &amp;rhs, mNumBitsForNextStreamOperations );
+-		return *this;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const uint32 rhs)
+-	{
+-		write( &amp;rhs, mNumBitsForNextStreamOperations );
+-		return *this;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const int8 rhs)
+-	{
+-		write( &amp;rhs, mNumBitsForNextStreamOperations );
+-		return *this;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const int16 rhs)
+-	{
+-		write( &amp;rhs, mNumBitsForNextStreamOperations );
+-		return *this;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const int32 rhs)
+-	{
+-		write( &amp;rhs, mNumBitsForNextStreamOperations );
+-		return *this;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const float rhs)
+-	{
+-		write( &amp;rhs, mNumBitsForNextStreamOperations );
+-		return *this;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const double rhs)
+-	{
+-		write( &amp;rhs, mNumBitsForNextStreamOperations );
+-		return *this;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;::obstream_base( DataStreamType* pds /*= 0*/ ) : mStream(pds), mBitPos(0), mTotalBits(0), mTotalBytes(0), mNumBitsForNextStreamOperations(8), mDestroyDataStream(false)
+-	{
+-		mBuf.set(0);
+-	}
+-	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;::~obstream_base()
+-	{
+-		if (mStream &amp;&amp; mDestroyDataStream)
+-			delete mStream;
+-	#ifdef _OUTPUT_DEBUG_STUFF
+-		std::cout &lt;&lt; &quot;obstream: &quot; &lt;&lt; uint32(mTotalBits) &lt;&lt; &quot; bits written.\n&quot;;
+-		std::cout &lt;&lt; &quot;obstream: &quot; &lt;&lt; uint32(mTotalBytes) &lt;&lt; &quot; bytes written.\n&quot;;
+-	#endif
+-	}
+-	template&lt;class DataStreamType&gt;
+-	void obstream_base&lt;DataStreamType&gt;::setNumBits(const uint8 numBitsForNextStreamOperations)
+-	{
+-		mNumBitsForNextStreamOperations = numBitsForNextStreamOperations;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	void obstream_base&lt;DataStreamType&gt;::setDataSink( DataStreamType* s, const bool takeOwnership )
+-	{
+-		if (mStream &amp;&amp; mDestroyDataStream)
+-			delete mStream;
+-		mDestroyDataStream = takeOwnership;
+-		mStream = s;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	void obstream_base&lt;DataStreamType&gt;::_outByte( uint8 c )
+-	{
+-		if (!mStream)
+-			return;
+-		//*mStream &lt;&lt; c;
+-		mStream-&gt;write( c );
+-		++mTotalBytes;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	uint8 obstream_base&lt;DataStreamType&gt;::write( const uint8 bits, uint8 numBits )
+-	{
+-		if (!mStream)
+-			return 0;
+-		if (numBits &gt; 8)
+-			numBits = 8;
+-
+-		std::bitset&lt;8&gt; d(bits);
+-
+-		//for (int8 i = numBits-1; i&gt;=0; --i)
+-		for (int8 i = 0; i&lt;numBits; ++i)
+-		{
+-	#ifdef _OUTPUT_DEBUG_STUFF
+-			std::cout &lt;&lt; &quot;writing bit &quot; &lt;&lt; uint32(i) &lt;&lt; &quot; = &quot; &lt;&lt; d[i] &lt;&lt; &quot;\n&quot;;
+-	#endif
+-			write( d[i] );
+-		}
+-
+-		return numBits;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	void obstream_base&lt;DataStreamType&gt;::write( const bool bit )
+-	{
+-		mBuf[ mBitPos ++ ] = bit;
+-		if (mBitPos &gt;= 8)
+-		{
+-			uint8 c = uint8( mBuf.to_ulong() &amp; 0xFF );
+-			_outByte( c );
+-			mBitPos -= 8;
+-		}
+-		++mTotalBits;
+-	}
+-	template&lt;class DataStreamType&gt;
+-	void obstream_base&lt;DataStreamType&gt;::flush()
+-	{
+-		if (mBitPos &gt; 0)
+-		{
+-			_outByte( uint8(mBuf.to_ulong() &amp; 0xFF) );
+-			mBitPos = 0;
+-		}
+-	}
+-	template&lt;class DataStreamType&gt;
+-	void obstream_base&lt;DataStreamType&gt;::write( const void* pd, size_t numBits )
+-	{
+-		const uint8* pc = static_cast&lt;const uint8*&gt;(pd);
+-		const uint8* pe = pc+(numBits &gt;&gt; 3);
+-		if (pc == pe)
+-		{
+-			write( *pc, uint8(numBits) );
+-			return;
+-		}
+-
+-		size_t towrite = numBits;
+-		while (pc != pe)
+-			towrite -= write( *pc++, (towrite &gt; 8) ? 8 : uint8(towrite) );
+-
+-		if (towrite &gt; 0)
+-			write( *pc, uint8(towrite) );
+-	}
+-	template&lt;class DataStreamType&gt;
+-	void obstream_base&lt;DataStreamType&gt;::write( const uint16 d, uint8 numBits )
+-	{
+-		write( &amp;d, numBits );
+-	}
+-	template&lt;class DataStreamType&gt;
+-	void obstream_base&lt;DataStreamType&gt;::write( const uint32 d, uint8 numBits )
+-	{
+-		write( &amp;d, numBits );
+-	}
+-	template&lt;class DataStreamType&gt;
+-	void obstream_base&lt;DataStreamType&gt;::write( const float d, uint8 numBits )
+-	{
+-		write( &amp;d, numBits );
+-	}
+-	template&lt;class DataStreamType&gt;
+-	size_t obstream_base&lt;DataStreamType&gt;::numBits() const
+-	{
+-		return mTotalBits;
+-	}
+-
+ } // namespace net
+ 
+ #endif
+
+Modified: trunk/yake/yake/net/netBitstreamAdapters.h
+===================================================================
+--- trunk/yake/yake/net/netBitstreamAdapters.h	2006-07-04 21:11:40 UTC (rev 1367)
++++ trunk/yake/yake/net/netBitstreamAdapters.h	2006-07-04 21:12:45 UTC (rev 1368)
+@@ -1,52 +1,57 @@
+ #ifndef NET_BITSTREAMADAPTERS_H
+ #define NET_BITSTREAMADAPTERS_H
+ 
++#include &quot;netPrerequisites.h&quot;
++#include &quot;netBitstream.h&quot;
++
+ namespace net {
+ 
+-	template&lt;class ctr_type&gt;
+-	struct bitstream_sink_stlcontainer
++	template&lt;class ContainerType&gt;
++	struct stlsequence_data_sink
+ 	{
+-	private:
+-		bitstream_sink_stlcontainer();
+-	public:
+-		typedef ctr_type container_type;
+-		bitstream_sink_stlcontainer(ctr_type&amp; ctr) : ctr_(ctr) {}
+-		void write(const net::uint8 c)
++		typedef ContainerType container_type;
++
++		stlsequence_data_sink(container_type* data = 0) : data_(data)
++		{}
++		stlsequence_data_sink&amp; operator &lt;&lt; (const uint8 rhs)
+ 		{
+-			ctr_.push_back( c );
++			assert(data_);
++			for (size_t i=0; i&lt;tmp_.size(); ++i)
++			{
++				assert(tmp_[i] == data_-&gt;at(i));
++			}
++			data_-&gt;push_back(rhs);
++			tmp_.push_back(rhs);
++			return *this;
+ 		}
+-		ctr_type&amp;	ctr_;
++	private:
++		container_type*	data_;
++		container_type	tmp_;
+ 	};
+-	typedef bitstream_sink_stlcontainer&lt;std::vector&lt;net::uint8&gt; &gt; bitstream_stlvector_sink;
+-	typedef net::obstream_base&lt;bitstream_stlvector_sink&gt; obitstream_vector;
++	typedef stlsequence_data_sink&lt;std::vector&lt;uint8&gt; &gt; ByteVectorSink;
++	typedef obitstream_base&lt;ByteVectorSink&gt; obitstream_vector;
+ 
+-	template&lt;class ctr_type&gt;
+-	struct bitstream_source_stlcontainer
++	template&lt;class ContainerType&gt;
++	struct stlsequence_data_source
+ 	{
+-	private:
+-		bitstream_source_stlcontainer();
+-	public:
+-		typedef ctr_type container_type;
+-		bitstream_source_stlcontainer(const container_type&amp; ctr) : currPos(ctr.begin()), itEnd(ctr.end()), ctr_(ctr)
++		typedef ContainerType container_type;
++
++		stlsequence_data_source(container_type* data = 0) : data_(data), pos_(0)
+ 		{}
+-		bool hasMoreData() const
++		stlsequence_data_source&amp; operator &gt;&gt; (uint8&amp; rhs)
+ 		{
+-			return currPos != itEnd;
++			assert(data_);
++			assert(pos_ &lt; data_-&gt;size());
++			rhs = data_-&gt;at(pos_);
++			++pos_;
++			return *this;
+ 		}
+-		bool read(net::uint8&amp; c) const
+-		{
+-			if (!hasMoreData())
+-				return false;
+-			c = *currPos++;
+-			return true;
+-		}
+ 	private:
+-		mutable typename container_type::const_iterator currPos;
+-		mutable typename container_type::const_iterator itEnd;
+-		const container_type&amp;	ctr_;
++		container_type*	data_;
++		size_t			pos_;
+ 	};
+-	typedef bitstream_source_stlcontainer&lt;std::vector&lt;net::uint8&gt; &gt; bitstream_stlvector_source;
+-	typedef net::ibstream_base&lt;bitstream_stlvector_source&gt; ibitstream_vector;
++	typedef stlsequence_data_source&lt;std::vector&lt;uint8&gt; &gt; ByteVectorSource;
++	typedef ibitstream_base&lt;ByteVectorSource&gt; ibitstream_vector;
+ 
+ 	struct bitstream_source_voidptr
+ 	{
+@@ -77,7 +82,7 @@
+ 		const uint8*			end_;
+ 		mutable uint8*			curr_;
+ 	};
+-	typedef net::ibstream_base&lt;bitstream_source_voidptr&gt; ibitstream_voidptr;
++	typedef net::ibitstream_base&lt;bitstream_source_voidptr&gt; ibitstream_voidptr;
+ } // namespace net
+ 
+ #endif
+
+Modified: trunk/yake/yake/net/netEvent.h
+===================================================================
+--- trunk/yake/yake/net/netEvent.h	2006-07-04 21:11:40 UTC (rev 1367)
++++ trunk/yake/yake/net/netEvent.h	2006-07-04 21:12:45 UTC (rev 1368)
+@@ -9,9 +9,9 @@
+ 	typedef obitstream_vector obitstream;
+ 	typedef ibitstream_vector ibitstream;
+ 
+-	typedef bitstream_stlvector_sink::container_type bitstream_data;
+-	typedef bitstream_stlvector_sink bitstream_sink;
+-	typedef bitstream_stlvector_source bitstream_source;
++	typedef ByteVectorSink::container_type bitstream_data;
++	typedef ByteVectorSink bitstream_sink;
++	typedef ByteVectorSource bitstream_source;
+ 
+ 	class NET_API NetEvent
+ 	{
+
+Modified: trunk/yake/yake/net/netPrerequisites.h
+===================================================================
+--- trunk/yake/yake/net/netPrerequisites.h	2006-07-04 21:11:40 UTC (rev 1367)
++++ trunk/yake/yake/net/netPrerequisites.h	2006-07-04 21:12:45 UTC (rev 1368)
+@@ -2,6 +2,7 @@
+ #define NET_PREREQUISITES_H
+ 
+ #include &lt;yake/base/yakePrerequisites.h&gt;
++#include &lt;yake/base/yake.h&gt;
+ 
+ #define NET_DLL
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000435.html">[Yake-svn] r1367 - trunk/yake/src/yake/plugins/scriptingLua
+</A></li>
+	<LI>Next message: <A HREF="000437.html">[Yake-svn] r1369 - trunk/yake/dependencies
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#436">[ date ]</a>
+              <a href="thread.html#436">[ thread ]</a>
+              <a href="subject.html#436">[ subject ]</a>
+              <a href="author.html#436">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

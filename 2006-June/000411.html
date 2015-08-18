@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1344 - trunk/yake/scripts/msvc8
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1344%20-%20trunk/yake/scripts/msvc8&In-Reply-To=%3C200606122214.k5CMEP3N028774%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000412.html">
+   <LINK REL="Next"  HREF="000413.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1344 - trunk/yake/scripts/msvc8</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1344%20-%20trunk/yake/scripts/msvc8&In-Reply-To=%3C200606122214.k5CMEP3N028774%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1344 - trunk/yake/scripts/msvc8">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Jun 13 00:14:25 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000412.html">[Yake-svn] r1343 - trunk/yake/scripts/msvc8
+</A></li>
+        <LI>Next message: <A HREF="000413.html">[Yake-svn] r1345 - in trunk/yake: src/yake/model yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#411">[ date ]</a>
+              <a href="thread.html#411">[ thread ]</a>
+              <a href="subject.html#411">[ subject ]</a>
+              <a href="author.html#411">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-13 00:14:25 +0200 (Tue, 13 Jun 2006)
+New Revision: 1344
+
+Modified:
+   trunk/yake/scripts/msvc8/vehicle.vcproj
+Log:
+now using ode 0.6
+
+Modified: trunk/yake/scripts/msvc8/vehicle.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/vehicle.vcproj	2006-06-12 22:14:00 UTC (rev 1343)
++++ trunk/yake/scripts/msvc8/vehicle.vcproj	2006-06-12 22:14:25 UTC (rev 1344)
+@@ -67,7 +67,7 @@
+ 				AdditionalDependencies=&quot;base.lib physics.lib data.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib;../../dependencies/ode/lib&quot;
++				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib;../../dependencies/ode/lib/debugdll&quot;
+ 				GenerateDebugInformation=&quot;true&quot;
+ 				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+ 				SubSystem=&quot;1&quot;
+@@ -148,7 +148,7 @@
+ 				AdditionalDependencies=&quot;base.lib physics.lib data.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib;../../dependencies/ode/lib&quot;
++				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib;../../dependencies/ode/lib/releasedll&quot;
+ 				GenerateDebugInformation=&quot;true&quot;
+ 				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+ 				SubSystem=&quot;1&quot;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000412.html">[Yake-svn] r1343 - trunk/yake/scripts/msvc8
+</A></li>
+	<LI>Next message: <A HREF="000413.html">[Yake-svn] r1345 - in trunk/yake: src/yake/model yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#411">[ date ]</a>
+              <a href="thread.html#411">[ thread ]</a>
+              <a href="subject.html#411">[ subject ]</a>
+              <a href="author.html#411">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

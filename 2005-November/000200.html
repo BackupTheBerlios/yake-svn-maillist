@@ -1,0 +1,316 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1130 - trunk/yake/yake/plugins/graphicsOgre
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1130%20-%20trunk/yake/yake/plugins/graphicsOgre&In-Reply-To=%3C200511092316.jA9NGjRk009582%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000199.html">
+   <LINK REL="Next"  HREF="000201.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1130 - trunk/yake/yake/plugins/graphicsOgre</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1130%20-%20trunk/yake/yake/plugins/graphicsOgre&In-Reply-To=%3C200511092316.jA9NGjRk009582%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1130 - trunk/yake/yake/plugins/graphicsOgre">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov 10 00:16:45 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000199.html">[Yake-svn] r1129 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+        <LI>Next message: <A HREF="000201.html">[Yake-svn] r1131 - trunk/yake/src/yake/samples/physics/demo
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#200">[ date ]</a>
+              <a href="thread.html#200">[ thread ]</a>
+              <a href="subject.html#200">[ subject ]</a>
+              <a href="author.html#200">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-10 00:16:45 +0100 (Thu, 10 Nov 2005)
+New Revision: 1130
+
+Modified:
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreGeometryAccess.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreSkeleton.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreViewport.h
+   trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h
+   trunk/yake/yake/plugins/graphicsOgre/yakePCH.h
+Log:
+ownership management for graphics objects
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h	2005-11-09 23:16:18 UTC (rev 1129)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h	2005-11-09 23:16:45 UTC (rev 1130)
+@@ -31,12 +31,12 @@
+ namespace graphics {
+ namespace ogre3d {
+ 
+-	class OgreCamera : public ICamera
++	class OgreCamera : public ICamera, public OgreWrappedObject
+ 	{
+ 		OgreCamera();
+ 		OgreCamera( const OgreCamera &amp; );
+ 	public:
+-		OgreCamera( Ogre::SceneManager * sceneMgr );
++		OgreCamera( GraphicalWorld&amp; owningWorld, Ogre::SceneManager * sceneMgr );
+ 		virtual ~OgreCamera();
+ 
+ 		// Movable
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h	2005-11-09 23:16:18 UTC (rev 1129)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h	2005-11-09 23:16:45 UTC (rev 1130)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright  2004 The YAKE Team
++   Copyright &#169; 2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -31,12 +31,13 @@
+ namespace graphics {
+ namespace ogre3d {
+ 
+-	class OgreEntity : public graphics::IEntity
++	class OgreNode;
++	class OgreEntity : public graphics::IEntity, public OgreWrappedObject
+ 	{
+ 		OgreEntity();
+ 		OgreEntity( const OgreEntity&amp; );
+ 	public:
+-		OgreEntity( ::Ogre::SceneManager* sceneMgr, const String&amp; mesh );
++		OgreEntity( GraphicalWorld&amp; owningWorld, ::Ogre::SceneManager* sceneMgr, const String&amp; mesh );
+ 		virtual ~OgreEntity();
+ 
+ 		virtual ISkeleton* getSkeleton() const;
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreGeometryAccess.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreGeometryAccess.h	2005-11-09 23:16:18 UTC (rev 1129)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreGeometryAccess.h	2005-11-09 23:16:45 UTC (rev 1130)
+@@ -35,7 +35,7 @@
+ namespace graphics {
+ namespace ogre3d {
+ 
+-	class OgreMeshGeometryAccess : public IMeshGeometryAccess
++	class OgreMeshGeometryAccess : public IMeshGeometryAccess, public OgreWrappedObject
+ 	{
+ 	private:
+ 		Ogre::MeshPtr		mMesh;
+@@ -43,7 +43,7 @@
+ 		SubMeshMap			mSubmeshes;
+ 		SubmeshId			mLastId;
+ 	public:
+-		OgreMeshGeometryAccess( Ogre::MeshPtr&amp; mesh );
++		OgreMeshGeometryAccess( GraphicalWorld&amp; owningWorld, Ogre::MeshPtr&amp; mesh );
+ 		virtual ~OgreMeshGeometryAccess();
+ 
+ 		virtual SubmeshId createSubmesh();
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h	2005-11-09 23:16:18 UTC (rev 1129)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h	2005-11-09 23:16:45 UTC (rev 1130)
+@@ -31,10 +31,10 @@
+ namespace graphics {
+ namespace ogre3d {
+ 
+-	class OgreLight : public graphics::ILight
++	class OgreLight : public graphics::ILight, public OgreWrappedObject
+ 	{
+ 	public:
+-		OgreLight( Ogre::SceneManager* sceneMgr );
++		OgreLight( GraphicalWorld&amp; owningWorld, Ogre::SceneManager* sceneMgr );
+ 		virtual ~OgreLight();
+ 
+ 		virtual void setType( const LightType type );
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h	2005-11-09 23:16:18 UTC (rev 1129)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h	2005-11-09 23:16:45 UTC (rev 1130)
+@@ -32,10 +32,10 @@
+ namespace ogre3d {
+ 
+ 	class OgreEntity;
+-	class OgreNode : public graphics::ISceneNode
++	class OgreNode : public graphics::ISceneNode, public OgreWrappedObject
+ 	{
+ 	public:
+-		OgreNode( Ogre::SceneManager * sceneMgr, const String&amp; name = &quot;&quot; );
++		OgreNode( GraphicalWorld&amp; owningWorld, Ogre::SceneManager * sceneMgr, const String&amp; name = &quot;&quot; );
+ 		virtual ~OgreNode();
+ 
+ 		virtual void setPosition( const Vector3 &amp; position );
+@@ -73,10 +73,12 @@
+ 		virtual void detach( ILight* pLight );
+ 		virtual void detach( ICamera* pCamera );
+ 		virtual void detach( IParticleSystem* pPS );
++		virtual void detach( ISceneNode* pNode );
+ 
+-
+ 		Ogre::SceneNode* getSceneNode_() const
+ 		{ return mSceneNode; }
++		void _onAttached( OgreNode* );
++		void _onDetached();
+ 	protected:
+ 		typedef SceneNodePtrList NodeList;
+ 		NodeList			mChildren;
+@@ -87,6 +89,7 @@
+ 
+ 		Ogre::SceneNode* 	mSceneNode;
+ 		Ogre::SceneManager*	mSceneMgr;
++		OgreNode*			mParentNode;
+ 	};
+ 
+ }
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.h	2005-11-09 23:16:18 UTC (rev 1129)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.h	2005-11-09 23:16:45 UTC (rev 1130)
+@@ -30,10 +30,10 @@
+ namespace yake {
+ namespace graphics {
+ 
+-	class OgreParticleSystem : public graphics::IParticleSystem
++	class OgreParticleSystem : public graphics::IParticleSystem, public ogre3d::OgreWrappedObject
+ 	{
+ 	public:
+-		OgreParticleSystem( Ogre::ParticleSystemManager&amp; rPSMgr, const String&amp; rPSTemplateName );
++		OgreParticleSystem( ogre3d::GraphicalWorld&amp; owningWorld, Ogre::ParticleSystemManager&amp; rPSMgr, const String&amp; rPSTemplateName);
+ 		virtual ~OgreParticleSystem();
+ 
+ 		virtual void setVisible( bool visible );
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreSkeleton.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreSkeleton.h	2005-11-09 23:16:18 UTC (rev 1129)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreSkeleton.h	2005-11-09 23:16:45 UTC (rev 1130)
+@@ -31,10 +31,10 @@
+ namespace graphics {
+ namespace ogre3d {
+ 
+-	class OgreSkeleton : public graphics::ISkeleton
++	class OgreSkeleton : public graphics::ISkeleton, public OgreWrappedObject
+ 	{
+ 	public:
+-		OgreSkeleton( Ogre::Entity&amp; rEntity );
++		OgreSkeleton( Ogre::Entity&amp; rEntity, GraphicalWorld&amp; owningWorld );
+ 		virtual ~OgreSkeleton();
+ 
+ 		virtual void enableAnimation( const String&amp; rAnimName, bool enable );
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreViewport.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreViewport.h	2005-11-09 23:16:18 UTC (rev 1129)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreViewport.h	2005-11-09 23:16:45 UTC (rev 1130)
+@@ -33,10 +33,10 @@
+ 
+ 	class OgreCore;
+ 	class OgreCamera;
+-	class OgreViewport : public graphics::IViewport
++	class OgreViewport : public graphics::IViewport, public OgreWrappedObject
+ 	{
+ 	public:
+-		OgreViewport( OgreCore* pCore, OgreCamera* pCamera );
++		OgreViewport( OgreCore* pCore, OgreCamera* pCamera, GraphicalWorld&amp; owningWorld );
+ 
+ 		virtual ~OgreViewport();
+ 
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h	2005-11-09 23:16:18 UTC (rev 1129)
++++ trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h	2005-11-09 23:16:45 UTC (rev 1130)
+@@ -85,6 +85,9 @@
+ 		YAKE_MEMBERSIGNAL_FIRE_FN1( public, PreRender, real timeElapsed, timeElapsed )
+ 		YAKE_MEMBERSIGNAL_VIRTUALIMPL( public, void(real), PostRender )
+ 		YAKE_MEMBERSIGNAL_FIRE_FN1( public, PostRender, real timeElapsed, timeElapsed )
++
++		void reg( OgreWrappedObject* pO );
++		void unreg( OgreWrappedObject* pO );
+ 	private:
+ 		static OgreCore*		msCore;
+ 		typedef AssocVector&lt; String, Ogre::MeshPtr &gt; ProcMeshMap;
+@@ -94,6 +97,10 @@
+ 		typedef std::map&lt; Ogre::Entity*, OgreEntity* &gt; EntityMap;
+ 		EntityMap				mEntityMap;
+ 
++		typedef std::deque&lt; OgreWrappedObject* &gt; WrappedList;
++		WrappedList				mWrapped;
++		uint32					mLastWrappedId;
++
+ 		String					mCurrentShadowTechnique;
+ 		StringMap				mCurrentShadowTechniqueParams;
+ 	};
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/yakePCH.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/yakePCH.h	2005-11-09 23:16:18 UTC (rev 1129)
++++ trunk/yake/yake/plugins/graphicsOgre/yakePCH.h	2005-11-09 23:16:45 UTC (rev 1130)
+@@ -72,4 +72,20 @@
+ 	{ \
+ 	}
+ 
++namespace yake {
++	namespace graphics {
++		namespace ogre3d {
++			class GraphicalWorld;
++			struct OgreWrappedObject
++			{
++				OgreWrappedObject(GraphicalWorld&amp; owner);
++				virtual ~OgreWrappedObject();
++				GraphicalWorld&amp; getOwningWorld();
++			private:
++				mutable GraphicalWorld&amp;	mOwningWorld;
++			};
++		}
++	}
++}
++
+ #endif // __INC_PCH_H__
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000199.html">[Yake-svn] r1129 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+	<LI>Next message: <A HREF="000201.html">[Yake-svn] r1131 - trunk/yake/src/yake/samples/physics/demo
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#200">[ date ]</a>
+              <a href="thread.html#200">[ thread ]</a>
+              <a href="subject.html#200">[ subject ]</a>
+              <a href="author.html#200">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r973 - in trunk/yake/yake/plugins: graphicsOgre physicsNX physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r973%20-%20in%20trunk/yake/yake/plugins%3A%20graphicsOgre%20physicsNX%20physicsODE&In-Reply-To=%3C200509302144.j8ULiQQO008759%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000042.html">
+   <LINK REL="Next"  HREF="000044.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r973 - in trunk/yake/yake/plugins: graphicsOgre physicsNX physicsODE</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r973%20-%20in%20trunk/yake/yake/plugins%3A%20graphicsOgre%20physicsNX%20physicsODE&In-Reply-To=%3C200509302144.j8ULiQQO008759%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r973 - in trunk/yake/yake/plugins: graphicsOgre physicsNX physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:44:26 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000042.html">[Yake-svn] r972 - trunk/yake/yake/physics
+</A></li>
+        <LI>Next message: <A HREF="000044.html">[Yake-svn] r974 - trunk/yake/scripts/yapp
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#43">[ date ]</a>
+              <a href="thread.html#43">[ thread ]</a>
+              <a href="subject.html#43">[ subject ]</a>
+              <a href="author.html#43">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:44:25 +0200 (Fri, 30 Sep 2005)
+New Revision: 973
+
+Modified:
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.h
+   trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h
+   trunk/yake/yake/plugins/physicsNX/yakeActorNx.h
+   trunk/yake/yake/plugins/physicsNX/yakeJointNx.h
+   trunk/yake/yake/plugins/physicsODE/OdeActor.h
+Log:
+API enhancements
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.h	2005-09-30 21:44:02 UTC (rev 972)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.h	2005-09-30 21:44:25 UTC (rev 973)
+@@ -37,6 +37,13 @@
+ 		virtual ~OgreParticleSystem();
+ 
+ 		virtual void setVisible( bool visible );
++		virtual size_t getNumEmitters() const;
++		virtual void setEmissionRate( const size_t emitter, const real particlesPerSec );
++		virtual real getEmissionRate( const size_t emitter ) const;
++		virtual void setMinVelocity( const size_t emitter, const real vel );
++		virtual real getMinVelocity( const size_t emitter ) const;
++		virtual void setMaxVelocity( const size_t emitter, const real vel );
++		virtual real getMaxVelocity( const size_t emitter ) const;
+ 
+ 		Ogre::ParticleSystem* getParticleSystem_() const
+ 		{
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h	2005-09-30 21:44:02 UTC (rev 972)
++++ trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h	2005-09-30 21:44:25 UTC (rev 973)
+@@ -61,6 +61,8 @@
+ 		/** Render a single frame. */
+ 		void render( real timeElapsed );
+ 
++		virtual void setSkyBox( const String&amp; name );
++
+ 		virtual ISceneNode* createSceneNode( const String&amp; tag = &quot;&quot; );
+ 		virtual IEntity* createEntity(const String &amp; mesh);
+ 		virtual ILight* createLight();
+
+Modified: trunk/yake/yake/plugins/physicsNX/yakeActorNx.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsNX/yakeActorNx.h	2005-09-30 21:44:02 UTC (rev 972)
++++ trunk/yake/yake/plugins/physicsNX/yakeActorNx.h	2005-09-30 21:44:25 UTC (rev 973)
+@@ -42,6 +42,8 @@
+ 		ActorNx( NxScene &amp; rScene, WorldNx&amp; rWorld, bool bDynamic );
+ 		virtual ~ActorNx();
+ 
++		virtual IWorld* getCreator() const;
++
+ 		virtual IShape* createShape( const IShape::Desc &amp; rkShapeDesc );
+ 		virtual void destroyShape( IShape* pShape );
+ 		virtual IShapePtrList getShapes() const;
+
+Modified: trunk/yake/yake/plugins/physicsNX/yakeJointNx.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsNX/yakeJointNx.h	2005-09-30 21:44:02 UTC (rev 972)
++++ trunk/yake/yake/plugins/physicsNX/yakeJointNx.h	2005-09-30 21:44:25 UTC (rev 973)
+@@ -57,6 +57,10 @@
+ 		//virtual void addForce(const size_t axisIndex, const real force, const real duration = real(-1));
+ 		//virtual void addTorque(const size_t axisIndex, const real torque, const real duration = real(-1));
+ 		//
++		virtual void setSpring(real);
++		virtual real getSpring() const;
++		virtual void setDamping(real);
++		virtual real getDamping() const;
+ 		static JointNx* createFromDesc_( NxScene &amp; rScene, const IJoint::DescBase &amp; rkJointDesc );
+ 		static const Deque&lt;JointType&gt;&amp; getSupportedTypes_();
+ 		static const AssocVector&lt;NxJointType, JointType&gt;&amp; getNxJointMap();
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeActor.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeActor.h	2005-09-30 21:44:02 UTC (rev 972)
++++ trunk/yake/yake/plugins/physicsODE/OdeActor.h	2005-09-30 21:44:25 UTC (rev 973)
+@@ -17,6 +17,8 @@
+ 		IBody&amp; getBody() const;
+ 		IBody* getBodyPtr() const;
+ 
++		virtual IWorld* getCreator() const;
++
+ 		virtual void setPosition( const Vector3&amp; rPosition );
+ 		virtual void setOrientation( const Quaternion&amp; rOrientation );
+ 		virtual Vector3 getPosition() const;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000042.html">[Yake-svn] r972 - trunk/yake/yake/physics
+</A></li>
+	<LI>Next message: <A HREF="000044.html">[Yake-svn] r974 - trunk/yake/scripts/yapp
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#43">[ date ]</a>
+              <a href="thread.html#43">[ thread ]</a>
+              <a href="subject.html#43">[ subject ]</a>
+              <a href="author.html#43">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

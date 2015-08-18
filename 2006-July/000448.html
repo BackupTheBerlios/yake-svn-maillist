@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1380 - in trunk/yake/src/yapp/samples/model: . sync1
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1380%20-%20in%20trunk/yake/src/yapp/samples/model%3A%20.%20sync1&In-Reply-To=%3C200607052016.k65KGsHZ031065%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000447.html">
+   <LINK REL="Next"  HREF="000449.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1380 - in trunk/yake/src/yapp/samples/model: . sync1</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1380%20-%20in%20trunk/yake/src/yapp/samples/model%3A%20.%20sync1&In-Reply-To=%3C200607052016.k65KGsHZ031065%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1380 - in trunk/yake/src/yapp/samples/model: . sync1">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Jul  5 22:16:54 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000447.html">[Yake-svn] r1379 - trunk/yake/src/yapp/samples/base
+</A></li>
+        <LI>Next message: <A HREF="000449.html">[Yake-svn] r1381 - in trunk/yake/src/yapp/samples: gui/console misc/cmdrmayhem
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#448">[ date ]</a>
+              <a href="thread.html#448">[ thread ]</a>
+              <a href="subject.html#448">[ subject ]</a>
+              <a href="author.html#448">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-05 22:16:50 +0200 (Wed, 05 Jul 2006)
+New Revision: 1380
+
+Removed:
+   trunk/yake/src/yapp/samples/model/XODE/
+Modified:
+   trunk/yake/src/yapp/samples/model/sync1/yakeDemo.cpp
+Log:
+various fixes to get the samples (mostly) uptodate,
+deprecated a few samples
+
+Modified: trunk/yake/src/yapp/samples/model/sync1/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/model/sync1/yakeDemo.cpp	2006-07-05 20:16:32 UTC (rev 1379)
++++ trunk/yake/src/yapp/samples/model/sync1/yakeDemo.cpp	2006-07-05 20:16:50 UTC (rev 1380)
+@@ -31,10 +31,7 @@
+ //============================================================================
+ #include &lt;yapp/samples/model/yakePCH.h&gt;
+ #include &lt;yake/samples/graphics/pch.h&gt;
+-#include &lt;yapp/model/yakeGraphical.h&gt;
+-#include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/model/yakePhysical.h&gt;
+-#include &lt;yapp/model/yakeModelMovableLink.h&gt;
++#include &lt;yake/model/model.h&gt;
+ 
+ using namespace yake;
+ using namespace yake::graphics;
+@@ -194,15 +191,14 @@
+ 		}
+ 	}
+ 
+-
+-	class ModelLink_DynActorToMovable : public model::ModelLinkController&lt; physics::IActor &gt;
++	class ModelLink_DynActorToMovable: public ModelLink, public Updatable2&lt;uint32,real&gt;
+ 	{
+ 	public:
+ 		YAKE_DECLARE_CONCRETE( ModelLink_DynActorToMovable, &quot;yake.DynamicsActorToMovable&quot; );
+ 
+ 		ModelLink_DynActorToMovable(const real startTime = real(0.), const real interpTimeOffset = real(0.));
+ 
+-		virtual void update(real timeElapsed);
++		virtual void update( const uint32, const real timeElapsed );
+ 		void updateHistoryFromSource(real theTime);
+ 
+ 		typedef Signal1&lt; void(const Vector3 &amp;) &gt; PositionSignal;
+@@ -213,9 +209,14 @@
+ 		SignalConnection subscribeToPositionChanged( Movable* pMovable );
+ 		SignalConnection subscribeToOrientationChanged( Movable* pMovable );
+ 
++		void setSource(physics::IActor* );
++		physics::IActor* getSource() const;
++
+ 		typedef model::DynamicsMoveHistory MoveHistory;
+ 		//void addMove( const MoveHistory::Move&amp; move );
+ 	private:
++		physics::IActor*		mpSource;
++
+ 		MoveHistory				mMoveHistory;
+ 		real					mTime;
+ 		real					mInterpTimeOffset;
+@@ -228,15 +229,24 @@
+ 	};
+ 	ModelLink_DynActorToMovable::ModelLink_DynActorToMovable(const real startTime /*= real(0.)*/, const real interpTimeOffset /*= real(0.)*/) :
+ 		mTime(startTime),
+-		mInterpTimeOffset(interpTimeOffset)
++		mInterpTimeOffset(interpTimeOffset),
++		mpSource(0)
+ 	{
+ 	}
+-	void ModelLink_DynActorToMovable::update(real timeElapsed)
++	void ModelLink_DynActorToMovable::setSource(physics::IActor* source)
+ 	{
++		mpSource = source;
++	}
++	physics::IActor* ModelLink_DynActorToMovable::getSource() const
++	{
++		return mpSource;
++	}
++	void ModelLink_DynActorToMovable::update( const uint32, const real timeElapsed )
++	{
+ 		mTime += timeElapsed;
+-		const physics::IActor* pSource = getSource();
+-		Vector3 position = pSource ? pSource-&gt;getPosition() : Vector3::kZero;
+-		Quaternion orientation = pSource ? pSource-&gt;getOrientation() : Quaternion::kIdentity;
++		YAKE_ASSERT( mpSource );
++		Vector3 position = mpSource ? mpSource-&gt;getPosition() : Vector3::kZero;
++		Quaternion orientation = mpSource ? mpSource-&gt;getOrientation() : Quaternion::kIdentity;
+ 		mMoveHistory.interpolateTo( mTime + mInterpTimeOffset, position, orientation );
+ 
+ 		// fire signals if necessary
+@@ -275,7 +285,7 @@
+ } // ns model
+ } // ns yake
+ 
+-class TheApp : public yake::exapp::ExampleApplication
++class TheApp : public yake::exapp::ExampleApplication, public yake::model::CentralControllerBase
+ {
+ private:
+ 	Vector&lt; std::pair&lt;IViewport*,ICamera*&gt; &gt;	mVPs;
+@@ -285,8 +295,8 @@
+ 
+ 	struct Object
+ 	{
+-		SharedPtr&lt;model::complex::Model&gt;	mComplex;
+-		SharedPtr&lt;model::Graphical&gt;		mGraphical;
++		SharedPtr&lt;model::Model&gt;					mComplex;
++		SharedPtr&lt;model::Graphical&gt;				mGraphical;
+ 
+ 		physics::IActor*						mPhysical;
+ 		graphics::ISceneNode*					mpSN;
+@@ -338,7 +348,7 @@
+ 	}
+ 	void setupObject(Object&amp; obj)
+ 	{
+-		obj.mComplex.reset( new model::complex::Model() );
++		obj.mComplex.reset( new model::Model() );
+ 		using namespace model;
+ 
+ 		// Loading physical part
+@@ -347,14 +357,14 @@
+ 		obj.mPhysical-&gt;createShape( physics::IShape::BoxDesc(Vector3(1,1,1)) );
+ 		Physical* pP = new Physical();
+ 		pP-&gt;addActor( obj.mPhysical, &quot;root&quot; );
+-		obj.mComplex-&gt;addPhysical( SharedPtr&lt;Physical&gt;(pP), &quot;p_box&quot; );
++		obj.mComplex-&gt;addComponent( pP, &quot;p_box&quot; );
+ 
+ 		// Loading graphical part
+ 		obj.mGraphical.reset( new model::Graphical() );
+ 		YAKE_ASSERT( obj.mGraphical );
+ 
+ 		obj.mpSN = mGWorld-&gt;createSceneNode();
+-		obj.mGraphical-&gt;addSceneNode( obj.mpSN, false );
++		obj.mGraphical-&gt;addSceneNode( obj.mpSN, &quot;rootsn&quot;, false );
+ 		obj.mpSN-&gt;attachEntity( mGWorld-&gt;createEntity(&quot;box_1x1x1.mesh&quot;) );
+ 
+ 		// linking
+@@ -364,7 +374,9 @@
+ 			obj.mpLink-&gt;subscribeToPositionChanged( obj.mpSN );
+ 			obj.mpLink-&gt;subscribeToOrientationChanged( obj.mpSN );
+ 
+-			obj.mComplex-&gt;addLink( SharedPtr&lt;model::ModelLink&gt;( obj.mpLink ), &quot;body2scenenode&quot; );
++			obj.mComplex-&gt;addLink( obj.mpLink/*, &quot;body2scenenode&quot; */);
++
++			this-&gt;subscribeToGraphicsUpdate( Bind2(&amp;Object::Link::update,obj.mpLink) );
+ 		}
+ 
+ 		obj.mPostStepConn = mPWorld-&gt;subscribeToPostStep(
+@@ -467,10 +479,11 @@
+ 				{
+ 					mPWorld-&gt;step( physicsStepTime );
+ 					ptimeElapsed -= physicsStepTime;
++					triggerPhysicsUpdateSignal(0,physicsStepTime);
+ 				}
+ 
+ 				//// graphics: variable time step: as fast as possible
+-				obj.mComplex-&gt;updateGraphics( timeElapsed );
++				triggerGraphicsUpdateSignal(0,timeElapsed);
+ 				
+ 				mGWorld-&gt;render( timeElapsed );
+ 			}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000447.html">[Yake-svn] r1379 - trunk/yake/src/yapp/samples/base
+</A></li>
+	<LI>Next message: <A HREF="000449.html">[Yake-svn] r1381 - in trunk/yake/src/yapp/samples: gui/console misc/cmdrmayhem
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#448">[ date ]</a>
+              <a href="thread.html#448">[ thread ]</a>
+              <a href="subject.html#448">[ subject ]</a>
+              <a href="author.html#448">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1367 - trunk/yake/src/yake/plugins/scriptingLua
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1367%20-%20trunk/yake/src/yake/plugins/scriptingLua&In-Reply-To=%3C200607042111.k64LBeYO018345%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000434.html">
+   <LINK REL="Next"  HREF="000436.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1367 - trunk/yake/src/yake/plugins/scriptingLua</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1367%20-%20trunk/yake/src/yake/plugins/scriptingLua&In-Reply-To=%3C200607042111.k64LBeYO018345%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1367 - trunk/yake/src/yake/plugins/scriptingLua">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Jul  4 23:11:40 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000434.html">[Yake-svn] r1366 - in trunk/yake/scripts/msvc8: . plugins/graphics plugins/gui plugins/physics
+</A></li>
+        <LI>Next message: <A HREF="000436.html">[Yake-svn] r1368 - in trunk/yake: src/yake/net/detail src/yake/plugins/physicsODE yake/net
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#435">[ date ]</a>
+              <a href="thread.html#435">[ thread ]</a>
+              <a href="subject.html#435">[ subject ]</a>
+              <a href="author.html#435">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-04 23:11:40 +0200 (Tue, 04 Jul 2006)
+New Revision: 1367
+
+Modified:
+   trunk/yake/src/yake/plugins/scriptingLua/ScriptingSystemLua.cpp
+Log:
+Lua 5.1.1 compatibility
+
+Modified: trunk/yake/src/yake/plugins/scriptingLua/ScriptingSystemLua.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/scriptingLua/ScriptingSystemLua.cpp	2006-07-04 20:58:08 UTC (rev 1366)
++++ trunk/yake/src/yake/plugins/scriptingLua/ScriptingSystemLua.cpp	2006-07-04 21:11:40 UTC (rev 1367)
+@@ -56,7 +56,14 @@
+ 		if (IS_MASK_SET(libs, LUALIB_TABLE))
+ 			luaopen_table( mLuaState );
+ 		if (IS_MASK_SET(libs, LUALIB_IO))
+-			luaopen_io( mLuaState );
++		{
++			// See linit.c and the Lua mailing list for more information why
++			// we have to load the IO lib this way instead of via luaopen_io().
++			//luaopen_io( mLuaState ); &lt;= do *not* use.
++			lua_pushcfunction(mLuaState, luaopen_io);
++			lua_pushstring(mLuaState, &quot;io&quot;);
++			lua_call(mLuaState, 1, 0);
++		}
+ 		if (IS_MASK_SET(libs, LUALIB_STRING))
+ 			luaopen_string( mLuaState );
+ 		if (IS_MASK_SET(libs, LUALIB_MATH))
+@@ -81,7 +88,7 @@
+ 	void LuaVM::execute( const String &amp; rData )
+ 	{
+ 		if (mLuaState)
+-			lua_dostring( mLuaState, rData.c_str() );
++			luaL_dostring( mLuaState, rData.c_str() );
+ 	}
+ 
+ 	//------------------------------------------------------
+@@ -95,7 +102,7 @@
+ 
+ 		const String&amp; rFileName = pLuaScript-&gt;getData();
+ 
+-		lua_dofile( mLuaState, rFileName.c_str() ); 
++		luaL_dofile( mLuaState, rFileName.c_str() ); 
+ 	}
+ 
+ 	//------------------------------------------------------
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000434.html">[Yake-svn] r1366 - in trunk/yake/scripts/msvc8: . plugins/graphics plugins/gui plugins/physics
+</A></li>
+	<LI>Next message: <A HREF="000436.html">[Yake-svn] r1368 - in trunk/yake: src/yake/net/detail src/yake/plugins/physicsODE yake/net
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#435">[ date ]</a>
+              <a href="thread.html#435">[ thread ]</a>
+              <a href="subject.html#435">[ subject ]</a>
+              <a href="author.html#435">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

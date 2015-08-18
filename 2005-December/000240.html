@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1170 - trunk/yake/src/yapp/raf
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-December/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1170%20-%20trunk/yake/src/yapp/raf&In-Reply-To=%3C200512072225.jB7MPaJ4022182%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000239.html">
+   <LINK REL="Next"  HREF="000241.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1170 - trunk/yake/src/yapp/raf</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1170%20-%20trunk/yake/src/yapp/raf&In-Reply-To=%3C200512072225.jB7MPaJ4022182%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1170 - trunk/yake/src/yapp/raf">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Dec  7 23:25:36 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000239.html">[Yake-svn] r1169 - trunk/yake/src/yapp/plugins/ceguiOgreRendererAdapter
+</A></li>
+        <LI>Next message: <A HREF="000241.html">[Yake-svn] r1171 - trunk/yake/src/yapp/samples/gui/console
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#240">[ date ]</a>
+              <a href="thread.html#240">[ thread ]</a>
+              <a href="subject.html#240">[ subject ]</a>
+              <a href="author.html#240">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-12-07 23:25:35 +0100 (Wed, 07 Dec 2005)
+New Revision: 1170
+
+Modified:
+   trunk/yake/src/yapp/raf/yakeApplication.cpp
+Log:
+CEGUI support
+
+Modified: trunk/yake/src/yapp/raf/yakeApplication.cpp
+===================================================================
+--- trunk/yake/src/yapp/raf/yakeApplication.cpp	2005-12-07 22:25:15 UTC (rev 1169)
++++ trunk/yake/src/yapp/raf/yakeApplication.cpp	2005-12-07 22:25:35 UTC (rev 1170)
+@@ -27,6 +27,17 @@
+ #include &lt;yapp/raf/pch.h&gt;
+ #include &lt;yapp/raf/yakeApplicationState.h&gt;
+ #include &lt;yapp/raf/yakeApplication.h&gt;
++#if YAKE_RAF_USES_CEGUI == 1
++#include &lt;CEGUI/CEGUI.h&gt;
++#include &lt;CEGUI/CEGUISystem.h&gt;
++#include &lt;yapp/common/yakeCEGUIRendererAdapter.h&gt;
++#include &lt;yapp/common/yakeCEGUIHelpers.h&gt;
++#ifdef YAKE_DEBUG
++#	pragma comment(lib,&quot;CEGUIBase_d.lib&quot;)
++#else
++#	pragma comment(lib,&quot;CEGUIBase.lib&quot;)
++#endif
++#endif
+ 
+ namespace yake {
+ namespace raf {
+@@ -98,6 +109,11 @@
+ 	Application::Application() : 
+ 		mMachine( 0 ),
+ 		mMainState( 0 ),
++#if YAKE_RAF_USES_CEGUI == 1
++		mCeguiRendererAdapter( 0 ),
++		mCeguiMouseInputEnabled( false ),
++		mCeguiKeyboardInputEnabled( false ),
++#endif
+ 		mKeyboard( 0 ),
+ 		mKeyboardEventGenerator( 0 ),
+ 		mMouse( 0 ),
+@@ -153,6 +169,163 @@
+ 	void Application::initPhysics()
+ 	{
+ 	}
++#if YAKE_RAF_USES_CEGUI == 1
++	void Application::initCEGUI()
++	{
++		const String file = &quot;ceguiOgreRendererAdapter&quot;;
++		yake::base::Library* pDynLib = new yake::base::Library( file ); //@FIXME. MEMORY LEAK.
++		YAKE_ASSERT( pDynLib ).debug( &quot;Out of memory&quot; );
++
++		YAKE_LOG( &quot;Loading plugin &quot; + file );
++
++		yake::base::YakeDynLibStartPluginFn pfnStartPlugin = (yake::base::YakeDynLibStartPluginFn)pDynLib-&gt;getSymbol( &quot;dynlibStartPlugin&quot; );
++		YAKE_ASSERT( pfnStartPlugin ).debug( &quot;Cannot find export in dynamic library&quot; );
++
++		mCeguiRendererAdapter = static_cast&lt;ceguiadapter::RendererAdapterPlugin*&gt;(pfnStartPlugin());
++		YAKE_ASSERT( mCeguiRendererAdapter ).debug( &quot;Plugin startup function failed&quot; );
++
++		//
++		bool bRet = mCeguiRendererAdapter-&gt;initialise();
++		YAKE_ASSERT( bRet ).debug( &quot;Plugin initialization failed&quot; );
++
++		if (!bRet)
++		{
++			delete mCeguiRendererAdapter;
++			YAKE_EXCEPT(&quot;Could not initialize GUI (CEGUI)!&quot;);
++		}
++
++		//---- Stating CEGUI
++
++		YAKE_LOG( &quot;Initialising CEGUI...&quot; );
++		CEGUI::System* ceguiSys = new CEGUI::System( mCeguiRendererAdapter-&gt;getRenderer() );
++
++		using namespace CEGUI;
++
++		YAKE_LOG( &quot;Setting CEGUI logging level...&quot; );
++		Logger::getSingleton().setLoggingLevel( Informative );
++
++		try
++		{
++			YAKE_LOG( &quot;Loading scheme...&quot; );
++			// load scheme and set up defaults
++			SchemeManager::getSingleton().loadScheme((utf8*)&quot;TaharezLook.scheme&quot;);
++			System::getSingleton().setDefaultMouseCursor((utf8*)&quot;TaharezLook&quot;, (utf8*)&quot;MouseArrow&quot;);
++			CEGUI::MouseCursor::getSingleton().setImage(CEGUI::System::getSingleton().getDefaultMouseCursor());
++			System::getSingleton().setDefaultFont((utf8*)&quot;Tahoma-12&quot;);
++
++			WindowManager&amp; wmgr = WindowManager::getSingleton();
++
++			//Window* sheet = wmgr.loadWindowLayout( &quot;console.layout&quot; );
++			//System::getSingleton().setGUISheet(sheet);
++
++			//CEGUI::Window* pEditBoxWnd = CEGUI::WindowManager::getSingleton().getWindow((CEGUI::utf8*)&quot;/Console/Wnd/Edit&quot;);
++			//mEditBox = static_cast&lt;CEGUI::Editbox*&gt;(CEGUI::WindowManager::getSingleton().getWindow(&quot;/Console/Wnd/Edit&quot;));
++			//mListBox = static_cast&lt;CEGUI::Listbox*&gt;(CEGUI::WindowManager::getSingleton().getWindow(&quot;/Console/Wnd/List&quot;));
++		}
++		// catch to prevent exit (errors will be logged).
++		catch( CEGUI::Exception&amp; e)
++		{
++			YAKE_LOG( yake::String( &quot;CEGUI Exception: &quot; ) + e.getMessage().c_str() );
++			YAKE_EXCEPT(yake::String( &quot;Caught CEGUI Exception:\n&quot;) + e.getMessage().c_str() );
++		}
++	}
++	void Application::enableKeyboardInputForCEGUI(const bool yes)
++	{
++		if (!mKeyboardEventGenerator)
++			return;
++		if (mCeguiKeyboardInputEnabled &amp;&amp; !yes)
++		{
++			// disable
++			ConstDequeIterator&lt; SigConnList &gt; it( mCeguiKeyboardSigConn );
++			while (it.hasMoreElements())
++				it.getNext().disconnect();
++			mCeguiKeyboardSigConn.clear();
++		}
++		else if (!mCeguiKeyboardInputEnabled &amp;&amp; yes)
++		{
++			// enable
++			mCeguiKeyboardInputEnabled = true;
++			mCeguiKeyboardSigConn.push_back(
++				getKeyboardEventGenerator()-&gt;subscribeToKeyDown( Bind1( &amp;Application::onKeyDown, this ) ) );
++			mCeguiKeyboardSigConn.push_back(
++				getKeyboardEventGenerator()-&gt;subscribeToKeyUp( Bind1( &amp;Application::onKeyUp, this ) ) );
++		}
++	}
++	void Application::enableMouseInputForCEGUI(const bool yes)
++	{
++		if (!mMouseEventGenerator)
++			return;
++		if (mCeguiMouseInputEnabled &amp;&amp; !yes)
++		{
++			// disable
++			ConstDequeIterator&lt; SigConnList &gt; it( mCeguiMouseSigConn );
++			while (it.hasMoreElements())
++				it.getNext().disconnect();
++			mCeguiMouseSigConn.clear();
++		}
++		else if (!mCeguiMouseInputEnabled &amp;&amp; yes)
++		{
++			// enable
++			mCeguiMouseInputEnabled = true;
++			mCeguiMouseSigConn.push_back(
++				getMouseEventGenerator()-&gt;subscribeToMouseButtonDown( Bind1( &amp;Application::onMBDown, this ) ) );
++			mCeguiMouseSigConn.push_back(
++				getMouseEventGenerator()-&gt;subscribeToMouseButtonUp( Bind1( &amp;Application::onMBUp, this ) ) );
++			mCeguiMouseSigConn.push_back(
++				getMouseEventGenerator()-&gt;subscribeToMouseMoved( Bind1( &amp;Application::onMouseMoved, this ) ) );
++		}
++	}
++	void Application::enableInputForCEGUI(const bool keyb /*= true*/, const bool mouse /*= true*/)
++	{
++		enableKeyboardInputForCEGUI( keyb );
++		enableMouseInputForCEGUI( mouse );
++	}
++	void Application::onKeyDown( const yake::input::KeyboardEvent&amp; rEvent )
++	{
++		YAKE_ASSERT( mCeguiKeyboardInputEnabled ).debug(&quot;Callback should not be enabled!&quot;);
++		if (!mCeguiKeyboardInputEnabled)
++			return;
++		if (CEGUI::System::getSingletonPtr())
++		{
++			CEGUI::System::getSingleton().injectKeyDown( rEvent.keyCode );
++			long modifiers = getKeyboard()-&gt;isKeyDown(input::KC_LSHIFT) || getKeyboard()-&gt;isKeyDown(input::KC_RSHIFT) ? 1 : 0;
++			CEGUI::System::getSingleton().injectChar( getKeyChar( rEvent.keyCode, modifiers ) );
++		}
++	}
++	void Application::onKeyUp( const yake::input::KeyboardEvent&amp; rEvent )
++	{
++		YAKE_ASSERT( mCeguiKeyboardInputEnabled ).debug(&quot;Callback should not be enabled!&quot;);
++		if (!mCeguiKeyboardInputEnabled)
++			return;
++		if (CEGUI::System::getSingletonPtr())
++			CEGUI::System::getSingleton().injectKeyUp( rEvent.keyCode );
++	}
++	void Application::onMBDown( uint8 btn )
++	{
++		YAKE_ASSERT( mCeguiMouseInputEnabled ).debug(&quot;Callback should not be enabled!&quot;);
++		if (!mCeguiMouseInputEnabled)
++			return;
++		if (CEGUI::System::getSingletonPtr())
++			CEGUI::System::getSingleton().injectMouseButtonDown( convertYakeButtonToCegui( btn ) );
++	}
++	void Application::onMBUp( uint8 btn )
++	{
++		YAKE_ASSERT( mCeguiMouseInputEnabled ).debug(&quot;Callback should not be enabled!&quot;);
++		if (!mCeguiMouseInputEnabled)
++			return;
++		if (CEGUI::System::getSingletonPtr())
++			CEGUI::System::getSingleton().injectMouseButtonUp( convertYakeButtonToCegui( btn ) );
++	}
++	void Application::onMouseMoved( const Vector3&amp; rDelta )
++	{
++		YAKE_ASSERT( mCeguiMouseInputEnabled ).debug(&quot;Callback should not be enabled!&quot;);
++		if (!mCeguiMouseInputEnabled)
++			return;
++		const real scale = 1;
++		if (CEGUI::System::getSingletonPtr())
++			CEGUI::System::getSingleton().injectMouseMove( rDelta.x*scale, rDelta.y*scale );
++	}
++#endif
+ 	bool Application::initialise()
+ 	{
+ 		ApplicationConfiguration&amp; cfg = getConfiguration();
+@@ -181,6 +354,14 @@
+ 		if (!mPhysicsSystems.empty())
+ 			initPhysics();
+ 
++#if YAKE_RAF_USES_CEGUI == 1
++		// CEGUI
++		if (cfg.loadCEGUI())
++		{
++			initCEGUI();
++		}
++#endif
++
+ 		// application state machine
+ 		mMachine = new AppMachine( state::TH_RELAXED );
+ 		YAKE_ASSERT( mMachine );
+@@ -210,7 +391,15 @@
+ 			mMachine-&gt;exitAll();
+ 			YAKE_SAFE_DELETE( mMachine );
+ 		}
+-
++#if YAKE_RAF_USES_CEGUI == 1
++		if (mCeguiRendererAdapter)
++		{
++			if ( CEGUI::System::getSingletonPtr() )
++				delete CEGUI::System::getSingletonPtr();
++			mCeguiRendererAdapter-&gt;shutdown();
++			YAKE_SAFE_DELETE( mCeguiRendererAdapter );
++		}
++#endif
+ 		YAKE_SAFE_DELETE( mKeyboardEventGenerator );
+ 		YAKE_SAFE_DELETE( mMouseEventGenerator );
+ 		mInputSystems.clear();
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000239.html">[Yake-svn] r1169 - trunk/yake/src/yapp/plugins/ceguiOgreRendererAdapter
+</A></li>
+	<LI>Next message: <A HREF="000241.html">[Yake-svn] r1171 - trunk/yake/src/yapp/samples/gui/console
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#240">[ date ]</a>
+              <a href="thread.html#240">[ thread ]</a>
+              <a href="subject.html#240">[ subject ]</a>
+              <a href="author.html#240">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

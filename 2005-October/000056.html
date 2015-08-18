@@ -1,0 +1,371 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r986 - in trunk/yake/src/yake: physics plugins/physicsNX plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r986%20-%20in%20trunk/yake/src/yake%3A%20physics%20plugins/physicsNX%20plugins/physicsODE&In-Reply-To=%3C200510032318.j93NIHu2007527%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000057.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r986 - in trunk/yake/src/yake: physics plugins/physicsNX plugins/physicsODE</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r986%20-%20in%20trunk/yake/src/yake%3A%20physics%20plugins/physicsNX%20plugins/physicsODE&In-Reply-To=%3C200510032318.j93NIHu2007527%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r986 - in trunk/yake/src/yake: physics plugins/physicsNX plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Oct  4 01:18:17 CEST 2005</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000057.html">[Yake-svn] r987 - in trunk/yake/yake: physics plugins/physicsNX plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#56">[ date ]</a>
+              <a href="thread.html#56">[ thread ]</a>
+              <a href="subject.html#56">[ subject ]</a>
+              <a href="author.html#56">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-04 01:18:09 +0200 (Tue, 04 Oct 2005)
+New Revision: 986
+
+Modified:
+   trunk/yake/src/yake/physics/yakePhysicsAffectorZone.cpp
+   trunk/yake/src/yake/physics/yakePhysicsSystem.cpp
+   trunk/yake/src/yake/plugins/physicsNX/yakeActorNx.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeJoint.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+Log:
+patch 1309131 (slightly modified)
+
+Modified: trunk/yake/src/yake/physics/yakePhysicsAffectorZone.cpp
+===================================================================
+--- trunk/yake/src/yake/physics/yakePhysicsAffectorZone.cpp	2005-09-30 21:56:08 UTC (rev 985)
++++ trunk/yake/src/yake/physics/yakePhysicsAffectorZone.cpp	2005-10-03 23:18:09 UTC (rev 986)
+@@ -40,8 +40,7 @@
+ 		if (!mNeedsUpdate)
+ 			return;
+ 
+-		YAKE_ASSERT( mWorld );
+-		_determineAffectedBodies( mWorld );
++		_determineAffectedBodies();
+ 		
+ 		VectorIterator&lt;AffectorList&gt; itAff( mAffectors.begin(), mAffectors.end() );
+ 		while (itAff.hasMoreElements())
+@@ -49,10 +48,50 @@
+ 			itAff.getNext()-&gt;applyTo( mAffectedBodies, timeElapsed );
+ 		}
+ 	}
+-	void AffectorZone::_determineAffectedBodies( const SharedPtr&lt;IWorld&gt;&amp; pWorld )
++
++	void AffectorZone::setEnabled(bool enabled)
+ 	{
+-		YAKE_ASSERT( pWorld );
++		mEnabled = enabled;
+ 	}
+ 
++	bool AffectorZone::isEnabled() const
++	{
++		return mEnabled;
++	}
++
++	void AffectorZone::addAffector(SharedPtr&lt;IBodyAffector&gt; &amp;pAffector)
++	{
++		YAKE_ASSERT(pAffector);
++		mAffectors.push_back(pAffector);
++	}
++
++	void AffectorZoneManager::addAffectorZone(SharedPtr&lt;AffectorZone&gt; &amp;pSpace)
++	{
++		mZones.push_back(pSpace);
++	}
++
++	AffectorZoneManager::AffectorZoneManager(SharedPtr&lt;physics::IWorld&gt;&amp; pWorld) : mWorld(pWorld)
++	{
++		mStepSigConn = mWorld-&gt;subscribeToPreStepInternal( boost::bind(AffectorZoneManager::update, this, _1) );
++	}
++
++	AffectorZoneManager::~AffectorZoneManager()
++	{
++		mStepSigConn.disconnect();
++		mZones.clear();
++	}
++
++	void AffectorZoneManager::update(const real timeElapsed)
++	{
++		VectorIterator&lt;ZoneList&gt; itZone(mZones.begin(), mZones.end());
++		SharedPtr&lt;AffectorZone&gt; pZone;
++		while (itZone.hasMoreElements())
++		{
++			pZone = itZone.getNext();
++			if (pZone-&gt;isEnabled())
++				pZone-&gt;update(timeElapsed);
++		}
++	}
++
+ }
+ }
+
+Modified: trunk/yake/src/yake/physics/yakePhysicsSystem.cpp
+===================================================================
+--- trunk/yake/src/yake/physics/yakePhysicsSystem.cpp	2005-09-30 21:56:08 UTC (rev 985)
++++ trunk/yake/src/yake/physics/yakePhysicsSystem.cpp	2005-10-03 23:18:09 UTC (rev 986)
+@@ -46,12 +46,12 @@
+ 	BodyGroup::~BodyGroup()
+ 	{
+ 	}
+-	BodyGroup&amp; BodyGroup::operator += (SharedPtr&lt;IBody&gt; &amp; rBody)
++	BodyGroup&amp; BodyGroup::operator += (IBodyPtr rBody)
+ 	{
+ 		mBodies.push_back( rBody );
+ 		return *this;
+ 	}
+-	BodyGroup&amp; BodyGroup::operator -= (SharedPtr&lt;IBody&gt; &amp; rBody)
++	BodyGroup&amp; BodyGroup::operator -= (IBodyPtr rBody)
+ 	{
+ 		BodyVector::iterator itFind = std::find(mBodies.begin(), mBodies.end(), rBody );
+ 		if (itFind != mBodies.end())
+
+Modified: trunk/yake/src/yake/plugins/physicsNX/yakeActorNx.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsNX/yakeActorNx.cpp	2005-09-30 21:56:08 UTC (rev 985)
++++ trunk/yake/src/yake/plugins/physicsNX/yakeActorNx.cpp	2005-10-03 23:18:09 UTC (rev 986)
+@@ -154,7 +154,7 @@
+ 		}
+ 		return out;
+ 	}
+-	IShape* ActorNx::createShape( const IShape::Desc &amp; rkShapeDesc )
++	IShape* ActorNx::createShape( const IShape::Desc &amp; rkShapeDesc, real massOrDensity, IBody::quantityType type )
+ 	{
+ 		YAKE_ASSERT( mpNxActor ).error(&quot;Actor is invalid! Cannot create shape without a valid actor.&quot;);
+ 		if (!mpNxActor)
+@@ -228,8 +228,18 @@
+ 			mpNxDefaultShape = 0;
+ 		}
+ 
++		YAKE_ASSERT( mpBody || !(massOrDensity) ).warning( &quot;Attempt to set mass on nonexistant body!&quot; );
++
+ 		if (mpBody)
+-			mpNxActor-&gt;updateMassFromShapes( 1, 0 );
++		{
++			if (type == IBody::QT_MASS)
++				mpNxActor-&gt;updateMassFromShapes( 0.0f, mpBody-&gt;getMass() + massOrDensity );
++			else
++			{
++				YAKE_LOG_WARNING( &quot;Adding density in Novodex doesn't work very well.&quot; );
++				mpNxActor-&gt;updateMassFromShapes(  massOrDensity, 1.0f /*@fixme should be 0., not?*/ );
++			}
++		}
+ 
+ 		return mShapes.back().get();
+ 	}
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-09-30 21:56:08 UTC (rev 985)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-10-03 23:18:09 UTC (rev 986)
+@@ -175,6 +175,31 @@
+ 	}
+ 
+ 	//-----------------------------------------------------
++	IBody::MassDesc* OdeActor::createMassDescFromShapeDesc( IShape::Desc const&amp; rShapeDesc, real massOrDensity, IBody::quantityType qType )
++	{
++		IShape::Desc* pShapeDesc = &amp;const_cast&lt;IShape::Desc&amp;&gt;( rShapeDesc );
++		IBody::MassDesc* result;
++		
++		if ( IShape::SphereDesc* pSphereDesc = dynamic_cast&lt;IShape::SphereDesc*&gt;( pShapeDesc ) )
++		{
++			result = new IBody::SphereMassDesc( pSphereDesc-&gt;radius, massOrDensity, pSphereDesc-&gt;position, qType );
++		}
++		else if ( IShape::BoxDesc* pBoxDesc = dynamic_cast&lt;IShape::BoxDesc*&gt;( pShapeDesc ) )
++		{
++			result = new IBody::BoxMassDesc( pBoxDesc-&gt;dimensions.x, pBoxDesc-&gt;dimensions.y, pBoxDesc-&gt;dimensions.z, massOrDensity,
++				pBoxDesc-&gt;position, qType );
++		}
++		else if ( IShape::CapsuleDesc* pCapsuleDesc = dynamic_cast&lt;IShape::CapsuleDesc*&gt;( pShapeDesc ) )
++		{
++			result = new IBody::CapsuleMassDesc( pCapsuleDesc-&gt;radius, pCapsuleDesc-&gt;height, massOrDensity, pCapsuleDesc-&gt;position, qType );
++		}
++
++		YAKE_ASSERT( result != 0 ).warning( &quot;Unsupported shape type!&quot; );
++
++		return result;
++	}
++
++	//-----------------------------------------------------
+ 	bool operator == (const SharedPtr&lt;OdeGeom&gt;&amp; lhs, const OdeGeom* rhs)
+ 	{
+ 		return (lhs.get() == rhs);
+@@ -365,16 +390,28 @@
+ 	}
+ 	
+ 	//-----------------------------------------------------
+-	IShape* OdeActor::createShape( const IShape::Desc&amp; rShapeDesc )
++	IShape* OdeActor::createShape( const IShape::Desc&amp; rShapeDesc, real massOrDensity, IBody::quantityType type )
+ 	{
+ 		if ( mBody &amp;&amp; dynamic_cast&lt;const IShape::PlaneDesc*&gt;( &amp;rShapeDesc ) )
+ 			YAKE_ASSERT( false ).error( &quot;Attempted to attach immovable plane shape to movable actor!&quot; );
+ 			
+ 		OdeGeom* pShape = createShapeFromDesc( rShapeDesc );
+ 		YAKE_ASSERT( pShape );
++
++		YAKE_ASSERT( mBody || !(massOrDensity) ).warning( &quot;Attempt to set mass on nonexistant body!&quot; );
+ 		
+ 		if (mBody)
++		{
+ 			dGeomSetBody( pShape-&gt;_getOdeGeomID(), mBody-&gt;_getOdeBody()-&gt;id() );
++
++			if (massOrDensity)
++			{
++//@todo clean up! avoid new/delete either by using caches/pools or ...
++				IBody::MassDesc* desc = createMassDescFromShapeDesc( rShapeDesc, massOrDensity, type );
++				mBody-&gt;addMass( *desc );
++				delete desc;
++			}
++		}
+ 		
+ 		return pShape;
+ 	}
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2005-09-30 21:56:08 UTC (rev 985)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2005-10-03 23:18:09 UTC (rev 986)
+@@ -93,27 +93,47 @@
+ 		{
+ 			if ( const IBody::SphereMassDesc* sphereMassDesc = dynamic_cast&lt;const IBody::SphereMassDesc*&gt;( &amp;desc ) )
+ 			{
+-				dMassSetSphere( mass, sphereMassDesc-&gt;density, sphereMassDesc-&gt;radius );
++				if ( sphereMassDesc-&gt;qType == IBody::QT_DENSITY )
++					dMassSetSphere( mass, sphereMassDesc-&gt;quantity, sphereMassDesc-&gt;radius );
++				else
++					dMassSetSphereTotal( mass, sphereMassDesc-&gt;quantity, sphereMassDesc-&gt;radius );
+ 			}
+ 			else if ( const IBody::BoxMassDesc* boxMassDesc = dynamic_cast&lt;const IBody::BoxMassDesc*&gt;( &amp;desc ) )
+ 			{
+-				dMassSetBox( mass, boxMassDesc-&gt;density, boxMassDesc-&gt;sizeX, boxMassDesc-&gt;sizeY, boxMassDesc-&gt;sizeZ );
++				if ( boxMassDesc-&gt;qType == IBody::QT_DENSITY )
++					dMassSetBox( mass, boxMassDesc-&gt;quantity, boxMassDesc-&gt;sizeX, boxMassDesc-&gt;sizeY, boxMassDesc-&gt;sizeZ );
++				else
++					dMassSetBoxTotal( mass, boxMassDesc-&gt;quantity, boxMassDesc-&gt;sizeX, boxMassDesc-&gt;sizeY, boxMassDesc-&gt;sizeZ );
+ 			}
+ 			else if ( const IBody::CapsuleMassDesc* capsuleMassDesc = dynamic_cast&lt;const IBody::CapsuleMassDesc*&gt;( &amp;desc ) )
+ 			{
+-				dMassSetCappedCylinder( mass,
+-												capsuleMassDesc-&gt;density,
++				if ( capsuleMassDesc-&gt;qType == IBody::QT_DENSITY )
++					dMassSetCappedCylinder( mass,
++												capsuleMassDesc-&gt;quantity,
+ 												2, 							// along Y axis
+ 												capsuleMassDesc-&gt;radius,
+ 												capsuleMassDesc-&gt;length );
++				else
++					dMassSetCappedCylinderTotal( mass,
++												capsuleMassDesc-&gt;quantity,
++												2, 							// along Y axis
++												capsuleMassDesc-&gt;radius,
++												capsuleMassDesc-&gt;length );
+ 			}
+ 			else if ( const IBody::CylinderMassDesc* cylMassDesc = dynamic_cast&lt;const IBody::CylinderMassDesc*&gt;( &amp;desc ) )
+ 			{
+-				dMassSetCylinder( mass,
+-										cylMassDesc-&gt;density,
++				if ( cylMassDesc-&gt;qType == IBody::QT_DENSITY )
++					dMassSetCylinder( mass,
++										cylMassDesc-&gt;quantity,
+ 										2,							// along Y axis
+ 										cylMassDesc-&gt;radius,
+ 										cylMassDesc-&gt;length );
++				else
++					dMassSetCylinderTotal( mass,
++										cylMassDesc-&gt;quantity,
++										2,							// along Y axis
++										cylMassDesc-&gt;radius,
++										cylMassDesc-&gt;length );
+ 			}
+ 			else
+ 			{
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeJoint.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeJoint.cpp	2005-09-30 21:56:08 UTC (rev 985)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeJoint.cpp	2005-10-03 23:18:09 UTC (rev 986)
+@@ -141,9 +141,28 @@
+ 		case dJointTypeUniversal:
+ 		case dJointTypeBall:
+ 		default:
++			YAKE_ASSERT( 1==0 )(mOdeJoint-&gt;getType()).warning(&quot;OdeJoint::_applySpring() not implemented for this type!&quot;);
+ 			break;
+ 		}
+ 	}
++	void OdeJoint::setSpring(real spring)
++	{
++		mSpringConstant = spring;
++		_applySpring();
++	}
++	real OdeJoint::getSpring() const
++	{
++		return mSpringConstant;
++	}
++	void OdeJoint::setDamping(real damping)
++	{
++		mDampingConstant = damping;
++		_applySpring();
++	}
++	real OdeJoint::getDamping() const
++	{
++		return mDampingConstant;
++	}
+ 
+ } // physics
+ } // yake
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-09-30 21:56:08 UTC (rev 985)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-10-03 23:18:09 UTC (rev 986)
+@@ -310,6 +310,9 @@
+ 
+ 				//mOdeWorld-&gt;step( mStepSize );
+ 				//mOdeWorld-&gt;stepFast1( mStepSize, 4 );
++
++				firePreStepInternal(mStepSize);
++
+ 				dWorldQuickStep( mOdeWorld-&gt;id(), mStepSize );
+ 				//dWorldStepFast1( mOdeWorld-&gt;id(), mStepSize, 4 );
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000057.html">[Yake-svn] r987 - in trunk/yake/yake: physics plugins/physicsNX plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#56">[ date ]</a>
+              <a href="thread.html#56">[ thread ]</a>
+              <a href="subject.html#56">[ subject ]</a>
+              <a href="author.html#56">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

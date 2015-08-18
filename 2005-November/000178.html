@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1108 - trunk/yake/src/yake/samples/physics/demo
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1108%20-%20trunk/yake/src/yake/samples/physics/demo&In-Reply-To=%3C200511022136.jA2LaUG5031965%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000177.html">
+   <LINK REL="Next"  HREF="000179.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1108 - trunk/yake/src/yake/samples/physics/demo</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1108%20-%20trunk/yake/src/yake/samples/physics/demo&In-Reply-To=%3C200511022136.jA2LaUG5031965%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1108 - trunk/yake/src/yake/samples/physics/demo">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  2 22:36:30 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000177.html">[Yake-svn] r1107 - trunk/yake/scripts/msvc71
+</A></li>
+        <LI>Next message: <A HREF="000179.html">[Yake-svn] r1109 - trunk/yake/scripts/msvc71/samples/misc
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#178">[ date ]</a>
+              <a href="thread.html#178">[ thread ]</a>
+              <a href="subject.html#178">[ subject ]</a>
+              <a href="author.html#178">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-02 22:36:30 +0100 (Wed, 02 Nov 2005)
+New Revision: 1108
+
+Modified:
+   trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+Log:
+physicsNX is now the (optional) secondary plugin, physicsODE the primary one.
+
+Modified: trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2005-11-02 21:36:06 UTC (rev 1107)
++++ trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2005-11-02 21:36:30 UTC (rev 1108)
+@@ -240,25 +240,25 @@
+ 
+ 	// physics 1
+ 
+-	SharedPtr&lt;base::Library&gt; pLib = loadLib(&quot;physicsNX&quot; );
++	SharedPtr&lt;base::Library&gt; pLib = loadLib(&quot;physicsOde&quot; );
+ 	YAKE_ASSERT( pLib ).debug(&quot;Cannot load physics plugin 1.&quot;);
+ 
+-	mPhysics1 = create&lt; physics::IPhysicsSystem &gt;(&quot;nx&quot;);
+-	YAKE_ASSERT( mPhysics1 ).debug(&quot;Cannot create physics system 1.&quot;);
++	mPhysics2 = create&lt; physics::IPhysicsSystem &gt;(&quot;ode&quot;);
++	YAKE_ASSERT( mPhysics2 ).debug(&quot;Cannot create physics system 1.&quot;);
+ 
+-	mPWorld1 = mPhysics1-&gt;createWorld();
+-	YAKE_ASSERT( mPWorld1 ).debug(&quot;Cannot create world 1.&quot;);
++	mPWorld2 = mPhysics2-&gt;createWorld();
++	YAKE_ASSERT( mPWorld2 ).debug(&quot;Cannot create world 1.&quot;);
+ 
+ 	// physics 2
+ #ifdef USE_SECOND_PHYSICS_PLUGIN
+-	pLib = loadLib(&quot;physicsOde&quot; );
++	pLib = loadLib(&quot;physicsNX&quot; );
+ 	YAKE_ASSERT( pLib ).debug(&quot;Cannot load physics plugin 2.&quot;);
+ 
+-	mPhysics2 = create&lt; physics::IPhysicsSystem &gt;(&quot;ode&quot;);
+-	YAKE_ASSERT( mPhysics2 ).debug(&quot;Cannot create physics system 2.&quot;);
++	mPhysics1 = create&lt; physics::IPhysicsSystem &gt;(&quot;nx&quot;);
++	YAKE_ASSERT( mPhysics1 ).debug(&quot;Cannot create physics system 2.&quot;);
+ 
+-	mPWorld2 = mPhysics2-&gt;createWorld();
+-	YAKE_ASSERT( mPWorld2 ).debug(&quot;Cannot create world 2.&quot;);
++	mPWorld1 = mPhysics1-&gt;createWorld();
++	YAKE_ASSERT( mPWorld1 ).debug(&quot;Cannot create world 2.&quot;);
+ #endif
+ 	// graphics
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000177.html">[Yake-svn] r1107 - trunk/yake/scripts/msvc71
+</A></li>
+	<LI>Next message: <A HREF="000179.html">[Yake-svn] r1109 - trunk/yake/scripts/msvc71/samples/misc
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#178">[ date ]</a>
+              <a href="thread.html#178">[ thread ]</a>
+              <a href="subject.html#178">[ subject ]</a>
+              <a href="author.html#178">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1290 - trunk/yake/yake/statemachine
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1290%20-%20trunk/yake/yake/statemachine&In-Reply-To=%3C200603162232.k2GMWwwp018968%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000359.html">
+   <LINK REL="Next"  HREF="000361.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1290 - trunk/yake/yake/statemachine</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1290%20-%20trunk/yake/yake/statemachine&In-Reply-To=%3C200603162232.k2GMWwwp018968%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1290 - trunk/yake/yake/statemachine">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Mar 16 23:32:58 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000359.html">[Yake-svn] r1289 - trunk/yake/yake/msg
+</A></li>
+        <LI>Next message: <A HREF="000361.html">[Yake-svn] r1291 - trunk/yake/src/yake/samples/msg/sampleMsg1
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#360">[ date ]</a>
+              <a href="thread.html#360">[ thread ]</a>
+              <a href="subject.html#360">[ subject ]</a>
+              <a href="author.html#360">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-16 23:32:58 +0100 (Thu, 16 Mar 2006)
+New Revision: 1290
+
+Modified:
+   trunk/yake/yake/statemachine/fsm_oo_machine.h
+Log:
+const correctness
+
+Modified: trunk/yake/yake/statemachine/fsm_oo_machine.h
+===================================================================
+--- trunk/yake/yake/statemachine/fsm_oo_machine.h	2006-03-16 22:31:52 UTC (rev 1289)
++++ trunk/yake/yake/statemachine/fsm_oo_machine.h	2006-03-16 22:32:58 UTC (rev 1290)
+@@ -43,9 +43,9 @@
+ 		{
+ 		}
+ 
+-		void addState(const state_type);
+-		void addTransition(const state_type, const event_type&amp;, const state_type);
+-		void setState(const state_type);
++		void addState(state_type);
++		void addTransition(state_type, const event_type&amp;, state_type);
++		void setState(state_type);
+ 		void processEvent(const event_type&amp; evt);
+ 		const state_type&amp; current() const
+ 		{ return machine_.current(); }
+@@ -73,17 +73,17 @@
+ 		state-&gt;onExit();
+ 	}
+ 	template&lt;typename _state_class_type, typename _event_type&gt;
+-	void oomachine&lt;_state_class_type,_event_type&gt;::addState(const state_type s)
++	void oomachine&lt;_state_class_type,_event_type&gt;::addState(state_type s)
+ 	{
+ 		machine_.addState(s);
+ 	}
+ 	template&lt;typename _state_class_type, typename _event_type&gt;
+-	void oomachine&lt;_state_class_type,_event_type&gt;::addTransition(const state_type from, const event_type&amp; ev, const state_type to)
++	void oomachine&lt;_state_class_type,_event_type&gt;::addTransition(state_type from, const event_type&amp; ev, state_type to)
+ 	{
+ 		machine_.addTransition( from, ev, to );
+ 	}
+ 	template&lt;typename _state_class_type, typename _event_type&gt;
+-	void oomachine&lt;_state_class_type,_event_type&gt;::setState(const state_type s)
++	void oomachine&lt;_state_class_type,_event_type&gt;::setState(state_type s)
+ 	{
+ 		if (machine_.current())
+ 			fnExit_( machine_, machine_.current() );
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000359.html">[Yake-svn] r1289 - trunk/yake/yake/msg
+</A></li>
+	<LI>Next message: <A HREF="000361.html">[Yake-svn] r1291 - trunk/yake/src/yake/samples/msg/sampleMsg1
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#360">[ date ]</a>
+              <a href="thread.html#360">[ thread ]</a>
+              <a href="subject.html#360">[ subject ]</a>
+              <a href="author.html#360">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1016 - in trunk/yake/scripts: yake/plugins/physics yapp
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1016%20-%20in%20trunk/yake/scripts%3A%20yake/plugins/physics%20yapp&In-Reply-To=%3C200510122225.j9CMPQuP013729%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000086.html">
+   <LINK REL="Next"  HREF="000088.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1016 - in trunk/yake/scripts: yake/plugins/physics yapp</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1016%20-%20in%20trunk/yake/scripts%3A%20yake/plugins/physics%20yapp&In-Reply-To=%3C200510122225.j9CMPQuP013729%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1016 - in trunk/yake/scripts: yake/plugins/physics yapp">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Oct 13 00:25:26 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000086.html">[Yake-svn] r1015 - trunk/yake/src/yapp/samples/base/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000088.html">[Yake-svn] r1017 - trunk/yake/common/media/vehicles
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#87">[ date ]</a>
+              <a href="thread.html#87">[ thread ]</a>
+              <a href="subject.html#87">[ subject ]</a>
+              <a href="author.html#87">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-13 00:25:25 +0200 (Thu, 13 Oct 2005)
+New Revision: 1016
+
+Modified:
+   trunk/yake/scripts/yake/plugins/physics/physicsODE.vcproj
+   trunk/yake/scripts/yapp/vehicle.vcproj
+Log:
+
+
+Modified: trunk/yake/scripts/yake/plugins/physics/physicsODE.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/plugins/physics/physicsODE.vcproj	2005-10-12 22:25:05 UTC (rev 1015)
++++ trunk/yake/scripts/yake/plugins/physics/physicsODE.vcproj	2005-10-12 22:25:25 UTC (rev 1016)
+@@ -208,6 +208,9 @@
+ 			&lt;File
+ 				RelativePath=&quot;..\..\..\..\yake\plugins\physicsODE\yakePCH.h&quot;&gt;
+ 			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\yake\plugins\physicsODE\yakePrerequisites.h&quot;&gt;
++			&lt;/File&gt;
+ 		&lt;/Filter&gt;
+ 	&lt;/Files&gt;
+ 	&lt;Globals&gt;
+
+Modified: trunk/yake/scripts/yapp/vehicle.vcproj
+===================================================================
+--- trunk/yake/scripts/yapp/vehicle.vcproj	2005-10-12 22:25:05 UTC (rev 1015)
++++ trunk/yake/scripts/yapp/vehicle.vcproj	2005-10-12 22:25:25 UTC (rev 1016)
+@@ -20,7 +20,7 @@
+ 			&lt;Tool
+ 				Name=&quot;VCCLCompilerTool&quot;
+ 				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl&quot;
++				AdditionalIncludeDirectories=&quot;../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl;../../dependencies/ode/include&quot;
+ 				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_CONSOLE;YAKE_VEHICLE_EXPORTS&quot;
+ 				MinimalRebuild=&quot;TRUE&quot;
+ 				BasicRuntimeChecks=&quot;3&quot;
+@@ -38,7 +38,7 @@
+ 				AdditionalDependencies=&quot;base.lib physics.lib data.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib&quot;
++				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib;../../dependencies/ode/lib&quot;
+ 				GenerateDebugInformation=&quot;TRUE&quot;
+ 				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+ 				SubSystem=&quot;1&quot;
+@@ -73,7 +73,7 @@
+ 			CharacterSet=&quot;2&quot;&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl&quot;
++				AdditionalIncludeDirectories=&quot;../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl;../../dependencies/ode/include&quot;
+ 				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE;YAKE_VEHICLE_EXPORTS&quot;
+ 				RuntimeLibrary=&quot;2&quot;
+ 				RuntimeTypeInfo=&quot;TRUE&quot;
+@@ -89,7 +89,7 @@
+ 				AdditionalDependencies=&quot;base.lib physics.lib data.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib&quot;
++				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib;../../dependencies/ode/lib&quot;
+ 				GenerateDebugInformation=&quot;TRUE&quot;
+ 				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+ 				SubSystem=&quot;1&quot;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000086.html">[Yake-svn] r1015 - trunk/yake/src/yapp/samples/base/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000088.html">[Yake-svn] r1017 - trunk/yake/common/media/vehicles
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#87">[ date ]</a>
+              <a href="thread.html#87">[ thread ]</a>
+              <a href="subject.html#87">[ subject ]</a>
+              <a href="author.html#87">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

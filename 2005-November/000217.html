@@ -1,0 +1,767 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1147 - in trunk/yake/src/yapp/samples: base/vehicle model/XODE model/dotLink
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1147%20-%20in%20trunk/yake/src/yapp/samples%3A%20base/vehicle%20model/XODE%20model/dotLink&In-Reply-To=%3C200511100035.jAA0ZWxv020008%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000216.html">
+   <LINK REL="Next"  HREF="000218.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1147 - in trunk/yake/src/yapp/samples: base/vehicle model/XODE model/dotLink</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1147%20-%20in%20trunk/yake/src/yapp/samples%3A%20base/vehicle%20model/XODE%20model/dotLink&In-Reply-To=%3C200511100035.jAA0ZWxv020008%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1147 - in trunk/yake/src/yapp/samples: base/vehicle model/XODE model/dotLink">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov 10 01:35:32 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000216.html">[Yake-svn] r1146 - trunk/yake/src/yapp/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000218.html">[Yake-svn] r1148 - trunk/yake/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#217">[ date ]</a>
+              <a href="thread.html#217">[ thread ]</a>
+              <a href="subject.html#217">[ subject ]</a>
+              <a href="author.html#217">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-10 01:35:06 +0100 (Thu, 10 Nov 2005)
+New Revision: 1147
+
+Modified:
+   trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp
+   trunk/yake/src/yapp/samples/model/XODE/yakeXODELoaderDemo.cpp
+   trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp
+Log:
+patch 1350326 by mj (reformatted by psy)
+
+Modified: trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp	2005-11-10 00:31:07 UTC (rev 1146)
++++ trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp	2005-11-10 00:35:06 UTC (rev 1147)
+@@ -14,7 +14,7 @@
+ struct TheConfiguration : public raf::ApplicationConfiguration
+ {
+ 	virtual StringVector getLibraries()
+-	{ return MakeStringVector() &lt;&lt; &quot;graphicsOgre&quot; &lt;&lt; &quot;inputOgre&quot; &lt;&lt; &quot;physicsOde&quot;; }
++	{ return MakeStringVector() &lt;&lt; &quot;graphicsOgre&quot; &lt;&lt; &quot;inputOgre&quot; &lt;&lt; &quot;physicsODE&quot;; }
+ 
+ 	//virtual StringVector getScriptingSystems()
+ 	//{ return MakeStringVector() &lt;&lt; &quot;lua&quot;; }
+@@ -49,13 +49,16 @@
+ 	{
+ 		enableInstantQuitByKey( input::KC_ESCAPE );
+ 	}
++
+ 	~TheMainState()
+ 	{
+ 	}
++
+ private:
+ 	void _createThrusterVisual(const String&amp; mtPtId, const String&amp; engineId, graphics::ISceneNode&amp; parentSN)
+ 	{
+-		graphics::ISceneNode* pSN = parentSN.createChildNode();
++		graphics::ISceneNode* pSN = parentSN.createChildNode( mtPtId );
++
+ 		graphics::IParticleSystem* pPS = getGraphicalWorld()-&gt;createParticleSystem(&quot;thruster2&quot;);
+ 		pSN-&gt;attachParticleSystem( pPS );
+ 		mComplex-&gt;addLink( mVehicle-&gt;getMountPoint(mtPtId), pSN );
+@@ -71,6 +74,7 @@
+ 		mComplex-&gt;addLink( mVehicle-&gt;getWheelInterface(wheelId), pSN );
+ 	}
+ protected:
++
+ 	virtual void onCreateScene()
+ 	{
+ 		YAKE_LOG_INFORMATION(&quot;Creating scene&quot;);
+@@ -81,7 +85,7 @@
+ 		pLight-&gt;setDirection( Vector3(0,-1,1) );
+ 		getGraphicalWorld()-&gt;createSceneNode(&quot;lightnode0&quot;)-&gt;attachLight( pLight );
+ 
+-		// position camera and look at the ninja
++		// position camera and look at the razor
+ 		getDefaultCamera()-&gt;setNearClipDistance( 1 );
+ 		getDefaultCamera()-&gt;setFixedYawAxis(Vector3::kUnitY);
+ 		getDefaultCamera()-&gt;setPosition(Vector3(0,0,-40));
+@@ -101,6 +105,8 @@
+ 			pG-&gt;addSceneNode( pGroundSN );
+ 			mGround-&gt;addGraphical( pG );
+ 
++			getPhysicalWorld()-&gt;setGlobalGravity( Vector3( 0, -9.81, 0 ) ); 
++
+ 			// physical
+ 			physics::IActorPtr pGroundPlane = getPhysicalWorld()-&gt;createActor( physics::ACTOR_STATIC );
+ 			pGroundPlane-&gt;createShape( physics::IShape::PlaneDesc( Vector3(0,1,0), -10 ) );
+@@ -157,11 +163,12 @@
+ 
+ 		// create visuals
+ 		// - ship body
+-		graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode(&quot;root&quot;);
++		graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode( &quot;root&quot; );
+ 		pSN-&gt;attachEntity( getGraphicalWorld()-&gt;createEntity(&quot;razor.mesh&quot;) );
+ 		pSN-&gt;setScale( Vector3::kUnitScale * razorMeshScale );
+ 		pG-&gt;addSceneNode(pSN);
+ 
++		YAKE_LOG( &quot;Creating thruster visuals&quot; );
+ 		// - thruster visuals
+ 		_createThrusterVisual( &quot;left&quot;, &quot;left&quot;, *pSN );
+ 		_createThrusterVisual( &quot;right&quot;, &quot;right&quot;, *pSN );
+@@ -183,6 +190,7 @@
+ 		// sky box
+ 		getGraphicalWorld()-&gt;setSkyBox(&quot;Examples/SpaceSkyBox&quot;);
+ 	}
++
+ 	virtual void onDestroyScene()
+ 	{
+ 		YAKE_SAFE_DELETE( mGround );
+@@ -190,6 +198,7 @@
+ 		YAKE_SAFE_DELETE( mComplex );
+ 		YAKE_SAFE_DELETE( mVehicle );
+ 	}
++
+ 	virtual void onEnter()
+ 	{
+ 		RtMainState::onEnter();
+@@ -227,9 +236,11 @@
+ 			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_PGUP, KAM_CONTINUOUS ) );
+ 		mActionMap.subscribeToActionId( ACTIONID_UP, boost::bind(&amp;TheMainState::onUp,this) );
+ 	}
++
+ 	virtual void onExit()
+ 	{
+ 	}
++
+ 	virtual void onFrame(const real timeElapsed)
+ 	{
+ 		mActionMap.update();
+@@ -277,10 +288,13 @@
+ protected:
+ 	void onStrafeLeft()
+ 	{ mActiveActions.insert( input::ACTIONID_STRAFE_LEFT ); }
++
+ 	void onStrafeRight()
+ 	{ mActiveActions.insert( input::ACTIONID_STRAFE_RIGHT ); }
++
+ 	void onForward()
+ 	{ mActiveActions.insert( input::ACTIONID_FORWARD ); }
++
+ 	void onReverse()
+ 	{ mActiveActions.insert( input::ACTIONID_REVERSE ); }
+ 	void onUp()
+@@ -297,6 +311,7 @@
+ 		mEmitterEmissionRate[ engineId ] = ps.getEmissionRate(0);
+ 		mThrusterPs[ engineId ] = &ps;
+ 	}
++
+ 	void _updateThrusterPs()
+ 	{
+ 		ConstDequeIterator&lt; ThrusterPsMap &gt; itM( mThrusterPs );
+@@ -317,6 +332,7 @@
+ 			ps-&gt;setMinVelocity( 0, vel );
+ 		}
+ 	}
++
+ private:
+ 	model::complex::Model*	mGround;
+ 	vehicle::IVehicle*		mVehicle;
+
+Modified: trunk/yake/src/yapp/samples/model/XODE/yakeXODELoaderDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/model/XODE/yakeXODELoaderDemo.cpp	2005-11-10 00:31:07 UTC (rev 1146)
++++ trunk/yake/src/yapp/samples/model/XODE/yakeXODELoaderDemo.cpp	2005-11-10 00:35:06 UTC (rev 1147)
+@@ -1,28 +1,28 @@
+ /*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright  2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
++------------------------------------------------------------------------------------
++This file is part of YAKE
++Copyright  2004 The YAKE Team
++For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++------------------------------------------------------------------------------------
++This program is free software; you can redistribute it and/or modify it under
++the terms of the GNU Lesser General Public License as published by the Free Software
++Foundation; either version 2 of the License, or (at your option) any later
++version.
+ 
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++This program is distributed in the hope that it will be useful, but WITHOUT
++ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+ 
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
++You should have received a copy of the GNU Lesser General Public License along with
++this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++<A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++------------------------------------------------------------------------------------
++If you are interested in another license model contact the Yake Team via
++E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++For more information see the LICENSE file in the root directory of the
++source code distribution.
++------------------------------------------------------------------------------------
+ */
+ 
+ //============================================================================
+@@ -31,6 +31,7 @@
+ #include &lt;yapp/samples/model/yakePCH.h&gt;
+ #include &lt;yapp/model/yakePhysical.h&gt;
+ #include &lt;yapp/loader/yakeXODEParser.h&gt;
++#include &lt;yapp/model/yakePhysicalDataImporter.h&gt;
+ 
+ using namespace yake;
+ using namespace yake::base::templates;
+@@ -38,21 +39,19 @@
+ 
+ class TheApp : public yake::exapp::ExampleApplication
+ {
+-	YAKE_DECLARE_CLASS( TheApp );
+ private:
+-	SharedPtr&lt;physics::IWorld&gt;			mPWorld;
++	SharedPtr&lt;physics::IWorld&gt;	mPWorld;
++	model::Physical* 		mPhysical;
++	String				mWorldFilename;
+ 
+-	model::Physical* 						mPhysical;
+-	
+-	String	mWorldFilename;
+ public:
+ 	TheApp( const String filename ) : ExampleApplication(   false /*graphics*/,
+-								true /*physics*/,
+-								false /*scripting*/,
+-								false /*input*/,
+-								false /*script bindings*/,
+-								false /*audio*/),
+-								mWorldFilename( filename )
++		true /*physics*/,
++		false /*scripting*/,
++		false /*input*/,
++		false /*script bindings*/,
++		false /*audio*/),
++		mWorldFilename( filename )
+ 	{
+ 	}
+ 
+@@ -60,19 +59,29 @@
+ 	{
+ 		mPhysical = new model::Physical();
+ 		YAKE_ASSERT( mPhysical );
+-		
++
+ 		yake::data::dom::xml::XmlSerializer ser;
+ 		ser.parse( mWorldFilename, false );
+ 		YAKE_ASSERT( ser.getDocumentNode() );
+ 
+-		
+-		parser::xode::XODEParserV1 parser( *mPhysical );
+-		parser.load( ser.getDocumentNode() , mPWorld.get() );
++		parser::xode::XODEParserV1 parser;
++
++		using namespace yake::model;
++
++		XODEListener listener( *mPhysical, mPWorld.get() );
++
++		parser.subscribeToBodySignal( Bind1( &amp;XODEListener::processBody, &amp;listener ) );
++		parser.subscribeToGeomSignal( Bind1( &amp;XODEListener::processGeom, &amp;listener ) );
++		parser.subscribeToMaterialSignal( Bind1( &amp;XODEListener::processMaterial, &amp;listener ) );
++		parser.subscribeToMassSignal( Bind1( &amp;XODEListener::processMass, &amp;listener ) );
++		parser.subscribeToJointSignal( Bind1( &amp;XODEListener::processJoint, &amp;listener ) );
++		parser.subscribeToParseEndedSignal( Bind0( &amp;XODEListener::postprocess, &amp;listener ) );
++
++		parser.load( ser.getDocumentNode() );
+ 	}
+ 
+ 	virtual void run()
+ 	{
+-		YAKE_DECLARE_FUNCTION( run );
+ 		// physics
+ 		mPWorld = getPhysicsSystem().createWorld();
+ 		YAKE_ASSERT( mPWorld );
+@@ -80,8 +89,8 @@
+ 		// objects
+ 		setupWorld();
+ 
+-		std::cout &lt;&lt; &quot;World was all set up!&quot; &lt;&lt; std::endl;
+-		YAKE_LOG(&quot;Running simulation...&quot;);
++		YAKE_LOG( &quot;World was all set up!&quot; );
++		YAKE_LOG( &quot;Running simulation...&quot; );
+ 
+ 		// main loop
+ 		real lastTime = base::native::getTime();
+@@ -100,9 +109,10 @@
+ 			if ( !shutdownRequested() )
+ 				mPWorld-&gt;step( timeElapsed );
+ 		}
++
+ 		YAKE_LOG(&quot;...done!&quot;);
+ 
+-		std::cout &lt;&lt; &quot;Simulation complete. Cleaning up...&quot; &lt;&lt; std::endl;
++		YAKE_LOG( &quot;Simulation complete. Cleaning up...&quot; );
+ 
+ 		YAKE_SAFE_DELETE( mPhysical );
+ 
+@@ -118,27 +128,27 @@
+ {
+ 	if ( argc &lt;= 1 )
+ 	{
+-		std::cout &lt;&lt; &quot;Usage: XODELoaderDemo filename.xode &quot; &lt;&lt; std::endl;
++		YAKE_LOG( &quot;Usage: XODELoaderDemo filename.xode &quot; ); 
+ 		return 0; 
+ 	}
+-	
++
+ 	try
+ 	{
+-		std::cout &lt;&lt; std::endl &lt;&lt; &quot;A simple demo ;) provided for YAKE by Nikita Buida&quot; &lt;&lt; std::endl;
+-		std::cout &lt;&lt; std::endl;
+-		
++		YAKE_LOG( &quot;A simple demo ;) provided for YAKE by Nikita Buida&quot; );
++
+ 		TheApp theApp( argv[1] );
+ 		theApp.initialise();
+ 		theApp.run();
+ 	}
+ 	catch (const yake::Exception&amp; rException)
+ 	{
+-		std::cout &lt;&lt; std::endl &lt;&lt; rException.what() &lt;&lt; std::endl;
++		YAKE_LOG( rException.what() );
+ 	}
+ #if defined( YAKE_DEBUG_BUILD )
+-	std::cout &lt;&lt; std::endl &lt;&lt; &quot;Waiting for you...&quot;;
++	YAKE_LOG( &quot;Waiting for you...&quot; );
+ 	std::cin.get();
+ #endif
+ 
+ 	return 0;
+ }
++
+
+Modified: trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp	2005-11-10 00:31:07 UTC (rev 1146)
++++ trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp	2005-11-10 00:35:06 UTC (rev 1147)
+@@ -37,7 +37,10 @@
+ #include &lt;yapp/loader/yakeXODEParser.h&gt;
+ #include &lt;yapp/loader/yakeDotLinkLoader.h&gt;
+ #include &lt;yapp/model/yakeComplexModel.h&gt;
++#include &lt;yapp/model/yakePhysicalDataImporter.h&gt;
+ 
++#include &lt;boost/lexical_cast.hpp&gt;
++
+ using namespace yake;
+ using namespace yake::graphics;
+ using namespace yake::base::templates;
+@@ -48,173 +51,182 @@
+ {
+ private:
+ 	Vector&lt; std::pair&lt;IViewport*,ICamera*&gt; &gt;	mVPs;
+-	
++
+ 	SharedPtr&lt;physics::IWorld&gt;					mPWorld;
+ 	SharedPtr&lt;graphics::IWorld&gt;					mGWorld;
+ 	SharedPtr&lt;model::Physical&gt;					mPhysical;
+ 	SharedPtr&lt;model::Graphical&gt;					mGraphical;
+ 	SharedPtr&lt;model::complex::Model&gt;			mModel;
+-		
++
+ 	String	mfnXODE;
+ 	String	mfnScene;
+ 	String	mfnLink;
++
+ public:
++
+ 	TheApp( const String fnLink, const String fnXODE, const String fnScene ) :
+-					 ExampleApplication( 	true /*graphics*/,
+-								true /*physics*/,
+-								false /*scripting*/,
+-								true /*input*/,
+-								false /*script bindings*/,
+-								false /*audio*/),
+-					mfnLink( fnLink ),
+-					mfnXODE( fnXODE ),
+-					mfnScene( fnScene )
+-	{
+-	}
++	  ExampleApplication( 	true /*graphics*/,
++		  true /*physics*/,
++		  false /*scripting*/,
++		  true /*input*/,
++		  false /*script bindings*/,
++		  false /*audio*/),
++		  mfnLink( fnLink ),
++		  mfnXODE( fnXODE ),
++		  mfnScene( fnScene )
++	  {
++	  }
+ 
+-	void onKey( const yake::input::KeyboardEvent&amp; rEvent )
+-	{
+-		std::cout &lt;&lt; &quot;KEY: &quot; &lt;&lt; rEvent.keyCode &lt;&lt; std::endl;
+-		
+-		if ( rEvent.keyCode == input::KC_ESCAPE )
+-			requestShutdown();
+-	}
+-	
+-	void onMB( uint8 btn )
+-	{
+-		std::cout &lt;&lt; &quot;MB: &quot; &lt;&lt; static_cast&lt;int&gt;( btn ) &lt;&lt; std::endl;
+-	}
+-	
+-	int createCameraViewportPair( real sx, real sy, real w, real h, int z )
+-	{
+-		ICamera* pC = mGWorld-&gt;createCamera();
+-		YAKE_ASSERT( pC );
+-		pC-&gt;setNearClipDistance( 1. );
++	  void onKey( const yake::input::KeyboardEvent&amp; rEvent )
++	  {
++		  YAKE_LOG( &quot;KEY: &quot; + boost::lexical_cast&lt;String&gt;( rEvent.keyCode ) );
+ 
+-		pC-&gt;setFarClipDistance( 2000 );
++		  if ( rEvent.keyCode == input::KC_ESCAPE )
++			  requestShutdown();
++	  }
+ 
+-		mVPs.push_back( std::pair&lt;IViewport*,ICamera*&gt;(mGWorld-&gt;createViewport( pC ), pC) );
+-		size_t idx = mVPs.size()-1;
+-		YAKE_ASSERT( mVPs[idx].first );
+-		mVPs[idx].first-&gt;setDimensions( sx, sy, w, h );
+-		mVPs[idx].first-&gt;setZ( z );
+-		
+-		return static_cast&lt;int&gt;(idx);
+-	}
++	  void onMB( uint8 btn )
++	  {
++		  YAKE_LOG( &quot;MB: &quot; + boost::lexical_cast&lt;String&gt;( btn ) );
++	  }
+ 
+-	void setupWorld()
+-	{
+-		// Loading graphical part
+-		mGraphical.reset( new model::Graphical() );
+-		YAKE_ASSERT( mGraphical );
+-		
+-		mGraphical-&gt;fromDotScene( mfnScene, mGWorld.get() );
++	  int createCameraViewportPair( real sx, real sy, real w, real h, int z )
++	  {
++		  ICamera* pC = mGWorld-&gt;createCamera();
++		  YAKE_ASSERT( pC );
++		  pC-&gt;setNearClipDistance( 1. );
+ 
+-		// Loading physical part
+-		mPhysical.reset( new model::Physical() );
+-		YAKE_ASSERT( mPhysical );
+-		
+-		yake::data::dom::xml::XmlSerializer ser;
+-		ser.parse( mfnXODE, false );
+-		YAKE_ASSERT( ser.getDocumentNode() )( mfnXODE ).error(&quot;Could not load XODE document!&quot;);
+-		
+-		parser::xode::XODEParserV1 parser( *mPhysical );
+-		parser.load( ser.getDocumentNode() , mPWorld.get() );
+-		
+-		// Bringing it all together!
+-		mModel = SharedPtr&lt;model::complex::Model&gt;( new model::complex::Model() );
+-		
+-		mModel-&gt;addGraphical( mGraphical, &quot;baseGraphical&quot; );
+-		mModel-&gt;addPhysical( mPhysical, &quot;basePhysical&quot; );
+-		
+-		model::DotLinkLoader dotLinkLoader;
+-		dotLinkLoader.load( mfnLink, *mModel.get() );
+-	}
++		  pC-&gt;setFarClipDistance( 2000 );
+ 
+-	virtual void run()
+-	{
+-		// setup event input generators
+-		mKeyboardEventGenerator.subscribeToKeyDown( Bind1( &amp;TheApp::onKey, this ) );
+-		mMouseEventGenerator.subscribeToMouseButtonDown( Bind1( &amp;TheApp::onMB, this ) );
+-		
+-		// physics
+-		mPWorld = getPhysicsSystem().createWorld();
+-		YAKE_ASSERT( mPWorld );
+-		
+-		//@todo mPWorld-&gt;setGlobalGravity( Vector3( 0, 0, -9.81 ) );
++		  mVPs.push_back( std::pair&lt;IViewport*,ICamera*&gt;(mGWorld-&gt;createViewport( pC ), pC) );
++		  size_t idx = mVPs.size()-1;
++		  YAKE_ASSERT( mVPs[idx].first );
++		  mVPs[idx].first-&gt;setDimensions( sx, sy, w, h );
++		  mVPs[idx].first-&gt;setZ( z );
+ 
+-		// graphics
+-		mGWorld = getGraphicsSystem().createWorld();
+-		YAKE_ASSERT( mGWorld );
+-		
+-		createCameraViewportPair( 0.0, 0.0, 1, 1, 10 );
++		  return static_cast&lt;int&gt;(idx);
++	  }
+ 
+-		if (mVPs[0].second)
+-		{
+-			mVPs[0].second-&gt;translate( Vector3( 100,0,600 ) );
+-			//mVPs[0].second-&gt;rotate( Vector3( 0, 1, 0 ), 45 );
+-			//mVPs[0].second-&gt;pitch(-10);
+-		}
++	  void setupWorld()
++	  {
++		  // Loading graphical part
++		  mGraphical.reset( new model::Graphical() );
++		  YAKE_ASSERT( mGraphical );
+ 
+-		// objects
+-		setupWorld();
++		  mGraphical-&gt;fromDotScene( mfnScene, mGWorld.get() );
+ 
+-		// main loop
+-		real lastTime = base::native::getTime();
+-		while (!shutdownRequested())
+-		{
+-			// timing
+-			real time = base::native::getTime();
+-			real timeElapsed = time - lastTime;
+-			lastTime = time;
+-			
+-			// handle input
+-			getInputSystem().update();
+-			mMouseEventGenerator.update();
+-			mKeyboardEventGenerator.update();
+-			
+-			YAKE_ASSERT( getKeyboard() );
+-			if ( getKeyboard() )
+-			{
+-				static  unsigned iCam = 0;
+-				real distance = 200. * timeElapsed;
+-				real angle = 10 * timeElapsed;
+-				if (getKeyboard()-&gt;isKeyDown(input::KC_LEFT))
+-					mVPs[iCam].second-&gt;translate( Vector3( distance, 0, 0 ) );
+-				if (getKeyboard()-&gt;isKeyDown(input::KC_RIGHT))
+-					mVPs[iCam].second-&gt;translate( Vector3( -distance, 0, 0 ) );
+-				if (getKeyboard()-&gt;isKeyDown(input::KC_UP))
+-					mVPs[iCam].second-&gt;translate( Vector3( 0, 0, distance ) );
+-				if (getKeyboard()-&gt;isKeyDown(input::KC_DOWN))
+-					mVPs[iCam].second-&gt;translate( Vector3( 0, 0, -distance ) );
+-				if (getKeyboard()-&gt;isKeyDown(input::KC_Z))
+-					mVPs[iCam].second-&gt;translate( Vector3( 0, distance, 0 ) );
+-				if (getKeyboard()-&gt;isKeyDown(input::KC_X))
+-					mVPs[iCam].second-&gt;translate( Vector3( 0, -distance, 0 ) );
+-				if (getKeyboard()-&gt;isKeyDown(input::KC_Q))
+-					mVPs[0].second-&gt;rotate( Vector3( 0, 1, 0 ), angle );
+-				if (getKeyboard()-&gt;isKeyDown(input::KC_W))
+-					mVPs[0].second-&gt;rotate( Vector3( 0, 1, 0 ), -angle );
+-			}
++		  // Loading physical part
++		  mPhysical.reset( new model::Physical() );
++		  YAKE_ASSERT( mPhysical );
+ 
+-			// step simulation
+-			if ( !shutdownRequested() )
+-			{
+-				mPWorld-&gt;step( timeElapsed );
+-				
+-				//mModel-&gt;updatePhysics( timeElapsed );
+-				mModel-&gt;updateGraphics( timeElapsed );
+-				
+-				mGWorld-&gt;render( timeElapsed );
+-			}
+-		}
++		  yake::data::dom::xml::XmlSerializer ser;
++		  ser.parse( mfnXODE, false );
++		  YAKE_ASSERT( ser.getDocumentNode() )( mfnXODE ).error(&quot;Could not load XODE document!&quot;);
+ 
+-		mModel.reset();
+-		mGraphical.reset();
+-		mGWorld.reset();
+-		mPhysical.reset();
+-		mPWorld.reset();
+-	}
++		  parser::xode::XODEParserV1 parser;
++
++		  using namespace yake::model;
++		  XODEListener listener( *mPhysical, mPWorld.get() );
++
++		  parser.subscribeToBodySignal( Bind1( &amp;XODEListener::processBody, &amp;listener ) );
++		  parser.subscribeToGeomSignal( Bind1( &amp;XODEListener::processGeom, &amp;listener ) );
++
++		  parser.load( ser.getDocumentNode() );
++
++		  // Bringing it all together!
++		  mModel = SharedPtr&lt;model::complex::Model&gt;( new model::complex::Model() );
++
++		  mModel-&gt;addGraphical( mGraphical, &quot;baseGraphical&quot; );
++		  mModel-&gt;addPhysical( mPhysical, &quot;basePhysical&quot; );
++
++		  model::DotLinkLoader dotLinkLoader;
++		  dotLinkLoader.load( mfnLink, *mModel.get() );
++	  }
++
++	  virtual void run()
++	  {
++		  // setup event input generators
++		  mKeyboardEventGenerator.subscribeToKeyDown( Bind1( &amp;TheApp::onKey, this ) );
++		  mMouseEventGenerator.subscribeToMouseButtonDown( Bind1( &amp;TheApp::onMB, this ) );
++
++		  // physics
++		  mPWorld = getPhysicsSystem().createWorld();
++		  YAKE_ASSERT( mPWorld );
++
++		  mPWorld-&gt;setGlobalGravity( Vector3( 0, 0, -9.81 ) );
++
++		  // graphics
++		  mGWorld = getGraphicsSystem().createWorld();
++		  YAKE_ASSERT( mGWorld );
++
++		  createCameraViewportPair( 0.0, 0.0, 1, 1, 10 );
++
++		  if (mVPs[0].second)
++		  {
++			  mVPs[0].second-&gt;translate( Vector3( 100,0,600 ) );
++			  //mVPs[0].second-&gt;rotate( Vector3( 0, 1, 0 ), 45 );
++			  //mVPs[0].second-&gt;pitch(-10);
++		  }
++
++		  // objects
++		  setupWorld();
++
++		  // main loop
++		  real lastTime = base::native::getTime();
++		  while (!shutdownRequested())
++		  {
++			  // timing
++			  real time = base::native::getTime();
++			  real timeElapsed = time - lastTime;
++			  lastTime = time;
++
++			  // handle input
++			  getInputSystem().update();
++			  mMouseEventGenerator.update();
++			  mKeyboardEventGenerator.update();
++
++			  YAKE_ASSERT( getKeyboard() );
++			  if ( getKeyboard() )
++			  {
++				  static  unsigned iCam = 0;
++				  real distance = 200. * timeElapsed;
++				  real angle = 10 * timeElapsed;
++				  if (getKeyboard()-&gt;isKeyDown(input::KC_LEFT))
++					  mVPs[iCam].second-&gt;translate( Vector3( distance, 0, 0 ) );
++				  if (getKeyboard()-&gt;isKeyDown(input::KC_RIGHT))
++					  mVPs[iCam].second-&gt;translate( Vector3( -distance, 0, 0 ) );
++				  if (getKeyboard()-&gt;isKeyDown(input::KC_UP))
++					  mVPs[iCam].second-&gt;translate( Vector3( 0, 0, distance ) );
++				  if (getKeyboard()-&gt;isKeyDown(input::KC_DOWN))
++					  mVPs[iCam].second-&gt;translate( Vector3( 0, 0, -distance ) );
++				  if (getKeyboard()-&gt;isKeyDown(input::KC_Z))
++					  mVPs[iCam].second-&gt;translate( Vector3( 0, distance, 0 ) );
++				  if (getKeyboard()-&gt;isKeyDown(input::KC_X))
++					  mVPs[iCam].second-&gt;translate( Vector3( 0, -distance, 0 ) );
++				  if (getKeyboard()-&gt;isKeyDown(input::KC_Q))
++					  mVPs[0].second-&gt;rotate( Vector3( 0, 1, 0 ), angle );
++				  if (getKeyboard()-&gt;isKeyDown(input::KC_W))
++					  mVPs[0].second-&gt;rotate( Vector3( 0, 1, 0 ), -angle );
++			  }
++
++			  // step simulation
++			  if ( !shutdownRequested() )
++			  {
++				  mPWorld-&gt;step( timeElapsed );
++
++				  //mModel-&gt;updatePhysics( timeElapsed );
++				  mModel-&gt;updateGraphics( timeElapsed );
++
++				  mGWorld-&gt;render( timeElapsed );
++			  }
++		  }
++
++		  mModel.reset();
++		  mGraphical.reset();
++		  mGWorld.reset();
++		  mPhysical.reset();
++		  mPWorld.reset();
++	  }
+ };
+ 
+ //============================================================================
+@@ -225,25 +237,25 @@
+ {
+ 	if ( argc &lt;= 3 )
+ 	{
+-		std::cout &lt;&lt; &quot;Usage: dotLinkDemo fn0.link fn1.xode fn2.scene&quot; &lt;&lt; std::endl;
++		YAKE_LOG( &quot;Usage: dotLinkDemo fn0.link fn1.xode fn2.scene&quot; );
+ 		return 0; 
+ 	}
+-	
++
+ 	try
+ 	{
+-		std::cout &lt;&lt; std::endl &lt;&lt; &quot;A simple demo ;) provided for YAKE by Nikita Buida&quot; &lt;&lt; std::endl;
+-		std::cout &lt;&lt; std::endl;
+-		
++		YAKE_LOG( &quot;A simple demo ;) provided for YAKE by Nikita Buida \n\n&quot; );
++
+ 		TheApp theApp( argv[1], argv[2], argv[3] );
++
+ 		theApp.initialise();
+ 		theApp.run();
+ 	}
+ 	catch (const yake::Exception&amp; rException)
+ 	{
+-		std::cout &lt;&lt; std::endl &lt;&lt; rException.what() &lt;&lt; std::endl;
++		YAKE_LOG( rException.what() );
+ 	}
+ #if defined( YAKE_DEBUG_BUILD )
+-	std::cout &lt;&lt; std::endl &lt;&lt; &quot;Waiting for you...&quot;;
++	YAKE_LOG( &quot;\nWaiting for you...&quot; );
+ 	std::cin.get();
+ #endif
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000216.html">[Yake-svn] r1146 - trunk/yake/src/yapp/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000218.html">[Yake-svn] r1148 - trunk/yake/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#217">[ date ]</a>
+              <a href="thread.html#217">[ thread ]</a>
+              <a href="subject.html#217">[ subject ]</a>
+              <a href="author.html#217">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

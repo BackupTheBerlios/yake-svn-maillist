@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1189 - in trunk/yake/src/yake/samples: . net net/roclient net/roserver
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-January/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1189%20-%20in%20trunk/yake/src/yake/samples%3A%20.%20net%20net/roclient%20net/roserver&In-Reply-To=%3C200601152139.k0FLdINo015459%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000258.html">
+   <LINK REL="Next"  HREF="000260.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1189 - in trunk/yake/src/yake/samples: . net net/roclient net/roserver</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1189%20-%20in%20trunk/yake/src/yake/samples%3A%20.%20net%20net/roclient%20net/roserver&In-Reply-To=%3C200601152139.k0FLdINo015459%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1189 - in trunk/yake/src/yake/samples: . net net/roclient net/roserver">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Jan 15 22:39:18 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000258.html">[Yake-svn] r1188 - in trunk/yake/yake: . net net/detail
+</A></li>
+        <LI>Next message: <A HREF="000260.html">[Yake-svn] r1190 - in trunk/yake/yake/samples: . net net/roclient net/roserver
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#259">[ date ]</a>
+              <a href="thread.html#259">[ thread ]</a>
+              <a href="subject.html#259">[ subject ]</a>
+              <a href="author.html#259">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-01-15 22:39:17 +0100 (Sun, 15 Jan 2006)
+New Revision: 1189
+
+Added:
+   trunk/yake/src/yake/samples/net/
+   trunk/yake/src/yake/samples/net/roclient/
+   trunk/yake/src/yake/samples/net/roclient/demo.cpp
+   trunk/yake/src/yake/samples/net/roclient/pch.cpp
+   trunk/yake/src/yake/samples/net/roserver/
+   trunk/yake/src/yake/samples/net/roserver/demo.cpp
+   trunk/yake/src/yake/samples/net/roserver/pch.cpp
+Log:
+initial revision
+
+Added: trunk/yake/src/yake/samples/net/roclient/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/roclient/demo.cpp	2006-01-15 21:38:07 UTC (rev 1188)
++++ trunk/yake/src/yake/samples/net/roclient/demo.cpp	2006-01-15 21:39:17 UTC (rev 1189)
+@@ -0,0 +1,32 @@
++#include &lt;yake/samples/net/roclient/pch.h&gt;
++#include &lt;yake/net/net.h&gt;
++#include &lt;yake/samples/net/common/common.h&gt;
++#include &lt;yake/samples/net/roclient/ROClient.h&gt;
++
++int main(int argc, char* argv[])
++{
++	net::initialize();
++
++	ro::client clientApp;
++
++	if (!clientApp.start( net::Address(&quot;127.0.0.1&quot;,40000) ))
++		return 0;
++
++	clientApp.waitForStart();
++	if (clientApp.running())
++	{
++		COUTLN(&quot;waiting for key press...&quot;);
++		while (!_kbhit())
++		{
++			net::native::sleep(10);
++			clientApp.step();
++		}
++		if (_kbhit())
++			_getch();
++	}
++	clientApp.stop();
++
++	net::shutdown();
++	return 0;
++}
++
+
+Added: trunk/yake/src/yake/samples/net/roclient/pch.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/roclient/pch.cpp	2006-01-15 21:38:07 UTC (rev 1188)
++++ trunk/yake/src/yake/samples/net/roclient/pch.cpp	2006-01-15 21:39:17 UTC (rev 1189)
+@@ -0,0 +1 @@
++#include &lt;yake/samples/net/roclient/pch.h&gt;
+
+Added: trunk/yake/src/yake/samples/net/roserver/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/roserver/demo.cpp	2006-01-15 21:38:07 UTC (rev 1188)
++++ trunk/yake/src/yake/samples/net/roserver/demo.cpp	2006-01-15 21:39:17 UTC (rev 1189)
+@@ -0,0 +1,37 @@
++#include &lt;yake/samples/net/roserver/pch.h&gt;
++#include &lt;yake/net/net.h&gt;
++#include &lt;yake/samples/net/common/common.h&gt;
++#include &lt;yake/samples/net/roserver/ROServer.h&gt;
++
++#include &lt;yake/object/yakeObjects.h&gt;
++#include &lt;yapp/ent/yakeEnt.h&gt;
++
++int main(int argc, char* argv[])
++{
++	try {
++
++		COUTLN(&quot;starting RO server...&quot;);
++		if (!net::initialize())
++			return 0;
++
++		ro::server serverApp;
++		serverApp.start();
++
++		COUTLN(&quot;waiting for key press...&quot;);
++		while (!_kbhit())
++			net::native::sleep(10);
++		_getch();
++
++		COUTLN(&quot;stopping...&quot;);
++		serverApp.stop();
++
++		net::shutdown();
++	}
++	catch (const net::Exception&amp; e)
++	{
++		COUTLN(&quot;Caught net exception: &quot; &lt;&lt; e.what());
++		net::shutdown();
++	}
++	return 0;
++}
++
+
+Added: trunk/yake/src/yake/samples/net/roserver/pch.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/roserver/pch.cpp	2006-01-15 21:38:07 UTC (rev 1188)
++++ trunk/yake/src/yake/samples/net/roserver/pch.cpp	2006-01-15 21:39:17 UTC (rev 1189)
+@@ -0,0 +1 @@
++#include &lt;yake/samples/net/roserver/pch.h&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000258.html">[Yake-svn] r1188 - in trunk/yake/yake: . net net/detail
+</A></li>
+	<LI>Next message: <A HREF="000260.html">[Yake-svn] r1190 - in trunk/yake/yake/samples: . net net/roclient net/roserver
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#259">[ date ]</a>
+              <a href="thread.html#259">[ thread ]</a>
+              <a href="subject.html#259">[ subject ]</a>
+              <a href="author.html#259">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

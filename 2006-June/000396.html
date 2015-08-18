@@ -1,0 +1,4181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1328 - in trunk/yake: scripts/msvc8 scripts/msvc8/plugins/graphics scripts/msvc8/samples/model src/yake src/yake/loader src/yake/model src/yake/plugins/graphicsOgre src/yake/samples src/yake/samples/model src/yake/samples/model/dotScene yake yake/base yake/base/templates yake/graphics yake/loader yake/model yake/physics yake/plugins/graphicsOgre yake/plugins/physicsODE yake/samples yake/samples/model yake/samples/model/dotScene yake/samples/net/common yapp/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1328%20-%20in%20trunk/yake%3A%20scripts/msvc8%20scripts/msvc8/plugins/graphics%20scripts/msvc8/samples/model%20src/yake%20src/yake/loader%20src/yake/model%20src/yake/plugins/graphicsOgre%20src/yake/samples%20src/yake/samples/model%20src/yake/samples/model/dotScene%20yake%20yake/base%20yake/base/templates%20yake/graphics%20yake/loader%20yake/model%20yake/physics%20yake/plugins/graphicsOgre%20yake/plugins/physicsODE%20yake/samples%20yake/samples/model%20yake/samples/model/dotScene%20yake/samples/net/common%20yapp/model&In-Reply-To=%3C200606092147.k59LleQs024949%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000395.html">
+   <LINK REL="Next"  HREF="000397.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1328 - in trunk/yake: scripts/msvc8 scripts/msvc8/plugins/graphics scripts/msvc8/samples/model src/yake src/yake/loader src/yake/model src/yake/plugins/graphicsOgre src/yake/samples src/yake/samples/model src/yake/samples/model/dotScene yake yake/base yake/base/templates yake/graphics yake/loader yake/model yake/physics yake/plugins/graphicsOgre yake/plugins/physicsODE yake/samples yake/samples/model yake/samples/model/dotScene yake/samples/net/common yapp/model</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1328%20-%20in%20trunk/yake%3A%20scripts/msvc8%20scripts/msvc8/plugins/graphics%20scripts/msvc8/samples/model%20src/yake%20src/yake/loader%20src/yake/model%20src/yake/plugins/graphicsOgre%20src/yake/samples%20src/yake/samples/model%20src/yake/samples/model/dotScene%20yake%20yake/base%20yake/base/templates%20yake/graphics%20yake/loader%20yake/model%20yake/physics%20yake/plugins/graphicsOgre%20yake/plugins/physicsODE%20yake/samples%20yake/samples/model%20yake/samples/model/dotScene%20yake/samples/net/common%20yapp/model&In-Reply-To=%3C200606092147.k59LleQs024949%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1328 - in trunk/yake: scripts/msvc8 scripts/msvc8/plugins/graphics scripts/msvc8/samples/model src/yake src/yake/loader src/yake/model src/yake/plugins/graphicsOgre src/yake/samples src/yake/samples/model src/yake/samples/model/dotScene yake yake/base yake/base/templates yake/graphics yake/loader yake/model yake/physics yake/plugins/graphicsOgre yake/plugins/physicsODE yake/samples yake/samples/model yake/samples/model/dotScene yake/samples/net/common yapp/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Jun  9 23:47:40 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000395.html">[Yake-svn] r1327 - trunk/yake/src/yake/samples/base/registry
+</A></li>
+        <LI>Next message: <A HREF="000397.html">[Yake-svn] r1329 - in trunk/yake/common/bin: debug release
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#396">[ date ]</a>
+              <a href="thread.html#396">[ thread ]</a>
+              <a href="subject.html#396">[ subject ]</a>
+              <a href="author.html#396">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-09 23:47:29 +0200 (Fri, 09 Jun 2006)
+New Revision: 1328
+
+Added:
+   trunk/yake/scripts/msvc8/loader.vcproj
+   trunk/yake/scripts/msvc8/model.vcproj
+   trunk/yake/scripts/msvc8/samples/model/sampleDotScene.vcproj
+   trunk/yake/src/yake/loader/
+   trunk/yake/src/yake/loader/pch.cpp
+   trunk/yake/src/yake/loader/yakeDotScene.cpp
+   trunk/yake/src/yake/model/
+   trunk/yake/src/yake/model/pch.cpp
+   trunk/yake/src/yake/model/yakeComponentCreatorManager.cpp
+   trunk/yake/src/yake/model/yakeGraphical.cpp
+   trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+   trunk/yake/src/yake/model/yakeGraphicalDotSceneLoader.cpp
+   trunk/yake/src/yake/model/yakeModel.cpp
+   trunk/yake/src/yake/model/yakeModelComponentContainer.cpp
+   trunk/yake/src/yake/model/yakeModelLinkContainer.cpp
+   trunk/yake/src/yake/model/yakeModelManager.cpp
+   trunk/yake/src/yake/model/yakePhysical.cpp
+   trunk/yake/src/yake/samples/model/
+   trunk/yake/src/yake/samples/model/dotScene/
+   trunk/yake/src/yake/samples/model/dotScene/demo.cpp
+   trunk/yake/src/yake/samples/model/dotScene/pch.cpp
+   trunk/yake/yake/loader/
+   trunk/yake/yake/loader/loader.h
+   trunk/yake/yake/loader/pch.h
+   trunk/yake/yake/loader/prerequisites.h
+   trunk/yake/yake/loader/yakeDotScene.h
+   trunk/yake/yake/model/
+   trunk/yake/yake/model/model.h
+   trunk/yake/yake/model/model_component.h
+   trunk/yake/yake/model/model_graphical_dotscene_loader.h
+   trunk/yake/yake/model/model_link.h
+   trunk/yake/yake/model/pch.h
+   trunk/yake/yake/model/prerequisites.h
+   trunk/yake/yake/samples/model/
+   trunk/yake/yake/samples/model/dotScene/
+   trunk/yake/yake/samples/model/dotScene/pch.h
+   trunk/yake/yake/samples/net/common/common.h
+   trunk/yake/yake/samples/net/common/commonEvents.h
+   trunk/yake/yake/samples/net/common/config.h
+Modified:
+   trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj
+   trunk/yake/scripts/msvc8/yake.sln
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp
+   trunk/yake/yake/base/templates/yakeVector.h
+   trunk/yake/yake/base/yakePrerequisites.h
+   trunk/yake/yake/base/yakeString.h
+   trunk/yake/yake/graphics/yakeGraphicalWorld.h
+   trunk/yake/yake/physics/yakePhysicsJoint.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h
+   trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h
+   trunk/yake/yake/plugins/physicsODE/OdeJoint.h
+   trunk/yake/yapp/model/yakePhysicalDataImporter.h
+Log:
+new model component (+demo),
+new loader component,
+added more network component headers,
+small updates for physics and graphics components
+
+Added: trunk/yake/scripts/msvc8/loader.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/loader.vcproj	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/scripts/msvc8/loader.vcproj	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,244 @@
++&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
++&lt;VisualStudioProject
++	ProjectType=&quot;Visual C++&quot;
++	Version=&quot;8,00&quot;
++	Name=&quot;loader&quot;
++	ProjectGUID=&quot;{2E5A589E-41FE-4BE9-80A0-1F8570944486}&quot;
++	RootNamespace=&quot;yake&quot;
++	Keyword=&quot;Win32Proj&quot;
++	&gt;
++	&lt;Platforms&gt;
++		&lt;Platform
++			Name=&quot;Win32&quot;
++		/&gt;
++	&lt;/Platforms&gt;
++	&lt;ToolFiles&gt;
++	&lt;/ToolFiles&gt;
++	&lt;Configurations&gt;
++		&lt;Configuration
++			Name=&quot;Debug|Win32&quot;
++			OutputDirectory=&quot;../../common/bin/$(ConfigurationName)&quot;
++			IntermediateDirectory=&quot;../../common/obj/$(ConfigurationName)/$(ProjectName)&quot;
++			ConfigurationType=&quot;2&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				Optimization=&quot;0&quot;
++				AdditionalIncludeDirectories=&quot;../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl&quot;
++				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_CONSOLE;YAKE_LOADER_EXPORTS&quot;
++				MinimalRebuild=&quot;true&quot;
++				BasicRuntimeChecks=&quot;3&quot;
++				RuntimeLibrary=&quot;3&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/loader/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;4&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib physics.lib graphics.lib data.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
++				LinkIncremental=&quot;2&quot;
++				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;1&quot;
++				ImportLibrary=&quot;../../common/lib/$(ConfigurationName)/$(ProjectName).lib&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++		&lt;Configuration
++			Name=&quot;Release|Win32&quot;
++			OutputDirectory=&quot;../../common/bin/$(ConfigurationName)&quot;
++			IntermediateDirectory=&quot;../../common/obj/$(ConfigurationName)/$(ProjectName)&quot;
++			ConfigurationType=&quot;2&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				AdditionalIncludeDirectories=&quot;../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE;YAKE_LOADER_EXPORTS&quot;
++				RuntimeLibrary=&quot;2&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/loader/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;3&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib physics.lib graphics.lib data.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
++				LinkIncremental=&quot;1&quot;
++				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;1&quot;
++				OptimizeReferences=&quot;2&quot;
++				EnableCOMDATFolding=&quot;2&quot;
++				ImportLibrary=&quot;../../common/lib/$(ConfigurationName)/$(ProjectName).lib&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++	&lt;/Configurations&gt;
++	&lt;References&gt;
++	&lt;/References&gt;
++	&lt;Files&gt;
++		&lt;Filter
++			Name=&quot;src&quot;
++			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
++			UniqueIdentifier=&quot;{FD0981FD-1055-4c31-93CE-DD7EF8377D29}&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\loader\pch.cpp&quot;
++				&gt;
++				&lt;FileConfiguration
++					Name=&quot;Debug|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;1&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++				&lt;FileConfiguration
++					Name=&quot;Release|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;1&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\loader\yakeDotScene.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++		&lt;Filter
++			Name=&quot;inc&quot;
++			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
++			UniqueIdentifier=&quot;{62C72BAD-1F45-4104-ACDC-A3CF4D7E9A3F}&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\loader\loader.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\loader\pch.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\loader\prerequisites.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\loader\yakeDotScene.h&quot;
++				&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++	&lt;/Files&gt;
++	&lt;Globals&gt;
++	&lt;/Globals&gt;
++&lt;/VisualStudioProject&gt;
+
+Added: trunk/yake/scripts/msvc8/model.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/model.vcproj	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/scripts/msvc8/model.vcproj	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,284 @@
++&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
++&lt;VisualStudioProject
++	ProjectType=&quot;Visual C++&quot;
++	Version=&quot;8,00&quot;
++	Name=&quot;model&quot;
++	ProjectGUID=&quot;{6BB1D3EF-8836-4D23-BE24-340D310D9913}&quot;
++	RootNamespace=&quot;yake&quot;
++	Keyword=&quot;Win32Proj&quot;
++	&gt;
++	&lt;Platforms&gt;
++		&lt;Platform
++			Name=&quot;Win32&quot;
++		/&gt;
++	&lt;/Platforms&gt;
++	&lt;ToolFiles&gt;
++	&lt;/ToolFiles&gt;
++	&lt;Configurations&gt;
++		&lt;Configuration
++			Name=&quot;Debug|Win32&quot;
++			OutputDirectory=&quot;../../common/bin/$(ConfigurationName)&quot;
++			IntermediateDirectory=&quot;../../common/obj/$(ConfigurationName)/$(ProjectName)&quot;
++			ConfigurationType=&quot;2&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				Optimization=&quot;0&quot;
++				AdditionalIncludeDirectories=&quot;../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl&quot;
++				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_CONSOLE;YAKE_MODEL_EXPORTS&quot;
++				MinimalRebuild=&quot;true&quot;
++				BasicRuntimeChecks=&quot;3&quot;
++				RuntimeLibrary=&quot;3&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/model/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;4&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib physics.lib graphics.lib data.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
++				LinkIncremental=&quot;2&quot;
++				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;1&quot;
++				ImportLibrary=&quot;../../common/lib/$(ConfigurationName)/$(ProjectName).lib&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++		&lt;Configuration
++			Name=&quot;Release|Win32&quot;
++			OutputDirectory=&quot;../../common/bin/$(ConfigurationName)&quot;
++			IntermediateDirectory=&quot;../../common/obj/$(ConfigurationName)/$(ProjectName)&quot;
++			ConfigurationType=&quot;2&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				AdditionalIncludeDirectories=&quot;../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE;YAKE_MODEL_EXPORTS&quot;
++				RuntimeLibrary=&quot;2&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/model/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;3&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib physics.lib graphics.lib data.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
++				LinkIncremental=&quot;1&quot;
++				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;1&quot;
++				OptimizeReferences=&quot;2&quot;
++				EnableCOMDATFolding=&quot;2&quot;
++				ImportLibrary=&quot;../../common/lib/$(ConfigurationName)/$(ProjectName).lib&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++	&lt;/Configurations&gt;
++	&lt;References&gt;
++	&lt;/References&gt;
++	&lt;Files&gt;
++		&lt;Filter
++			Name=&quot;src&quot;
++			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
++			UniqueIdentifier=&quot;{AD0230C1-DFA5-4a98-A098-E87F6CFD8BD3}&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\model\pch.cpp&quot;
++				&gt;
++				&lt;FileConfiguration
++					Name=&quot;Debug|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;1&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++				&lt;FileConfiguration
++					Name=&quot;Release|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;1&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\model\yakeComponentCreatorManager.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\model\yakeGraphical.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\model\yakeGraphicalCreator.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\model\yakeGraphicalDotSceneLoader.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\model\yakeModel.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\model\yakeModelComponentContainer.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\model\yakeModelLinkContainer.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\model\yakeModelManager.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\src\yake\model\yakePhysical.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++		&lt;Filter
++			Name=&quot;inc&quot;
++			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
++			UniqueIdentifier=&quot;{5A8F8C34-9894-44d8-8EF5-14379EB5AF7D}&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\model\model.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\model\model_component.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\model\model_graphical_dotscene_loader.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\model\model_link.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\model\pch.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\yake\model\prerequisites.h&quot;
++				&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++	&lt;/Files&gt;
++	&lt;Globals&gt;
++	&lt;/Globals&gt;
++&lt;/VisualStudioProject&gt;
+
+Modified: trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -284,6 +284,7 @@
+ 					&gt;
+ 					&lt;FileConfiguration
+ 						Name=&quot;Debug|Win32&quot;
++						ExcludedFromBuild=&quot;true&quot;
+ 						&gt;
+ 						&lt;Tool
+ 							Name=&quot;VCCLCompilerTool&quot;
+
+Added: trunk/yake/scripts/msvc8/samples/model/sampleDotScene.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/model/sampleDotScene.vcproj	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/scripts/msvc8/samples/model/sampleDotScene.vcproj	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,224 @@
++&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
++&lt;VisualStudioProject
++	ProjectType=&quot;Visual C++&quot;
++	Version=&quot;8,00&quot;
++	Name=&quot;sampleModelDotScene&quot;
++	ProjectGUID=&quot;{920E5CA3-620C-43C3-986C-5A6F9397F6DA}&quot;
++	Keyword=&quot;Win32Proj&quot;
++	&gt;
++	&lt;Platforms&gt;
++		&lt;Platform
++			Name=&quot;Win32&quot;
++		/&gt;
++	&lt;/Platforms&gt;
++	&lt;ToolFiles&gt;
++	&lt;/ToolFiles&gt;
++	&lt;Configurations&gt;
++		&lt;Configuration
++			Name=&quot;Debug|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/debug&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/debug/$(ProjectName)&quot;
++			ConfigurationType=&quot;1&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				Optimization=&quot;0&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/boost/;../../../../dependencies/ttl/&quot;
++				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_CONSOLE&quot;
++				MinimalRebuild=&quot;true&quot;
++				BasicRuntimeChecks=&quot;3&quot;
++				RuntimeLibrary=&quot;3&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/samples/model/dotScene/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;4&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
++				LinkIncremental=&quot;2&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;1&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++		&lt;Configuration
++			Name=&quot;Release|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/release&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/release/$(ProjectName)&quot;
++			ConfigurationType=&quot;1&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/boost/;../../../../dependencies/ttl/&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE&quot;
++				RuntimeLibrary=&quot;2&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/samples/model/dotScene/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;3&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
++				LinkIncremental=&quot;1&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;false&quot;
++				SubSystem=&quot;1&quot;
++				OptimizeReferences=&quot;2&quot;
++				EnableCOMDATFolding=&quot;2&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++	&lt;/Configurations&gt;
++	&lt;References&gt;
++	&lt;/References&gt;
++	&lt;Files&gt;
++		&lt;Filter
++			Name=&quot;inc&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\yake\samples\model\dotScene\pch.h&quot;
++				&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++		&lt;Filter
++			Name=&quot;src&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\src\yake\samples\model\dotScene\demo.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\src\yake\samples\model\dotScene\pch.cpp&quot;
++				&gt;
++				&lt;FileConfiguration
++					Name=&quot;Debug|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;1&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++				&lt;FileConfiguration
++					Name=&quot;Release|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;1&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++	&lt;/Files&gt;
++	&lt;Globals&gt;
++	&lt;/Globals&gt;
++&lt;/VisualStudioProject&gt;
+
+Modified: trunk/yake/scripts/msvc8/yake.sln
+===================================================================
+--- trunk/yake/scripts/msvc8/yake.sln	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/scripts/msvc8/yake.sln	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -128,6 +128,12 @@
+ 		{2F5124AA-56BD-4909-811A-E79901978C86} = {2F5124AA-56BD-4909-811A-E79901978C86}
+ 	EndProjectSection
+ EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;model&quot;, &quot;model.vcproj&quot;, &quot;{6BB1D3EF-8836-4D23-BE24-340D310D9913}&quot;
++EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleModelDotScene&quot;, &quot;samples\model\sampleDotScene.vcproj&quot;, &quot;{920E5CA3-620C-43C3-986C-5A6F9397F6DA}&quot;
++EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;loader&quot;, &quot;loader.vcproj&quot;, &quot;{2E5A589E-41FE-4BE9-80A0-1F8570944486}&quot;
++EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+ 		Debug|Win32 = Debug|Win32
+@@ -244,6 +250,18 @@
+ 		{6FC81A1C-0463-45EB-94F9-F7D084E3C169}.Debug|Win32.Build.0 = Debug|Win32
+ 		{6FC81A1C-0463-45EB-94F9-F7D084E3C169}.Release|Win32.ActiveCfg = Release|Win32
+ 		{6FC81A1C-0463-45EB-94F9-F7D084E3C169}.Release|Win32.Build.0 = Release|Win32
++		{6BB1D3EF-8836-4D23-BE24-340D310D9913}.Debug|Win32.ActiveCfg = Debug|Win32
++		{6BB1D3EF-8836-4D23-BE24-340D310D9913}.Debug|Win32.Build.0 = Debug|Win32
++		{6BB1D3EF-8836-4D23-BE24-340D310D9913}.Release|Win32.ActiveCfg = Release|Win32
++		{6BB1D3EF-8836-4D23-BE24-340D310D9913}.Release|Win32.Build.0 = Release|Win32
++		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Debug|Win32.ActiveCfg = Debug|Win32
++		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Debug|Win32.Build.0 = Debug|Win32
++		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Release|Win32.ActiveCfg = Release|Win32
++		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Release|Win32.Build.0 = Release|Win32
++		{2E5A589E-41FE-4BE9-80A0-1F8570944486}.Debug|Win32.ActiveCfg = Debug|Win32
++		{2E5A589E-41FE-4BE9-80A0-1F8570944486}.Debug|Win32.Build.0 = Debug|Win32
++		{2E5A589E-41FE-4BE9-80A0-1F8570944486}.Release|Win32.ActiveCfg = Release|Win32
++		{2E5A589E-41FE-4BE9-80A0-1F8570944486}.Release|Win32.Build.0 = Release|Win32
+ 	EndGlobalSection
+ 	GlobalSection(SolutionProperties) = preSolution
+ 		HideSolutionNode = FALSE
+
+Added: trunk/yake/src/yake/loader/pch.cpp
+===================================================================
+--- trunk/yake/src/yake/loader/pch.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/loader/pch.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,27 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/loader/pch.h&quot;
+
+Added: trunk/yake/src/yake/loader/yakeDotScene.cpp
+===================================================================
+--- trunk/yake/src/yake/loader/yakeDotScene.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/loader/yakeDotScene.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,416 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++
++#include &lt;yake/loader/pch.h&gt;
++#include &lt;yake/loader/loader.h&gt;
++
++namespace yake {
++namespace data {
++namespace parser {
++namespace dotscene {
++
++	const String DotSceneParser::ROOT_NODE_NAME = &quot;root_node&quot;;
++	
++	//------------------------------------------------------
++	void DotSceneParser::reset()
++	{
++		//FIXME state is more that just doc node
++		mDocNode.reset();
++	}
++
++	//------------------------------------------------------
++	bool DotSceneParser::load( const SharedPtr&lt;dom::INode&gt;&amp; docNode )
++	{
++		YAKE_LOG( &quot;DotSceneParser::load()&quot; );
++		
++		YAKE_ASSERT( docNode.get() );
++		
++		if (!docNode.get())
++			return false;
++		
++		mDocNode = docNode;
++		
++		YAKE_LOG( &quot;DotSceneParser: parsing scene...&quot; );
++		
++		readScene( mDocNode );
++
++		return true;
++	}
++
++	//------------------------------------------------------
++	void DotSceneParser::readScene( const SharedPtr&lt;dom::INode&gt;&amp; pNode )
++	{
++		//const String name = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
++		//YAKE_LOG( &quot;DotSceneParser: readScene() [&quot; + name + &quot;]&quot; );
++		
++		YAKE_ASSERT( pNode );
++		
++		SharedPtr&lt;dom::INode&gt; pNodes = pNode-&gt;getNodeByName(&quot;nodes&quot;);
++		YAKE_LOG( &quot;DotSceneParser: scene: found nodes = &quot; + String( pNodes.get() ? &quot;yes&quot; : &quot;no&quot; ) );
++		
++		if ( pNodes.get() )
++			readNodes( pNodes, _T(&quot;&quot;) );
++	}
++
++	//------------------------------------------------------
++	void DotSceneParser::readNodes( const SharedPtr&lt;dom::INode&gt;&amp; pNodes, const String&amp; path )
++	{
++		YAKE_LOG( &quot;DotSceneParser: readNodes()&quot; );
++		YAKE_ASSERT( pNodes );
++		
++		const dom::NodeList&amp; nodes = pNodes-&gt;getNodes();
++		for( dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it )
++		{
++			readNode( (*it), ROOT_NODE_NAME, path );
++		}
++	}
++
++	String appendToPath(const String&amp; path, const String&amp; name)
++	{
++		return (path.empty() ? name : (path + _T(&quot;/&quot;) + name));
++	}
++	//------------------------------------------------------
++	void DotSceneParser::readNode( const SharedPtr&lt;dom::INode&gt;&amp; pNode, const String&amp; parentNodeName, const String&amp; path )
++	{
++		String nodeName = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
++		
++		YAKE_LOG( &quot;DotSceneParser: readNode() [name=&quot; + nodeName + &quot;]&quot; );
++		YAKE_ASSERT( pNode );
++		
++		if ( nodeName.empty() )
++			nodeName = uniqueName::create( nodeName );
++		
++		NodeDesc currentSceneNode;
++		
++		currentSceneNode.name = nodeName;
++		currentSceneNode.parentNodeName = parentNodeName;
++		currentSceneNode.path = appendToPath(path, nodeName);
++		
++		// Implementing top-bottom parsing. So we have to read full info about the top-most node 
++		// and then descend to lower levels &quot;root----&gt;children&quot;. 
++		// That's why XML nodes for scene nodes should be saved at first. XML nodes for all entities, cameras,
++		// lights, etc. of the current scene node should also be saved and be parsed after the current node.
++		// Saved XML nodes for child scene nodes are parsed in the last turn.
++		dom::NodeList childNodes;
++		dom::NodeList attachedObjects; // for entities, cameras, lights, etc.
++		
++		const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
++		for ( dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it )
++		{
++			String tag = StringUtil::toLowerCase((*it)-&gt;getName());
++
++			const SharedPtr&lt;dom::INode&gt; &amp; pChild = (*it);
++			if (tag == &quot;position&quot;)
++			{
++				readPosition( pChild, currentSceneNode.transform.position );
++			}
++			else if (tag == &quot;rotation&quot;)
++			{
++				readRotation( pChild, currentSceneNode.transform.rotation );
++			}
++			else if (tag == &quot;scale&quot;)
++			{
++				readScale( pChild, currentSceneNode.transform.scale );
++			}
++			else if (tag == &quot;node&quot; )
++				childNodes.push_back( *it );
++			else if (	tag == &quot;light&quot; ||
++						tag == &quot;entity&quot; ||
++						tag == &quot;camera&quot; )
++				attachedObjects.push_back( *it );
++		}
++		
++		// Now firing signal as new node was parsed
++		mSigNode( currentSceneNode );
++		// And placing it to the map
++		mSNDescriptions[ nodeName ] = currentSceneNode;
++		
++		// Now it's time to read attached objects
++		for ( dom::NodeList::const_iterator it = attachedObjects.begin(); it != attachedObjects.end(); ++it )
++		{
++			String tag = StringUtil::toLowerCase((*it)-&gt;getName());
++
++			const SharedPtr&lt;dom::INode&gt;&amp; pChild = (*it);
++			if ( tag == &quot;entity&quot; )
++			{
++				readEntity( pChild, nodeName, currentSceneNode.path );
++			}
++			else if ( tag == &quot;camera&quot; )
++			{
++				readCamera( pChild, nodeName, currentSceneNode.path );
++			}
++			else if ( tag == &quot;light&quot; )
++			{
++				readLight( pChild, nodeName, currentSceneNode.path );
++			}
++		}
++		
++		// Next, reading child scene nodes
++		// descending the node tree...
++		for ( dom::NodeList::const_iterator it = childNodes.begin(); it != childNodes.end(); ++it )
++		{
++		  readNode( *it, nodeName, currentSceneNode.path );
++		}
++	}
++
++	//------------------------------------------------------
++	void DotSceneParser::readEntity( const SharedPtr&lt;dom::INode&gt;&amp; pNode, const String&amp; parentNodeName, const String&amp; path )
++	{
++		YAKE_ASSERT( pNode );
++		
++		EntityDesc desc;
++		
++		String name = (pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;name&quot;));
++		
++		desc.name = name;
++		desc.parentNodeName = parentNodeName;
++		desc.path = appendToPath(path, name);
++		
++		YAKE_LOG( &quot;DotSceneParser: readEntity() [name = &quot; + name + &quot;]&quot; );
++		
++		desc.meshFile = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;meshFile&quot; );
++		
++		String castsShadows = StringUtil::toLowerCase(pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;castsShadow&quot;));
++		desc.castsShadows = castsShadows == &quot;yes&quot; || castsShadows == &quot;true&quot; || castsShadows == &quot;1&quot;;
++
++		// Entity description ready. Fire!
++		mSigEntity( desc );
++		
++		// Storing...
++		mEntityDescriptions[ name ] = desc;
++	}
++	
++	//------------------------------------------------------
++	void DotSceneParser::readVector( const SharedPtr&lt;dom::INode&gt;&amp; pNode, math::Vector3&amp; rVec )
++	{
++		YAKE_ASSERT( pNode );
++		rVec.x = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;x&quot;) );
++		rVec.y = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;y&quot;) );
++		rVec.z = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;z&quot;) );
++	}
++
++	//------------------------------------------------------
++	void DotSceneParser::readPosition( const SharedPtr&lt;dom::INode&gt; &amp; pNode, math::Vector3 &amp; position )
++	{
++		readVector( pNode, position );
++	}
++
++	//------------------------------------------------------
++	void DotSceneParser::readScale( const SharedPtr&lt;dom::INode&gt;&amp; pNode, math::Vector3&amp; rScale )
++	{
++		readVector( pNode, rScale );
++	}
++	
++	//------------------------------------------------------
++	void DotSceneParser::readRotation( const SharedPtr&lt;dom::INode&gt;&amp; pNode, math::Quaternion&amp; rotation )
++	{
++		YAKE_ASSERT( pNode );
++		if ( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qx&quot;) != &quot;&quot; )
++		{
++			rotation.x = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qx&quot;) );
++			rotation.y = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qy&quot;) );
++			rotation.z = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qz&quot;) );
++			rotation.w = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qw&quot;) );
++		}
++		else if ( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisX&quot;) != &quot;&quot; )
++		{
++			math::Vector3 axis;
++			axis.x = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisX&quot;) );
++			axis.y = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisY&quot;) );
++			axis.z = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisZ&quot;) );
++			rotation.FromAxes( &amp;axis );
++		}
++		else if ( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;angleX&quot;) != &quot;&quot; )
++		{
++			math::Vector3 axis;
++			axis.x = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;angleX&quot;) );
++			axis.y = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;angleY&quot;) );
++			axis.z = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;angleZ&quot;) );
++			real angle = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;angle&quot;) );
++			rotation.FromAngleAxis( angle, axis );
++		}
++	}
++	//------------------------------------------------------
++	void DotSceneParser::readColour( const SharedPtr&lt;dom::INode&gt;&amp; pNode, math::Color&amp; colour )
++	{
++		YAKE_ASSERT( pNode );
++		
++		String r = pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;r&quot;);
++		String g = pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;g&quot;);
++		String b = pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;b&quot;);
++		
++		//YAKE_LOG( &quot;DotSceneParser: readColour: r=&quot; + r + &quot;, g=&quot; + g + &quot;, b=&quot; + b );
++		
++		colour.r = StringUtil::parseReal( r );
++		colour.g = StringUtil::parseReal( g );
++		colour.b = StringUtil::parseReal( b );
++	}
++
++	//------------------------------------------------------
++	void DotSceneParser::readLightRange( const SharedPtr&lt;dom::INode&gt;&amp; pNode, LightDesc&amp; desc )
++	{
++		YAKE_ASSERT( pNode );
++		
++		desc.range.inner = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;inner&quot; ) );
++		desc.range.outer = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;outer&quot; ) );
++		desc.range.falloff = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;falloff&quot; ) );
++	}
++
++	//------------------------------------------------------
++	void DotSceneParser::readLightAttenuation( const SharedPtr&lt;dom::INode&gt;&amp; pNode, LightDesc&amp; desc )
++	{
++		YAKE_ASSERT( pNode );
++		
++		desc.attenuation.range = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;range&quot; ) );
++		desc.attenuation.constant = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;constant&quot; ) );
++		desc.attenuation.linear = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;linear&quot; ) );
++		desc.attenuation.quadratic = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;quadratic&quot; ) );
++	}
++	
++	//------------------------------------------------------
++	void DotSceneParser::readLight( const SharedPtr&lt;dom::INode&gt;&amp; pNode, const String&amp; parentNodeName, const String&amp; path )
++	{
++		String name = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
++
++		LightDesc desc;
++		
++		desc.name = name;
++		desc.parentNodeName = parentNodeName;
++		desc.path = appendToPath(path, name);
++		
++		YAKE_LOG( &quot;DotSceneParser: readLight() [name=&quot; + name + &quot;]&quot; );
++		YAKE_ASSERT( pNode );
++		
++		String lightType = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;type&quot; );
++		String castsShadows = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;castShadows&quot; );
++		desc.castsShadows = castsShadows == &quot;yes&quot; || castsShadows == &quot;true&quot; || castsShadows == &quot;1&quot;;
++				
++		desc.type = graphics::ILight::LT_POINT;
++		
++		if ( lightType == &quot;spot&quot; )
++			desc.type = graphics::ILight::LT_SPOT;
++		else if ( lightType == &quot;directional&quot; )
++			desc.type = graphics::ILight::LT_DIRECTIONAL;
++		
++		const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
++		for ( dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it )
++		{
++			String childNodeName = (*it)-&gt;getName();
++			
++			//YAKE_LOG( &quot;DotSceneParser: node child: &quot; + StringUtil::toLowerCase( childNodeName ) );
++
++			const SharedPtr&lt;dom::INode&gt;&amp; pChild = *it;
++			
++			if ( childNodeName == &quot;normal&quot; )
++				readVector( pChild, desc.normal );
++			else if ( childNodeName == &quot;colourDiffuse&quot; )
++				readColour( pChild, desc.diffuseColor );
++			else if ( childNodeName == &quot;colourSpecular&quot; )
++				readColour( pChild, desc.specularColor );
++			else if ( childNodeName == &quot;lightRange&quot; )
++				readLightRange( pChild, desc );
++			else if ( childNodeName == &quot;lightAttenuation&quot; )
++				readLightAttenuation( pChild, desc );
++			else
++				YAKE_LOG_ERROR(String(&quot;DotSceneParser: Unhandled node child '&quot;) + childNodeName + _T(&quot;'&quot;));
++		}
++		
++		// Light description ready. Fire!
++		mSigLight( desc );
++		
++		// Store
++		mLightDescriptions[ name ] = desc;
++	}
++	
++	//------------------------------------------------------
++	void DotSceneParser::readCameraClipping( const SharedPtr&lt;dom::INode&gt;&amp; pNode, CameraDesc&amp; desc )
++	{
++		YAKE_ASSERT( pNode );
++		
++		desc.clipping.nearClip = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;near&quot; ) );
++		desc.clipping.farClip = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;far&quot; ) );
++	}
++	
++	//------------------------------------------------------
++	void DotSceneParser::readCamera( const SharedPtr&lt;dom::INode&gt;&amp; pNode, const String&amp; parentNodeName, const String&amp; path )
++	{
++		String name = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
++
++		CameraDesc desc;
++		
++		desc.name = name;
++		desc.parentNodeName = parentNodeName;
++		desc.path = appendToPath(path, name);
++		
++		YAKE_LOG( &quot;DotSceneParser: readCamera() [name=&quot; + name + &quot;]&quot; );
++		YAKE_ASSERT( pNode );
++		
++		String projectionType = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;projectionType&quot; );
++				
++		desc.projectionType = graphics::ICamera::PT_PERSPECTIVE;
++		
++		if ( projectionType == &quot;orthographic&quot; )
++			desc.projectionType = graphics::ICamera::PT_ORTHOGRAPHIC;
++		
++		desc.fov = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;fov&quot; ) );
++		
++		// Reading aspect ratio
++		String aspectRatio = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;aspectRatio&quot; );
++		// default value is 1.333 ( 640/480, 800/600, etc... )
++		desc.aspectRatio =
++				aspectRatio == &quot;&quot; ? 1.333 : StringUtil::parseReal( aspectRatio );
++		
++		const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
++		for ( dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it )
++		{
++			String childNodeName = (*it)-&gt;getName();
++			
++			//YAKE_LOG( &quot;DotSceneParser: node child: &quot; + StringUtil::toLowerCase( childNodeName ) );
++
++			const SharedPtr&lt;dom::INode&gt;&amp; pChild = *it;
++			
++			if ( childNodeName == &quot;normal&quot; )
++				readVector( pChild, desc.normal );
++			else if ( childNodeName == &quot;clipping&quot; )
++				readCameraClipping( pChild, desc );
++			else if ( childNodeName == &quot;trackTarget&quot; )
++				desc.trackTargetName = pChild-&gt;getAttributeValueAs&lt;String&gt;( &quot;nodeName&quot; );
++			else
++				YAKE_LOG_ERROR(String(&quot;DotSceneParser: Unhandled node child '&quot;) + childNodeName + _T(&quot;'&quot;));
++		}
++		
++		// Camera description ready. Fire!
++		mSigCamera( desc );
++		
++		// Store
++		mCameraDescriptions[ name ] = desc;
++	}
++
++} // dotscene
++} // parser
++} // data
++} // yake
+
+Added: trunk/yake/src/yake/model/pch.cpp
+===================================================================
+--- trunk/yake/src/yake/model/pch.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/model/pch.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,27 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
+
+Added: trunk/yake/src/yake/model/yakeComponentCreatorManager.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeComponentCreatorManager.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/model/yakeComponentCreatorManager.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,78 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++
++	YAKE_IMPLEMENT_REGISTRY(ComponentCreator)
++
++	ComponentCreatorManager::ComponentCreatorManager()
++	{
++	}
++	ComponentCreatorManager::~ComponentCreatorManager()
++	{
++	}
++	ModelComponent* ComponentCreatorManager::create(const String&amp; type, const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
++	{
++		YAKE_ASSERT( !type.empty() )(type)(params).debug(&quot;Invalid type!&quot;);
++		if (type.empty())
++			return 0;
++
++		ComponentCreator* theCreator = 0;
++		{
++			TypeCreatorMap::const_iterator it = creators_.find( type );
++			if (it == creators_.end())
++			{
++				SharedPtr&lt;ComponentCreator&gt; creator;
++				try {
++					creator = templates::create&lt;ComponentCreator&gt;( type );
++				}
++				catch (...)
++				{
++					YAKE_LOG_ERROR(&quot;Unregistered ComponentCreator type!&quot;);
++				}
++				YAKE_ASSERT( creator.get() )(type)(params).debug(&quot;Failed to create component creator! Probably it has not been registered/loaded.&quot;);
++				if (!creator.get())
++					return 0;
++				creators_.insert( std::make_pair(type,creator) );
++				theCreator = creator.get();
++			}
++			else
++				theCreator = it-&gt;second.get();
++		}
++		YAKE_ASSERT( theCreator );
++		ModelComponent* c = theCreator-&gt;create(ctx,params);
++		YAKE_ASSERT( c )(type)(params).debug(&quot;Failed to create component!&quot;);
++
++		return c;
++	}
++
++} // namespace model
++} // namespace yake
+
+Added: trunk/yake/src/yake/model/yakeGraphical.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeGraphical.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/model/yakeGraphical.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,118 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++
++	Graphical::Graphical()
++	{
++	}
++	Graphical::~Graphical()
++	{
++		/*
++		for (TagNodeMap::iterator itN = nodes_.begin(); itN != nodes_.end(); ++itN)
++		{
++			if (itN-&gt;second.owned_)
++				delete itN-&gt;second.p_;
++		}
++
++		for (TagEntityMap::iterator itE = entities_.begin(); itE != entities_.end(); ++itE)
++		{
++			if (itE-&gt;second.owned_)
++				delete itE-&gt;second.p_;
++		}
++
++		for (TagLightMap::iterator itL = lights_.begin(); itL != lights_.end(); ++itL)
++		{
++			if (itL-&gt;second.owned_)
++				delete itL-&gt;second.p_;
++		}
++		*/
++	}
++	/*
++	ModelComponent* Graphical::clone() const
++	{
++		Graphical* cloned = new Graphical();
++
++		// nodes
++		ConstVectorIterator&lt;TagNodeMap&gt; itN( nodes_ );
++		while (itN.hasMoreElements())
++		{
++			const TagNodeMap::value_type&amp; vt = itN.getNextRef();
++			graphics::ISceneNode* clonedNode = vt.second-&gt;deepClone();
++			cloned-&gt;addSceneNode( clonedNode, vt.first );
++		}
++
++		//@todo lights etc
++
++		return cloned;
++	}
++	*/
++	void Graphical::addSceneNode(graphics::ISceneNode* node, const String&amp; xpath, const bool owned)
++	{
++		YAKE_LOG(String(&quot;Graphical::addSceneNode(&quot;) + xpath + _T(&quot;)&quot;));
++		this-&gt;_add(node,nodes_,xpath,owned);
++	}
++	void Graphical::addEntity(graphics::IEntity* ent, const String&amp; xpath, const bool owned)
++	{
++		YAKE_LOG(String(&quot;Graphical::addEntity(&quot;) + xpath + _T(&quot;)&quot;));
++		this-&gt;_add(ent,entities_,xpath,owned);
++	}
++	void Graphical::addLight(graphics::ILight* light, const String&amp; xpath, const bool owned)
++	{
++		YAKE_LOG(String(&quot;Graphical::addLight(&quot;) + xpath + _T(&quot;)&quot;));
++		this-&gt;_add(light,lights_,xpath,owned);
++	}
++	graphics::ISceneNode* Graphical::getSceneNode(const String&amp; xpath) const
++	{
++		return this-&gt;_get(nodes_,xpath);
++	}
++	graphics::IEntity* Graphical::getEntity(const String&amp; xpath) const
++	{
++		return this-&gt;_get(entities_,xpath);
++	}
++	graphics::ILight* Graphical::getLight(const String&amp; xpath) const
++	{
++		return this-&gt;_get(lights_,xpath);
++	}
++	void Graphical::translate(const Vector3&amp; d)
++	{
++		ConstVectorIterator&lt;TagNodeMap&gt; itN( nodes_ );
++		while (itN.hasMoreElements())
++		{
++			const TagNodeMap::value_type&amp; vt = itN.getNextRef();
++			//if (vt.second.owned_)
++			if (!vt.second.p_-&gt;getParent())
++				vt.second.p_-&gt;translate( d );
++		}
++	}
++
++} // namespace model
++} // namespace yake
+
+Added: trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,88 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++#include &quot;yake/model/model_graphical_dotscene_loader.h&quot;
++
++namespace yake {
++namespace model {
++
++	YAKE_REGISTER_CONCRETE(GraphicalFromDotSceneCreator)
++
++	ModelComponent* GraphicalFromDotSceneCreator::create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
++	{
++		// Verify validity of creation context
++		graphics::IWorld* pGWorld = ctx.gworld_;
++		YAKE_ASSERT( pGWorld );
++		if (!pGWorld)
++			return 0;
++
++		// Extract parameters
++
++		StringMap::const_iterator itParam = params.find(&quot;file&quot;);
++		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'file'.&quot;);
++		if (itParam == params.end())
++			return 0;
++		const String fn = itParam-&gt;second;
++
++		itParam = params.find(&quot;name&quot;);
++		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
++		if (itParam == params.end())
++			return 0;
++		const String name = itParam-&gt;second;
++
++		// Read dotscene file into DOM
++
++		yake::data::dom::xml::XmlSerializer ser;
++		ser.parse( fn, false );
++		YAKE_ASSERT( ser.getDocumentNode() )( fn ).error(&quot;Could not parse dotScene document!&quot;);
++
++		// Parse DOM and create graphical objects
++
++		yake::data::parser::dotscene::DotSceneParserV1 dsp;
++
++		Graphical* pGraphical = new Graphical();
++
++		DotSceneListener dotSceneListener( *pGraphical, name.empty() ? _T(&quot;&quot;) : (name + _T(&quot;/&quot;)) );
++		dotSceneListener.reset( pGWorld );
++
++		dsp.subscribeToNodeSignal( Bind1( &amp;DotSceneListener::processSceneNode, &amp;dotSceneListener ) );
++		dsp.subscribeToEntitySignal( Bind1( &amp;DotSceneListener::processEntity, &amp;dotSceneListener ) );
++		dsp.subscribeToCameraSignal( Bind1( &amp;DotSceneListener::processCamera, &amp;dotSceneListener ) );
++		dsp.subscribeToLightSignal( Bind1( &amp;DotSceneListener::processLight, &amp;dotSceneListener ) );
++
++		if (!dsp.load( ser.getDocumentNode() ))
++		{
++			YAKE_SAFE_DELETE( pGraphical );
++		}
++
++		return pGraphical;
++	}
++
++} // namespace model
++} // namespace yake
+
+Added: trunk/yake/src/yake/model/yakeGraphicalDotSceneLoader.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeGraphicalDotSceneLoader.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/model/yakeGraphicalDotSceneLoader.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,231 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++#include &quot;yake/model/model_graphical_dotscene_loader.h&quot;
++
++namespace yake {
++namespace model {
++
++	//-----------------------------------------------------
++	void DotSceneListener::processSceneNode( const SceneNodeDesc&amp; desc )
++	{
++		const String fullName = mNamePrefix + desc.path;
++		const String fullParentNodeName = mNamePrefix + desc.parentNodeName;
++		YAKE_LOG( &quot;Processing scene node &quot; + desc.name + &quot; (&quot; + fullName + &quot;) with parent node &quot; + desc.parentNodeName + &quot; (&quot; + fullParentNodeName + &quot;)&quot; );
++
++		// create scene node
++		graphics::ISceneNode* pSN = mGWorld-&gt;createSceneNode( fullName );
++
++		// add to parent node (if necessary)
++		graphics::ISceneNode* parentSN = 0;
++		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
++		{
++			parentSN = mSceneNodes[ desc.parentNodeName ];
++			parentSN-&gt;addChildNode( pSN );
++		}
++
++		// set properties
++		pSN-&gt;setName( fullName );
++		pSN-&gt;setPosition( desc.transform.position );
++		pSN-&gt;setOrientation( desc.transform.rotation );
++		pSN-&gt;setScale( desc.transform.scale );
++
++		mSceneNodes[ desc.name ] = pSN;
++
++		// Register with Model object
++		mOwner.addSceneNode( pSN, desc.path, parentSN ? false : true );
++
++		// look if this node is tracked
++		// TODO current scheme allows node to be tracked by only one target
++		TrackerMap::iterator end = mTrackersTargets.end();
++		for( TrackerMap::iterator trackRecord = mTrackersTargets.begin(); trackRecord != end; ++trackRecord )
++		{
++			if ( trackRecord-&gt;second == desc.name )
++			{
++				YAKE_LOG( &quot;Setting track target for camera &quot; + trackRecord-&gt;first + &quot; ...&quot; );
++
++				CameraInfo info = mCameras[ trackRecord-&gt;first ];
++
++				YAKE_LOG( &quot;Camera info found. Acquiring camera...&quot; );
++
++				graphics::ICamera* tracker = info.camera;
++
++				YAKE_LOG( &quot;Got camera. Setting orientation...&quot; );
++
++				tracker-&gt;lookAt( pSN-&gt;getPosition( graphics::ISceneNode::TS_WORLD ) );
++
++				YAKE_LOG( &quot;Orientation was set up...&quot; );
++
++				// cleaning up
++				mTrackersTargets.erase( trackRecord );
++				break;
++			}
++		}
++	}
++
++	//-----------------------------------------------------
++	void DotSceneListener::processEntity( const EntityDesc&amp; desc )
++	{
++		const String fullName = mNamePrefix + desc.name;
++		const String fullParentNodeName = mNamePrefix + desc.parentNodeName;
++		YAKE_LOG( &quot;Processing entity &quot; + desc.name + &quot; (&quot; + fullName + &quot;) with parent node &quot; + desc.parentNodeName + &quot; (&quot; + fullParentNodeName + &quot;)&quot; );
++
++		// create entity
++		graphics::IEntity* pEntity = mGWorld-&gt;createEntity( desc.meshFile );
++		YAKE_ASSERT( pEntity );
++
++		// lookup scene node
++		bool parented = false;
++		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
++		{
++			graphics::ISceneNode* parentSN = mSceneNodes[ desc.parentNodeName ];
++			YAKE_ASSERT( parentSN );
++			parentSN-&gt;attachEntity( pEntity );
++			parented = true;
++		}
++
++		// configure entity
++		pEntity-&gt;setCastsShadow( desc.castsShadows );
++
++		// Register with Model object
++		mOwner.addEntity( pEntity, desc.path, !parented );
++
++		// store entity meta info
++		EntityInfo info;
++
++		info.entity = pEntity;
++		info.parentSceneNode = desc.parentNodeName;
++
++		mEntities[ desc.name ] = info;
++	}
++
++	//-----------------------------------------------------
++	void DotSceneListener::processCamera( const CameraDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;Processing camera &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
++
++		graphics::ICamera* pCamera = mGWorld-&gt;createCamera();
++
++		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
++		{
++			graphics::ISceneNode* parentSN = mSceneNodes[ desc.parentNodeName ];
++
++			parentSN-&gt;attachCamera( pCamera );
++		}
++
++		pCamera-&gt;setName( desc.name );
++		pCamera-&gt;setFOV( Math::DegreesToRadians( desc.fov ) );
++		pCamera-&gt;setAspectRatio( desc.aspectRatio );
++		pCamera-&gt;setProjectionType( desc.projectionType );
++		pCamera-&gt;setNearClipDistance( desc.clipping.nearClip );
++		pCamera-&gt;setFarClipDistance( desc.clipping.farClip );
++
++		//	pCamera-&gt;setDirection( desc.normal );
++
++		pCamera-&gt;setPosition( Vector3() );
++		pCamera-&gt;setOrientation( Quaternion::kIdentity );
++
++
++		if ( desc.trackTargetName != &quot;&quot; )
++		{
++			YAKE_LOG( &quot;Saving tracking record for camera &quot; + desc.name + &quot; ... &quot; );
++
++			mTrackersTargets.insert( TrackerMap::value_type( desc.name, desc.trackTargetName ) );
++		}
++
++		CameraInfo info;
++
++		info.camera = pCamera;
++		info.parentSceneNode = desc.parentNodeName;
++
++		mCameras[ desc.name ] = info;
++	}
++
++	//-----------------------------------------------------
++	void DotSceneListener::processLight( const LightDesc&amp; desc )
++	{
++		const String fullName = mNamePrefix + desc.name;
++		const String fullParentNodeName = mNamePrefix + desc.parentNodeName;
++		YAKE_LOG( &quot;Processing light &quot; + desc.name + &quot; (&quot; + fullName + &quot;) with parent node &quot; + desc.parentNodeName + &quot; (&quot; + fullParentNodeName + &quot;)&quot; );
++
++		// create light
++		graphics::ILight* pLight = mGWorld-&gt;createLight();
++
++		// lookup parent scene node
++		bool parented = false;
++		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
++		{
++			graphics::ISceneNode* parentSN = mSceneNodes[ desc.parentNodeName ];
++			YAKE_ASSERT( parentSN );
++
++			parentSN-&gt;attachLight( pLight );
++			parented = true;
++		}
++
++		// register with Model
++		mOwner.addLight( pLight, desc.path, !parented );
++
++		// configure light
++		pLight-&gt;setName( desc.name );
++		pLight-&gt;setType( desc.type );
++		pLight-&gt;setCastsShadows( desc.castsShadows );
++
++		if ( desc.castsShadows )
++		{
++			YAKE_LOG( &quot;  light casts shadows&quot; );
++		}
++		else
++		{
++			YAKE_LOG( &quot;  light doesn't cast shadows&quot; );
++		}
++
++		pLight-&gt;setDiffuseColour( desc.diffuseColor );
++		pLight-&gt;setSpecularColour( desc.specularColor );
++		pLight-&gt;setAttenuation( desc.attenuation.range,
++			desc.attenuation.constant,
++			desc.attenuation.linear,
++			desc.attenuation.quadratic );
++
++		if ( desc.type == graphics::ILight::LT_SPOT )
++			pLight-&gt;setSpotlightRange( desc.range.inner, desc.range.outer, desc.range.falloff );
++
++		if ( desc.type != graphics::ILight::LT_POINT )
++			pLight-&gt;setDirection( desc.normal );
++
++		// store light meta info
++		LightInfo info;
++
++		info.light = pLight;
++		info.parentSceneNode = desc.parentNodeName;
++
++		mLights[ desc.name ] = info;
++	}
++
++} // namespace model
++} // namespace yake
+
+Added: trunk/yake/src/yake/model/yakeModel.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModel.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/model/yakeModel.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,69 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++
++	Model::Model() : name_(_T(&quot;&quot;)), internalName_(uniqueName::create(_T(&quot;yake.model_&quot;)))
++	{}
++	void Model::setName(const String&amp; name)
++	{
++		name_ = name;
++	}
++	const String&amp; Model::getName() const
++	{
++		return name_; 
++	}
++	void Model::addComponent(ModelComponent* c, const ComponentTag&amp; tag)
++	{
++		components_.addComponent(c,tag);
++	}
++	ModelComponent* Model::getComponentByTag(const ComponentTag&amp; tag) const
++	{
++		return components_.getComponentByTag(tag);
++	}
++	/*
++	Model* Model::clone() const
++	{
++		Model* cloned = new Model();
++		YAKE_ASSERT( cloned );
++
++		// clone name
++		cloned-&gt;name_ = name_ + &quot;_copy&quot;;
++
++		// clone components
++		ModelComponentContainer::_cloneComponents(*cloned);
++
++		return cloned;
++	}
++	*/
++
++} // namespace model
++} // namespace yake
+
+Added: trunk/yake/src/yake/model/yakeModelComponentContainer.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelComponentContainer.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/model/yakeModelComponentContainer.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,108 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++	bool operator==(const SharedPtr&lt;ModelComponent&gt;&amp; lhs, const ModelComponent* rhs)
++	{
++		return (lhs.get() == rhs);
++	}
++	ModelComponentContainer::ModelComponentContainer()
++	{
++	}
++	/*
++	void ModelComponentContainer::_cloneComponents(Model&amp; cloned) const
++	{
++		// clone components
++		typedef std::map&lt;const ModelComponent*,SharedPtr&lt;ModelComponent&gt; &gt; ClonedMap;
++		ClonedMap clonedMap;
++
++		ConstVectorIterator&lt;ModelComponentList&gt; itC(components_);
++		while (itC.hasMoreElements())
++		{
++			const ModelComponent* comp = itC.getNext().get();
++			SharedPtr&lt;ModelComponent&gt; clonedComp( comp-&gt;clone() );
++			clonedMap[ comp ] = clonedComp;
++			cloned.components_.push_back( clonedComp );
++		}
++
++		// clone tags
++		ConstVectorIterator&lt;TagModelComponentMap&gt; itCM(tag2components_);
++		while (itCM.hasMoreElements())
++		{
++			const TagModelComponentMap::value_type&amp; cm = itCM.getNext();
++			ClonedMap::const_iterator it = clonedMap.find( cm.second.get() );
++			if (it != clonedMap.end())
++				cloned.tag2components_[ cm.first ] = it-&gt;second;
++		}
++	}
++	*/
++	void ModelComponentContainer::addComponent(ModelComponent* c)
++	{
++		YAKE_ASSERT( c );
++#ifdef YAKE_DEBUG_BUILD
++		YAKE_ASSERT( components_.end() == std::find(components_.begin(),components_.end(),c) );
++#endif
++		components_.push_back( SharedPtr&lt;ModelComponent&gt;(c) );
++	}
++	void ModelComponentContainer::addComponent(ModelComponent* c, const ComponentTag&amp; tag)
++	{
++		YAKE_ASSERT( c );
++		YAKE_ASSERT( !tag.empty() )(tag);
++
++		SharedPtr&lt;ModelComponent&gt; ptr(c);
++		components_.push_back( ptr );
++#ifdef YAKE_DEBUG_BUILD
++		YAKE_ASSERT( tag2components_.end() == tag2components_.find(tag) );
++#endif
++		tag2components_[ tag ] = ptr;
++	}
++	ModelComponent* ModelComponentContainer::getComponentByTag(const ComponentTag&amp; tag) const
++	{
++		TagModelComponentMap::const_iterator it = tag2components_.find(tag);
++		return ((it == tag2components_.end()) ? 0 : it-&gt;second.get());
++	}
++	ModelComponent* ModelComponentContainer::getComponentByIndex(const size_t idx) const
++	{
++		YAKE_ASSERT( !this-&gt;empty() );
++		YAKE_ASSERT( idx &lt; components_.size() );
++		return components_[ idx ].get();
++	}
++	size_t ModelComponentContainer::numComponents() const
++	{
++		return components_.size();
++	}
++	bool ModelComponentContainer::empty() const
++	{
++		return components_.empty();
++	}
++
++} // namespace model
++} // namespace yake
+
+Added: trunk/yake/src/yake/model/yakeModelLinkContainer.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelLinkContainer.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/model/yakeModelLinkContainer.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,52 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++
++	ModelLinkContainer::ModelLinkContainer()
++	{
++	}
++	ModelLinkContainer::~ModelLinkContainer()
++	{
++		this-&gt;destroyAllModelLinks();
++	}
++	void ModelLinkContainer::destroyAllModelLinks()
++	{
++	}
++	void ModelLinkContainer::addModelLink(ModelLink*)
++	{
++	}
++	void ModelLinkContainer::removeModelLink(ModelLink*)
++	{
++	}
++
++} // namespace model
++} // namespace yake
+
+Added: trunk/yake/src/yake/model/yakeModelManager.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelManager.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/model/yakeModelManager.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,98 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++
++	ModelManager::ModelManager()
++	{
++	}
++	ModelManager::~ModelManager()
++	{
++	}
++	namespace detail {
++		void extractParams(const String&amp; params, StringMap&amp; out)
++		{
++			StringVector singles = split&lt;String&gt;(params,&quot;;&quot;);
++			ConstVectorIterator&lt;StringVector&gt; it( singles );
++			while (it.hasMoreElements())
++			{
++				const String s = it.getNext();
++				StringVector keyValuePair = split&lt;String&gt;( s, &quot;=&quot; );
++				out[ keyValuePair.front() ] = (keyValuePair.size() == 1) ? &quot;&quot; : keyValuePair.back();
++			}
++		}
++	} // namespace detail
++	/// graphics/dotScene:name=gfx;file=bla.scene|physics/dotXODE...
++	Model* ModelManager::createModel(const String&amp; def)
++	{
++		Vector&lt;String&gt; defComponents = split&lt;String&gt;(def, &quot;|&quot;);
++		YAKE_ASSERT(!defComponents.empty());
++		if (defComponents.empty())
++			return 0;
++		Model* m = new Model();
++		models_.push_back( SharedPtr&lt;Model&gt;(m) );
++		ConstVectorIterator&lt;Vector&lt;String&gt; &gt; itDef( defComponents );
++		while (itDef.hasMoreElements())
++		{
++			const String&amp; defC = itDef.getNextRef();
++
++			// Split e.g. &quot;gfx=graphics/dotScene:file=blah.scene&quot; into &quot;gfx&quot; and &quot;file=graphics/dotScene:blah.scene&quot;
++			Vector&lt;String&gt; defTypeRest = split&lt;String&gt;( defC, &quot;:&quot; );
++			YAKE_ASSERT( defTypeRest.size() == 2 );
++
++			const String type = defTypeRest.front(); // e.g. &quot;graphics/dotScene&quot;
++
++			StringMap params;
++			detail::extractParams( defTypeRest.back(), params );
++
++			StringMap::const_iterator itParam = params.find(&quot;name&quot;);
++			YAKE_ASSERT( itParam != params.end() ).debug(&quot;No property 'name' for component!&quot;);
++			if (itParam == params.end())
++				continue;
++			const String name = itParam-&gt;second;
++
++			YAKE_ASSERT( m-&gt;getComponentByTag(name) == 0 ).debug(&quot;Components with duplicate tags are not allowed within the same model!&quot;);
++
++			m-&gt;addComponent( creatorMgr_.create( type, ctx_, params ), name );
++		}
++		return m;
++	}
++	void ModelManager::setCreationContext_GraphicalWorld(graphics::IWorld* w)
++	{
++		ctx_.gworld_ = w;
++	}
++	void ModelManager::setCreationContext_PhysicalWorld(physics::IWorld* w)
++	{
++		ctx_.pworld_ = w;
++	}
++
++} // namespace model
++} // namespace yake
+
+Added: trunk/yake/src/yake/model/yakePhysical.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakePhysical.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/model/yakePhysical.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,79 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++
++	Physical::Physical()
++	{
++	}
++	Physical::~Physical()
++	{
++		for (TagActorMap::iterator itA = actors_.begin(); itA != actors_.end(); ++itA)
++		{
++			physics::IActor* obj = itA-&gt;second.p_;
++			obj-&gt;getCreator()-&gt;destroyActor(obj);
++		}
++		for (TagJointMap::iterator itJ = joints_.begin(); itJ != joints_.end(); ++itJ)
++		{
++			physics::IJoint* obj = itJ-&gt;second.p_;
++			obj-&gt;getCreator()-&gt;destroyJoint(obj);
++		}
++	}
++	void Physical::addActor(physics::IActor* actor, const String&amp; xpath)
++	{
++		YAKE_LOG(String(&quot;Physical::addActor(&quot;) + xpath + _T(&quot;)&quot;));
++		this-&gt;_add&lt;physics::IActor&gt;(actor,actors_,xpath);
++	}
++	void Physical::addJoint(physics::IJoint* joint, const String&amp; xpath)
++	{
++		YAKE_LOG(String(&quot;Physical::addJoint(&quot;) + xpath + _T(&quot;)&quot;));
++		this-&gt;_add&lt;physics::IJoint&gt;(joint,joints_,xpath);
++	}
++	void Physical::addBody(physics::IBody* body, const String&amp; xpath)
++	{
++		YAKE_LOG(String(&quot;Physical::addBody(&quot;) + xpath + _T(&quot;)&quot;));
++		this-&gt;_add&lt;physics::IBody&gt;(body,bodies_,xpath);
++	}
++	physics::IActor* Physical::getActor(const yake::String&amp; xpath) const
++	{
++		return this-&gt;_get(actors_,xpath);
++	}
++	physics::IJoint* Physical::getJoint(const yake::String&amp; xpath) const
++	{
++		return this-&gt;_get(joints_,xpath);
++	}
++	physics::IBody* Physical::getBody(const yake::String&amp; xpath) const
++	{
++		return this-&gt;_get(bodies_,xpath);
++	}
++
++} // namespace model
++} // namespace yake
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -280,9 +280,12 @@
+ 		try {
+ 			mSceneNode-&gt;getAttachedObject( pCam-&gt;getCamera_()-&gt;getName() );
+ 		}
+-		catch (...)
++		catch (Ogre::Exception&amp; e)
+ 		{
+-			mSceneNode-&gt;attachObject( pCam-&gt;getCamera_() );
++			if (e.getNumber() == Ogre::Exception::ERR_ITEM_NOT_FOUND)
++				mSceneNode-&gt;attachObject( pCam-&gt;getCamera_() );
++			else
++				YAKE_LOG(String(&quot;Ogre Exception: &quot;) + e.getFullDescription());
+ 		}
+ 		mCameras.push_back( pCamera );
+ 	}
+@@ -300,8 +303,12 @@
+ 		try {
+ 			mSceneNode-&gt;getAttachedObject( pL-&gt;getLight_()-&gt;getName() );
+ 		}
+-		catch (...)
++		catch (Ogre::Exception&amp; e)
+ 		{
++			if (e.getNumber() != Ogre::Exception::ERR_ITEM_NOT_FOUND)
++			{
++				YAKE_EXCEPT(String(&quot;Caught OGRE exception: &quot;) + e.getFullDescription().c_str());
++			}
+ 			mSceneNode-&gt;attachObject( pL-&gt;getLight_() );
+ 		}
+ 		mLights.push_back( pLight );
+@@ -320,9 +327,12 @@
+ 		try {
+ 			mSceneNode-&gt;getAttachedObject( pE-&gt;getEntity_()-&gt;getName() );
+ 		}
+-		catch (...)
++		catch (Ogre::Exception&amp; e)
+ 		{
+-			mSceneNode-&gt;attachObject( pE-&gt;getEntity_() );
++			if (e.getNumber() == Ogre::Exception::ERR_ITEM_NOT_FOUND)
++				mSceneNode-&gt;attachObject( pE-&gt;getEntity_() );
++			else
++				YAKE_LOG(String(&quot;Ogre Exception: &quot;) + e.getFullDescription());
+ 		}
+ 		mEntities.push_back( pEntity );
+ 	}
+@@ -520,6 +530,13 @@
+ 
+ 		mParticleSystems.erase( victim );
+ 	}
++
++	//------------------------------------------------------
++	ISceneNode* OgreNode::getParent() const
++	{ 
++		return (mWorld.isRoot(mParentNode) ? 0 : mParentNode); 
++	}
++
+ }
+ }
+ }
+
+Added: trunk/yake/src/yake/samples/model/dotScene/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/model/dotScene/demo.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/samples/model/dotScene/demo.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,194 @@
++//****************************************************************************
++//**
++//**    Sample
++//**
++//**	Simpler than simple sample! Beware!
++//**	It's WIP towards a real sample :)
++//**
++//**	When running, press ESC to exit.
++//**
++//****************************************************************************
++
++#include &lt;yake/samples/model/dotScene/pch.h&gt;
++#include &lt;yake/model/model.h&gt;
++
++#pragma warning( disable: 4305 ) // truncation from 'double' to 'float'
++
++using namespace yake;
++
++class TheApp : public yake::exapp::ExampleApplication
++{
++private:
++	typedef std::pair&lt;graphics::IViewport*,graphics::ICamera*&gt; ViewportCameraPair;
++	Vector&lt;ViewportCameraPair &gt;			mVPs;
++	SharedPtr&lt; graphics::IWorld &gt;		mGWorld;
++
++public:
++	TheApp() : ExampleApplication(
++					true /*graphics*/,
++					false /*physics*/,
++					false /*scripting*/,
++					true /*input*/,
++					false /*script bindings*/,
++					false /*audio*/)
++	{
++	}
++	void onKey(const yake::input::KeyboardEvent &amp; e)
++	{
++		std::cout &lt;&lt; &quot;Key pressed: &quot; &lt;&lt; e.keyCode &lt;&lt; &quot;\n&quot;;
++		
++		if (e.keyCode == input::KC_ESCAPE)
++			requestShutdown();
++	}
++	void onMB(uint8 btn)
++	{
++		std::cout &lt;&lt; &quot;MB: &quot; &lt;&lt; static_cast&lt;int&gt;(btn) &lt;&lt; std::endl;
++	}
++	int createCameraViewportPair( real sx, real sy, real w, real h, int z )
++	{
++		graphics::ICamera* pC = mGWorld-&gt;createCamera();
++		YAKE_ASSERT( pC );
++		pC-&gt;setNearClipDistance( 1. );
++        // incase infinite far distance is not supported
++        pC-&gt;setFarClipDistance(100000);
++
++		mVPs.push_back( ViewportCameraPair(mGWorld-&gt;createViewport( pC ), pC) );
++		size_t idx = mVPs.size()-1;
++		YAKE_ASSERT( mVPs[idx].first );
++		mVPs[idx].first-&gt;setDimensions( sx, sy, w, h );
++		mVPs[idx].first-&gt;setZ( z );
++		return static_cast&lt;int&gt;(idx);
++	}
++	void setupScene()
++	{
++		// Floor plane
++		graphics::IEntity* ent = mGWorld-&gt;createEntity(&quot;plane_1x1.mesh&quot;);
++		YAKE_ASSERT( ent );
++		graphics::ISceneNode* node = mGWorld-&gt;createSceneNode(&quot;sn_plane&quot;);
++		YAKE_ASSERT( node );
++		node-&gt;attachEntity( ent );
++		node-&gt;setScale( Vector3(1000,1,1000) );
++		ent-&gt;setMaterial(&quot;Examples/BumpyMetal&quot;);
++		ent-&gt;setCastsShadow(false);
++	}
++
++	virtual void run()
++	{
++		// setup event input generators
++		mKeyboardEventGenerator.subscribeToKeyDown( Bind1( &amp;TheApp::onKey, this ) );
++		mMouseEventGenerator.subscribeToMouseButtonDown( Bind1( &amp;TheApp::onMB, this ) );
++
++		// graphics
++		mGWorld = getGraphicsSystem().createWorld();
++		YAKE_ASSERT( mGWorld );
++
++		//NOTE: Make sure you create a camera before calling mGWorld-&gt;setShadowsEnabled(true)
++		// when using &quot;ogre3d&quot; and the terrain scene manager with modulated texture shadows.
++		// The first camera created will be used as the primary camera by the scene manager
++		// and it crashes wildly if it's a texture shadow camera!
++
++		createCameraViewportPair( 0.0, 0.0, 1, 1, 10 );
++		//createCameraViewportPair( 0.0, 0.0, 0.5, 0.5, 10 );
++		//createCameraViewportPair( 0.5, 0.0, 0.5, 0.5, 11 );
++		//createCameraViewportPair( 0.0, 0.5, 0.5, 0.5, 12 );
++		//createCameraViewportPair( 0.5, 0.5, 0.5, 0.5, 13 );
++
++		if (mVPs[0].second)
++		{
++			mVPs[0].second-&gt;translate( Vector3(0,100,700) );
++			mVPs[0].second-&gt;pitch(-10);
++		}
++		if (mVPs.size() &gt; 1 &amp;&amp; mVPs[1].second)
++			mVPs[1].second-&gt;setPosition( Vector3(0,2,-80) );
++		if (mVPs.size() &gt; 2 &amp;&amp; mVPs[2].second)
++		{
++			mVPs[2].second-&gt;translate( Vector3(0,15,30) );
++			mVPs[2].second-&gt;pitch(-30);
++		}
++		if (mVPs.size() &gt; 3 &amp;&amp; mVPs[3].second)
++		{
++			mVPs[3].second-&gt;setPosition( Vector3(0,50,0) );
++			mVPs[3].second-&gt;pitch(-90);
++		}
++
++		// scene
++		setupScene();
++
++		//mGWorld-&gt;setShadowsEnabled( true );
++		model::ModelManager modelMgr;
++		modelMgr.setCreationContext_GraphicalWorld( mGWorld.get() );
++
++		model::Model* m = modelMgr.createModel(&quot;graphics/dotScene:name=gfx1;file=../../media/samples/dotScene/DotScene1.scene&quot;);
++		YAKE_ASSERT( m );
++
++		m = modelMgr.createModel(&quot;graphics/dotScene:name=gfx2;file=../../media/samples/dotScene/DotScene1.scene&quot;);
++		YAKE_ASSERT( m );
++		((model::Graphical*)m-&gt;getComponentByTag(&quot;gfx2&quot;))-&gt;translate(Vector3(40,20,0));
++
++		// main loop
++		real lastTime = native::getTime();
++		while (!shutdownRequested())
++		{
++			// timing
++			real time = native::getTime();
++			real timeElapsed = time-lastTime;//timer-&gt;getSeconds();
++			lastTime = time;
++
++			// handle input
++			getInputSystem().update();
++			mMouseEventGenerator.update();
++			mKeyboardEventGenerator.update();
++
++			//
++			YAKE_ASSERT( getKeyboard() );
++			if (getKeyboard())
++			{
++				static unsigned iCam = 0;
++				real distance = real(-200. * timeElapsed);
++				if (getKeyboard()-&gt;isKeyDown(input::KC_LEFT))
++					mVPs[iCam].second-&gt;translate( Vector3(distance, 0, 0) );
++				if (getKeyboard()-&gt;isKeyDown(input::KC_RIGHT))
++					mVPs[iCam].second-&gt;translate( Vector3(-distance, 0, 0) );
++				if (getKeyboard()-&gt;isKeyDown(input::KC_UP))
++					mVPs[iCam].second-&gt;translate( Vector3(0, 0, distance) );
++				if (getKeyboard()-&gt;isKeyDown(input::KC_DOWN))
++					mVPs[iCam].second-&gt;translate( Vector3(0, 0, -distance) );
++			}
++
++			// render the scene
++			if (!shutdownRequested())
++				mGWorld-&gt;render( timeElapsed );
++		}
++
++		mGWorld.reset();
++	}
++};
++
++//============================================================================
++//    IMPLEMENTATION FUNCTIONS
++//============================================================================
++
++int main()
++{
++	try
++	{
++		std::cout &lt;&lt; std::endl &lt;&lt; &quot;A simple demo :) provided for YAKE by Stephan Kaiser&quot; &lt;&lt; std::endl;
++		TheApp theApp;
++		theApp.initialise();
++		theApp.run();
++	}
++	catch ( const yake::Exception&amp; e )
++	{
++		std::cout &lt;&lt; std::endl &lt;&lt; e.what() &lt;&lt; std::endl;
++	}
++	catch (...)
++	{
++		std::cout &lt;&lt; std::endl &lt;&lt; &quot;-----------------&quot; &lt;&lt; std::endl &lt;&lt; &quot;UNHANDLED EXCEPTION&quot; &lt;&lt; std::endl;
++	}
++#if defined( YAKE_DEBUG_BUILD )
++	std::cout &lt;&lt; std::endl &lt;&lt; &quot;Waiting for you...&quot;;
++	std::cin.get();
++#endif
++
++	return 0;
++}
+
+Added: trunk/yake/src/yake/samples/model/dotScene/pch.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/model/dotScene/pch.cpp	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/src/yake/samples/model/dotScene/pch.cpp	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1 @@
++#include &lt;yake/samples/model/dotScene/pch.h&gt;
+
+Modified: trunk/yake/yake/base/templates/yakeVector.h
+===================================================================
+--- trunk/yake/yake/base/templates/yakeVector.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/base/templates/yakeVector.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -260,6 +260,11 @@
+ 		{
+ 			return *mCurrent++;
+ 		}
++		/** Returns the next element in the collection, and advances to the next. */
++		const typename T::value_type&amp; getNextRef(void)
++		{
++			return *mCurrent++;
++		}
+ 		/** Returns the next element in the collection, without advancing to the next. */
+ 		typename T::value_type peekNext(void)
+ 		{
+
+Modified: trunk/yake/yake/base/yakePrerequisites.h
+===================================================================
+--- trunk/yake/yake/base/yakePrerequisites.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/base/yakePrerequisites.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -85,6 +85,7 @@
+ #	define YAKE_BASE_API DLLIMPORT
+ #endif
+ 
++#define _T(X) X
+ 
+ #if defined(_DEBUG) || defined(DEBUG)
+ #	define YAKE_DEBUG
+
+Modified: trunk/yake/yake/base/yakeString.h
+===================================================================
+--- trunk/yake/yake/base/yakeString.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/base/yakeString.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -143,6 +143,17 @@
+ 	private:
+ 		StringMap m_map;
+ 	};
++	inline std::ostream&amp; operator &lt;&lt; (std::ostream&amp; out, const StringMap&amp; rhs)
++	{
++		out &lt;&lt; &quot;StringMap(&quot;;
++		for (StringMap::const_iterator it = rhs.begin(); it != rhs.end(); ++it)
++		{
++			out &lt;&lt; ((it == rhs.begin()) ? &quot;&quot; : &quot;;&quot;) 
++				&lt;&lt; it-&gt;first &lt;&lt; &quot;=&quot; &lt;&lt; it-&gt;second;
++		}
++		out &lt;&lt; &quot;)&quot;;
++		return out;
++	}
+ 
+ #undef YAKE_BASE_STRING
+ 
+
+Modified: trunk/yake/yake/graphics/yakeGraphicalWorld.h
+===================================================================
+--- trunk/yake/yake/graphics/yakeGraphicalWorld.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/graphics/yakeGraphicalWorld.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -309,6 +309,8 @@
+ 
+ 		virtual void setInheritScale( bool inherit ) = 0;
+ 
++		virtual ISceneNode* getParent() const = 0;
++
+ 		/** Returns a list of all child scene nodes of this scene node.
+ 		*/
+ 		virtual void getChildren( SceneNodePtrList&amp; ret, bool bRecursive = false ) const = 0;
+@@ -385,6 +387,9 @@
+ 			@param relativeTo TransformSpace to use for the rotation.
+ 		*/
+ 		virtual void rotate( const math::Quaternion&amp; rDelta, const TransformSpace relativeTo = TS_PARENT ) = 0;
++
++		//virtual ISceneNode* shallowClone() const = 0;
++		//virtual ISceneNode* deepClone() const = 0;
+ 	};
+ 
+ 	/** Viewport abstract interface.
+
+Added: trunk/yake/yake/loader/loader.h
+===================================================================
+--- trunk/yake/yake/loader/loader.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/loader/loader.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,33 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_LOADER_H
++#define YAKE_LOADER_H
++
++#include &quot;yake/loader/prerequisites.h&quot;
++#include &quot;yake/loader/yakeDotScene.h&quot;
++
++#endif
+
+Added: trunk/yake/yake/loader/pch.h
+===================================================================
+--- trunk/yake/yake/loader/pch.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/loader/pch.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,33 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_LOADER_PCH_H
++#define YAKE_LOADER_PCH_H
++
++#include &lt;yake/base/yake.h&gt;
++#include &lt;yake/data/yakeData.h&gt;
++
++#endif
+
+Added: trunk/yake/yake/loader/prerequisites.h
+===================================================================
+--- trunk/yake/yake/loader/prerequisites.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/loader/prerequisites.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,40 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_LOADER_PREREQUISITES_H
++#define YAKE_LOADER_PREREQUISITES_H
++
++#if defined(YAKE_LOADER_EXPORTS)
++#	define YAKE_LOADER_API DLLEXPORT
++#else
++#	define YAKE_LOADER_API DLLIMPORT
++#endif
++
++#if (YAKE_PLATFORM == PLATFORM_WIN32) &amp;&amp; !defined(YAKE_LOADER_EXPORTS)
++#pragma comment(lib,&quot;loader.lib&quot;)
++#endif
++
++#endif
+
+Added: trunk/yake/yake/loader/yakeDotScene.h
+===================================================================
+--- trunk/yake/yake/loader/yakeDotScene.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/loader/yakeDotScene.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,224 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_DATA_DOTSCENE_H
++#define YAKE_DATA_DOTSCENE_H
++
++#include &lt;yake/loader/prerequisites.h&gt;
++#include &lt;yake/data/yakeData.h&gt;
++#include &lt;yake/graphics/yakeGraphics.h&gt;
++
++#pragma warning(disable: 4244)
++
++namespace yake {
++namespace data {
++namespace parser {
++namespace dotscene {
++
++	/** DotSceneParser base class providing default implementation for DOM parsing of dotScene files.
++	* \todo read environment, external references ..
++	*/
++	class YAKE_LOADER_API DotSceneParser
++	{
++	public:
++		
++		struct Desc
++		{
++			String		name;
++			String		id;
++			String		parentNodeName;
++			String		path;
++		};
++		
++		struct Transform
++		{
++			math::Vector3		position;
++			math::Quaternion	rotation;
++			math::Vector3		scale; 
++		};
++		
++		struct NodeDesc : public Desc
++		{
++			Transform	transform;
++		};
++		
++		struct EntityDesc : public Desc
++		{
++			String		meshFile;
++			String		materialFile;
++			bool		castsShadows;
++			bool		isStatic;
++		};
++		
++		struct CameraDesc : public Desc
++		{
++			real					fov;
++			real					aspectRatio;
++			graphics::ICamera::ProjectionType	projectionType;
++			String					trackTargetName;
++			math::Vector3				normal;
++			
++			struct Clipping
++			{
++				real nearClip;
++				real farClip;
++			} clipping;
++		};
++		
++		struct LightDesc : public Desc
++		{
++			graphics::ILight::LightType	type;
++			bool				visible;
++			bool				castsShadows;
++			math::Color			diffuseColor;
++			math::Color			specularColor;
++			math::Vector3			normal;
++			
++			struct Range
++			{
++				real inner;
++				real outer;
++				real falloff;
++			} range;
++			
++			struct Attenuation
++			{
++				real range;
++				real constant;
++				real linear;
++				real quadratic;
++			}							attenuation;
++			
++			LightDesc() : visible( true ), castsShadows( false )
++			{}
++		};
++		
++		typedef AssocVector&lt; String, NodeDesc &gt; SceneNodeDescMap;
++		typedef AssocVector&lt; String, EntityDesc &gt; EntityDescMap;
++		typedef AssocVector&lt; String, CameraDesc &gt; CameraDescMap;
++		typedef AssocVector&lt; String, LightDesc &gt; LightDescMap;
++
++		static const String ROOT_NODE_NAME;
++		
++		virtual ~DotSceneParser() {}
++
++		String getName() const
++		{ return &quot;yake.data.dotScene&quot;; }
++
++		virtual Version getVersion() const = 0;
++
++		/** Build graphics scene from DOM!
++			\param file 
++			\return 
++		*/
++		virtual bool load(	const SharedPtr&lt;dom::INode&gt;&amp; docNode );
++
++		/** Prepare for next run of load/store.
++		*/
++		virtual void reset();
++		
++		const SceneNodeDescMap&amp; getSceneNodeDescriptions() { return mSNDescriptions; }
++		const EntityDescMap&amp; getEntityDescriptions() { return mEntityDescriptions; }
++		const CameraDescMap&amp; getCameraDescriptions() { return mCameraDescriptions; }
++		const LightDescMap&amp; getLightDescriptions() { return mLightDescriptions; }
++		
++		typedef SignalX&lt; void(const NodeDesc) &gt; NodeSignal;
++		typedef SignalX&lt; void(const EntityDesc) &gt; EntitySignal;
++		typedef SignalX&lt; void(const CameraDesc) &gt; CameraSignal;
++		typedef SignalX&lt; void(const LightDesc) &gt; LightSignal;
++		
++		
++		SignalConnection subscribeToNodeSignal( const NodeSignal::slot_type&amp; slot )
++		{ return mSigNode.connect(slot); } 
++		
++		SignalConnection subscribeToEntitySignal( const EntitySignal::slot_type&amp; slot )
++		{ return mSigEntity.connect(slot); } 
++	
++		SignalConnection subscribeToCameraSignal( const CameraSignal::slot_type&amp; slot )
++		{ return mSigCamera.connect(slot); } 
++	
++		SignalConnection subscribeToLightSignal( const LightSignal::slot_type&amp; slot )
++		{ return mSigLight.connect(slot); } 
++		
++	private:
++		NodeSignal		mSigNode;
++		EntitySignal	mSigEntity;
++		CameraSignal	mSigCamera;
++		LightSignal		mSigLight;
++
++	protected:
++		/// Default implementations for common functions
++
++		virtual void readScene( const SharedPtr&lt;dom::INode&gt;&amp; pNode );
++		
++		virtual void readNodes( const SharedPtr&lt;dom::INode&gt;&amp; pNodes, const String&amp; path );
++		
++		virtual void readNode( const SharedPtr&lt;dom::INode&gt;&amp; pNode, const String&amp; parentNodeName, const String&amp; path );
++		virtual void readEntity( const SharedPtr&lt;dom::INode&gt;&amp; pNode, const String&amp; parentNodeName, const String&amp; path );
++		
++		virtual void readRotation( const SharedPtr&lt;dom::INode&gt;&amp; pNode, math::Quaternion&amp; rotation );
++		virtual void readPosition( const SharedPtr&lt;dom::INode&gt;&amp; pNode, math::Vector3&amp; position );
++		virtual void readScale( const SharedPtr&lt;dom::INode&gt;&amp; pNode, math::Vector3&amp; rScale );
++		virtual void readVector( const SharedPtr&lt;dom::INode&gt;&amp; pNode, math::Vector3&amp; rVec );
++		
++		virtual void readLight( const SharedPtr&lt;dom::INode&gt;&amp; pNode, const String&amp; parentNodeName, const String&amp; path );
++		
++		virtual void readColour( const SharedPtr&lt;dom::INode&gt;&amp; pNode, math::Color&amp; colour );
++		virtual void readLightRange( const SharedPtr&lt;dom::INode&gt;&amp; pNode, LightDesc&amp; );
++		virtual void readLightAttenuation( const SharedPtr&lt;dom::INode&gt;&amp; pNode, LightDesc&amp; );
++		
++		virtual void readCamera( const SharedPtr&lt;dom::INode&gt;&amp; pNode, const String&amp; parentNodeName, const String&amp; path );
++		
++		virtual void readCameraClipping( const SharedPtr&lt;dom::INode&gt;&amp; pNode, CameraDesc&amp; );
++
++	private:
++		SharedPtr&lt;dom::INode&gt;	mDocNode;
++
++		SceneNodeDescMap		mSNDescriptions;
++		EntityDescMap			mEntityDescriptions;
++		CameraDescMap			mCameraDescriptions;
++		LightDescMap			mLightDescriptions;
++		
++		
++	};
++
++	class YAKE_LOADER_API DotSceneParserV1 : public DotSceneParser
++	{
++		YAKE_DECLARE_CLASS( DotSceneParserV1 );
++	public:
++		virtual Version getVersion() const
++		{ return Version( 0, 1, 2 ); }
++	};
++
++	///HACK It is here for backwards compatibility
++	typedef DotSceneParserV1 DotSceneSerializerV1;
++
++} // dotscene
++} // parser
++} // data
++} // yake
++
++#endif
+
+Added: trunk/yake/yake/model/model.h
+===================================================================
+--- trunk/yake/yake/model/model.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/model/model.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,171 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MODEL_H
++#define YAKE_MODEL_H
++
++#ifndef YAKE_MODEL_INCLUDE_LOADERS
++//@todo enable #	define YAKE_MODEL_INCLUDE_LOADERS 1
++#endif
++
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model_link.h&quot;
++#include &quot;yake/model/model_component.h&quot;
++#if YAKE_MODEL_INCLUDE_LOADERS == 1
++#	include &quot;yake/model/loader/loader_xode.h&quot;
++#	include &quot;yake/model/loader/loader_dotscene.h&quot;
++#endif
++
++namespace yake {
++namespace model {
++	///@todo move out!!!
++	struct CentralController
++	{
++		// parameters: frame (int32), timeElapsed/dt (real)
++		typedef Signal2&lt;void(const uint32, const real)&gt; PhysicsUpdateSignal;
++		typedef Signal2&lt;void(const uint32, const real)&gt; GraphicsUpdateSignal;
++		SignalConnection subscribeToPhysicsUpdate(const PhysicsUpdateSignal::slot_type&amp;); 
++		SignalConnection subscribeToGraphicsUpdate(const PhysicsUpdateSignal::slot_type&amp;);
++	};
++
++	template&lt;typename T&gt;
++	struct Clonable
++	{
++		virtual ~Clonable() {}
++		virtual T* clone() const = 0;
++	};
++
++	struct YAKE_MODEL_API Model
++	{
++		Model();
++		//virtual ~Model() {} //@todo virtual?
++
++		// basic properties
++		void setName(const String&amp;);
++		const String&amp; getName() const;
++
++		// component management
++		void addComponent(ModelComponent*);
++		void addComponent(ModelComponent*, const ComponentTag&amp;);
++		ModelComponent* removeComponent(ModelComponent*);
++		ModelComponent* getComponentByTag(const ComponentTag&amp;) const;
++		ModelComponent* getComponentByIndex(const size_t) const;
++		size_t numComponents() const;
++
++		// link management
++		void addLink(ModelLink*);
++		void removeLink(ModelLink*);
++		void destroyAllLinks();
++
++		// signal
++
++		// helpers (for convencience only)
++		/** For convenience! This function creates a ModelMovableLink between
++			source and target movable objects. Both position and rotation
++			are marked for updates.
++			@Remarks This function is optimized to cache the created links
++				for each source. That means that for each source there's
++				only ever a single link (instead of having one for each
++				pair of source/target objects).
++		*/
++		ModelMovableLink* createLink(Movable*,Movable*,const String&amp; linkType = &quot;yake.movable&quot;);
++		ModelMovableLink* createDirectLink(Movable*,Movable*); // uses &quot;yake.movable&quot;
++		ModelMovableLink* createWorldSpaceLink(Movable*,Movable*); // uses &quot;yake.movable_world&quot;
++
++		//Model* clone() const;
++	private:
++		Model(const Model&amp;);
++		Model&amp; operator=(const Model&amp;);
++	private:
++		String					name_;
++		String					internalName_;
++
++		typedef AssocVector&lt; Movable*, ModelMovableLink* &gt; MovableLinkMap;
++		MovableLinkMap			movableLinkMap_;
++
++		ModelLinkContainer		links_;
++		ModelComponentContainer	components_;
++	};
++	struct YAKE_MODEL_API ModelManager
++	{
++	public:
++		ModelManager();
++		~ModelManager();
++
++		Model* createModel(const String&amp;);
++
++		void setCreationContext_GraphicalWorld(graphics::IWorld*);
++		void setCreationContext_PhysicalWorld(physics::IWorld*);
++	private:
++		ModelManager(const ModelManager&amp;);
++		ModelManager&amp; operator=(const ModelManager&amp;);
++	private:
++		ComponentCreatorManager		creatorMgr_;
++		ComponentCreationContext	ctx_;
++
++		typedef Vector&lt;SharedPtr&lt;Model&gt; &gt; ModelList;
++		ModelList					models_;
++	};
++	/**@todo Move into private impl file. */
++	struct ModelTemplate : public ModelComponentContainer
++	{
++		ModelTemplate();
++		~ModelTemplate();
++
++		/// Example 1: from=physical:&quot;p_mine&quot;:actor:&quot;mineActor&quot; to=graphical:&quot;g_mine&quot;:scenenode:&quot;mine_root&quot;
++		/// Example 2: from=physical:&quot;p_mine&quot;:shape:&quot;mineActor/sphere1&quot; to=graphical:&quot;g_mine&quot;:scenenode:&quot;mine_root&quot;
++		/// Example params for ModelMovableLink: &quot;position,orientation&quot;
++		void addLink(const String&amp; from, const String&amp; to, const String&amp; params);
++
++		/// Clones model (including components) and recreates links for the cloned model.
++		Model* createInstance(const String&amp; name) const;
++	private:
++		ModelTemplate(const ModelTemplate&amp;);
++		ModelTemplate&amp; operator=(const ModelTemplate&amp;);
++	private:
++		struct link_t
++		{
++			String	fromComponentType_;
++			String	fromComponentName_;
++			String	fromElementType_;
++			String	fromElementName_;
++			String	toComponentType_;
++			String	toComponentName_;
++			String	toElementType_;
++			String	toElementName_;
++		};
++		typedef std::deque&lt;link_t&gt; LinkList;
++		LinkList	links_;
++
++		Model*		modelWithoutLinks_;
++	private:
++		void _createLinks(Model&amp;);
++	};
++
++} // namespace model
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/model/model_component.h
+===================================================================
+--- trunk/yake/yake/model/model_component.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/model/model_component.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,222 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MODEL_COMPONENT_H
++#define YAKE_MODEL_COMPONENT_H
++
++#include &quot;yake/model/prerequisites.h&quot;
++
++namespace yake {
++namespace model {
++
++	struct YAKE_MODEL_API ModelComponent //: public Clonable&lt;ModelComponent&gt;
++	{
++		ModelComponent() {}
++		virtual ~ModelComponent() {}
++	private:
++		ModelComponent(const ModelComponent&amp;);
++		ModelComponent&amp; operator=(const ModelComponent&amp;);
++	};
++	typedef SharedPtr&lt;ModelComponent&gt; ModelComponentSharedPtr;
++	typedef std::deque&lt;ModelComponentSharedPtr&gt; ModelComponentList;
++	typedef std::string ComponentTag;
++	struct YAKE_MODEL_API ModelComponentContainer
++	{
++		ModelComponentContainer();
++		void addComponent(ModelComponent*);
++		void addComponent(ModelComponent*, const ComponentTag&amp;);
++		ModelComponent* getComponentByTag(const ComponentTag&amp;) const;
++		ModelComponent* getComponentByIndex(const size_t) const;
++		size_t numComponents() const;
++		bool empty() const;
++	private:
++		ModelComponentContainer(const ModelComponentContainer&amp;);
++		ModelComponentContainer&amp; operator=(const ModelComponentContainer&amp;);
++	protected:
++		//void _cloneComponents(Model&amp; cloned) const;
++	protected:
++		ModelComponentList		components_;
++		typedef std::map&lt;ComponentTag,ModelComponentSharedPtr&gt; TagModelComponentMap;
++		TagModelComponentMap	tag2components_;
++	};
++
++	////@todo move out:
++
++	struct YAKE_MODEL_API Physical : public ModelComponent
++	{
++	private:
++		Physical(const Physical&amp;);
++		Physical&amp; operator=(const Physical&amp;);
++	public:
++		//@todo register factory?
++		Physical();
++		virtual ~Physical();
++
++		void addActor(physics::IActor*, const String&amp;);
++		void addBody(physics::IBody*, const String&amp;);
++		void addJoint(physics::IJoint*, const String&amp;);
++
++		physics::IActor* getActor(const String&amp;) const;
++		physics::IBody* getBody(const String&amp;) const;
++		physics::IJoint* getJoint(const String&amp;) const;
++
++		//getShape(const String&amp;,const String&amp;)
++
++		//void setPosition(const Vector3&amp;);
++		//void setOrientation(const Quaternion&amp;);
++		//void translate(const Vector3&amp;);
++		//void rotate(const Quaternion&amp;);
++	private:
++		template&lt;typename T&gt;
++		struct EntryT
++		{
++			typedef T* pointer;
++			pointer	p_;
++			EntryT(pointer p) : p_(p)
++			{}
++		};
++		typedef AssocVector&lt;String,EntryT&lt;physics::IActor&gt; &gt; TagActorMap;
++		typedef AssocVector&lt;String,EntryT&lt;physics::IBody&gt; &gt; TagBodyMap;
++		typedef AssocVector&lt;String,EntryT&lt;physics::IJoint&gt; &gt; TagJointMap;
++		TagActorMap		actors_;
++		TagBodyMap		bodies_;
++		TagJointMap		joints_;
++
++		template&lt;typename T&gt;
++		void _add(T* obj,AssocVector&lt;String,EntryT&lt;T&gt; &gt;&amp; ctr, const String&amp; xpath)
++		{
++			YAKE_ASSERT( obj );
++			YAKE_ASSERT( !xpath.empty() );
++#ifdef YAKE_DEBUG_BUILD
++			YAKE_ASSERT( ctr.end() == ctr.find(xpath) )(xpath).debug(_T(&quot;Item with this xpath already exists!&quot;));
++#endif
++			ctr.insert( std::make_pair( xpath, EntryT&lt;T&gt;(obj) ) );
++		}
++		template&lt;typename T&gt;
++		T* _get(const AssocVector&lt;String,EntryT&lt;T&gt; &gt;&amp; ctr, const String&amp; xpath) const
++		{
++			typename AssocVector&lt;String,EntryT&lt;T&gt; &gt;::const_iterator it = ctr.find( xpath );
++			return ((it != ctr.end()) ? it-&gt;second.p_ : 0);
++		}
++	};
++	struct YAKE_MODEL_API Graphical : public ModelComponent
++	{
++		Graphical();
++		virtual ~Graphical();
++		//@todo register factory?
++
++		//virtual ModelComponent* clone() const;
++
++		void addSceneNode(graphics::ISceneNode*, const String&amp; xpath, const bool owned = true);
++		void addEntity(graphics::IEntity*, const String&amp; xpath, const bool owned = true);
++		void addLight(graphics::ILight*, const String&amp; xpath, const bool owned = true);
++		//void addCamera()
++
++		graphics::ISceneNode* getSceneNode(const String&amp; xpath) const;
++		graphics::IEntity* getEntity(const String&amp; xpath) const;
++		graphics::ILight* getLight(const String&amp; xpath) const;
++
++		//void setPosition(const Vector3&amp;);
++		//void setOrientation(const Quaternion&amp;);
++
++		///! translates root nodes only!
++		void translate(const Vector3&amp;);
++		//void rotate(const Quaternion&amp;);
++	private:
++		Graphical(const Graphical&amp;);
++		Graphical&amp; operator=(const Graphical&amp;);
++	private:
++		template&lt;typename T&gt;
++		struct EntryT
++		{
++			typedef T* pointer;
++			pointer	p_;
++			bool	owned_;
++			EntryT(pointer p, const bool owned) : p_(p), owned_(owned)
++			{}
++		};
++		typedef AssocVector&lt;String,EntryT&lt;graphics::ISceneNode&gt; &gt; TagNodeMap;
++		typedef AssocVector&lt;String,EntryT&lt;graphics::IEntity&gt; &gt; TagEntityMap;
++		typedef AssocVector&lt;String,EntryT&lt;graphics::ILight&gt; &gt; TagLightMap;
++		TagNodeMap		nodes_;
++		TagEntityMap	entities_;
++		TagLightMap		lights_;
++		template&lt;typename T&gt;
++		void _add(T* obj,AssocVector&lt;String,EntryT&lt;T&gt; &gt;&amp; ctr, const String&amp; xpath, const bool owned)
++		{
++			YAKE_ASSERT( obj );
++			YAKE_ASSERT( !xpath.empty() );
++#ifdef YAKE_DEBUG_BUILD
++			YAKE_ASSERT( ctr.end() == ctr.find(xpath) )(xpath).debug(_T(&quot;Item with this xpath already exists!&quot;));
++#endif
++			ctr.insert( std::make_pair( xpath, EntryT&lt;T&gt;(obj,owned) ) );
++		}
++		template&lt;typename T&gt;
++		T* _get(const AssocVector&lt;String,EntryT&lt;T&gt; &gt;&amp; ctr, const String&amp; xpath) const
++		{
++			typename AssocVector&lt;String,EntryT&lt;T&gt; &gt;::const_iterator it = ctr.find( xpath );
++			return ((it != ctr.end()) ? it-&gt;second.p_ : 0);
++		}
++	};
++	//@todo move into private header
++	struct ComponentCreationContext
++	{
++		graphics::IWorld*	gworld_;
++		physics::IWorld*	pworld_;
++		ComponentCreationContext() : gworld_(0), pworld_(0)
++		{}
++	};
++	struct YAKE_MODEL_API ComponentCreator
++	{
++		YAKE_DECLARE_REGISTRY_0(ComponentCreator, String);
++		virtual ~ComponentCreator() {}
++
++		virtual ModelComponent* create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params) = 0;
++	};
++	struct GraphicalFromDotSceneCreator : public ComponentCreator
++	{
++		YAKE_DECLARE_CONCRETE(GraphicalFromDotSceneCreator,&quot;graphics/dotScene&quot;);
++
++		virtual ModelComponent* create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++	};
++	struct YAKE_MODEL_API ComponentCreatorManager
++	{
++		ComponentCreatorManager();
++		~ComponentCreatorManager();
++
++		ModelComponent* create(const String&amp; type, const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++	private:
++		ComponentCreatorManager(const ComponentCreatorManager&amp;);
++		ComponentCreatorManager&amp; operator=(const ComponentCreatorManager);
++	private:
++		typedef AssocVector&lt;String,SharedPtr&lt;ComponentCreator&gt; &gt; TypeCreatorMap;
++		TypeCreatorMap	creators_;
++	};
++
++} // namespace model
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/model/model_graphical_dotscene_loader.h
+===================================================================
+--- trunk/yake/yake/model/model_graphical_dotscene_loader.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/model/model_graphical_dotscene_loader.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,112 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++
++#ifndef YAPP_MODEL_GRAPHICAL_DOTSCENE_LOADER_H
++#define YAPP_MODEL_GRAPHICAL_DOTSCENE_LOADER_H
++
++#include &lt;yake/model/prerequisites.h&gt;
++#include &lt;yake/graphics/yakeGraphicsSystem.h&gt;
++#include &lt;yake/loader/yakeDotScene.h&gt;
++
++namespace yake {
++namespace model {
++
++    /** Class implements DotSceneParser's listener. Creates graphical objects and places
++     * them in model::Graphical object.
++     */
++    class YAKE_MODEL_API DotSceneListener
++    {
++	public:
++	    DotSceneListener( Graphical&amp; owner, const String&amp; namePrefix = _T(&quot;&quot;) ) :
++		  mOwner(owner), mNamePrefix(namePrefix)
++	    {}
++
++	    virtual ~DotSceneListener() {}		
++
++	    typedef yake::data::parser::dotscene::DotSceneParser::NodeDesc SceneNodeDesc;
++	    typedef yake::data::parser::dotscene::DotSceneParser::EntityDesc EntityDesc;
++	    typedef yake::data::parser::dotscene::DotSceneParser::CameraDesc CameraDesc;
++	    typedef yake::data::parser::dotscene::DotSceneParser::LightDesc LightDesc;
++
++	    virtual void processSceneNode( const SceneNodeDesc&amp; );
++	    virtual void processEntity( const EntityDesc&amp; );
++	    virtual void processCamera( const CameraDesc&amp; );
++	    virtual void processLight( const LightDesc&amp; );
++
++	    void reset( graphics::IWorld* graphicsWorld )
++	    {
++			mSceneNodes.clear();
++			mEntities.clear();
++			mCameras.clear();
++			mLights.clear();
++
++			mGWorld = graphicsWorld;
++	    }
++
++	    struct EntityInfo
++	    {
++			graphics::IEntity*	entity;
++			String		parentSceneNode;
++	    };
++
++	    struct CameraInfo
++	    {
++			graphics::ICamera*	camera;
++			String		parentSceneNode;
++	    };
++
++	    struct LightInfo
++	    {
++			graphics::ILight*	light;
++			String		parentSceneNode;
++	    };
++
++	    typedef AssocVector&lt; String, graphics::ISceneNode* &gt; SceneNodeMap;
++	    typedef AssocVector&lt; String, EntityInfo &gt; EntityMap;
++	    typedef AssocVector&lt; String, CameraInfo &gt; CameraMap;
++	    typedef AssocVector&lt; String, LightInfo &gt; LightMap;
++
++	    typedef std::map&lt; String, String &gt; TrackerMap;
++	    TrackerMap		mTrackersTargets;
++
++	    SceneNodeMap	mSceneNodes;
++	    EntityMap		mEntities;
++	    CameraMap		mCameras;
++	    LightMap		mLights;
++
++	    graphics::IWorld*	mGWorld;
++
++	    Graphical&amp;		mOwner;
++		String			mNamePrefix;
++    };
++
++
++} // model
++} // yake
++
++#endif 
++
+
+Added: trunk/yake/yake/model/model_link.h
+===================================================================
+--- trunk/yake/yake/model/model_link.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/model/model_link.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,119 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MODEL_LINK_H
++#define YAKE_MODEL_LINK_H
++
++#include &quot;yake/model/prerequisites.h&quot;
++
++namespace yake {
++namespace model {
++
++	struct YAKE_MODEL_API ModelLink
++	{
++		virtual ~ModelLink() {}
++		YAKE_DECLARE_REGISTRY_0( ModelLink, ::yake::String );
++	};
++	struct YAKE_MODEL_API ModelLinkContainer
++	{
++		ModelLinkContainer();
++		virtual ~ModelLinkContainer();
++		void addModelLink(ModelLink*);
++		void removeModelLink(ModelLink*);
++		void destroyAllModelLinks();
++	private:
++		ModelLinkContainer(const ModelLinkContainer&amp;);
++		ModelLinkContainer&amp; operator=(const ModelLinkContainer&amp;);
++	protected:
++		//void _cloneLinks(ModelLinkContainer&amp; cloned) const;
++	protected:
++		typedef std::deque&lt;ModelLink*&gt; ModelLinkList;
++		ModelLinkList	links_;
++	};
++	template&lt;typename Arg0Type&gt;
++	struct Updatable
++	{
++		virtual ~Updatable() {}
++		virtual void update(const Arg0Type) = 0;
++	};
++	struct YAKE_MODEL_API ModelMovableLink : public ModelLink, public Updatable&lt;real&gt;
++	{
++	public:
++		typedef Signal1&lt; void(const Vector3&amp;) &gt; PositionSignal;
++		typedef Signal1&lt; void(const Quaternion&amp;) &gt; OrientationSignal;
++
++		SignalConnection subscribeToPositionChanged( const PositionSignal::slot_type&amp; slot );
++		SignalConnection subscribeToOrientationChanged( const OrientationSignal::slot_type&amp; slot );
++		SignalConnection subscribeToPositionChanged( Movable* pMovable );
++		SignalConnection subscribeToOrientationChanged( Movable* pMovable );
++
++	protected:
++		ModelMovableLink();
++	protected:
++		PositionSignal		mPositionSignal;
++		OrientationSignal	mOrientationSignal;
++
++		Vector3				mLastPosition;
++		Quaternion			mLastOrientation;
++	};
++	/** A link controller designed to forward position and/or orientation to
++		to other clients using signals. Factory item id is &quot;yake.movable&quot;.
++		@Remarks A controller only fires signals when the values have changed!
++	*/
++	struct ModelMovableDirectLink : public ModelMovableLink
++	{
++	public:
++		YAKE_DECLARE_CONCRETE( ModelMovableDirectLink, &quot;yake.movable&quot; );
++
++		ModelMovableDirectLink();
++		virtual void update( const real timeElapsed );
++	};
++	/** A link controller designed to forward absolute (world space) position and/or orientation to
++		to other clients using signals. Factory item id is &quot;yake.movable&quot;.
++		@Remarks A controller only fires signals when the values have changed!
++	*/
++	struct ModelMovableWorldLink : public ModelMovableLink
++	{
++	public:
++		YAKE_DECLARE_CONCRETE( ModelMovableWorldLink, &quot;yake.movable_world&quot; ); // world coordinate system
++
++		ModelMovableWorldLink();
++		virtual void update( const real timeElapsed );
++	};
++	struct ModelMovableLink_decoupled : public ModelMovableLink
++	{
++	public:
++		YAKE_DECLARE_CONCRETE( ModelMovableWorldLink, &quot;yake.movable.decoupled&quot; );
++
++		ModelMovableLink_decoupled();
++		virtual void update( const real timeElapsed );
++		//@todo add history/interpolation specific code
++	};
++
++} // namespace model
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/model/pch.h
+===================================================================
+--- trunk/yake/yake/model/pch.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/model/pch.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,32 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MODEL_PCH_H
++#define YAKE_MODEL_PCH_H
++
++#include &quot;yake/base/yake.h&quot;
++
++#endif
+
+Added: trunk/yake/yake/model/prerequisites.h
+===================================================================
+--- trunk/yake/yake/model/prerequisites.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/model/prerequisites.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,53 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MODEL_PREREQUISITES_H
++#define YAKE_MODEL_PREREQUISITES_H
++
++#if defined(YAKE_MODEL_EXPORTS)
++#	define YAKE_MODEL_API DLLEXPORT
++#else
++#	define YAKE_MODEL_API DLLIMPORT
++#endif
++
++#if (YAKE_PLATFORM == PLATFORM_WIN32) &amp;&amp; !defined(YAKE_MODEL_EXPORTS)
++#pragma comment(lib,&quot;model.lib&quot;)
++#endif
++
++#include &quot;yake/physics/yakePhysics.h&quot;
++#include &quot;yake/graphics/yakeGraphics.h&quot;
++
++namespace yake {
++namespace model {
++
++	struct ModelComponent;
++	struct ModelComponentContainer;
++	struct Model;
++
++} // namespace model
++} // namespace yake
++
++#endif
+
+Modified: trunk/yake/yake/physics/yakePhysicsJoint.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsJoint.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/physics/yakePhysicsJoint.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -69,6 +69,7 @@
+ 	};
+ 	typedef Deque&lt;Limit&gt; LimitList;
+ 
++	class IWorld;
+ 	class IActor;
+ 	class IAngularMotor;
+ 	class YAKE_PHYSICS_API IJoint
+@@ -185,6 +186,8 @@
+ 	public:
+ 		virtual ~IJoint() {}
+ 
++		virtual IWorld* getCreator() const = 0;
++
+ 		YAKE_MEMBERSIGNAL_PUREINTERFACE( public, void(void), OnBreaking )
+ 	public:
+ 
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -80,6 +80,8 @@
+ 		virtual void detach( IParticleSystem* pPS );
+ 		virtual void detach( ISceneNode* pNode );
+ 
++		virtual ISceneNode* getParent() const;
++
+ 		Ogre::SceneNode* getSceneNode_() const
+ 		{ return mSceneNode; }
+ 		void _setParent( OgreNode* );
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -102,6 +102,11 @@
+ 		Ogre::SceneManager* getSceneMgr() const;
+ 		OgreCore* getCore() const
+ 		{ return msCore; }
++
++		inline bool isRoot(OgreNode* node) const
++		{
++			return (node == mRootNode);
++		}
+ 	private:
+ 		static OgreCore*		msCore;
+ 		typedef AssocVector&lt; String, Ogre::MeshPtr &gt; ProcMeshMap;
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeJoint.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeJoint.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/plugins/physicsODE/OdeJoint.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -44,6 +44,9 @@
+ 		public:
+ 			virtual ~OdeJoint();
+ 
++			virtual IWorld* getCreator() const
++			{ return mWorld; }
++
+ 			/** Attach joint to bodies. If one of the bodies is 0, then attach
+ 			 * to static environment.
+ 			 */
+
+Added: trunk/yake/yake/samples/model/dotScene/pch.h
+===================================================================
+--- trunk/yake/yake/samples/model/dotScene/pch.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/samples/model/dotScene/pch.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,14 @@
++//============================================================================
++//    IMPLEMENTATION HEADERS
++//============================================================================
++// STL
++#include &lt;iostream&gt;
++// Yake
++#include &lt;yake/base/yake.h&gt;
++#include &lt;yake/base/yakeLog.h&gt;
++#include &lt;yake/base/yakeLibrary.h&gt;
++#include &lt;yake/scripting/yakeScriptingSystem.h&gt;
++#include &lt;yake/graphics/yakeGraphicsSystem.h&gt;
++
++#include &lt;yake/samples/common/yakeExampleApplication.h&gt;
++#include &lt;yake/data/yakeData.h&gt;
+
+Added: trunk/yake/yake/samples/net/common/common.h
+===================================================================
+--- trunk/yake/yake/samples/net/common/common.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/samples/net/common/common.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,45 @@
++#ifndef TEST_COMMON_H
++#define TEST_COMMON_H
++
++#include &lt;conio.h&gt;
++#include &lt;cassert&gt;
++#include &lt;iostream&gt;
++#include &lt;sstream&gt;
++#include &lt;boost/thread/mutex.hpp&gt;
++#include &quot;config.h&quot;
++
++#define COUTLN(X) \
++{ \
++	std::stringstream ss; \
++	ss &lt;&lt; X &lt;&lt; &quot;\n&quot;; \
++	std::cout &lt;&lt; ss.str(); \
++}
++
++template&lt;typename T&gt;
++struct safe_var
++{
++	safe_var(const T&amp; v = T()) : value_(v)
++	{}
++	void set(const T&amp; v)
++	{
++		boost::mutex::scoped_lock lck(mtx_);
++		value_ = v;
++	}
++	T getCopy() const
++	{
++		boost::mutex::scoped_lock lck(mtx_);
++		return value_;
++	}
++	safe_var&amp; operator = (const safe_var&amp; rhs)
++	{
++		if (this == &amp;rhs)
++			return *this;
++		set( rhs.getCopy() );
++		return *this;
++	}
++private:
++	T						value_;
++	mutable boost::mutex	mtx_;
++};
++
++#endif
+
+Added: trunk/yake/yake/samples/net/common/commonEvents.h
+===================================================================
+--- trunk/yake/yake/samples/net/common/commonEvents.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/samples/net/common/commonEvents.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,149 @@
++#ifndef TEST_COMMONEVENTS_H
++#define TEST_COMMONEVENTS_H
++
++#include &lt;map&gt;
++
++const net::ChannelId CHANNELID_CONTROL = 0;
++const net::ChannelId CHANNELID_SIMCTRL = 1;
++const net::ChannelId CHANNELID_SIMUPD  = 2;
++
++//---
++/*
++// pull in types
++typedef net::INetEventConnection::CreateEventFn CreateEventFn;
++typedef net::INetEventConnection::DestroyEventFn DestroyEventFn;
++
++// event pool
++struct EventPool
++{
++	EventPool();
++	~EventPool();
++	void register_class(const net::NetEvent::id_type id, const CreateEventFn&amp;, const DestroyEventFn&amp;);
++	{
++		classes_.insert( std::make_pair( id, ClassEntry(createFn,destroyFn) ) );
++	}
++	net::NetEvent* create(const net::NetEvent::id_type);
++	void destroy(net::NetEvent*);
++	void lookup(const net::NetEvent::id_type id, CreateEventFn&amp;, DestroyEventFn&amp;);
++private:
++	typedef std::deque&lt;net::NetEvent*&gt; EventList;
++	struct ClassEntry
++	{
++		CreateEventFn	createFn_;
++		DestroyEventFn	destroyFn_;
++		EventList		avail_;
++		EventList		taken_;
++	};
++	typedef std::map&lt;net::NetEvent::id_type,ClassEntry&gt; ClassMap; //&lt;= perfect candidate for AssocVector
++	ClassMap		classes_;
++};
++
++// event registrator for use with pooled events and event connections
++template&lt;typename evt_type&gt;
++bool s_registerEvent(const EventPool&amp; evtpool,
++							const net::IEventConnection&amp; conn,
++							const net::NetEvent::id_type id,
++							const net::NetEvent::Direction dir)
++{
++	CreateEventFn createFn = boost::bind(&amp;EventPool::create,&amp;evtpool,_1);
++	DestroyEventFn destroyFn = boost::bind(&amp;EventPool::destroy,&amp;evtpool,_1);;
++	conn.registerEvent(id,dir,ce.createFn,ce.destroyFn);
++}
++*/
++//---
++
++#define DECLARE_EVENT(CLASS,IDVALUE) \
++public: \
++static net::NetEvent* create(net::NetEvent::id_type id) \
++{ CLASS* p = new CLASS(); p-&gt;setId(id); return p; } \
++static void destroy(net::NetEvent* p) { delete p; } \
++static const net::NetEvent::id_type ID = IDVALUE; \
++CLASS() : net::NetEvent(ID) \
++{}
++
++struct version_t
++{
++	net::uint8 ver[3];
++	version_t(const net::uint8 maj = 0, const net::uint8 min = 0, const net::uint8 b = 0)
++	{
++		ver[0] = maj;
++		ver[1] = min;
++		ver[2] = b;
++	}
++};
++inline net::obitstream&amp; operator &lt;&lt; (net::obitstream&amp; out, const version_t&amp; rhs)
++{
++	out.write( rhs.ver[0], 8 );
++	out.write( rhs.ver[1], 8  );
++	out.write( rhs.ver[2], 8  );
++	return out;
++}
++inline net::ibitstream&amp; operator &gt;&gt; (net::ibitstream&amp; in, version_t&amp; rhs)
++{
++	in.read( rhs.ver[0], 8 );
++	in.read( rhs.ver[1], 8 );
++	in.read( rhs.ver[2], 8 );
++	return in;
++}
++
++struct c2sEvtJoinReq : public net::NetEvent
++{
++	DECLARE_EVENT( c2sEvtJoinReq, 1 );
++	virtual bool pack(net::obitstream&amp; out) const
++	{
++		out &lt;&lt; version;;
++		return true;
++	}
++	virtual bool unpack(net::ibitstream&amp; in)
++	{
++		in &gt;&gt; version;
++		return true;
++	}
++	version_t	version;
++};
++struct s2cEvtJoinReqReply : public net::NetEvent
++{
++	DECLARE_EVENT( s2cEvtJoinReqReply, 2 );
++	virtual bool pack(net::obitstream&amp; out) const
++	{
++		out.write( accepted );
++		return true;
++	}
++	virtual bool unpack(net::ibitstream&amp; in)
++	{
++		in.read( accepted );
++		return true;
++	}
++	bool accepted;
++};
++struct s2cEvtClassTable : public net::NetEvent
++{
++	DECLARE_EVENT( s2cEvtClassTable, 10 );
++	virtual bool pack(net::obitstream&amp; out) const
++	{
++		//out &lt;&lt; globalClassIds_;
++		return true;
++	}
++	virtual bool unpack(net::ibitstream&amp; in)
++	{
++		//in &gt;&gt; globalClassIds_;
++		return true;
++	}
++	//uint8 numClassIdBits_;
++	std::map&lt;std::string,net::uint16&gt; globalClassIds_;
++};
++struct c2sEvtSimOk : public net::NetEvent
++{
++	DECLARE_EVENT( c2sEvtSimOk, 11 );
++	virtual bool pack(net::obitstream&amp; out) const
++	{
++		return true;
++	}
++	virtual bool unpack(net::ibitstream&amp; in)
++	{
++		return true;
++	}
++};
++
++
++#endif
+\ No newline at end of file
+
+Added: trunk/yake/yake/samples/net/common/config.h
+===================================================================
+--- trunk/yake/yake/samples/net/common/config.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yake/samples/net/common/config.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -0,0 +1,8 @@
++#ifndef YAKE_NET_SAMPLES_CONFIG_H
++#define YAKE_NET_SAMPLES_CONFIG_H
++
++
++#define NET_STRESS_TEST_LEVEL 1
++
++
++#endif
+\ No newline at end of file
+
+Modified: trunk/yake/yapp/model/yakePhysicalDataImporter.h
+===================================================================
+--- trunk/yake/yapp/model/yakePhysicalDataImporter.h	2006-06-09 17:00:57 UTC (rev 1327)
++++ trunk/yake/yapp/model/yakePhysicalDataImporter.h	2006-06-09 21:47:29 UTC (rev 1328)
+@@ -61,10 +61,8 @@
+ 
+ 	    IJoint* getJointByName( const String&amp; name )
+ 	    {
+-		if ( joints_.find( name ) != joints_.end() )
+-		    return joints_[ name ].joint_;
+-		else
+-		    return NULL;
++			JointMap::const_iterator it = joints_.find( name );
++			return (it == joints_.end()) ? 0 : it-&gt;second.joint_;
+ 	    }
+ 
+ 	protected:
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000395.html">[Yake-svn] r1327 - trunk/yake/src/yake/samples/base/registry
+</A></li>
+	<LI>Next message: <A HREF="000397.html">[Yake-svn] r1329 - in trunk/yake/common/bin: debug release
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#396">[ date ]</a>
+              <a href="thread.html#396">[ thread ]</a>
+              <a href="subject.html#396">[ subject ]</a>
+              <a href="author.html#396">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

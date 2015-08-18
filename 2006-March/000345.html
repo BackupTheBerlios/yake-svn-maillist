@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1275 - trunk/yake/src/yake/samples/ent/sampleEntFsm
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1275%20-%20trunk/yake/src/yake/samples/ent/sampleEntFsm&In-Reply-To=%3C200603152020.k2FKKPuS013830%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000344.html">
+   <LINK REL="Next"  HREF="000346.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1275 - trunk/yake/src/yake/samples/ent/sampleEntFsm</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1275%20-%20trunk/yake/src/yake/samples/ent/sampleEntFsm&In-Reply-To=%3C200603152020.k2FKKPuS013830%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1275 - trunk/yake/src/yake/samples/ent/sampleEntFsm">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Mar 15 21:20:25 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000344.html">[Yake-svn] r1274 - in trunk/yake/src/yake/samples: . statemachine statemachine/sampleFsm1
+</A></li>
+        <LI>Next message: <A HREF="000346.html">[Yake-svn] r1276 - in trunk/yake/scripts/msvc8/samples: . statemachine
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#345">[ date ]</a>
+              <a href="thread.html#345">[ thread ]</a>
+              <a href="subject.html#345">[ subject ]</a>
+              <a href="author.html#345">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-15 21:20:24 +0100 (Wed, 15 Mar 2006)
+New Revision: 1275
+
+Modified:
+   trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp
+Log:
+initial revision
+
+Modified: trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp	2006-03-15 20:12:50 UTC (rev 1274)
++++ trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp	2006-03-15 20:20:24 UTC (rev 1275)
+@@ -58,15 +58,127 @@
+ 		scripting::IScriptingSystem&amp;	scriptingSys_;
+ 	};
+ 
+-	struct SimpleGraphicsCo : public ent::Co
++	struct SimpleGraphicsCo : public ent::Component
+ 	{
+ 		DECL_CO(SimpleGraphicsCo,&quot;SimpleGraphicsCo&quot;)
+ 	};
+-	IMPL_CO_1(SimpleGraphicsCo,&quot;Co&quot;)
++	IMPL_CO_1(SimpleGraphicsCo,&quot;Component&quot;)
+ } // namespace exapp
++#ifdef OOSTATE
++struct oostate 
++{
++	virtual ~oostate() {}
++	virtual void onEnter() {}
++	virtual void onExit() {}
++};
++template&lt;typename _state_class_type /*= oostate */, typename _event_type&gt;
++struct oomachine
++{
++	typedef _event_type event_type;
++	typedef _state_class_type* state_type;
+ 
++	oomachine() :
++		fnEnter_( boost::bind(&amp;oomachine::onEnter,this,_1,_2) ),
++		fnExit_( boost::bind(&amp;oomachine::onExit,this,_1,_2) )
++	{
++	}
++
++	void addState(const state_type);
++	void addTransition(const state_type, const event_type&amp;, const state_type);
++	void setState(const state_type);
++	void processEvent(const event_type&amp; evt);
++	const state_type&amp; getCurrentFsmState() const
++	{ return m_.current(); }
++private:
++	typedef fsm::machine&lt;state_type,event_type&gt; machine_type;
++	void onEnter(machine_type&amp;,const state_type&amp;);
++	void onExit(machine_type&amp;,const state_type&amp;);
++private:
++	machine_type			machine_;
++	typedef boost::function&lt;void(machine_type&amp;,const state_type&amp;)&gt; CbFn;
++	CbFn						fnEnter_;
++	CbFn						fnExit_;
++};
++template&lt;typename _state_class_type, typename _event_type&gt;
++void oomachine&lt;_state_class_type,_event_type&gt;::onEnter(machine_type&amp;,const state_type&amp; state)
++{
++	YAKE_ASSERT( state );
++	state-&gt;onEnter();
++}
++template&lt;typename _state_class_type, typename _event_type&gt;
++void oomachine&lt;_state_class_type,_event_type&gt;::onExit(machine_type&amp;,const state_type&amp; state)
++{
++	YAKE_ASSERT( state );
++	state-&gt;onExit();
++}
++template&lt;typename _state_class_type, typename _event_type&gt;
++void oomachine&lt;_state_class_type,_event_type&gt;::addState(const state_type s)
++{
++	machine_.addState(s);
++}
++template&lt;typename _state_class_type, typename _event_type&gt;
++void oomachine&lt;_state_class_type,_event_type&gt;::addTransition(const state_type from, const event_type&amp; ev, const state_type to)
++{
++	machine_.addTransition( from, ev, to );
++}
++template&lt;typename _state_class_type, typename _event_type&gt;
++void oomachine&lt;_state_class_type,_event_type&gt;::setState(const state_type s)
++{
++	machine_.setState( s );
++}
++template&lt;typename _state_class_type, typename _event_type&gt;
++void oomachine&lt;_state_class_type,_event_type&gt;::processEvent(const event_type&amp; evt)
++{
++	YAKE_ASSERT( !fnEnter_.empty() );
++	machine_.processEventCb(evt, fnEnter_, fnExit_);
++}
++struct test_state_base
++{
++	virtual ~test_state_base() {}
++	virtual void onEnter() {}
++	virtual void onExit() {}
++};
++typedef test_state_base* test_state_base_ptr;
++namespace fsm {
++	template&lt;&gt;
++	inline const test_state_base_ptr&amp; get_null_state()
++	{ 
++		static test_state_base* ms_null = 0;
++		return ms_null; 
++	}
++}
++struct test_state : public test_state_base
++{
++	test_state(const std::string&amp; name) : name_(name)
++	{}
++	virtual void onEnter()
++	{
++		std::cout &lt;&lt; name_ &lt;&lt; &quot;.onEnter()\n&quot;;
++	}
++	virtual void onExit()
++	{
++		std::cout &lt;&lt; name_ &lt;&lt; &quot;.onExit()\n&quot;;
++	}
++private:
++	std::string	name_;
++};
++void test()
++{
++	typedef oomachine&lt;test_state_base,std::string&gt; machine_t;
++	test_state_base* first = new test_state(&quot;first&quot;);
++	test_state_base* second = new test_state(&quot;second&quot;);
++
++	machine_t machine;
++	machine.addState( first );
++	machine.addState( second );
++	machine.setState( first );
++	machine.addTransition( first, &quot;go&quot;, second );
++	machine.processEvent(&quot;go&quot;);
++}
++#endif
+ int main(int argc, char* argv[])
+ {
++	//test();
+ 
+ 	// Create the scripting system we want to use (Lua).
+ 	SharedPtr&lt;scripting::IScriptingSystem&gt; luaSys = templates::create&lt;scripting::IScriptingSystem&gt;(&quot;lua&quot;);
+@@ -110,16 +222,16 @@
+ 	/*
+ 	RttiClassMgr clsMgr;
+ 	clsMgr.insert( ent::Object::cls() );
+-	clsMgr.insert( ent::Co::cls() );
++	clsMgr.insert( ent::Component::cls() );
+ 	exapp::SimpleGraphicsCo::cls()-&gt;add( PropDef(&quot;position&quot;,&quot;position&quot;,Vector3(0,0,0)) );
+ 	clsMgr.insert( exapp::SimpleGraphicsCo::cls() );
+ 
+-	e-&gt;addCo(&quot;gfx&quot;,new exapp::SimpleGraphicsCo());
+-	e-&gt;getCo(&quot;gfx&quot;)-&gt;init();
+-	if (!e-&gt;getCo(&quot;gfx&quot;)-&gt;setValue(&quot;position&quot;,Vector3(10,0,0)))
++	e-&gt;addComponent(&quot;gfx&quot;,new exapp::SimpleGraphicsCo());
++	e-&gt;getComponent(&quot;gfx&quot;)-&gt;init();
++	if (!e-&gt;getComponent(&quot;gfx&quot;)-&gt;setValue(&quot;position&quot;,Vector3(10,0,0)))
+ 		std::cerr &lt;&lt; &quot;could not set position\n&quot;;
+ 	Vector3 pos(0,0,0);
+-	if (e-&gt;getCo(&quot;gfx&quot;)-&gt;getValue&lt;Vector3&gt;(&quot;position&quot;,pos))
++	if (e-&gt;getComponent(&quot;gfx&quot;)-&gt;getValue&lt;Vector3&gt;(&quot;position&quot;,pos))
+ 		std::cout &lt;&lt; &quot;position=&quot; &lt;&lt; pos &lt;&lt; &quot;\n&quot;;
+ 	else
+ 		std::cerr &lt;&lt; &quot;could not get position\n&quot;;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000344.html">[Yake-svn] r1274 - in trunk/yake/src/yake/samples: . statemachine statemachine/sampleFsm1
+</A></li>
+	<LI>Next message: <A HREF="000346.html">[Yake-svn] r1276 - in trunk/yake/scripts/msvc8/samples: . statemachine
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#345">[ date ]</a>
+              <a href="thread.html#345">[ thread ]</a>
+              <a href="subject.html#345">[ subject ]</a>
+              <a href="author.html#345">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

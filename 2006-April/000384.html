@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1316 - in trunk/yake/common/media: . scripts
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1316%20-%20in%20trunk/yake/common/media%3A%20.%20scripts&In-Reply-To=%3C200604131847.k3DIltmV029331%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000385.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1316 - in trunk/yake/common/media: . scripts</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1316%20-%20in%20trunk/yake/common/media%3A%20.%20scripts&In-Reply-To=%3C200604131847.k3DIltmV029331%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1316 - in trunk/yake/common/media: . scripts">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Apr 13 20:47:55 CEST 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000385.html">[Yake-svn] r1317 - in trunk/yake: dependencies scripts/msvc8 src/yake/audio src/yake/base src/yake/base/math src/yake/base/native/Linux src/yake/base/native/win32 src/yake/data src/yake/ent src/yake/input src/yake/net src/yake/net/detail src/yake/samples/physics/demo yake/base yake/base/math yake/base/native yake/base/native/win32 yake/base/templates yake/data yake/ent yake/msg yake/net yake/net/detail yake/object yake/physics yake/plugins/graphicsOgre yake/samples/common yake/statemachine
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#384">[ date ]</a>
+              <a href="thread.html#384">[ thread ]</a>
+              <a href="subject.html#384">[ subject ]</a>
+              <a href="author.html#384">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-04-13 20:47:52 +0200 (Thu, 13 Apr 2006)
+New Revision: 1316
+
+Added:
+   trunk/yake/common/media/scripts/
+   trunk/yake/common/media/scripts/o_fsm_test.lua
+Log:
+initial version
+
+Added: trunk/yake/common/media/scripts/o_fsm_test.lua
+===================================================================
+--- trunk/yake/common/media/scripts/o_fsm_test.lua	2006-03-20 22:26:26 UTC (rev 1315)
++++ trunk/yake/common/media/scripts/o_fsm_test.lua	2006-04-13 18:47:52 UTC (rev 1316)
+@@ -0,0 +1,51 @@
++print(&quot;&gt; Starting object script...&quot;);
++event = {
++	on_spawn = function()
++		print(&quot;  script event.on_spawn&quot;)
++		--ent:postCmd(&quot;go to&quot;,&quot;jack's bar&quot;)
++		--OR: ev:postCmd(ent,&quot;go to&quot;,&quot;jack's bar&quot;)
++		--ent:postCmd(&quot;die&quot;)
++	end,
++	on_tick = function()
++		print(&quot;  script event.on_tick&quot;)
++	end,
++	on_die = function()
++		print(&quot;  script event.on_die&quot;)
++	end,
++	-- various:
++	onArrived = function() --triggered as a result of &quot;go to&quot;
++	end
++}
++fsm = {
++	main = {
++		states = {
++			awakening,
++			alive,
++			dead
++		},
++		transitions = {
++			{awakening,&quot;spawn&quot;,alive},
++			{alive,&quot;die&quot;,dead}
++		}
++	}
++}
++state = {
++	alive = {
++		on_enter = function()
++			print(&quot;  script state.alive.on_enter&quot;)
++		end,
++		on_tick = function()
++			print(&quot;  script state.alive.on_tick&quot;)
++		end,
++		on_exit = function()
++			print(&quot;  script state.alive.on_exit&quot;)
++		end
++	}
++}
++print(&quot;&gt; Object script up.&quot;);
++
++function main()
++	print(&quot;main() calling charGoTo()&quot;)
++	charGoTo(&quot;blah&quot;)
++	print(&quot;main() resuming from charGoTo()&quot;)
++end
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000385.html">[Yake-svn] r1317 - in trunk/yake: dependencies scripts/msvc8 src/yake/audio src/yake/base src/yake/base/math src/yake/base/native/Linux src/yake/base/native/win32 src/yake/data src/yake/ent src/yake/input src/yake/net src/yake/net/detail src/yake/samples/physics/demo yake/base yake/base/math yake/base/native yake/base/native/win32 yake/base/templates yake/data yake/ent yake/msg yake/net yake/net/detail yake/object yake/physics yake/plugins/graphicsOgre yake/samples/common yake/statemachine
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#384">[ date ]</a>
+              <a href="thread.html#384">[ thread ]</a>
+              <a href="subject.html#384">[ subject ]</a>
+              <a href="author.html#384">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

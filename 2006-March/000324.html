@@ -1,0 +1,488 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1254 - trunk/yake/scripts/msvc8
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1254%20-%20trunk/yake/scripts/msvc8&In-Reply-To=%3C200603122203.k2CM3FQR012001%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000323.html">
+   <LINK REL="Next"  HREF="000325.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1254 - trunk/yake/scripts/msvc8</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1254%20-%20trunk/yake/scripts/msvc8&In-Reply-To=%3C200603122203.k2CM3FQR012001%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1254 - trunk/yake/scripts/msvc8">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 12 23:03:15 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000323.html">[Yake-svn] r1253 - trunk/yake/yapp/plugins
+</A></li>
+        <LI>Next message: <A HREF="000325.html">[Yake-svn] r1255 - trunk/yake/scripts/msvc8/plugins/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#324">[ date ]</a>
+              <a href="thread.html#324">[ thread ]</a>
+              <a href="subject.html#324">[ subject ]</a>
+              <a href="author.html#324">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-12 23:03:14 +0100 (Sun, 12 Mar 2006)
+New Revision: 1254
+
+Removed:
+   trunk/yake/scripts/msvc8/ent.vcproj
+Modified:
+   trunk/yake/scripts/msvc8/ent2.vcproj
+   trunk/yake/scripts/msvc8/yake.sln
+Log:
+updated ent
+
+Deleted: trunk/yake/scripts/msvc8/ent.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/ent.vcproj	2006-03-12 22:02:18 UTC (rev 1253)
++++ trunk/yake/scripts/msvc8/ent.vcproj	2006-03-12 22:03:14 UTC (rev 1254)
+@@ -1,324 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
+-&lt;VisualStudioProject
+-	ProjectType=&quot;Visual C++&quot;
+-	Version=&quot;8,00&quot;
+-	Name=&quot;ent&quot;
+-	ProjectGUID=&quot;{B145E9A0-2656-4481-972A-39A6A0568F14}&quot;
+-	RootNamespace=&quot;yapp&quot;
+-	Keyword=&quot;Win32Proj&quot;
+-	&gt;
+-	&lt;Platforms&gt;
+-		&lt;Platform
+-			Name=&quot;Win32&quot;
+-		/&gt;
+-	&lt;/Platforms&gt;
+-	&lt;ToolFiles&gt;
+-	&lt;/ToolFiles&gt;
+-	&lt;Configurations&gt;
+-		&lt;Configuration
+-			Name=&quot;Debug|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/$(ConfigurationName)&quot;
+-			IntermediateDirectory=&quot;../../common/obj/$(ConfigurationName)/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
+-			CharacterSet=&quot;2&quot;
+-			&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl&quot;
+-				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_CONSOLE;YAKE_ENT_EXPORTS&quot;
+-				MinimalRebuild=&quot;true&quot;
+-				BasicRuntimeChecks=&quot;3&quot;
+-				RuntimeLibrary=&quot;3&quot;
+-				RuntimeTypeInfo=&quot;true&quot;
+-				UsePrecompiledHeader=&quot;2&quot;
+-				PrecompiledHeaderThrough=&quot;yapp/ent/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;true&quot;
+-				DebugInformationFormat=&quot;4&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedResourceCompilerTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib physics.lib data.lib&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;true&quot;
+-				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+-				SubSystem=&quot;1&quot;
+-				ImportLibrary=&quot;../../common/lib/$(ConfigurationName)/$(ProjectName).lib&quot;
+-				TargetMachine=&quot;1&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCALinkTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManifestTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXDCMakeTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCBscMakeTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCFxCopTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAppVerifierTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;
+-			/&gt;
+-		&lt;/Configuration&gt;
+-		&lt;Configuration
+-			Name=&quot;Release|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/$(ConfigurationName)&quot;
+-			IntermediateDirectory=&quot;../../common/obj/$(ConfigurationName)/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
+-			CharacterSet=&quot;2&quot;
+-			&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE;YAKE_ENT_EXPORTS&quot;
+-				RuntimeLibrary=&quot;2&quot;
+-				RuntimeTypeInfo=&quot;true&quot;
+-				UsePrecompiledHeader=&quot;2&quot;
+-				PrecompiledHeaderThrough=&quot;yapp/ent/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;true&quot;
+-				DebugInformationFormat=&quot;3&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedResourceCompilerTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib physics.lib data.lib&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/$(ConfigurationName);../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;true&quot;
+-				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+-				SubSystem=&quot;1&quot;
+-				OptimizeReferences=&quot;2&quot;
+-				EnableCOMDATFolding=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/$(ConfigurationName)/$(ProjectName).lib&quot;
+-				TargetMachine=&quot;1&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCALinkTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManifestTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXDCMakeTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCBscMakeTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCFxCopTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAppVerifierTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;
+-			/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;
+-			/&gt;
+-		&lt;/Configuration&gt;
+-	&lt;/Configurations&gt;
+-	&lt;References&gt;
+-	&lt;/References&gt;
+-	&lt;Files&gt;
+-		&lt;Filter
+-			Name=&quot;src&quot;
+-			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
+-			UniqueIdentifier=&quot;{E22096B0-18DC-47ae-BBBD-A51C0F018B87}&quot;
+-			&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeActor.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeDemo.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeEnt.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeEntity.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeEntityComponent.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeEntityMachine.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeEvent.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeLight.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeMessaging.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeObject.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakePawn.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakePCH.cpp&quot;
+-				&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;
+-					&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;
+-					/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;
+-					&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;
+-					/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeSim.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yapp\ent\yakeTrigger.cpp&quot;
+-				&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;inc&quot;
+-			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
+-			UniqueIdentifier=&quot;{D3A5D637-E2C0-4f5a-B733-3757A329BD6B}&quot;
+-			&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeActor.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeCommon.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeEnt.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeEntity.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeEntityComponent.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeEntityMachine.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeEvent.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeMessaging.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeObject.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakePCH.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeSim.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yapp\ent\yakeTrigger.h&quot;
+-				&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-	&lt;/Files&gt;
+-	&lt;Globals&gt;
+-	&lt;/Globals&gt;
+-&lt;/VisualStudioProject&gt;
+
+Modified: trunk/yake/scripts/msvc8/ent2.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/ent2.vcproj	2006-03-12 22:02:18 UTC (rev 1253)
++++ trunk/yake/scripts/msvc8/ent2.vcproj	2006-03-12 22:03:14 UTC (rev 1254)
+@@ -2,7 +2,7 @@
+ &lt;VisualStudioProject
+ 	ProjectType=&quot;Visual C++&quot;
+ 	Version=&quot;8,00&quot;
+-	Name=&quot;ent2&quot;
++	Name=&quot;ent&quot;
+ 	ProjectGUID=&quot;{08BC40D8-33D8-4677-993A-32599A93A460}&quot;
+ 	RootNamespace=&quot;yapp&quot;
+ 	Keyword=&quot;Win32Proj&quot;
+
+Modified: trunk/yake/scripts/msvc8/yake.sln
+===================================================================
+--- trunk/yake/scripts/msvc8/yake.sln	2006-03-12 22:02:18 UTC (rev 1253)
++++ trunk/yake/scripts/msvc8/yake.sln	2006-03-12 22:03:14 UTC (rev 1254)
+@@ -100,12 +100,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;msg&quot;, &quot;msg.vcproj&quot;, &quot;{7EB6A55E-D262-4C82-862C-33E831DDF04C}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;ent&quot;, &quot;ent.vcproj&quot;, &quot;{B145E9A0-2656-4481-972A-39A6A0568F14}&quot;
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;entCommon&quot;, &quot;plugins\ent\entCommon.vcproj&quot;, &quot;{9E975777-551F-45F8-85FD-40BE6B0183A4}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;entLua&quot;, &quot;plugins\ent\entLua.vcproj&quot;, &quot;{3EEED188-5D62-476B-9CF3-022EBBAFFD12}&quot;
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;ceguiOgreRendererAdapter&quot;, &quot;plugins\gui\ceguiOgreRendererAdapter.vcproj&quot;, &quot;{526DC299-3C9B-46ED-8C16-0490AE5CAE88}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;modelLua&quot;, &quot;plugins\model\modelLua.vcproj&quot;, &quot;{8150E623-2456-4152-AC96-D302B1CFF6E9}&quot;
+@@ -119,15 +115,20 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;net&quot;, &quot;net.vcproj&quot;, &quot;{90688422-B178-44F3-824A-C8CD6F3BD86F}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;ent2&quot;, &quot;ent2.vcproj&quot;, &quot;{08BC40D8-33D8-4677-993A-32599A93A460}&quot;
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;ent&quot;, &quot;ent2.vcproj&quot;, &quot;{08BC40D8-33D8-4677-993A-32599A93A460}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleEntFsm&quot;, &quot;samples\ent\sampleEntFsm.vcproj&quot;, &quot;{E7B61D39-73E5-4C0E-97D4-1E6FFA12390C}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
++		{08BC40D8-33D8-4677-993A-32599A93A460} = {08BC40D8-33D8-4677-993A-32599A93A460}
+ 		{89182311-DB82-446B-AA9B-C70A3A0AF035} = {89182311-DB82-446B-AA9B-C70A3A0AF035}
++	EndProjectSection
++EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;entLua&quot;, &quot;plugins\ent\entLua2.vcproj&quot;, &quot;{89182311-DB82-446B-AA9B-C70A3A0AF035}&quot;
++	ProjectSection(ProjectDependencies) = postProject
+ 		{08BC40D8-33D8-4677-993A-32599A93A460} = {08BC40D8-33D8-4677-993A-32599A93A460}
+ 	EndProjectSection
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;entLua2&quot;, &quot;plugins\ent\entLua2.vcproj&quot;, &quot;{89182311-DB82-446B-AA9B-C70A3A0AF035}&quot;
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;msg2&quot;, &quot;msg2.vcproj&quot;, &quot;{9E9DDB4A-CF98-4ED5-AB85-D3F5E71AE912}&quot;
+ EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+@@ -209,18 +210,10 @@
+ 		{7EB6A55E-D262-4C82-862C-33E831DDF04C}.Debug|Win32.Build.0 = Debug|Win32
+ 		{7EB6A55E-D262-4C82-862C-33E831DDF04C}.Release|Win32.ActiveCfg = Release|Win32
+ 		{7EB6A55E-D262-4C82-862C-33E831DDF04C}.Release|Win32.Build.0 = Release|Win32
+-		{B145E9A0-2656-4481-972A-39A6A0568F14}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{B145E9A0-2656-4481-972A-39A6A0568F14}.Debug|Win32.Build.0 = Debug|Win32
+-		{B145E9A0-2656-4481-972A-39A6A0568F14}.Release|Win32.ActiveCfg = Release|Win32
+-		{B145E9A0-2656-4481-972A-39A6A0568F14}.Release|Win32.Build.0 = Release|Win32
+ 		{9E975777-551F-45F8-85FD-40BE6B0183A4}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{9E975777-551F-45F8-85FD-40BE6B0183A4}.Debug|Win32.Build.0 = Debug|Win32
+ 		{9E975777-551F-45F8-85FD-40BE6B0183A4}.Release|Win32.ActiveCfg = Release|Win32
+ 		{9E975777-551F-45F8-85FD-40BE6B0183A4}.Release|Win32.Build.0 = Release|Win32
+-		{3EEED188-5D62-476B-9CF3-022EBBAFFD12}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{3EEED188-5D62-476B-9CF3-022EBBAFFD12}.Debug|Win32.Build.0 = Debug|Win32
+-		{3EEED188-5D62-476B-9CF3-022EBBAFFD12}.Release|Win32.ActiveCfg = Release|Win32
+-		{3EEED188-5D62-476B-9CF3-022EBBAFFD12}.Release|Win32.Build.0 = Release|Win32
+ 		{526DC299-3C9B-46ED-8C16-0490AE5CAE88}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{526DC299-3C9B-46ED-8C16-0490AE5CAE88}.Debug|Win32.Build.0 = Debug|Win32
+ 		{526DC299-3C9B-46ED-8C16-0490AE5CAE88}.Release|Win32.ActiveCfg = Release|Win32
+@@ -253,6 +246,10 @@
+ 		{89182311-DB82-446B-AA9B-C70A3A0AF035}.Debug|Win32.Build.0 = Debug|Win32
+ 		{89182311-DB82-446B-AA9B-C70A3A0AF035}.Release|Win32.ActiveCfg = Release|Win32
+ 		{89182311-DB82-446B-AA9B-C70A3A0AF035}.Release|Win32.Build.0 = Release|Win32
++		{9E9DDB4A-CF98-4ED5-AB85-D3F5E71AE912}.Debug|Win32.ActiveCfg = Debug|Win32
++		{9E9DDB4A-CF98-4ED5-AB85-D3F5E71AE912}.Debug|Win32.Build.0 = Debug|Win32
++		{9E9DDB4A-CF98-4ED5-AB85-D3F5E71AE912}.Release|Win32.ActiveCfg = Release|Win32
++		{9E9DDB4A-CF98-4ED5-AB85-D3F5E71AE912}.Release|Win32.Build.0 = Release|Win32
+ 	EndGlobalSection
+ 	GlobalSection(SolutionProperties) = preSolution
+ 		HideSolutionNode = FALSE
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000323.html">[Yake-svn] r1253 - trunk/yake/yapp/plugins
+</A></li>
+	<LI>Next message: <A HREF="000325.html">[Yake-svn] r1255 - trunk/yake/scripts/msvc8/plugins/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#324">[ date ]</a>
+              <a href="thread.html#324">[ thread ]</a>
+              <a href="subject.html#324">[ subject ]</a>
+              <a href="author.html#324">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

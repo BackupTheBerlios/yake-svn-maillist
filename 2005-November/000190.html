@@ -1,0 +1,2065 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1120 - in trunk/yake/src: yake/plugins/physicsODE yapp/base/event yapp/loader
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1120%20-%20in%20trunk/yake/src%3A%20yake/plugins/physicsODE%20yapp/base/event%20yapp/loader&In-Reply-To=%3C200511092058.jA9Kw6he022311%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000187.html">
+   <LINK REL="Next"  HREF="000191.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1120 - in trunk/yake/src: yake/plugins/physicsODE yapp/base/event yapp/loader</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1120%20-%20in%20trunk/yake/src%3A%20yake/plugins/physicsODE%20yapp/base/event%20yapp/loader&In-Reply-To=%3C200511092058.jA9Kw6he022311%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1120 - in trunk/yake/src: yake/plugins/physicsODE yapp/base/event yapp/loader">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  9 21:58:06 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000187.html">[Yake-svn] r1119 - in trunk/yake/yake: base base/templates input physics plugins/graphicsOgre plugins/physicsODE samples/common
+</A></li>
+        <LI>Next message: <A HREF="000191.html">[Yake-svn] r1121 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#190">[ date ]</a>
+              <a href="thread.html#190">[ thread ]</a>
+              <a href="subject.html#190">[ subject ]</a>
+              <a href="author.html#190">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-09 21:57:59 +0100 (Wed, 09 Nov 2005)
+New Revision: 1120
+
+Modified:
+   trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+   trunk/yake/src/yapp/base/event/yakeMessageQ.cpp
+   trunk/yake/src/yapp/loader/yakeDotScene.cpp
+Log:
+patch 1350326 by mj (modified by psy)
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp	2005-11-09 20:46:15 UTC (rev 1119)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp	2005-11-09 20:57:59 UTC (rev 1120)
+@@ -39,9 +39,12 @@
+ 		mSlipNormal(Vector3::kZero),
+ 		mSlipLinearCoeff(0),
+ 		mSlipAngularCoeff(0),
++		mRestitution(0), // better value?
+ 		mName(name)
+ 	{
+ 	}
++
++	//---------------------------------------------------
+ 	OdeMaterial::OdeMaterial(const physics::IMaterial::Desc&amp; desc, const String&amp; name) : 
+ 		mSoftness(desc.mSoftness),
+ 		mFriction(desc.mFriction),
+@@ -50,33 +53,42 @@
+ 		mSlipNormal(Vector3::kZero),
+ 		mSlipLinearCoeff(0),
+ 		mSlipAngularCoeff(0),
++		mRestitution( desc.mRestitution ),
+ 		mName(name)
+ 	{
+ 	}
+-	void OdeMaterial::setBounciness(const real bounciness)
+-	{
+-		//@todo
+-	}
++
++	//---------------------------------------------------
+ 	void OdeMaterial::setSoftness(const real softness)
+ 	{
+ 		mSoftness = softness;
+ 	}
++
++	//---------------------------------------------------
+ 	void OdeMaterial::setRollingFriction( const real friction )
+ 	{
+ 		//@todo
+ 	}
++
++	//---------------------------------------------------
+ 	void OdeMaterial::setRestitution( const real restitution )
+ 	{
+-		//@todo
++		mRestitution = restitution;	
+ 	}
++
++	//---------------------------------------------------
+ 	void OdeMaterial::setStaticFriction( const real friction )
+ 	{
+ 		mFriction = friction; //@todo is that right?
+ 	}
++
++	//---------------------------------------------------
+ 	void OdeMaterial::setStaticFrictionV( const real friction )
+ 	{
+ 		//@todo
+ 	}
++
++	//---------------------------------------------------
+ 	void OdeMaterial::setStaticFrictionVEnabled( bool enabled )
+ 	{
+ 		//@todo
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp	2005-11-09 20:46:15 UTC (rev 1119)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp	2005-11-09 20:57:59 UTC (rev 1120)
+@@ -27,590 +27,589 @@
+ #include &lt;yake/plugins/physicsODE/yakePCH.h&gt;
+ #include &lt;yake/plugins/physicsODE/OdeShapes.h&gt;
+ 
+-namespace yake
+-{
+-	namespace physics
+-	{
++namespace yake {
++namespace physics {
+ 
+-		//-----------------------------------------------------
+-		//	OdeGeom
+-		//-----------------------------------------------------
++	//-----------------------------------------------------
++	//	OdeGeom
++	//-----------------------------------------------------
+ 
+-		//-----------------------------------------------------
+-		OdeGeom::OdeGeom(OdeActor* pOwner) :
+-				mOdeGeomID( 0 ),
+-				mOdeSpace( 0 ),
+-				mOdeGeom( 0 ),
+-				mOwner( pOwner ),
+-				mMaterial( 0 )
+-		{
+-			YAKE_ASSERT( mOwner );
+-		}
++	//-----------------------------------------------------
++	OdeGeom::OdeGeom(OdeActor* pOwner) :
++			mOdeGeomID( 0 ),
++			mOdeSpace( 0 ),
++			mOdeGeom( 0 ),
++			mOwner( pOwner ),
++			mMaterial( 0 )
++	{
++		YAKE_ASSERT( mOwner );
++	}
+ 
+-		//-----------------------------------------------------
+-		OdeGeom::~OdeGeom()
++	//-----------------------------------------------------
++	OdeGeom::~OdeGeom()
++	{
++		if ( mOdeGeom != NULL )
+ 		{
+-			if ( mOdeGeom != NULL )
+-			{
+-				YAKE_SAFE_DELETE( mOdeGeom );
+-			}
+-			else if ( mOdeGeomID != 0 )
+-			{
+-				dGeomDestroy( mOdeGeomID );
+-				mOdeGeomID = 0;
+-			}
++			YAKE_SAFE_DELETE( mOdeGeom );
+ 		}
+-
+-		//-----------------------------------------------------
+-		dGeomID OdeGeom::_getOdeGeomID() const
++		else if ( mOdeGeomID != 0 )
+ 		{
+-			return mOdeGeomID;
++			dGeomDestroy( mOdeGeomID );
++			mOdeGeomID = 0;
+ 		}
++	}
+ 
+-		//-----------------------------------------------------
+-		dSpace* OdeGeom::_getOdeSpace() const
+-		{
+-			return mOdeSpace;
+-		}
++	//-----------------------------------------------------
++	dGeomID OdeGeom::_getOdeGeomID() const
++	{
++		return mOdeGeomID;
++	}
+ 
+-		//-----------------------------------------------------
+-		void OdeGeom::_setData( void* pData )
+-		{
+-			dGeomSetData( mOdeGeomID, pData );
+-		}
++	//-----------------------------------------------------
++	dSpace* OdeGeom::_getOdeSpace() const
++	{
++		return mOdeSpace;
++	}
+ 
+-		//-----------------------------------------------------
+-		void* OdeGeom::_getData() const
+-		{
+-			return dGeomGetData( mOdeGeomID );
+-		}
++	//-----------------------------------------------------
++	void OdeGeom::_setData( void* pData )
++	{
++		dGeomSetData( mOdeGeomID, pData );
++	}
+ 
+-		//-----------------------------------------------------
+-		dGeom* OdeGeom::_getOdeGeomPtr()
+-		{
+-			return mOdeGeom;
+-		}
++	//-----------------------------------------------------
++	void* OdeGeom::_getData() const
++	{
++		return dGeomGetData( mOdeGeomID );
++	}
+ 
+-		//-----------------------------------------------------
+-		OdeMaterial* OdeGeom::getMaterial() const
+-		{
+-			return mMaterial;
+-		}
++	//-----------------------------------------------------
++	dGeom* OdeGeom::_getOdeGeomPtr()
++	{
++		return mOdeGeom;
++	}
+ 
+-		//-----------------------------------------------------
+-		void OdeGeom::setMaterial( OdeMaterial* pMaterial )
+-		{
+-			mMaterial = pMaterial;
+-		}
++	//-----------------------------------------------------
++	OdeMaterial* OdeGeom::getMaterial() const
++	{
++		return mMaterial;
++	}
+ 
+-		//-----------------------------------------------------
+-		void OdeGeom::setPosition( Vector3 const&amp; rPosition )
+-		{
+-			if (getType() == ST_PLANE)
+-				return;
+-			dGeomSetPosition( mOdeGeomID, rPosition.x, rPosition.y, rPosition.z );
+-		}
++	//-----------------------------------------------------
++	void OdeGeom::setMaterial( IMaterial* pMaterial )
++	{
++		mMaterial = static_cast&lt;OdeMaterial*&gt;( pMaterial );
++	}
+ 
+-		//-----------------------------------------------------
+-		Vector3 OdeGeom::getPosition() const
+-		{
+-			if (getType() == ST_PLANE)
+-				return Vector3::kZero;
+-			const dReal* pos = dGeomGetPosition( mOdeGeomID );
+-			return Vector3( real(pos[0]), real(pos[1]), real(pos[2]) );
+-		}
++	//-----------------------------------------------------
++	void OdeGeom::setPosition( Vector3 const&amp; rPosition )
++	{
++		if (getType() == ST_PLANE)
++			return;
+ 
+-		//-----------------------------------------------------
+-		void OdeGeom::setOrientation( Quaternion const&amp; rOrientation )
+-		{
+-			if (getType() == ST_PLANE)
+-				return;
+-			const dQuaternion q = { rOrientation.w, rOrientation.x, rOrientation.y, rOrientation.z };
+-			dGeomSetQuaternion( mOdeGeomID, q );
+-		}
++		dGeomSetPosition( mOdeGeomID, rPosition.x, rPosition.y, rPosition.z );
++	}
+ 
+-		//-----------------------------------------------------
+-		Quaternion OdeGeom::getOrientation() const
+-		{
+-			if (getType() == ST_PLANE)
+-				return Quaternion::kIdentity;
++	//-----------------------------------------------------
++	Vector3 OdeGeom::getPosition() const
++	{
++		if (getType() == ST_PLANE)
++			return Vector3::kZero;
++		const dReal* pos = dGeomGetPosition( mOdeGeomID );
++		return Vector3( real(pos[0]), real(pos[1]), real(pos[2]) );
++	}
+ 
+-			dQuaternion q;
+-			dGeomGetQuaternion( mOdeGeomID, q );
++	//-----------------------------------------------------
++	void OdeGeom::setOrientation( Quaternion const&amp; rOrientation )
++	{
++		if (getType() == ST_PLANE)
++			return;
++		const dQuaternion q = { rOrientation.w, rOrientation.x, rOrientation.y, rOrientation.z };
++		dGeomSetQuaternion( mOdeGeomID, q );
++	}
+ 
+-			return Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) );
+-		}
++	//-----------------------------------------------------
++	Quaternion OdeGeom::getOrientation() const
++	{
++		if (getType() == ST_PLANE)
++			return Quaternion::kIdentity;
+ 
+-		//-----------------------------------------------------
+-		Vector3 OdeGeom::getDerivedPosition() const
+-		{
+-			dBodyID bodyId = dGeomGetBody( mOdeGeomID );
+-			const dReal* pos = dBodyGetPosition( bodyId );
+-			return Vector3( real(pos[0]), real(pos[1]), real(pos[2]) );
+-		}
++		dQuaternion q;
++		dGeomGetQuaternion( mOdeGeomID, q );
+ 
+-		//-----------------------------------------------------
+-		Quaternion OdeGeom::getDerivedOrientation() const
+-		{
+-			dBodyID bodyId = dGeomGetBody( mOdeGeomID );
+-			const dReal* q = dBodyGetQuaternion( bodyId );
+-			return Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) );
+-		}
++		return Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) );
++	}
+ 
+-		//-----------------------------------------------------
+-		bool operator == (const std::pair&lt;const String,boost::any&gt;&amp; lhs, const std::pair&lt;const String,boost::any&gt;&amp; rhs)
+-		{
+-			return (lhs.first == rhs.first);
+-		}
++	//-----------------------------------------------------
++	Vector3 OdeGeom::getDerivedPosition() const
++	{
++		dBodyID bodyId = dGeomGetBody( mOdeGeomID );
++		const dReal* pos = dBodyGetPosition( bodyId );
++		return Vector3( real(pos[0]), real(pos[1]), real(pos[2]) );
++	}
+ 
+-		//-----------------------------------------------------
+-		Vector3 OdeGeom::getPropertyVector3(const String&amp; id) const
+-		{
+-			PropMap::const_iterator itFind = mProps.find( id );
+-			YAKE_ASSERT(itFind != mProps.end());
+-			if (itFind == mProps.end())
+-				return Vector3();
+-			return boost::any_cast&lt;Vector3&gt;(itFind-&gt;second);
+-		}
++	//-----------------------------------------------------
++	Quaternion OdeGeom::getDerivedOrientation() const
++	{
++		dBodyID bodyId = dGeomGetBody( mOdeGeomID );
++		const dReal* q = dBodyGetQuaternion( bodyId );
++		return Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) );
++	}
+ 
+-		//-----------------------------------------------------
+-		real OdeGeom::getPropertyReal(const String&amp; id) const
+-		{
+-			PropMap::const_iterator itFind = mProps.find( id );
+-			YAKE_ASSERT(itFind != mProps.end());
+-			if (itFind == mProps.end())
+-				return real(0.);
+-			return boost::any_cast&lt;real&gt;(itFind-&gt;second);
+-		}
++	//-----------------------------------------------------
++	bool operator == (const std::pair&lt;const String,boost::any&gt;&amp; lhs, const std::pair&lt;const String,boost::any&gt;&amp; rhs)
++	{
++		return (lhs.first == rhs.first);
++	}
+ 
+-		//-----------------------------------------------------
+-		//	OdeTriMesh
+-		//-----------------------------------------------------
++	//-----------------------------------------------------
++	Vector3 OdeGeom::getPropertyVector3(const String&amp; id) const
++	{
++		PropMap::const_iterator itFind = mProps.find( id );
++		YAKE_ASSERT(itFind != mProps.end());
++		if (itFind == mProps.end())
++			return Vector3();
++		return boost::any_cast&lt;Vector3&gt;(itFind-&gt;second);
++	}
+ 
+-		//-----------------------------------------------------
+-		OdeTriMesh::OdeTriMesh( dSpace* pSpace, OdeActor* pOwner, dTriMeshDataID meshDataId ) :
+-				OdeGeom( pOwner )
+-		{
+-			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
++	//-----------------------------------------------------
++	real OdeGeom::getPropertyReal(const String&amp; id) const
++	{
++		PropMap::const_iterator itFind = mProps.find( id );
++		YAKE_ASSERT(itFind != mProps.end());
++		if (itFind == mProps.end())
++			return real(0.);
++		return boost::any_cast&lt;real&gt;(itFind-&gt;second);
++	}
+ 
+-			mOdeSpace = pSpace;
++	//-----------------------------------------------------
++	//	OdeTriMesh
++	//-----------------------------------------------------
+ 
+-			// enjoy!
+-			mOdeGeomID = dCreateTriMesh( mOdeSpace-&gt;id(), meshDataId, 0, 0, 0 );
++	//-----------------------------------------------------
++	OdeTriMesh::OdeTriMesh( dSpace* pSpace, OdeActor* pOwner, dTriMeshDataID meshDataId ) :
++			OdeGeom( pOwner )
++	{
++		YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+ 
+-			// enabling collisions with spheres and boxes
+-			dGeomTriMeshEnableTC( mOdeGeomID, dSphereClass, 1 );
+-			dGeomTriMeshEnableTC( mOdeGeomID, dBoxClass, 1 );
++		mOdeSpace = pSpace;
+ 
+-			_setData( this );
+-		}
++		// enjoy!
++		mOdeGeomID = dCreateTriMesh( mOdeSpace-&gt;id(), meshDataId, 0, 0, 0 );
+ 
+-		//-----------------------------------------------------
+-		ShapeType OdeTriMesh::getType() const
+-		{
+-			return ST_TRIANGLE_MESH;
+-		}
++		// enabling collisions with spheres and boxes
++		dGeomTriMeshEnableTC( mOdeGeomID, dSphereClass, 1 );
++		dGeomTriMeshEnableTC( mOdeGeomID, dBoxClass, 1 );
+ 
+-		//-----------------------------------------------------
+-		OdeTriMesh::~OdeTriMesh()
+-		{
+-			dGeomDestroy( mOdeGeomID );
++		_setData( this );
++	}
+ 
+-		}
++	//-----------------------------------------------------
++	ShapeType OdeTriMesh::getType() const
++	{
++		return ST_TRIANGLE_MESH;
++	}
+ 
+-		//-----------------------------------------------------
+-		//-----------------------------------------------------
+-		void OdeTriMesh::buildMeshData(	MeshData&amp; dataToFill,
+-		                                TriangleMeshDesc::VertexVector const&amp; rVertices,
+-		                                TriangleMeshDesc::IndexVector const&amp; rIndices,
+-		                                TriangleMeshDesc::NormalVector const&amp; rNormals )
+-		{
+-			YAKE_ASSERT( !rVertices.empty() ).error( &quot;Wont create empty mesh!&quot;);
+-			YAKE_ASSERT( !rIndices.empty() ).error( &quot;Vertices without indices are meaningless!&quot; );
+-			// Performing conversion to ODE internal format
+-			dReal*		pVertices;
+-			uint32*		pIndices;
+-			dReal*		pNormals;
++	//-----------------------------------------------------
++	OdeTriMesh::~OdeTriMesh()
++	{
++		dGeomDestroy( mOdeGeomID );
+ 
+-			// stuffing vertices
+-			pVertices = new dReal[ 3*rVertices.size() ];
+-			uint32 elementCounter = 0;
++	}
+ 
+-			ConstVectorIterator&lt;TriangleMeshDesc::VertexVector&gt; itV( rVertices.begin(), rVertices.end() );
+-			while ( itV.hasMoreElements() )
+-			{
+-				Vector3 const&amp; v = itV.getNext();
+-				pVertices[ elementCounter*3 + 0 ] = v.x;
+-				pVertices[ elementCounter*3 + 1 ] = v.y;
+-				pVertices[ elementCounter*3 + 2 ] = v.z;
+-				++elementCounter;
+-			}
++	//-----------------------------------------------------
++	//-----------------------------------------------------
++	void OdeTriMesh::buildMeshData(	MeshData&amp; dataToFill,
++		                            TriangleMeshDesc::VertexVector const&amp; rVertices,
++		                            TriangleMeshDesc::IndexVector const&amp; rIndices,
++		                            TriangleMeshDesc::NormalVector const&amp; rNormals )
++	{
++		YAKE_ASSERT( !rVertices.empty() ).error( &quot;Wont create empty mesh!&quot;);
++		YAKE_ASSERT( !rIndices.empty() ).error( &quot;Vertices without indices are meaningless!&quot; );
++		// Performing conversion to ODE internal format
++		dReal*		pVertices;
++		uint32*		pIndices;
++		dReal*		pNormals;
+ 
+-			// pouring indices
+-			pIndices = new uint32[ rIndices.size() ];
+-			elementCounter = 0;
++		// stuffing vertices
++		pVertices = new dReal[ 3*rVertices.size() ];
++		uint32 elementCounter = 0;
+ 
+-			ConstVectorIterator&lt;TriangleMeshDesc::IndexVector&gt; itI( rIndices.begin(), rIndices.end() );
+-			while ( itI.hasMoreElements() )
+-			{
+-				pIndices[ elementCounter++] = itI.getNext();
+-			}
++		ConstVectorIterator&lt;TriangleMeshDesc::VertexVector&gt; itV( rVertices.begin(), rVertices.end() );
++		while ( itV.hasMoreElements() )
++		{
++			Vector3 const&amp; v = itV.getNext();
++			pVertices[ elementCounter*3 + 0 ] = v.x;
++			pVertices[ elementCounter*3 + 1 ] = v.y;
++			pVertices[ elementCounter*3 + 2 ] = v.z;
++			++elementCounter;
++		}
+ 
+-			// spice-up with normals
+-			if ( !rNormals.empty() ) // according to taste (normals are optional)
+-			{
+-				pNormals = new dReal[ 3*rNormals.size() ];
+-				elementCounter  = 0;
++		// pouring indices
++		pIndices = new uint32[ rIndices.size() ];
++		elementCounter = 0;
+ 
+-				ConstVectorIterator&lt;TriangleMeshDesc::NormalVector&gt; itN( rNormals.begin(), rNormals.end() );
+-				while ( itN.hasMoreElements() )
+-				{
+-					Vector3 const&amp; v = itN.getNext();
+-					pNormals[ elementCounter*3 + 0 ] = v.x;
+-					pNormals[ elementCounter*3 + 1 ] = v.y;
+-					pNormals[ elementCounter*3 + 2 ] = v.z;
+-					++elementCounter;
+-				}
+-			}
++		ConstVectorIterator&lt;TriangleMeshDesc::IndexVector&gt; itI( rIndices.begin(), rIndices.end() );
++		while ( itI.hasMoreElements() )
++		{
++			pIndices[ elementCounter++] = itI.getNext();
++		}
+ 
+-			// serving up
+-			dTriMeshDataID dataId = dGeomTriMeshDataCreate();
++		// spice-up with normals
++		if ( !rNormals.empty() ) // according to taste (normals are optional)
++		{
++			pNormals = new dReal[ 3*rNormals.size() ];
++			elementCounter  = 0;
+ 
+-			if ( !rNormals.empty() )
++			ConstVectorIterator&lt;TriangleMeshDesc::NormalVector&gt; itN( rNormals.begin(), rNormals.end() );
++			while ( itN.hasMoreElements() )
+ 			{
+-				dGeomTriMeshDataBuildDouble1( dataId,
+-				                              pVertices,
+-				                              sizeof( dReal )*3,
+-				                              rVertices.size(),
+-				                              pIndices,
+-				                              rIndices.size(),
+-				                              sizeof( uint32 )*3,
+-				                              pNormals );
++				Vector3 const&amp; v = itN.getNext();
++				pNormals[ elementCounter*3 + 0 ] = v.x;
++				pNormals[ elementCounter*3 + 1 ] = v.y;
++				pNormals[ elementCounter*3 + 2 ] = v.z;
++				++elementCounter;
+ 			}
+-			else
+-			{
+-				dGeomTriMeshDataBuildDouble(  dataId,
+-				                              pVertices,
+-				                              sizeof( dReal )*3,
+-				                              rVertices.size(),
+-				                              pIndices,
+-				                              rIndices.size(),
+-				                              sizeof( uint32 )*3 );
+-			}
+-
+-			dataToFill.normals = pNormals;
+-			dataToFill.vertices = pVertices;
+-			dataToFill.indices = pIndices;
+-			dataToFill.id = dataId;
+ 		}
+ 
+-		//-----------------------------------------------------
+-		//	OdeSphere
+-		//-----------------------------------------------------
++		// serving up
++		dTriMeshDataID dataId = dGeomTriMeshDataCreate();
+ 
+-		//-----------------------------------------------------
+-		OdeSphere::OdeSphere( dSpace* pSpace, OdeActor* pOwner, real radius ) :
+-				OdeGeom( pOwner )
++		if ( !rNormals.empty() )
+ 		{
+-			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
++			dGeomTriMeshDataBuildDouble1( dataId,
++				                            pVertices,
++				                            sizeof( dReal )*3,
++				                            rVertices.size(),
++				                            pIndices,
++				                            rIndices.size(),
++				                            sizeof( uint32 )*3,
++				                            pNormals );
++		}
++		else
++		{
++			dGeomTriMeshDataBuildDouble(  dataId,
++				                            pVertices,
++				                            sizeof( dReal )*3,
++				                            rVertices.size(),
++				                            pIndices,
++				                            rIndices.size(),
++				                            sizeof( uint32 )*3 );
++		}
+ 
+-			mOdeSpace = pSpace;
+-			YAKE_ASSERT( radius &gt; 0 ).warning( &quot;Radius may be invalid!&quot; );
++		dataToFill.normals = pNormals;
++		dataToFill.vertices = pVertices;
++		dataToFill.indices = pIndices;
++		dataToFill.id = dataId;
++	}
+ 
+-			mOdeGeom = new dSphere( mOdeSpace-&gt;id(), static_cast&lt;dReal&gt;( radius ) );
+-			YAKE_ASSERT( mOdeGeom );
+-			mOdeGeomID = mOdeGeom-&gt;id();
++	//-----------------------------------------------------
++	//	OdeSphere
++	//-----------------------------------------------------
+ 
+-			_setData( this );
++	//-----------------------------------------------------
++	OdeSphere::OdeSphere( dSpace* pSpace, OdeActor* pOwner, real radius ) :
++			OdeGeom( pOwner )
++	{
++		YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+ 
+-			mProps[&quot;radius&quot;] = radius;
+-		}
++		mOdeSpace = pSpace;
++		YAKE_ASSERT( radius &gt; 0 ).warning( &quot;Radius may be invalid!&quot; );
+ 
+-		//-----------------------------------------------------
+-		ShapeType OdeSphere::getType() const
+-		{
+-			return ST_SPHERE;
+-		}
++		mOdeGeom = new dSphere( mOdeSpace-&gt;id(), static_cast&lt;dReal&gt;( radius ) );
++		YAKE_ASSERT( mOdeGeom );
++		mOdeGeomID = mOdeGeom-&gt;id();
+ 
+-		//-----------------------------------------------------
+-		//	OdeCCylinder
+-		//-----------------------------------------------------
++		_setData( this );
+ 
+-		//-----------------------------------------------------
+-		OdeCCylinder::OdeCCylinder( dSpace* pSpace, OdeActor* pOwner, real radius, real length ) :
+-				OdeGeom( pOwner )
+-		{
+-			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
++		mProps[&quot;radius&quot;] = radius;
++	}
+ 
+-			mOdeSpace = pSpace;
++	//-----------------------------------------------------
++	ShapeType OdeSphere::getType() const
++	{
++		return ST_SPHERE;
++	}
+ 
+-			YAKE_ASSERT( radius &gt; 0 ).error( &quot;Radius should be invalid!&quot; );
+-			YAKE_ASSERT( length &gt; 0 ).error( &quot;Length should be positive!&quot; );
++	//-----------------------------------------------------
++	//	OdeCCylinder
++	//-----------------------------------------------------
+ 
+-			mOdeGeom = new dCCylinder( mOdeSpace-&gt;id(), static_cast&lt;dReal&gt;( radius ), static_cast&lt;dReal&gt;( length ) );
++	//-----------------------------------------------------
++	OdeCCylinder::OdeCCylinder( dSpace* pSpace, OdeActor* pOwner, real radius, real length ) :
++			OdeGeom( pOwner )
++	{
++		YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+ 
+-			mOdeGeomID = mOdeGeom-&gt;id();
++		mOdeSpace = pSpace;
+ 
+-			_setData( this );
++		YAKE_ASSERT( radius &gt; 0 ).error( &quot;Radius should be invalid!&quot; );
++		YAKE_ASSERT( length &gt; 0 ).error( &quot;Length should be positive!&quot; );
+ 
+-			mProps[&quot;radius&quot;] = radius;
+-			mProps[&quot;length&quot;] = length;
+-		}
++		mOdeGeom = new dCCylinder( mOdeSpace-&gt;id(), static_cast&lt;dReal&gt;( radius ), static_cast&lt;dReal&gt;( length ) );
+ 
+-		//-----------------------------------------------------
+-		ShapeType OdeCCylinder::getType() const
+-		{
+-			return ST_CYLINDER;
+-		}
++		mOdeGeomID = mOdeGeom-&gt;id();
+ 
+-		//-----------------------------------------------------
+-		//	OdeBox
+-		//-----------------------------------------------------
++		_setData( this );
+ 
+-		//-----------------------------------------------------
+-		OdeBox::OdeBox( dSpace* pSpace, OdeActor* pOwner, real sizex, real sizey, real sizez) :
+-				OdeGeom( pOwner )
+-		{
+-			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
++		mProps[&quot;radius&quot;] = radius;
++		mProps[&quot;length&quot;] = length;
++	}
+ 
+-			mOdeSpace = pSpace;
++	//-----------------------------------------------------
++	ShapeType OdeCCylinder::getType() const
++	{
++		return ST_CYLINDER;
++	}
+ 
+-			mOdeGeom = new dBox( mOdeSpace-&gt;id(), sizex, sizey, sizez );
++	//-----------------------------------------------------
++	//	OdeBox
++	//-----------------------------------------------------
+ 
+-			mOdeGeomID = mOdeGeom-&gt;id();
++	//-----------------------------------------------------
++	OdeBox::OdeBox( dSpace* pSpace, OdeActor* pOwner, real sizex, real sizey, real sizez) :
++			OdeGeom( pOwner )
++	{
++		YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+ 
+-			_setData( this );
++		mOdeSpace = pSpace;
+ 
+-			mProps[&quot;dimensions&quot;] = Vector3(sizex,sizey,sizez);
+-		}
++		mOdeGeom = new dBox( mOdeSpace-&gt;id(), sizex, sizey, sizez );
+ 
+-		//-----------------------------------------------------
+-		ShapeType OdeBox::getType() const
+-		{
+-			return ST_BOX;
+-		}
++		mOdeGeomID = mOdeGeom-&gt;id();
+ 
+-		//-----------------------------------------------------
+-		//	OdePlane
+-		//-----------------------------------------------------
++		_setData( this );
+ 
+-		//-----------------------------------------------------
+-		OdePlane::OdePlane( dSpace* pSpace, OdeActor* pOwner, real a, real b, real c, real d ) :
+-				OdeGeom( pOwner )
+-		{
+-			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
++		mProps[&quot;dimensions&quot;] = Vector3(sizex,sizey,sizez);
++	}
+ 
+-			mOdeSpace = pSpace;
++	//-----------------------------------------------------
++	ShapeType OdeBox::getType() const
++	{
++		return ST_BOX;
++	}
+ 
+-			YAKE_ASSERT( a != 0. || b != 0. || c != 0. ).error( &quot;Invalid plane equation!&quot; );
++	//-----------------------------------------------------
++	//	OdePlane
++	//-----------------------------------------------------
+ 
+-			Vector3 normal = Vector3( a, b, c );
++	//-----------------------------------------------------
++	OdePlane::OdePlane( dSpace* pSpace, OdeActor* pOwner, real a, real b, real c, real d ) :
++			OdeGeom( pOwner )
++	{
++		YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+ 
+-			if ( normal.squaredLength() &lt; 0.02 )
+-				normal = Vector3( 0, 1, 0 );
+-			else
+-				normal.normalise();
++		mOdeSpace = pSpace;
+ 
+-			mOdeGeom = new dPlane( mOdeSpace-&gt;id(), normal.x, normal.y, normal.z, d );
+-			YAKE_ASSERT( mOdeGeom );
+-			mOdeGeomID = mOdeGeom-&gt;id();
++		YAKE_ASSERT( a != 0. || b != 0. || c != 0. ).error( &quot;Invalid plane equation!&quot; );
+ 
+-			_setData( this );
++		Vector3 normal = Vector3( a, b, c );
+ 
+-			mProps[&quot;normal&quot;] = Vector3(a,b,c);
+-			mProps[&quot;d&quot;] = d;
+-		}
++		if ( normal.squaredLength() &lt; 0.02 )
++			normal = Vector3( 0, 1, 0 );
++		else
++			normal.normalise();
+ 
+-		//-----------------------------------------------------
+-		ShapeType OdePlane::getType() const
+-		{
+-			return ST_PLANE;
+-		}
++		mOdeGeom = new dPlane( mOdeSpace-&gt;id(), normal.x, normal.y, normal.z, d );
++		YAKE_ASSERT( mOdeGeom );
++		mOdeGeomID = mOdeGeom-&gt;id();
+ 
+-		//-----------------------------------------------------
+-		//	OdeTransformGeom
+-		//-----------------------------------------------------
++		_setData( this );
+ 
+-		//-----------------------------------------------------
+-		OdeTransformGeom::OdeTransformGeom( dSpace* pSpace, OdeActor* pOwner ) :
+-				OdeGeom( pOwner ),
+-				mAttachedGeom( NULL )
+-		{
+-			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
++		mProps[&quot;normal&quot;] = Vector3(a,b,c);
++		mProps[&quot;d&quot;] = d;
++	}
+ 
+-			mOdeSpace = pSpace;
++	//-----------------------------------------------------
++	ShapeType OdePlane::getType() const
++	{
++		return ST_PLANE;
++	}
+ 
+-			mOdeGeom = new dGeomTransform( mOdeSpace-&gt;id() );
+-			YAKE_ASSERT( mOdeGeom );
+-			mOdeGeomID = mOdeGeom-&gt;id();
++	//-----------------------------------------------------
++	//	OdeTransformGeom
++	//-----------------------------------------------------
+ 
+-			dGeomTransformSetCleanup( mOdeGeomID, 1 );
+-			dGeomTransformSetInfo( mOdeGeomID, 1 );
++	//-----------------------------------------------------
++	OdeTransformGeom::OdeTransformGeom( dSpace* pSpace, OdeActor* pOwner ) :
++			OdeGeom( pOwner ),
++			mAttachedGeom( NULL )
++	{
++		YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+ 
+-			_setData( this );
+-		}
++		mOdeSpace = pSpace;
+ 
+-		//-----------------------------------------------------
+-		ShapeType OdeTransformGeom::getType() const
+-		{
+-			return mAttachedGeom ? mAttachedGeom-&gt;getType() : ST_OTHER;
+-		}
++		mOdeGeom = new dGeomTransform( mOdeSpace-&gt;id() );
++		YAKE_ASSERT( mOdeGeom );
++		mOdeGeomID = mOdeGeom-&gt;id();
+ 
+-		//-----------------------------------------------------
+-		void OdeTransformGeom::attachGeom( OdeGeom* pGeom )
+-		{
+-			YAKE_ASSERT( pGeom ).error( &quot;Attachment failed due to invalid geom passed!&quot; );
++		dGeomTransformSetCleanup( mOdeGeomID, 1 );
++		dGeomTransformSetInfo( mOdeGeomID, 1 );
+ 
+-			mAttachedGeom = pGeom;
++		_setData( this );
++	}
+ 
+-			mAttachedGeom-&gt;_setData( this-&gt;_getData() );
++	//-----------------------------------------------------
++	ShapeType OdeTransformGeom::getType() const
++	{
++		return mAttachedGeom ? mAttachedGeom-&gt;getType() : ST_OTHER;
++	}
+ 
+-			dSpace* pSpace = mAttachedGeom-&gt;_getOdeSpace();
+-			YAKE_ASSERT( pSpace ).error( &quot;Attached geom doesn't contain valid ODE space!&quot; );
++	//-----------------------------------------------------
++	void OdeTransformGeom::attachGeom( OdeGeom* pGeom )
++	{
++		YAKE_ASSERT( pGeom ).error( &quot;Attachment failed due to invalid geom passed!&quot; );
+ 
+-			pSpace-&gt;remove( mAttachedGeom-&gt;_getOdeGeomID() );
+-			dGeomTransformSetGeom( mOdeGeomID, mAttachedGeom-&gt;_getOdeGeomID() );
++		mAttachedGeom = pGeom;
+ 
+-			mProps = mAttachedGeom-&gt;mProps;
+-		}
++		mAttachedGeom-&gt;_setData( this-&gt;_getData() );
+ 
+-		//-----------------------------------------------------
+-		OdeGeom* OdeTransformGeom::getAttachedGeom() const
+-		{
+-			return mAttachedGeom;
+-		}
++		dSpace* pSpace = mAttachedGeom-&gt;_getOdeSpace();
++		YAKE_ASSERT( pSpace ).error( &quot;Attached geom doesn't contain valid ODE space!&quot; );
+ 
+-		//-----------------------------------------------------
+-		Vector3 OdeTransformGeom::getDerivedPosition() const
+-		{
+-			return (mAttachedGeom ?
+-				(getPosition() + getDerivedOrientation() * mAttachedGeom-&gt;getPosition()) :
+-				getPosition() );
+-		}
++		pSpace-&gt;remove( mAttachedGeom-&gt;_getOdeGeomID() );
++		dGeomTransformSetGeom( mOdeGeomID, mAttachedGeom-&gt;_getOdeGeomID() );
+ 
+-		//-----------------------------------------------------
+-		Quaternion OdeTransformGeom::getDerivedOrientation() const
+-		{
+-			return (mAttachedGeom ?
+-				mAttachedGeom-&gt;getDerivedOrientation() :
+-				getOrientation() );
+-		}
++		mProps = mAttachedGeom-&gt;mProps;
++	}
+ 
+-		//-----------------------------------------------------
+-		void OdeTransformGeom::setPosition( Vector3 const&amp; rPosition )
+-		{
+-			if (getType() == ST_PLANE)
+-				return;
+-			YAKE_ASSERT( mAttachedGeom );
+-			const dReal* pos = dGeomGetPosition( mOdeGeomID );
+-			mAttachedGeom-&gt;setPosition( rPosition - Vector3(real(pos[0]), real(pos[1]), real(pos[2])) );
+-			//dGeomSetPosition( mOdeGeomID, rPosition.x, rPosition.y, rPosition.z );
+-		}
++	//-----------------------------------------------------
++	OdeGeom* OdeTransformGeom::getAttachedGeom() const
++	{
++		return mAttachedGeom;
++	}
+ 
+-		//-----------------------------------------------------
+-		Vector3 OdeTransformGeom::getPosition() const
+-		{
+-			if (getType() == ST_PLANE)
+-				return Vector3::kZero;
+-			YAKE_ASSERT( mAttachedGeom );
++	//-----------------------------------------------------
++	Vector3 OdeTransformGeom::getDerivedPosition() const
++	{
++		return (mAttachedGeom ?
++			(getPosition() + getDerivedOrientation() * mAttachedGeom-&gt;getPosition()) :
++			getPosition() );
++	}
+ 
+-			const dReal* pos = dGeomGetPosition( mOdeGeomID );
+-			dQuaternion q;
+-			dGeomGetQuaternion( mOdeGeomID, q );
+-			return Vector3( real(pos[0]), real(pos[1]), real(pos[2]) ) + 
+-				Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) ) * mAttachedGeom-&gt;getPosition();
+-		}
++	//-----------------------------------------------------
++	Quaternion OdeTransformGeom::getDerivedOrientation() const
++	{
++		return (mAttachedGeom ?
++			mAttachedGeom-&gt;getDerivedOrientation() :
++			getOrientation() );
++	}
+ 
+-		//-----------------------------------------------------
+-		void OdeTransformGeom::setOrientation( Quaternion const&amp; rOrientation )
+-		{
+-			if (getType() == ST_PLANE)
+-				return;
+-			YAKE_ASSERT( mAttachedGeom );
+-			const dQuaternion q = { rOrientation.w, rOrientation.x, rOrientation.y, rOrientation.z };
+-			dGeomSetQuaternion( mOdeGeomID, q );
+-		}
++	//-----------------------------------------------------
++	void OdeTransformGeom::setPosition( Vector3 const&amp; rPosition )
++	{
++		if (getType() == ST_PLANE)
++			return;
++		YAKE_ASSERT( mAttachedGeom );
++		const dReal* pos = dGeomGetPosition( mOdeGeomID );
++		mAttachedGeom-&gt;setPosition( rPosition - Vector3(real(pos[0]), real(pos[1]), real(pos[2])) );
++		//dGeomSetPosition( mOdeGeomID, rPosition.x, rPosition.y, rPosition.z );
++	}
+ 
+-		//-----------------------------------------------------
+-		Quaternion OdeTransformGeom::getOrientation() const
+-		{
+-			if (getType() == ST_PLANE)
+-				return Quaternion::kIdentity;
+-			YAKE_ASSERT( mAttachedGeom );
+-			dQuaternion q;
+-			dGeomGetQuaternion( mOdeGeomID, q );
++	//-----------------------------------------------------
++	Vector3 OdeTransformGeom::getPosition() const
++	{
++		if (getType() == ST_PLANE)
++			return Vector3::kZero;
++		YAKE_ASSERT( mAttachedGeom );
+ 
+-			YAKE_ASSERT( mAttachedGeom );
++		const dReal* pos = dGeomGetPosition( mOdeGeomID );
++		dQuaternion q;
++		dGeomGetQuaternion( mOdeGeomID, q );
++		return Vector3( real(pos[0]), real(pos[1]), real(pos[2]) ) + 
++			Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) ) * mAttachedGeom-&gt;getPosition();
++	}
+ 
+-			return mAttachedGeom-&gt;getOrientation() * Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) );
+-		}
++	//-----------------------------------------------------
++	void OdeTransformGeom::setOrientation( Quaternion const&amp; rOrientation )
++	{
++		if (getType() == ST_PLANE)
++			return;
++		YAKE_ASSERT( mAttachedGeom );
++		const dQuaternion q = { rOrientation.w, rOrientation.x, rOrientation.y, rOrientation.z };
++		dGeomSetQuaternion( mOdeGeomID, q );
++	}
+ 
+-		// /*		//-----------------------------------------------------
+-		// 		void OdeCollisionGeomBase::tfAttachGeom( ICollisionGeometry* pGeom )
+-		// 		{ YAKE_ASSERT(1==0).error(&quot;not implemented&quot;); }
+-		// 		//-----------------------------------------------------
+-		// 		ICollisionGeometry* OdeCollisionGeomBase::tfGetAttachedGeom() const
+-		// 		{ return 0; }
+-		// 		//-----------------------------------------------------
+-		// 		Vector3 OdeCollisionGeomBase::planeGetNormal() const
+-		// 		{ return Vector3::kZero; }
+-		// 		//-----------------------------------------------------
+-		// 		String OdeCollisionGeomBase::meshGetName() const
+-		// 		{ return &quot;&quot;; }
+-		// 		//-----------------------------------------------------
+-		// 		real OdeCollisionGeomBase::planeGetDistance() const
+-		// 		{ return 0; }
+-		// 		//-----------------------------------------------------
+-		// 		real OdeCollisionGeomBase::sphereGetRadius() const
+-		// 		{ return 0; }
+-		// 		//-----------------------------------------------------
+-		// 		void OdeCollisionGeomBase::sphereSetRadius(const real radius)
+-		// 		{}
+-		// 		//-----------------------------------------------------
+-		// 		Vector3 OdeCollisionGeomBase::boxGetDimensions() const
+-		// 		{ return Vector3::kZero; }
+-		// 		//-----------------------------------------------------
+-		// 		Vector3 OdeCollisionGeomBase::rayGetOrigin() const
+-		// 		{ return Vector3::kZero; }
+-		// 		//-----------------------------------------------------
+-		// 		Quaternion OdeCollisionGeomBase::rayGetOrientation() const
+-		// 		{ return Quaternion::kIdentity; }
+-		//
+-		// 		//-----------------------------------------------------
+-		// 		real OdeCollisionGeomSphere::sphereGetRadius() const
+-		// 		{
+-		// 			return static_cast&lt;dSphere*&gt;(mOdeGeom)-&gt;getRadius();
+-		// 		}
+-		//
+-		// 		//-----------------------------------------------------
+-		// 		void OdeCollisionGeomSphere::sphereSetRadius(const real radius)
+-		// 		{
+-		// 			static_cast&lt;dSphere*&gt;(mOdeGeom)-&gt;setRadius(radius);
+-		// 		}
+-		//
+-		// 		//-----------------------------------------------------
+-		// 		Vector3 OdeCollisionGeomBox::boxGetDimensions() const
+-		// 		{
+-		// 			dVector3 lengths;
+-		// 			static_cast&lt;dBox*&gt;(mOdeGeom)-&gt;getLengths(lengths);
+-		// 			return Vector3( lengths[0], lengths[1], lengths[2] );
+-		// 		}
+-		//
+-		//
+-		// 		//-----------------------------------------------------
+-		// 		Vector3 OdeCollisionGeomPlane::planeGetNormal() const
+-		// 		{
+-		// 			dVector4 params;
+-		// 			static_cast&lt;dPlane*&gt;(mOdeGeom)-&gt;getParams(params);
+-		// 			return Vector3( params[0], params[1], params[2] );
+-		// 		}
+-		// 		//-----------------------------------------------------
+-		// 		real OdeCollisionGeomPlane::planeGetDistance() const
+-		// 		{
+-		// 			dVector4 params;
+-		// 			static_cast&lt;dPlane*&gt;(mOdeGeom)-&gt;getParams(params);
+-		// 			return params[3];
+-		// 		}
++	//-----------------------------------------------------
++	Quaternion OdeTransformGeom::getOrientation() const
++	{
++		if (getType() == ST_PLANE)
++			return Quaternion::kIdentity;
++		YAKE_ASSERT( mAttachedGeom );
++		dQuaternion q;
++		dGeomGetQuaternion( mOdeGeomID, q );
+ 
+-	} // physics
++		YAKE_ASSERT( mAttachedGeom );
++
++		return mAttachedGeom-&gt;getOrientation() * Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) );
++	}
++
++	// /*		//-----------------------------------------------------
++	// 		void OdeCollisionGeomBase::tfAttachGeom( ICollisionGeometry* pGeom )
++	// 		{ YAKE_ASSERT(1==0).error(&quot;not implemented&quot;); }
++	// 		//-----------------------------------------------------
++	// 		ICollisionGeometry* OdeCollisionGeomBase::tfGetAttachedGeom() const
++	// 		{ return 0; }
++	// 		//-----------------------------------------------------
++	// 		Vector3 OdeCollisionGeomBase::planeGetNormal() const
++	// 		{ return Vector3::kZero; }
++	// 		//-----------------------------------------------------
++	// 		String OdeCollisionGeomBase::meshGetName() const
++	// 		{ return &quot;&quot;; }
++	// 		//-----------------------------------------------------
++	// 		real OdeCollisionGeomBase::planeGetDistance() const
++	// 		{ return 0; }
++	// 		//-----------------------------------------------------
++	// 		real OdeCollisionGeomBase::sphereGetRadius() const
++	// 		{ return 0; }
++	// 		//-----------------------------------------------------
++	// 		void OdeCollisionGeomBase::sphereSetRadius(const real radius)
++	// 		{}
++	// 		//-----------------------------------------------------
++	// 		Vector3 OdeCollisionGeomBase::boxGetDimensions() const
++	// 		{ return Vector3::kZero; }
++	// 		//-----------------------------------------------------
++	// 		Vector3 OdeCollisionGeomBase::rayGetOrigin() const
++	// 		{ return Vector3::kZero; }
++	// 		//-----------------------------------------------------
++	// 		Quaternion OdeCollisionGeomBase::rayGetOrientation() const
++	// 		{ return Quaternion::kIdentity; }
++	//
++	// 		//-----------------------------------------------------
++	// 		real OdeCollisionGeomSphere::sphereGetRadius() const
++	// 		{
++	// 			return static_cast&lt;dSphere*&gt;(mOdeGeom)-&gt;getRadius();
++	// 		}
++	//
++	// 		//-----------------------------------------------------
++	// 		void OdeCollisionGeomSphere::sphereSetRadius(const real radius)
++	// 		{
++	// 			static_cast&lt;dSphere*&gt;(mOdeGeom)-&gt;setRadius(radius);
++	// 		}
++	//
++	// 		//-----------------------------------------------------
++	// 		Vector3 OdeCollisionGeomBox::boxGetDimensions() const
++	// 		{
++	// 			dVector3 lengths;
++	// 			static_cast&lt;dBox*&gt;(mOdeGeom)-&gt;getLengths(lengths);
++	// 			return Vector3( lengths[0], lengths[1], lengths[2] );
++	// 		}
++	//
++	//
++	// 		//-----------------------------------------------------
++	// 		Vector3 OdeCollisionGeomPlane::planeGetNormal() const
++	// 		{
++	// 			dVector4 params;
++	// 			static_cast&lt;dPlane*&gt;(mOdeGeom)-&gt;getParams(params);
++	// 			return Vector3( params[0], params[1], params[2] );
++	// 		}
++	// 		//-----------------------------------------------------
++	// 		real OdeCollisionGeomPlane::planeGetDistance() const
++	// 		{
++	// 			dVector4 params;
++	// 			static_cast&lt;dPlane*&gt;(mOdeGeom)-&gt;getParams(params);
++	// 			return params[3];
++	// 		}
++
++} // physics
+ } // yake
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-11-09 20:46:15 UTC (rev 1119)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-11-09 20:57:59 UTC (rev 1120)
+@@ -38,430 +38,429 @@
+ namespace yake {
+ namespace physics {
+ 
+-		//-----------------------------------------------------
+-		OdeWorld::OdeWorld() : mNextMeshId( 0 )
+-		{
+-			mStepSize = real(1. / 100.);	// default: 50Hz
+-			mOdeWorld = new dWorld();
+-			YAKE_ASSERT( mOdeWorld );
+-			mOdeSpace = new dSimpleSpace( 0 );
+-			YAKE_ASSERT( mOdeSpace );
+-			
+-			mOdeContactGroup = new dJointGroup( 0 );
++	//-----------------------------------------------------
++	OdeWorld::OdeWorld() : mNextMeshId( 0 )
++	{
++		mStepSize = real(1. / 100.);	// default: 50Hz
++		mOdeWorld = new dWorld();
++		YAKE_ASSERT( mOdeWorld );
++		mOdeSpace = new dSimpleSpace( 0 );
++		YAKE_ASSERT( mOdeSpace );
++		
++		mOdeContactGroup = new dJointGroup( 0 );
+ 
+-			mOdeWorld-&gt;setAutoDisableFlag( 1 );
+-			mOdeWorld-&gt;setAutoDisableAngularThreshold( 0.04 ); // ODE default: 0.01
+-			mOdeWorld-&gt;setAutoDisableLinearThreshold( 0.03 ); // ODE default: 0.01
+-			mOdeWorld-&gt;setAutoDisableSteps( 30 ); // ODE default: 10
+-			mOdeWorld-&gt;setAutoDisableTime( 0 ); // ODE default: 0. (= ignore time)
++		mOdeWorld-&gt;setAutoDisableFlag( 1 );
++		mOdeWorld-&gt;setAutoDisableAngularThreshold( 0.04 ); // ODE default: 0.01
++		mOdeWorld-&gt;setAutoDisableLinearThreshold( 0.03 ); // ODE default: 0.01
++		mOdeWorld-&gt;setAutoDisableSteps( 30 ); // ODE default: 10
++		mOdeWorld-&gt;setAutoDisableTime( 0 ); // ODE default: 0. (= ignore time)
+ 
+-			mOdeWorld-&gt;setGravity( 0., -9.81, 0. );
+-			mOdeWorld-&gt;setCFM( 0.0005 );
+-			mOdeWorld-&gt;setERP( 0.99 );
++		mOdeWorld-&gt;setGravity( 0., -9.81, 0. );
++		mOdeWorld-&gt;setCFM( 0.0005 );
++		mOdeWorld-&gt;setERP( 0.99 );
+ 
+-			dWorldSetQuickStepNumIterations( mOdeWorld-&gt;id(), 20 );
++		dWorldSetQuickStepNumIterations( mOdeWorld-&gt;id(), 20 );
+ 
+-			dWorldSetContactMaxCorrectingVel( mOdeWorld-&gt;id(), 10. );
+-			dWorldSetContactSurfaceLayer( mOdeWorld-&gt;id(), 0.025 );
++		dWorldSetContactMaxCorrectingVel( mOdeWorld-&gt;id(), 10. );
++		dWorldSetContactSurfaceLayer( mOdeWorld-&gt;id(), 0.025 );
+ 
+-			mTime = real(0.);
++		mTime = real(0.);
+ 
+-			mMaterials[&quot;default&quot;] = SharedPtr&lt;OdeMaterial&gt;(new OdeMaterial(&quot;default&quot;));
+-		}
++		mMaterials[&quot;default&quot;] = SharedPtr&lt;OdeMaterial&gt;(new OdeMaterial(&quot;default&quot;));
++	}
+ 
+-		//-----------------------------------------------------
+- 		OdeWorld::~OdeWorld()
+- 		{
+-			mAvatars.clear();
+-			mActors.clear();
+-			mJoints.clear();
+-			mMaterials.clear();
+-			mBodies.clear();
++	//-----------------------------------------------------
++ 	OdeWorld::~OdeWorld()
++ 	{
++		mAvatars.clear();
++		mActors.clear();
++		mJoints.clear();
++		mMaterials.clear();
++		mBodies.clear();
+ 
+-			for ( MeshDataMap::iterator i = mMeshDataMap.begin(); i != mMeshDataMap.end(); ++i )
+-			{
+-				OdeTriMesh::MeshData mesh_data = i-&gt;second;
+-				
+-				dGeomTriMeshDataDestroy( mesh_data.id );
+-				
+-				YAKE_SAFE_DELETE_ARRAY( mesh_data.vertices );
+-				YAKE_SAFE_DELETE_ARRAY( mesh_data.indices );
+-				YAKE_SAFE_DELETE_ARRAY( mesh_data.normals );
+-			}
+-
+- 			YAKE_SAFE_DELETE( mOdeContactGroup );
+- 			YAKE_SAFE_DELETE( mOdeSpace );
+- 			YAKE_SAFE_DELETE( mOdeWorld );
+- 		}
+-			
+-		//-----------------------------------------------------
+-		void OdeWorld::setGlobalGravity( const Vector3&amp; g )
++		for ( MeshDataMap::iterator i = mMeshDataMap.begin(); i != mMeshDataMap.end(); ++i )
+ 		{
+-			YAKE_ASSERT( mOdeWorld );
+-			mOdeWorld-&gt;setGravity( g.x, g.y, g.z );
++			OdeTriMesh::MeshData mesh_data = i-&gt;second;
++			
++			dGeomTriMeshDataDestroy( mesh_data.id );
++			
++			YAKE_SAFE_DELETE_ARRAY( mesh_data.vertices );
++			YAKE_SAFE_DELETE_ARRAY( mesh_data.indices );
++			YAKE_SAFE_DELETE_ARRAY( mesh_data.normals );
+ 		}
+ 
+-		//-----------------------------------------------------
+-		Vector3 OdeWorld::getGlobalGravity() const
+-		{
+-			YAKE_ASSERT( mOdeWorld );
+-			dVector3 g;
+-			mOdeWorld-&gt;getGravity( g );
+-			return Vector3(real(g[0]), real(g[1]), real(g[2]));
+-		}
++ 		YAKE_SAFE_DELETE( mOdeContactGroup );
++ 		YAKE_SAFE_DELETE( mOdeSpace );
++ 		YAKE_SAFE_DELETE( mOdeWorld );
++ 	}
++		
++	//-----------------------------------------------------
++	void OdeWorld::setGlobalGravity( const Vector3&amp; g )
++	{
++		YAKE_ASSERT( mOdeWorld );
++		mOdeWorld-&gt;setGravity( g.x, g.y, g.z );
++	}
+ 
+-		//-----------------------------------------------------
+-		Deque&lt;ShapeType&gt; OdeWorld::getSupportedShapes( bool includeStatic, bool includeDynamic ) const
+-		{
+-			/// TODO Add real implementation! FIXME
+-			Deque&lt;ShapeType&gt; supportedShapes;
+-			
+-			return supportedShapes;
+-		}
++	//-----------------------------------------------------
++	Vector3 OdeWorld::getGlobalGravity() const
++	{
++		YAKE_ASSERT( mOdeWorld );
++		dVector3 g;
++		mOdeWorld-&gt;getGravity( g );
++		return Vector3(real(g[0]), real(g[1]), real(g[2]));
++	}
++
++	//-----------------------------------------------------
++	Deque&lt;ShapeType&gt; OdeWorld::getSupportedShapes( bool includeStatic, bool includeDynamic ) const
++	{
++		/// TODO Add real implementation! FIXME
++		Deque&lt;ShapeType&gt; supportedShapes;
+ 		
+-		//-----------------------------------------------------
+-		Deque&lt;JointType&gt; OdeWorld::getSupportedJoints() const
+-		{
+-			//TODO Add real implementation
+-			Deque&lt;JointType&gt; supportedJoints;
+-			
+-			return supportedJoints;
+-		}
++		return supportedShapes;
++	}
++	
++
++	//-----------------------------------------------------
++	void OdeWorld::destroyMaterial( IMaterialPtr pMaterial )
++	{
++		YAKE_ASSERT( pMaterial );
++		mMaterials.erase( mMaterials.find( dynamic_cast&lt;OdeMaterial*&gt;(pMaterial)-&gt;mName ) );
++	}
++
++	//-----------------------------------------------------
++	IMaterialPtr OdeWorld::createMaterial( IMaterial::Desc const&amp; rMatDesc, const String&amp; id /*= &quot;&quot;*/ )
++	{
++		String matId = id.empty() ? uniqueName::create(&quot;ode.material_&quot;) : id;
++		SharedPtr&lt;OdeMaterial&gt; pMat( new OdeMaterial(rMatDesc,matId) );
++		mMaterials.insert( std::make_pair(matId,pMat) );
++		return pMat.get();
++	}
++
++	//-----------------------------------------------------
++	bool operator == (const std::pair&lt;const String,SharedPtr&lt;OdeMaterial&gt; &gt;&amp; lhs, const std::pair&lt;const String,SharedPtr&lt;OdeMaterial&gt; &gt;&amp; rhs)
++	{
++		return lhs.first == rhs.first;
++	}
++	IMaterialPtr OdeWorld::getMaterial( const String&amp; id ) const
++	{
++		OdeMaterialVector::const_iterator itFind = mMaterials.find( id );
++		return (itFind == mMaterials.end()) ? 0 : itFind-&gt;second.get();
++	}
++	//-----------------------------------------------------
++	Deque&lt;JointType&gt; OdeWorld::getSupportedJoints() const
++	{
++		//TODO Add real implementation
++		Deque&lt;JointType&gt; supportedJoints;
+ 		
+-		//-----------------------------------------------------
+-		Deque&lt;String&gt; OdeWorld::getSupportedSolvers() const
+-		{
+-			//TODO Add real implementation
+-			Deque&lt;String&gt; supportedSolvers;
+-			
+-			supportedSolvers.push_back( &quot;quickStep&quot; );
+-			supportedSolvers.push_back( &quot;StepFast&quot; );
+-			
+-			return supportedSolvers;
+-		}
++		return supportedJoints;
++	}
++	
++	//-----------------------------------------------------
++	Deque&lt;String&gt; OdeWorld::getSupportedSolvers() const
++	{
++		//TODO Add real implementation
++		Deque&lt;String&gt; supportedSolvers;
+ 		
+-		//-----------------------------------------------------
+-		bool OdeWorld::useSolver( String const&amp; rSolver )
+-		{
+-			//TODO add solver functor!
+-			return false;
+-		}
++		supportedSolvers.push_back( &quot;quickStep&quot; );
++		supportedSolvers.push_back( &quot;StepFast&quot; );
+ 		
+-		//-----------------------------------------------------
+-		String OdeWorld::getCurrentSolver() const
+-		{
+-			//TODO add current solver name variable
+-			return &quot;quickStep&quot;;
+-		}
+-			
+-		//-----------------------------------------------------
+-		const StringVector OdeWorld::getCurrentSolverParams() const
+-		{
+-			return mCurrentSolverParams;
+-		}
++		return supportedSolvers;
++	}
++	
++	//-----------------------------------------------------
++	bool OdeWorld::useSolver( String const&amp; rSolver )
++	{
++		//TODO add solver functor!
++		return false;
++	}
++	
++	//-----------------------------------------------------
++	String OdeWorld::getCurrentSolver() const
++	{
++		//TODO add current solver name variable
++		return &quot;quickStep&quot;;
++	}
+ 		
+-		//-----------------------------------------------------
+-		void OdeWorld::setCurrentSolverParam( String const&amp; rName, boost::any const&amp; rValue )
+-		{
+-			//TODO add implementation
+-		}
++	//-----------------------------------------------------
++	const StringVector OdeWorld::getCurrentSolverParams() const
++	{
++		return mCurrentSolverParams;
++	}
++	
++	//-----------------------------------------------------
++	void OdeWorld::setCurrentSolverParam( String const&amp; rName, boost::any const&amp; rValue )
++	{
++		//TODO add implementation
++	}
+ 
+-		//-----------------------------------------------------
+-		IJointPtr OdeWorld::createJoint( IJoint::DescBase const&amp; rJointDesc )
+-		{
+-			//@todo add joints &quot;actor vs static env&quot;
+-			YAKE_ASSERT( rJointDesc.actor0 &amp;&amp; rJointDesc.actor1 );
+-			if (!rJointDesc.actor0 || !rJointDesc.actor1)
+-				return 0;
++	//-----------------------------------------------------
++	IJointPtr OdeWorld::createJoint( IJoint::DescBase const&amp; rJointDesc )
++	{
++		//@todo add joints &quot;actor vs static env&quot;
++		YAKE_ASSERT( rJointDesc.actor0 &amp;&amp; rJointDesc.actor1 );
++		if (!rJointDesc.actor0 || !rJointDesc.actor1)
++			return 0;
+ 
+-			/// Bodies to attach
+-			IBody&amp; rBody1 = rJointDesc.actor0-&gt;getBody();
+-			IBody&amp; rBody2 = rJointDesc.actor1-&gt;getBody();
+-			
+-			/// Joint to return
+-			OdeJoint* pJoint = 0;
++		/// Bodies to attach
++		IBody&amp; rBody1 = rJointDesc.actor0-&gt;getBody();
++		IBody&amp; rBody2 = rJointDesc.actor1-&gt;getBody();
++		
++		/// Joint to return
++		OdeJoint* pJoint = 0;
+ 
+-			switch( rJointDesc.type )
++		switch( rJointDesc.type )
++		{
++		case JT_FIXED:
+ 			{
+-			case JT_FIXED:
+-				{
+-				pJoint = new OdeFixedJoint( this );
+-				pJoint-&gt;attach( rBody1, rBody2 );
+-				}
+-				break;
+-			case JT_HINGE:
+-				{
+-				pJoint = new OdeHingeJoint( this );
+-				const IJoint::DescHinge&amp; desc = static_cast&lt;const IJoint::DescHinge&amp;&gt;( rJointDesc );
+-				pJoint-&gt;attach( rBody1, rBody2 );
+-				pJoint-&gt;setAnchor( 0, desc.anchor );
+-				pJoint-&gt;setAxis( 0, desc.axis );
+-				}
+-				break;
+-			case JT_HINGE2:
+-				{
+-				pJoint = new OdeHinge2Joint( this );
+-				const IJoint::DescHinge2&amp; desc = static_cast&lt;const IJoint::DescHinge2&amp;&gt;( rJointDesc );
+-				pJoint-&gt;attach( rBody1, rBody2 );
+-				pJoint-&gt;setAnchor( 0, desc.anchor );
+-				pJoint-&gt;setAxis( 0, desc.axis0 );
+-				pJoint-&gt;setAxis( 1, desc.axis1 );
+-				}
+-				break;
+-			case JT_UNIVERSAL:
+-				{
+-				pJoint = new OdeUniversalJoint( this );
+-				const IJoint::DescUniversal&amp; desc = static_cast&lt;const IJoint::DescUniversal&amp;&gt;( rJointDesc );
+-				pJoint-&gt;attach( rBody1, rBody2 );
+-				pJoint-&gt;setAnchor( 0, desc.anchor );
+-				pJoint-&gt;setAxis( 0, desc.axis0 );
+-				pJoint-&gt;setAxis( 1, desc.axis1 );
+-				}
+-				break;
+-			case JT_BALL:
+-				{
+-				pJoint = new OdeBallJoint( this );
+-				const IJoint::DescBall&amp; desc = static_cast&lt;const IJoint::DescBall&amp;&gt;( rJointDesc );
+-				pJoint-&gt;attach( rBody1, rBody2 );
+-				pJoint-&gt;setAnchor( 0, desc.anchor );
+-				}
+-				break;
+-			case JT_SLIDER:
+-				{
+-				pJoint = new OdeSliderJoint( this );
+-				const IJoint::DescSlider&amp; desc = static_cast&lt;const IJoint::DescSlider&amp;&gt;( rJointDesc );
+-				pJoint-&gt;attach( rBody1, rBody2 );
+-				pJoint-&gt;setAxis( 0, desc.axis );
+-				}
+-				break;
+-			default:
+-				YAKE_ASSERT( 0 &amp;&amp; &quot;unhandled type&quot; )(rJointDesc.type).warning(&quot;&quot;);
+-				return 0;
+-			};
+-			YAKE_ASSERT( pJoint != NULL ).error( &quot;Unknown type of joint or ... some other error :(&quot; );
+-			
+-			mJoints.push_back( SharedPtr&lt;OdeJoint&gt;(pJoint) );
+-			
+-			return pJoint;
+-		}
++			pJoint = new OdeFixedJoint( this );
++			pJoint-&gt;attach( rBody1, rBody2 );
++			}
++			break;
++		case JT_HINGE:
++			{
++			pJoint = new OdeHingeJoint( this );
++			const IJoint::DescHinge&amp; desc = static_cast&lt;const IJoint::DescHinge&amp;&gt;( rJointDesc );
++			pJoint-&gt;attach( rBody1, rBody2 );
++			pJoint-&gt;setAnchor( 0, desc.anchor );
++			pJoint-&gt;setAxis( 0, desc.axis );
++			}
++			break;
++		case JT_HINGE2:
++			{
++			pJoint = new OdeHinge2Joint( this );
++			const IJoint::DescHinge2&amp; desc = static_cast&lt;const IJoint::DescHinge2&amp;&gt;( rJointDesc );
++			pJoint-&gt;attach( rBody1, rBody2 );
++			pJoint-&gt;setAnchor( 0, desc.anchor );
++			pJoint-&gt;setAxis( 0, desc.axis0 );
++			pJoint-&gt;setAxis( 1, desc.axis1 );
++			}
++			break;
++		case JT_UNIVERSAL:
++			{
++			pJoint = new OdeUniversalJoint( this );
++			const IJoint::DescUniversal&amp; desc = static_cast&lt;const IJoint::DescUniversal&amp;&gt;( rJointDesc );
++			pJoint-&gt;attach( rBody1, rBody2 );
++			pJoint-&gt;setAnchor( 0, desc.anchor );
++			pJoint-&gt;setAxis( 0, desc.axis0 );
++			pJoint-&gt;setAxis( 1, desc.axis1 );
++			}
++			break;
++		case JT_BALL:
++			{
++			pJoint = new OdeBallJoint( this );
++			const IJoint::DescBall&amp; desc = static_cast&lt;const IJoint::DescBall&amp;&gt;( rJointDesc );
++			pJoint-&gt;attach( rBody1, rBody2 );
++			pJoint-&gt;setAnchor( 0, desc.anchor );
++			}
++			break;
++		case JT_SLIDER:
++			{
++			pJoint = new OdeSliderJoint( this );
++			const IJoint::DescSlider&amp; desc = static_cast&lt;const IJoint::DescSlider&amp;&gt;( rJointDesc );
++			pJoint-&gt;attach( rBody1, rBody2 );
++			pJoint-&gt;setAxis( 0, desc.axis );
++			}
++			break;
++		default:
++			YAKE_ASSERT( 0 &amp;&amp; &quot;unhandled type&quot; )(rJointDesc.type).warning(&quot;&quot;);
++			return 0;
++		};
++		YAKE_ASSERT( pJoint != NULL ).error( &quot;Unknown type of joint or ... some other error :(&quot; );
+ 		
+-		//-----------------------------------------------------
+-		IActorPtr OdeWorld::createActor( const IActor::Desc&amp; rActorDesc )
++		mJoints.push_back( SharedPtr&lt;OdeJoint&gt;(pJoint) );
++		
++		return pJoint;
++	}
++	
++	//-----------------------------------------------------
++	IActorPtr OdeWorld::createActor( const IActor::Desc&amp; rActorDesc )
++	{
++		OdeActor* pActor = new OdeActor( this, (rActorDesc.type == ACTOR_DYNAMIC) );
++		YAKE_ASSERT( pActor );
++		
++		typedef Deque&lt; SharedPtr&lt;IShape::Desc&gt; &gt; ActorShapesCollection;
++		const ActorShapesCollection&amp; shapes = rActorDesc.shapes;
++		
++		for ( ActorShapesCollection::const_iterator i = shapes.begin(); i != shapes.end(); ++i )
+ 		{
+-			OdeActor* pActor = new OdeActor( this, (rActorDesc.type == ACTOR_DYNAMIC) );
+-			YAKE_ASSERT( pActor );
+-			
+-			typedef Deque&lt; SharedPtr&lt;IShape::Desc&gt; &gt; ActorShapesCollection;
+-			const ActorShapesCollection&amp; shapes = rActorDesc.shapes;
+-			
+-			for ( ActorShapesCollection::const_iterator i = shapes.begin(); i != shapes.end(); ++i )
+-			{
+-				SharedPtr&lt;IShape::Desc&gt; pShapeDesc = *i;
+-				pActor-&gt;createShape(  *pShapeDesc );
+-			}  
+-			mActors.push_back( SharedPtr&lt;OdeActor&gt;( pActor ) );
+-			return pActor;
+-		}
+-		//-----------------------------------------------------
+-		bool operator==(const SharedPtr&lt;OdeJoint&gt;&amp; lhs, const OdeJoint* rhs)
+-		{
+-			return (lhs.get() == rhs);
+-		}
+-		//-----------------------------------------------------
+-		void OdeWorld::destroyJoint( IJointPtr pJoint )
+-		{
+-			YAKE_ASSERT( pJoint );
+-			mJoints.erase( std::find(mJoints.begin(), mJoints.end(), dynamic_cast&lt;OdeJoint*&gt;(pJoint) ) );
+-		}
+-		//-----------------------------------------------------
+-		bool operator==(const SharedPtr&lt;OdeActor&gt;&amp; lhs, const OdeActor* rhs)
+-		{
+-			return (lhs.get() == rhs);
+-		}
+-		//-----------------------------------------------------
+-		void OdeWorld::destroyActor( IActorPtr pActor )
+-		{
+-			YAKE_ASSERT( pActor );
+-			mActors.erase( std::find(mActors.begin(), mActors.end(), dynamic_cast&lt;OdeActor*&gt;(pActor) ) );
+-		}
+-		//-----------------------------------------------------
+-		void OdeWorld::destroyAvatar( IAvatarPtr pAvatar )
+-		{
+-			YAKE_ASSERT( 0 &amp;&amp; &quot;NOT IMPLEMENTED&quot; );
+-			//YAKE_ASSERT( !pAvatar.expired() );
+-			//mAvatars.erase( std::find(mAvatars.begin(), mAvatars.end(), dynamic_cast&lt;OdeAvatar*&gt;(pAvatar .lock().get()) ) );
+-		}
++			SharedPtr&lt;IShape::Desc&gt; pShapeDesc = *i;
++			pActor-&gt;createShape(  *pShapeDesc );
++		}  
++		mActors.push_back( SharedPtr&lt;OdeActor&gt;( pActor ) );
++		return pActor;
++	}
++	//-----------------------------------------------------
++	bool operator==(const SharedPtr&lt;OdeJoint&gt;&amp; lhs, const OdeJoint* rhs)
++	{
++		return (lhs.get() == rhs);
++	}
++	//-----------------------------------------------------
++	void OdeWorld::destroyJoint( IJointPtr pJoint )
++	{
++		YAKE_ASSERT( pJoint );
++		mJoints.erase( std::find(mJoints.begin(), mJoints.end(), dynamic_cast&lt;OdeJoint*&gt;(pJoint) ) );
++	}
++	//-----------------------------------------------------
++	bool operator==(const SharedPtr&lt;OdeActor&gt;&amp; lhs, const OdeActor* rhs)
++	{
++		return (lhs.get() == rhs);
++	}
++	//-----------------------------------------------------
++	void OdeWorld::destroyActor( IActorPtr pActor )
++	{
++		YAKE_ASSERT( pActor );
++		mActors.erase( std::find(mActors.begin(), mActors.end(), dynamic_cast&lt;OdeActor*&gt;(pActor) ) );
++	}
++	//-----------------------------------------------------
++	void OdeWorld::destroyAvatar( IAvatarPtr pAvatar )
++	{
++		YAKE_ASSERT( 0 &amp;&amp; &quot;NOT IMPLEMENTED&quot; );
++		//YAKE_ASSERT( !pAvatar.expired() );
++		//mAvatars.erase( std::find(mAvatars.begin(), mAvatars.end(), dynamic_cast&lt;OdeAvatar*&gt;(pAvatar .lock().get()) ) );
++	}
+ 
+-		//-----------------------------------------------------
+-		void OdeWorld::destroyMaterial( IMaterialPtr pMaterial )
++	//-----------------------------------------------------
++	void OdeWorld::step( const real timeElapsed )
++	{
++		static real overflow = 0.;
++		real t = overflow + timeElapsed;
++		firePreStep();
++		while ( t &gt; mStepSize )
+ 		{
+-			YAKE_ASSERT( pMaterial );
+-			mMaterials.erase( mMaterials.find( dynamic_cast&lt;OdeMaterial*&gt;(pMaterial)-&gt;mName ) );
+-		}
++			mTime += mStepSize;
++			t -= mStepSize;
++	
++	#ifdef ADJUST_FPU_PRECISION
++			_controlfp(_PC_64, _MCW_PC);
++	#endif
++			
++			// Now collide the objects in the world
++			dSpaceCollide( mOdeSpace-&gt;id(), this, &amp;_OdeNearCallback );
+ 
+-		//-----------------------------------------------------
+-		IMaterialPtr OdeWorld::createMaterial( IMaterial::Desc const&amp; rMatDesc, const String&amp; id /*= &quot;&quot;*/ )
+-		{
+-			String matId = id.empty() ? uniqueName::create(&quot;ode.material_&quot;) : id;
+-			SharedPtr&lt;OdeMaterial&gt; pMat( new OdeMaterial(rMatDesc,matId) );
+-			mMaterials.insert( std::make_pair(matId,pMat) );
+-			return pMat.get();
+-		}
++			//mOdeWorld-&gt;step( mStepSize );
++			//mOdeWorld-&gt;stepFast1( mStepSize, 4 );
+ 
+-		//-----------------------------------------------------
+-		bool operator == (const std::pair&lt;const String,SharedPtr&lt;OdeMaterial&gt; &gt;&amp; lhs, const std::pair&lt;const String,SharedPtr&lt;OdeMaterial&gt; &gt;&amp; rhs)
+-		{
+-			return lhs.first == rhs.first;
+-		}
+-		IMaterialPtr OdeWorld::getMaterial( const String&amp; id ) const
+-		{
+-			OdeMaterialVector::const_iterator itFind = mMaterials.find( id );
+-			return (itFind == mMaterials.end()) ? 0 : itFind-&gt;second.get();
+-		}
++			firePreStepInternal(mStepSize);
+ 
+-		//-----------------------------------------------------
+-		void OdeWorld::step( const real timeElapsed )
+-		{
+-			static real overflow = 0.;
+-			real t = overflow + timeElapsed;
+-			firePreStep();
+-			while ( t &gt; mStepSize )
+-			{
+-				mTime += mStepSize;
+-				t -= mStepSize;
+-		
+-		#ifdef ADJUST_FPU_PRECISION
+-				_controlfp(_PC_64, _MCW_PC);
+-		#endif
+-				
+-				// Now collide the objects in the world
+-				dSpaceCollide( mOdeSpace-&gt;id(), this, &amp;_OdeNearCallback );
++			//dWorldStep( mOdeWorld-&gt;id(), mStepSize );
++			dWorldQuickStep( mOdeWorld-&gt;id(), mStepSize );
++			//dWorldStepFast1( mOdeWorld-&gt;id(), mStepSize, 4 );
+ 
+-				//mOdeWorld-&gt;step( mStepSize );
+-				//mOdeWorld-&gt;stepFast1( mStepSize, 4 );
++	#ifdef ADJUST_FPU_PRECISION
++			_controlfp(_PC_24, _MCW_PC);
++	#endif
+ 
+-				firePreStepInternal(mStepSize);
++			// Clear contacts
++			mOdeContactGroup-&gt;empty();
+ 
+-				//dWorldStep( mOdeWorld-&gt;id(), mStepSize );
+-				dWorldQuickStep( mOdeWorld-&gt;id(), mStepSize );
+-				//dWorldStepFast1( mOdeWorld-&gt;id(), mStepSize, 4 );
+-
+-		#ifdef ADJUST_FPU_PRECISION
+-				_controlfp(_PC_24, _MCW_PC);
+-		#endif
+-
+-				// Clear contacts
+-				mOdeContactGroup-&gt;empty();
+-
+-				// Dampen bodies
+-				ConstVectorIterator&lt; BodyList &gt; itBody( mBodies );
+-				while (itBody.hasMoreElements())
+-				{
+-					OdeBody* pBody = itBody.getNext();
+-					YAKE_ASSERT( pBody );
+-					dBody* pOdeBody = pBody-&gt;_getOdeBody();
+-					YAKE_ASSERT( pOdeBody );
+-					if (!pOdeBody-&gt;isEnabled())
+-						continue;
+-					const dReal vScale = -0.04 * pBody-&gt;getMass();
+-					const dReal aScale = -0.05 * pBody-&gt;getMass();
+-					dReal const* linV = pOdeBody-&gt;getLinearVel();
+-					pOdeBody-&gt;addForce( vScale*linV[0], vScale*linV[1], vScale*linV[2] );
+-					dReal const* angV = pOdeBody-&gt;getAngularVel();
+-					pOdeBody-&gt;addTorque( aScale*angV[0], aScale*angV[1], aScale*angV[2] );
+-				}
++			// Dampen bodies
++			ConstVectorIterator&lt; BodyList &gt; itBody( mBodies );
++			while (itBody.hasMoreElements())
++			{
++				OdeBody* pBody = itBody.getNext();
++				YAKE_ASSERT( pBody );
++				dBody* pOdeBody = pBody-&gt;_getOdeBody();
++				YAKE_ASSERT( pOdeBody );
++				if (!pOdeBody-&gt;isEnabled())
++					continue;
++				const dReal vScale = -0.04 * pBody-&gt;getMass();
++				const dReal aScale = -0.05 * pBody-&gt;getMass();
++				dReal const* linV = pOdeBody-&gt;getLinearVel();
++				pOdeBody-&gt;addForce( vScale*linV[0], vScale*linV[1], vScale*linV[2] );
++				dReal const* angV = pOdeBody-&gt;getAngularVel();
++				pOdeBody-&gt;addTorque( aScale*angV[0], aScale*angV[1], aScale*angV[2] );
+ 			}
+-			
+-			firePostStep( mTime );
+-
+-			overflow = t;
+ 		}
+ 		
+-		//-----------------------------------------------------
+-		TriangleMeshId OdeWorld::createTriangleMesh( TriangleMeshDesc const&amp; rTriMeshDesc )
+-		{
+-			OdeTriMesh::MeshData data;
+-			
+-			OdeTriMesh::buildMeshData( data,
+-												rTriMeshDesc.vertices,
+-												rTriMeshDesc.indices,
+-												rTriMeshDesc.normals );
++		firePostStep( mTime );
+ 
+-			mMeshDataMap.insert( MeshDataMap::value_type( mNextMeshId, data ) );
+-			
+-			return mNextMeshId++;
+-		}
+-		//-----------------------------------------------------
+-		OdeTriMesh::MeshData OdeWorld::getMeshDataById(  TriangleMeshId id ) const
+-		{
+-			MeshDataMap::const_iterator i = mMeshDataMap.find( id );
+-			
+-			YAKE_ASSERT( i != mMeshDataMap.end() ).error( &quot;No mesh data matches supplied mesh id!&quot; );
+-				
+-			return i-&gt;second;
+-		}
++		overflow = t;
++	}
++	
++	//-----------------------------------------------------
++	TriangleMeshId OdeWorld::createTriangleMesh( const TriangleMeshDesc&amp; rTriMeshDesc )
++	{
++		OdeTriMesh::MeshData data;
++		
++		OdeTriMesh::buildMeshData( data,
++											rTriMeshDesc.vertices,
++											rTriMeshDesc.indices,
++											rTriMeshDesc.normals );
+ 
+-		//-----------------------------------------------------
+-		dWorldID OdeWorld::_getOdeID() const
+-		{
+-			return mOdeWorld-&gt;id();
+-		}
++		mMeshDataMap.insert( MeshDataMap::value_type( mNextMeshId, data ) );
+ 		
+-		//-----------------------------------------------------
+-		void OdeWorld::_addBody( OdeBody* body )
+-		{
+-			YAKE_ASSERT( body );
+-			if (body)
+-				mBodies.push_back( body );
+-		}
++		return mNextMeshId++;
++	}
++	//-----------------------------------------------------
++	OdeTriMesh::MeshData OdeWorld::getMeshDataById(  TriangleMeshId id ) const
++	{
++		MeshDataMap::const_iterator i = mMeshDataMap.find( id );
++		
++		YAKE_ASSERT( i != mMeshDataMap.end() ).error( &quot;No mesh data matches supplied mesh id!&quot; );
++			
++		return i-&gt;second;
++	}
+ 
+-		//-----------------------------------------------------
+-		void OdeWorld::_removeBody( OdeBody* body )
+-		{
+-			BodyList::iterator itFind = std::find( mBodies.begin(), mBodies.end(), body );
+-			if (itFind != mBodies.end())
+-				mBodies.erase( itFind );
+-		}
++	//-----------------------------------------------------
++	dWorldID OdeWorld::_getOdeID() const
++	{
++		return mOdeWorld-&gt;id();
++	}
++	
++	//-----------------------------------------------------
++	void OdeWorld::_addBody( OdeBody* body )
++	{
++		YAKE_ASSERT( body );
++		if (body)
++			mBodies.push_back( body );
++	}
+ 
+-		//-----------------------------------------------------
+-		void OdeWorld::_OdeNearCallback ( void* data, dGeomID o1, dGeomID o2 )
++	//-----------------------------------------------------
++	void OdeWorld::_removeBody( OdeBody* body )
++	{
++		BodyList::iterator itFind = std::find( mBodies.begin(), mBodies.end(), body );
++		if (itFind != mBodies.end())
++			mBodies.erase( itFind );
++	}
++
++	//-----------------------------------------------------
++	void OdeWorld::_OdeNearCallback ( void* data, dGeomID o1, dGeomID o2 )
++	{
++		//YAKE_LOG(&quot;OdeWorld::-&gt;NearCallBack()&quot;);
++		// make sure we traverse through all spaces and sub-spaces
++		if ( dGeomIsSpace (o1) || dGeomIsSpace (o2) )
+ 		{
+-			//YAKE_LOG(&quot;OdeWorld::-&gt;NearCallBack()&quot;);
+-			// make sure we traverse through all spaces and sub-spaces
+-			if ( dGeomIsSpace (o1) || dGeomIsSpace (o2) )
+-			{
+-				// colliding a space with something
+-				dSpaceCollide2 ( o1, o2, data, &amp;_OdeNearCallback );
++			// colliding a space with something
++			dSpaceCollide2 ( o1, o2, data, &amp;_OdeNearCallback );
+ 
+-				// collide all geoms internal to the space(s)
+-				if ( dGeomIsSpace(o1) ) dSpaceCollide( dSpaceID(o1), data, &amp;_OdeNearCallback );
+-				if ( dGeomIsSpace(o2) ) dSpaceCollide( dSpaceID(o2), data, &amp;_OdeNearCallback );
+-			}
++			// collide all geoms internal to the space(s)
++			if ( dGeomIsSpace(o1) ) dSpaceCollide( dSpaceID(o1), data, &amp;_OdeNearCallback );
++			if ( dGeomIsSpace(o2) ) dSpaceCollide( dSpaceID(o2), data, &amp;_OdeNearCallback );
++		}
+ 
+-			// colliding two non-space geoms, so generate contact joints
+-			dJointGroup* odeContactGroup = ( static_cast&lt;OdeWorld*&gt;(data) )-&gt;_getOdeContactJointGroup();
+-			dWorldID odeWorldID = ( static_cast&lt;OdeWorld*&gt;(data) )-&gt;_getOdeID();
++		// colliding two non-space geoms, so generate contact joints
++		dJointGroup* odeContactGroup = ( static_cast&lt;OdeWorld*&gt;(data) )-&gt;_getOdeContactJointGroup();
++		dWorldID odeWorldID = ( static_cast&lt;OdeWorld*&gt;(data) )-&gt;_getOdeID();
+ 
+-			// exit without doing anything if the two bodies are connected by a joint
+-			dBodyID b1 = dGeomGetBody(o1);
+-			dBodyID b2 = dGeomGetBody(o2);
+-			
+-			if ( b1 &amp;&amp; b2 &amp;&amp; dAreConnected( b1, b2 ) )
+-				return;
++		// exit without doing anything if the two bodies are connected by a joint
++		dBodyID b1 = dGeomGetBody(o1);
++		dBodyID b2 = dGeomGetBody(o2);
++		
++		if ( b1 &amp;&amp; b2 &amp;&amp; dAreConnected( b1, b2 ) )
++			return;
+ 
+-			int t1 = dGeomGetClass( o1 );
+-			int t2 = dGeomGetClass( o2 );
+ 
+-			OdeActor* pA = static_cast&lt;OdeGeom*&gt;( dGeomGetData( o1 ) )-&gt;getOwner();
+-			OdeActor* pB = static_cast&lt;OdeGeom*&gt;( dGeomGetData( o2 ) )-&gt;getOwner();
+-			
+-			if ( pA &amp;&amp; pB )
+-			{
+-				// collide
+-				pA-&gt;_collide( pB, o1, o2, odeContactGroup );
+-				return;
+-			}
++		OdeActor* pA = static_cast&lt;OdeGeom*&gt;( dGeomGetData( o1 ) )-&gt;getOwner();
++		OdeActor* pB = static_cast&lt;OdeGeom*&gt;( dGeomGetData( o2 ) )-&gt;getOwner();
++		
++		if ( pA &amp;&amp; pB )
++		{
++			// collide
++			pA-&gt;_collide( pB, o1, o2, odeContactGroup );
++			return;
+ 		}
++	}
+ 
+ } // physics
+ } // yake
++
+
+Modified: trunk/yake/src/yapp/base/event/yakeMessageQ.cpp
+===================================================================
+--- trunk/yake/src/yapp/base/event/yakeMessageQ.cpp	2005-11-09 20:46:15 UTC (rev 1119)
++++ trunk/yake/src/yapp/base/event/yakeMessageQ.cpp	2005-11-09 20:57:59 UTC (rev 1120)
+@@ -66,4 +66,5 @@
+ 	}
+ 
+ }
+-}
+\ No newline at end of file
++}
++
+
+Modified: trunk/yake/src/yapp/loader/yakeDotScene.cpp
+===================================================================
+--- trunk/yake/src/yapp/loader/yakeDotScene.cpp	2005-11-09 20:46:15 UTC (rev 1119)
++++ trunk/yake/src/yapp/loader/yakeDotScene.cpp	2005-11-09 20:57:59 UTC (rev 1120)
+@@ -34,7 +34,7 @@
+ namespace parser {
+ namespace dotscene {
+ 
+-	String DotSceneParser::ROOT_NODE_NAME = &quot;root_node&quot;;
++	const String DotSceneParser::ROOT_NODE_NAME = &quot;root_node&quot;;
+ 	
+ 	//------------------------------------------------------
+ 	void DotSceneParser::reset()
+@@ -169,7 +169,7 @@
+ 		// descending the node tree...
+ 		for ( dom::NodeList::const_iterator it = childNodes.begin(); it != childNodes.end(); ++it )
+ 		{
+-				readNode( *it, nodeName );
++		  readNode( *it, nodeName );
+ 		}
+ 	}
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000187.html">[Yake-svn] r1119 - in trunk/yake/yake: base base/templates input physics plugins/graphicsOgre plugins/physicsODE samples/common
+</A></li>
+	<LI>Next message: <A HREF="000191.html">[Yake-svn] r1121 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#190">[ date ]</a>
+              <a href="thread.html#190">[ thread ]</a>
+              <a href="subject.html#190">[ subject ]</a>
+              <a href="author.html#190">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

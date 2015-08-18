@@ -1,0 +1,269 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1389 - trunk/yake/src/yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1389%20-%20trunk/yake/src/yapp/vehicle&In-Reply-To=%3C200607151431.k6FEVTmB002878%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000456.html">
+   <LINK REL="Next"  HREF="000458.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1389 - trunk/yake/src/yapp/vehicle</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1389%20-%20trunk/yake/src/yapp/vehicle&In-Reply-To=%3C200607151431.k6FEVTmB002878%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1389 - trunk/yake/src/yapp/vehicle">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Sat Jul 15 16:31:29 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000456.html">[Yake-svn] r1388 - in trunk/yake: src/yake/base yake/base
+</A></li>
+        <LI>Next message: <A HREF="000458.html">[Yake-svn] r1390 - trunk/yake/documentation/api
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#457">[ date ]</a>
+              <a href="thread.html#457">[ thread ]</a>
+              <a href="subject.html#457">[ subject ]</a>
+              <a href="author.html#457">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-15 16:31:29 +0200 (Sat, 15 Jul 2006)
+New Revision: 1389
+
+Added:
+   trunk/yake/src/yapp/vehicle/yakeVehicleModelComponent.cpp
+   trunk/yake/src/yapp/vehicle/yakeVehicleModelComponentCreator.cpp
+Log:
+initial revision
+
+Added: trunk/yake/src/yapp/vehicle/yakeVehicleModelComponent.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeVehicleModelComponent.cpp	2006-07-15 14:31:07 UTC (rev 1388)
++++ trunk/yake/src/yapp/vehicle/yakeVehicleModelComponent.cpp	2006-07-15 14:31:29 UTC (rev 1389)
+@@ -0,0 +1,47 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &lt;yapp/vehicle/yakePCH.h&gt;
++#include &lt;yapp/vehicle/yakeVehicle.h&gt;
++
++namespace yake {
++namespace vehicle {
++
++	//-----------------------------------------------------
++	// Class: VehicleModelComponent
++	//-----------------------------------------------------
++	VehicleModelComponent::VehicleModelComponent(IVehicle* vehicle) :
++		vehicle_(vehicle)
++	{
++		YAKE_ASSERT( vehicle_.get() );
++	}
++	VehicleModelComponent::~VehicleModelComponent()
++	{
++	}
++
++} // namespace vehicle
++} // namespace yake
++
+
+Added: trunk/yake/src/yapp/vehicle/yakeVehicleModelComponentCreator.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeVehicleModelComponentCreator.cpp	2006-07-15 14:31:07 UTC (rev 1388)
++++ trunk/yake/src/yapp/vehicle/yakeVehicleModelComponentCreator.cpp	2006-07-15 14:31:29 UTC (rev 1389)
+@@ -0,0 +1,139 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &lt;yapp/vehicle/yakePCH.h&gt;
++#include &lt;yapp/vehicle/yakeVehicle.h&gt;
++
++namespace yake {
++namespace vehicle {
++
++	//-----------------------------------------------------
++	// Class: VehicleModelComponentCreator
++	//-----------------------------------------------------
++	class VehicleModelComponentCreator : public model::ComponentCreator
++	{
++		YAKE_DECLARE_CONCRETE(VehicleModelComponentCreator,&quot;yake/dotVehicle&quot;);
++
++		VehicleModelComponentCreator();
++		virtual void create(const model::ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++
++	private:
++	};
++
++	//-----------------------------------------------------
++	// Class: VehicleModelComponentCreator
++	//-----------------------------------------------------
++	YAKE_REGISTER_CONCRETE(VehicleModelComponentCreator)
++
++	VehicleModelComponentCreator::VehicleModelComponentCreator()
++	{
++	}
++	void VehicleModelComponentCreator::create(const model::ComponentCreationContext&amp; ctx, const StringMap&amp; params)
++	{
++		// Verify validity of creation context
++		physics::IWorld* pPWorld = ctx.pworld_;
++		YAKE_ASSERT( pPWorld );
++		if (!pPWorld)
++			return;
++
++		// Extract parameters
++
++		StringMap::const_iterator itParam = params.find(&quot;file&quot;);
++		const String fn = (itParam == params.end()) ? &quot;&quot; : itParam-&gt;second;
++
++		itParam = params.find(&quot;name&quot;);
++		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
++		if (itParam == params.end())
++			return;
++		const String name = itParam-&gt;second;
++
++		itParam = params.find(&quot;physical&quot;);
++		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'physical'.&quot;);
++		if (itParam == params.end())
++			return;
++		const String physicalTag = itParam-&gt;second;
++
++		itParam = params.find(&quot;template&quot;);
++		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'template'.&quot;);
++		if (itParam == params.end())
++			return;
++		const String tplname = itParam-&gt;second;
++
++		// Retrieve vehicle system
++
++		IVehicleSystem* vehSys = 0;
++		{
++			model::ComponentCreationContext::ParamMap::const_iterator it = ctx.params_.find(&quot;vehicleSystem&quot;);
++			YAKE_ASSERT(it != ctx.params_.end()).debug(&quot;Missing context parameter 'vehicleSystem'.&quot;);
++			if (it == ctx.params_.end())
++				return;
++			try {
++				vehSys = boost::any_cast&lt;vehicle::IVehicleSystem*&gt;(it-&gt;second);
++			} catch (boost::bad_any_cast&amp; e)
++			{
++				YAKE_ASSERT( 0 )(name).debug(String(&quot;Failed to retrieve IVehicleSystem interface from context parameter! (&quot;) + e.what() + &quot;)&quot;);
++				return;
++			}
++			YAKE_ASSERT( vehSys )(name).debug(&quot;IVehicleSystem interface not set.&quot;);
++			if (!vehSys)
++				return;
++		}
++
++		// Load template if necessary
++		if (!fn.empty())
++		{
++			const bool succ = vehSys-&gt;loadTemplates( fn );
++			YAKE_ASSERT( succ )(name)(fn).debug(&quot;Failed to load template(s).&quot;);
++			if (!succ)
++				return;
++		}
++
++		// Retrieve 'Physical'
++
++		YAKE_ASSERT( ctx.model_ );
++
++		model::Physical* pPhysical = dynamic_cast&lt;model::Physical*&gt;(ctx.model_-&gt;getComponentByTag(physicalTag));
++		YAKE_ASSERT( pPhysical )(physicalTag)(name).debug(&quot;Failed to retrieve Physical.&quot;);
++
++		// Instantiate template vehicle
++
++		IVehicle* pVehicle = vehSys-&gt;create(tplname, *pPWorld, *pPhysical );
++		YAKE_ASSERT( pVehicle )(tplname).debug(&quot;Failed to instantiate vehicle.&quot;);
++		if (!pVehicle)
++			return;
++
++		// Create VehicleModelComponent
++		VehicleModelComponent* c = new VehicleModelComponent(pVehicle);
++		YAKE_ASSERT( c );
++
++		ctx.model_-&gt;addComponent( c, name );
++
++		return;
++	}
++
++} // namespace vehicle
++} // namespace yake
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000456.html">[Yake-svn] r1388 - in trunk/yake: src/yake/base yake/base
+</A></li>
+	<LI>Next message: <A HREF="000458.html">[Yake-svn] r1390 - trunk/yake/documentation/api
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#457">[ date ]</a>
+              <a href="thread.html#457">[ thread ]</a>
+              <a href="subject.html#457">[ subject ]</a>
+              <a href="author.html#457">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

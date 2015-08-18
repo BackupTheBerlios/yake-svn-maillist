@@ -1,0 +1,152 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1106 - trunk/yake/src/yapp/samples/base/events
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1106%20-%20trunk/yake/src/yapp/samples/base/events&In-Reply-To=%3C200511022127.jA2LRfvW030911%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000175.html">
+   <LINK REL="Next"  HREF="000177.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1106 - trunk/yake/src/yapp/samples/base/events</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1106%20-%20trunk/yake/src/yapp/samples/base/events&In-Reply-To=%3C200511022127.jA2LRfvW030911%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1106 - trunk/yake/src/yapp/samples/base/events">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  2 22:27:41 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000175.html">[Yake-svn] r1105 - trunk/yake/scripts/msvc71
+</A></li>
+        <LI>Next message: <A HREF="000177.html">[Yake-svn] r1107 - trunk/yake/scripts/msvc71
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#176">[ date ]</a>
+              <a href="thread.html#176">[ thread ]</a>
+              <a href="subject.html#176">[ subject ]</a>
+              <a href="author.html#176">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-02 22:27:40 +0100 (Wed, 02 Nov 2005)
+New Revision: 1106
+
+Modified:
+   trunk/yake/src/yapp/samples/base/events/yakeDemo.cpp
+Log:
+API changes
+
+Modified: trunk/yake/src/yapp/samples/base/events/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/base/events/yakeDemo.cpp	2005-11-02 21:19:57 UTC (rev 1105)
++++ trunk/yake/src/yapp/samples/base/events/yakeDemo.cpp	2005-11-02 21:27:40 UTC (rev 1106)
+@@ -58,7 +58,7 @@
+ 	class M1Listener : public MessageListener
+ 	{
+ 	public:
+-		virtual MsgResultCode onMessage( const MessageId id, yake::base::ParamHolder* pParams )
++		virtual MsgResultCode onMessage( const MessageId id, yake::ParamHolder* pParams )
+ 		{
+ 			if (kMsgHandled == MessageListener::onMessage( id, pParams ))
+ 				return kMsgHandled;
+@@ -68,32 +68,26 @@
+ 				if (pParams)
+ 				{
+ 					// case 1 : dump all parameters
+-					yake::base::ParamHolder::StringVector keys;
++					yake::ParamHolder::StringVector keys;
+ 					keys = pParams-&gt;getKeys();
+-					ConstVectorIterator&lt;yake::base::ParamHolder::StringVector&gt; it( keys.begin(), keys.end() );
++					ConstVectorIterator&lt;yake::ParamHolder::StringVector&gt; it( keys.begin(), keys.end() );
+ 					while (it.hasMoreElements())
+ 					{
+ 						String key = it.getNext();
+ 						std::cout &lt;&lt; key;
+-						yake::base::ParamHolder::Param value = pParams-&gt;get(key);
+-						std::cout &lt;&lt; &quot; [type=&quot; &lt;&lt; value.which() &lt;&lt; &quot;] &quot;;
+-						std::cout &lt;&lt; &quot; = &quot;;
+-						if (value.which() == yake::base::ParamHolder::kString)
+-							std::cout &lt;&lt; varGet&lt;String&gt;(value) &lt;&lt; std::endl;
+-						else
+-							std::cout &lt;&lt; std::endl;
++						try {	
++							const String s = boost::any_cast&lt;String&gt;(pParams-&gt;get(key));
++							std::cout &lt;&lt; &quot; = (string) &quot; &lt;&lt; s &lt;&lt; std::endl;
++						} 
++						catch (bad_any_cast&amp;)
++						{
++							std::cout &lt;&lt; &quot; = (unhandled type)&quot; &lt;&lt; std::endl;
++						}
+ 					}
+ 
+ 					// case 2 : we expect a certain parameter of type String
+-					yake::base::ParamHolder::Param value = pParams-&gt;get(&quot;aString&quot;);
+-					//YAKE_ASSERT( value.which() != yapp::event::ParamHolder::kNone ); // superfluous, check for error condition...
+-					YAKE_ASSERT( value.which() == yake::base::ParamHolder::kString ); // to be sure...
+-					std::cout &lt;&lt; &quot;Retrieving expected param 'aString' = &quot; &lt;&lt; varGet&lt;String&gt;(value) &lt;&lt; std::endl;
+ 
+ 					// case 3 : we expect a certain parameter of type Pointer
+-					//value = pParams-&gt;get(&quot;aPointer&quot;);
+-					//YAKE_ASSERT( value.which() == yapp::event::ParamHolder::kPointer ); // to be sure...
+-					//std::cout &lt;&lt; &quot;Retrieving expected param 'aPointer' = &quot; &lt;&lt; varGet&lt;yapp::event::ParamHolder::Pointer&gt;(value).get() &lt;&lt; std::endl;
+ 				}
+ 				return kMsgHandled;
+ 			}
+@@ -107,7 +101,7 @@
+ 			mRetCode(code),
+ 			mName(name)
+ 		{}
+-		virtual MsgResultCode onMessage( const MessageId id, yake::base::ParamHolder* pParams )
++		virtual MsgResultCode onMessage( const MessageId id, yake::ParamHolder* pParams )
+ 		{
+ 			std::cout &lt;&lt; &quot;&gt; M2 (&quot; &lt;&lt; mName &lt;&lt; &quot;) received &quot; &lt;&lt; id &lt;&lt; std::endl;
+ 			return mRetCode;
+@@ -119,11 +113,10 @@
+ 	void run()
+ 	{
+ 		// construct message instance
+-		yake::base::ParamHolder par1;
+-		par1.set( &quot;aString&quot;, &quot;aloha&quot; );
+-		par1.set( &quot;aString&quot;, &quot;aloha2&quot; );
+-		par1.set( &quot;anotherString&quot;, &quot;aloha&quot; );
+-//		par1.set( &quot;aPointer&quot;, yapp::event::ParamHolder::Pointer(&amp;par1) );
++		yake::ParamHolder par1;
++		par1.set( &quot;aString&quot;, String(&quot;aloha&quot;) );
++		par1.set( &quot;aString&quot;, String(&quot;aloha2&quot;) );
++		par1.set( &quot;anotherString&quot;, String(&quot;aloha&quot;) );
+ 
+ 		M1Listener L1;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000175.html">[Yake-svn] r1105 - trunk/yake/scripts/msvc71
+</A></li>
+	<LI>Next message: <A HREF="000177.html">[Yake-svn] r1107 - trunk/yake/scripts/msvc71
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#176">[ date ]</a>
+              <a href="thread.html#176">[ thread ]</a>
+              <a href="subject.html#176">[ subject ]</a>
+              <a href="author.html#176">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1116 - trunk/yake
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1116%20-%20trunk/yake&In-Reply-To=%3C200511092030.jA9KUx9P023715%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000188.html">
+   <LINK REL="Next"  HREF="000185.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1116 - trunk/yake</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1116%20-%20trunk/yake&In-Reply-To=%3C200511092030.jA9KUx9P023715%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1116 - trunk/yake">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  9 21:30:59 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000188.html">[Yake-svn] r1115 - trunk/yake/src/yapp/raf
+</A></li>
+        <LI>Next message: <A HREF="000185.html">[Yake-svn] r1117 - trunk/yake
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#184">[ date ]</a>
+              <a href="thread.html#184">[ thread ]</a>
+              <a href="subject.html#184">[ subject ]</a>
+              <a href="author.html#184">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-09 21:30:56 +0100 (Wed, 09 Nov 2005)
+New Revision: 1116
+
+Modified:
+   trunk/yake/BUILD
+Log:
+patch 1350326 by mj
+
+Modified: trunk/yake/BUILD
+===================================================================
+--- trunk/yake/BUILD	2005-11-09 20:21:48 UTC (rev 1115)
++++ trunk/yake/BUILD	2005-11-09 20:30:56 UTC (rev 1116)
+@@ -58,16 +58,11 @@
+ Its structure should look like this:
+ /dependencies
+ 	|
+-	/boost/boost
+ 	|
+-	/lua
+-	|
+ 	/luabind
+ 	|
+-	/ode
++	/OGRE
+ 	|
+-	/ogrenew
+-	|
+ 	/tinyxml
+ 	|
+ 	/ttl
+@@ -78,6 +73,26 @@
+ dependencies dir as it is described in Yake forums to avoid string redefinition ( 
+ just comment out Ogre's definitions of additional operators ).
+ 
++Next, you have 2 options for building Yake.
++Way 1. SCons [RECOMMENDED]
++Install SCons build system. Just 'emerge scons' if you are on Gentoo like me, or go to www.scons.org or search for
++package for your distro.
++
++Then go to yake root dir and run:
++# scons
++
++That will build everything. After that as root:
++# scons install
++
++That installs libraries. 
++Update dynamic loader cache (as root):
++# ldconfig
++
++Now you will find all demos in common/bin directory ;)
++
++ATTENTION! This is my preferred way to build Yake. It is best supported by me from now on ( 10/2005 ).
++
++Way 2. KDevelop/automake
+ #. Execute autogen.sh script - it will create various missing scripts needed for automake &amp; friends.
+ 
+ Now there are two ways of building Yake: automated-command-line and IDE-wise ;)
+@@ -86,32 +101,20 @@
+ 	make
+ 	make install
+ 
+-NOTE:
+-
+-On the current state of development not all components of CVS version can be built 
+-without errors as it is unstable. So for the first time I'd recomend to use KDevelop
+-to rid of minor bugs and then to build however you like.
+-
+ Else, KDevelop'ers could do:
+ #. Run KDevelop and open project file from yake root dir.
+ #. Run automake and friends from KDevelop Build menu.
+ #. Run configure from Build menu. 
+ 
+ #. You can start building libraries now.
+-You may just build the whole project. But if you want more detailed knowledge of Yake
+-start off with base and its components. Then move to plugins. And finally samples.
++You can just build the whole project. 
+ 
+ # Install all built libraries (with root rights). They are all installed in /usr/local/lib by default
+ 
+ # In Project settings change run options. There are absolute paths to the program to run. You should change that
+ according to your configuration.
+ 
+-# Build GraphicsDemo. From now on you're able to run the most (IMHO) impressive Yake demo.
++# From now on you're able to run the demos.
+ You will need to set up working dir for demo, e.g. create config files and have Ogre's media.
+ 
+ 
+-NOTE:
+-
+-To 22/09/2004 I managed to build only described libraries and demos. More to come in 
+-the next release of this doc.
+-
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000188.html">[Yake-svn] r1115 - trunk/yake/src/yapp/raf
+</A></li>
+	<LI>Next message: <A HREF="000185.html">[Yake-svn] r1117 - trunk/yake
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#184">[ date ]</a>
+              <a href="thread.html#184">[ thread ]</a>
+              <a href="subject.html#184">[ subject ]</a>
+              <a href="author.html#184">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r961 - trunk/yake/yapp/samples/base/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r961%20-%20trunk/yake/yapp/samples/base/vehicle&In-Reply-To=%3C200509302137.j8ULbiCK007889%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000030.html">
+   <LINK REL="Next"  HREF="000032.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r961 - trunk/yake/yapp/samples/base/vehicle</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r961%20-%20trunk/yake/yapp/samples/base/vehicle&In-Reply-To=%3C200509302137.j8ULbiCK007889%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r961 - trunk/yake/yapp/samples/base/vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:37:44 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000030.html">[Yake-svn] r960 - trunk/yake/yapp/samples/common
+</A></li>
+        <LI>Next message: <A HREF="000032.html">[Yake-svn] r962 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#31">[ date ]</a>
+              <a href="thread.html#31">[ thread ]</a>
+              <a href="subject.html#31">[ subject ]</a>
+              <a href="author.html#31">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:37:44 +0200 (Fri, 30 Sep 2005)
+New Revision: 961
+
+Modified:
+   trunk/yake/yapp/samples/base/vehicle/yakePCH.h
+Log:
+refactoring of yake::vehicle
+
+Modified: trunk/yake/yapp/samples/base/vehicle/yakePCH.h
+===================================================================
+--- trunk/yake/yapp/samples/base/vehicle/yakePCH.h	2005-09-30 21:37:29 UTC (rev 960)
++++ trunk/yake/yapp/samples/base/vehicle/yakePCH.h	2005-09-30 21:37:44 UTC (rev 961)
+@@ -5,11 +5,5 @@
+ #include &lt;iostream&gt;
+ // Yake
+ #include &lt;yake/base/yake.h&gt;
+-#include &lt;yake/base/yakeDebugOutputStream.h&gt;
+-#include &lt;yake/base/yakeLog.h&gt;
+-#include &lt;yake/base/yakeLibrary.h&gt;
+ #include &lt;yake/scripting/yakeScriptingSystem.h&gt;
+-#include &lt;yake/graphics/yakeGraphicsSystem.h&gt;
+-
+-#include &lt;yake/samples/common/yakeExampleApplication.h&gt;
+-#include &lt;yake/data/yakeData.h&gt;
++#include &lt;yapp/base/yapp.h&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000030.html">[Yake-svn] r960 - trunk/yake/yapp/samples/common
+</A></li>
+	<LI>Next message: <A HREF="000032.html">[Yake-svn] r962 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#31">[ date ]</a>
+              <a href="thread.html#31">[ thread ]</a>
+              <a href="subject.html#31">[ subject ]</a>
+              <a href="author.html#31">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

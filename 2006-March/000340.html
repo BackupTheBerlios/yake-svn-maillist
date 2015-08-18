@@ -1,0 +1,264 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1270 - trunk/yake/yake/statemachine
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1270%20-%20trunk/yake/yake/statemachine&In-Reply-To=%3C200603152002.k2FK2rL1004191%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000339.html">
+   <LINK REL="Next"  HREF="000341.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1270 - trunk/yake/yake/statemachine</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1270%20-%20trunk/yake/yake/statemachine&In-Reply-To=%3C200603152002.k2FK2rL1004191%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1270 - trunk/yake/yake/statemachine">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Mar 15 21:02:53 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000339.html">[Yake-svn] r1269 - trunk/yake/scripts/msvc8
+</A></li>
+        <LI>Next message: <A HREF="000341.html">[Yake-svn] r1271 - trunk/yake/yake/statemachine
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#340">[ date ]</a>
+              <a href="thread.html#340">[ thread ]</a>
+              <a href="subject.html#340">[ subject ]</a>
+              <a href="author.html#340">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-15 21:02:26 +0100 (Wed, 15 Mar 2006)
+New Revision: 1270
+
+Modified:
+   trunk/yake/yake/statemachine/fsm_core.h
+Log:
+added license + comments
+
+Modified: trunk/yake/yake/statemachine/fsm_core.h
+===================================================================
+--- trunk/yake/yake/statemachine/fsm_core.h	2006-03-12 23:13:51 UTC (rev 1269)
++++ trunk/yake/yake/statemachine/fsm_core.h	2006-03-15 20:02:26 UTC (rev 1270)
+@@ -1,3 +1,29 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
+ #ifndef FSM_CORE_H
+ #define FSM_CORE_H
+ 
+@@ -24,27 +50,39 @@
+ 
+ namespace fsm {
+ #if defined(FSM_USE_NULL_STATE)
++	/** Returns the state representing a 'null state' for a given type (as template parameter).
++		This function can be specialized for custom types. Specializations for common types are
++		provided (string, int ...).
++		See the documentation of machine&lt;&gt; for more information on null states.
++		@see machine&lt;&gt;
++	*/
+ 	template&lt;typename state_type_&gt;
+ 	const state_type_&amp; get_null_state();
+ 
++	/** Returns whether a state is equal to the null state for this type.
++		This function can be specialized for custom types when necessary.
++	*/
+ 	template&lt;typename state_type_&gt;
+ 	inline bool is_state_null(const state_type_&amp; state)
+ 	{
+ 		return (state == get_null_state&lt;state_type_&gt;());
+ 	}
+ 
++	/** Specialization for 'int'. */
+ 	template&lt;&gt;
+ 	inline const int&amp; get_null_state()
+ 	{
+ 		static int ms_null = 0xffffffff;
+ 		return ms_null;
+ 	}
++	/** Specialization for 'unsigned char'. */
+ 	template&lt;&gt;
+ 	inline const unsigned char&amp; get_null_state()
+ 	{
+ 		static unsigned char ms_null = 0xff;
+ 		return ms_null;
+ 	}
++	/** Specialization for 'std::string'. */
+ 	template&lt;&gt;
+ 	inline const std::string&amp; get_null_state()
+ 	{
+@@ -52,12 +90,14 @@
+ 		return ms_null;
+ 	}
+ #endif
++	/** Generic operator object with a single parameter that does nothing (as the name implies). */
+ 	template&lt;typename T1&gt;
+ 	struct do_nothing_on_one
+ 	{
+ 		void operator()(const T1&amp;)
+ 		{}
+ 	};
++	/** Generic operator object with two parameters that does nothing (as the name implies). */
+ 	template&lt;typename T1, typename T2&gt;
+ 	struct do_nothing_on_two
+ 	{
+@@ -65,39 +105,78 @@
+ 		{}
+ 	};
+ 
++	/** Basic generic finite state machine. State and event types can be configured per machine type at compile-time.
++		Machine instances are configured at run-time (i.e. states and transitions are added at run-time).
++		@Remarks boost::statechart looks like a good candidate for a compile-time only state machine.
++		@todo add findPathToState() which finds a transition path from the current to the specified destination state
++				and enables the client to execute processEvent() for each event in the path.
++		@see oomachine
++	*/
+ 	template&lt;typename _state_type, typename _event_type&gt;
+ 	struct machine
+ 	{
+ 		// types
++
++		/** Type of this machine's states. */
+ 		typedef _state_type state_type;
++
++		/** Type of this machine's events. */
+ 		typedef _event_type event_type;
++
++		/** Type to self. */
+ 		typedef machine machine_type;
+ 
++		/** Do nothing operation - used as default in processEvent(). */
+ 		typedef do_nothing_on_one&lt;state_type&gt; do_nothing_state_op;
++
++		/** Do nothing operation - used as default in processEvent(). */
+ 		typedef do_nothing_on_two&lt;machine_type,state_type&gt; do_nothing_op;
+ 
+ 		// construction
+ #if defined(FSM_USE_NULL_STATE)
++		/** Constructs a machine. Sets the current state to the state type's null state. */
+ 		machine() : 
+ 			curr_(get_null_state&lt;state_type&gt;()) 
+ #else
++		/** Constructs a machine. */
+ 		machine()
+ #endif
+ 		{}
+ 
+ 		// operations
++
++		/** Add a state.
++			@Remarks Client code has to take care that the machine is in a valid state when events are processed.
++		*/
+ 		void addState(const state_type&amp;);
+ 		//? void addEvent(const event_type);
++
++		/** Add a transition.
++			@Remarks Client code has to take care that the machine is in a valid state when events are processed.
++		*/
+ 		void addTransition(const state_type&amp;, const event_type&amp;, const state_type&amp;);
++
++		/** Explicitely set the current state.
++			A call to this function can be useful if the initial state has to be set explicitely. By default (if null
++			states are enabled) the initial state is the null state and a transition from a null state to a custom
++			state added with addState() has to be specified by the client code.
++		*/
+ 		void setState(const state_type&amp;);
+ 
++		/** Clears the machine, i.e. removes all states and transitions.
++		*/
+ 		void clear();
+ 
++		/** Returns the number of states that have been added with addState(). */
+ 		size_t numStates() const;
++		/** Returns the number of outgoing transitions for a specific state. */
+ 		size_t numOffgoingTransitions(const state_type&amp;) const; // off-going transitions for source state
++
++		/** Returns a reference to the current state. */
+ 		const state_type&amp; current() const;
+ 
+ #ifdef _DEBUG
++		/** DEBUG-ONLY function for dumping the machine contents to a std::ostream object. */
+ 		void dump(std::ostream&amp; out) const
+ 		{
+ 			out &lt;&lt; &quot;machine&lt;&gt;::dump()\n&quot;;
+@@ -114,14 +193,24 @@
+ 		}
+ #endif
+ 
++		/** This method validates the machine by making sure that states and transitions are properly connected, i.e.
++			it finds unconnected states and invalid transitions.
++			@todo implement!
++		*/
+ 		std::pair&lt;bool,std::string&gt; validate();
+ 
++		/** Processes the given event thereby triggering a transition from the current state to the transition's target state.
++			If no transition can be found for the combination of currently active state and given event, the method returns without doing anything.
++		*/
+ 		void processEvent(const event_type&amp; evt)
+ 		{
+ 			do_nothing_op do_nothing;
+ 			processEventCb(evt, do_nothing, do_nothing);
+ 		}
+ 
++		/** Same as processEvent but this method allows to provide custom callbacks for 'enter state' and 'exit state' calls.
++			@copydoc processEvent
++		*/
+ 		template&lt;typename enter_state_op_t, typename exit_state_op_t&gt;
+ 		void processEventCb(const event_type&amp; evt, enter_state_op_t&amp; enterOp, exit_state_op_t&amp; exitOp)
+ 		{
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000339.html">[Yake-svn] r1269 - trunk/yake/scripts/msvc8
+</A></li>
+	<LI>Next message: <A HREF="000341.html">[Yake-svn] r1271 - trunk/yake/yake/statemachine
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#340">[ date ]</a>
+              <a href="thread.html#340">[ thread ]</a>
+              <a href="subject.html#340">[ subject ]</a>
+              <a href="author.html#340">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

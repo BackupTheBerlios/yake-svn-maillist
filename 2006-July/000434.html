@@ -1,0 +1,314 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1366 - in trunk/yake/scripts/msvc8: . plugins/graphics plugins/gui plugins/physics
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1366%20-%20in%20trunk/yake/scripts/msvc8%3A%20.%20plugins/graphics%20plugins/gui%20plugins/physics&In-Reply-To=%3C200607042058.k64Kw9MP017397%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000435.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1366 - in trunk/yake/scripts/msvc8: . plugins/graphics plugins/gui plugins/physics</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1366%20-%20in%20trunk/yake/scripts/msvc8%3A%20.%20plugins/graphics%20plugins/gui%20plugins/physics&In-Reply-To=%3C200607042058.k64Kw9MP017397%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1366 - in trunk/yake/scripts/msvc8: . plugins/graphics plugins/gui plugins/physics">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Jul  4 22:58:09 CEST 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000435.html">[Yake-svn] r1367 - trunk/yake/src/yake/plugins/scriptingLua
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#434">[ date ]</a>
+              <a href="thread.html#434">[ thread ]</a>
+              <a href="subject.html#434">[ subject ]</a>
+              <a href="author.html#434">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-04 22:58:08 +0200 (Tue, 04 Jul 2006)
+New Revision: 1366
+
+Modified:
+   trunk/yake/scripts/msvc8/data.vcproj
+   trunk/yake/scripts/msvc8/net.vcproj
+   trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj
+   trunk/yake/scripts/msvc8/plugins/gui/ceguiOgreRendererAdapter.vcproj
+   trunk/yake/scripts/msvc8/plugins/physics/terrainPhysMgr.vcproj
+   trunk/yake/scripts/msvc8/yake.sln
+Log:
+fixed various settings
+
+Modified: trunk/yake/scripts/msvc8/data.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/data.vcproj	2006-06-25 18:15:03 UTC (rev 1365)
++++ trunk/yake/scripts/msvc8/data.vcproj	2006-07-04 20:58:08 UTC (rev 1366)
+@@ -123,7 +123,7 @@
+ 			&lt;Tool
+ 				Name=&quot;VCCLCompilerTool&quot;
+ 				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/;..dependencies/tinyxml&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_DATA_EXPORTS&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_DATA_EXPORTS;_CRT_SECURE_NO_DEPRECATE&quot;
+ 				RuntimeLibrary=&quot;2&quot;
+ 				RuntimeTypeInfo=&quot;true&quot;
+ 				UsePrecompiledHeader=&quot;2&quot;
+
+Modified: trunk/yake/scripts/msvc8/net.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/net.vcproj	2006-06-25 18:15:03 UTC (rev 1365)
++++ trunk/yake/scripts/msvc8/net.vcproj	2006-07-04 20:58:08 UTC (rev 1366)
+@@ -124,7 +124,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/;..dependencies/tinyxml&quot;
++				AdditionalIncludeDirectories=&quot;../../;../../dependencies/enet/include;../../dependencies/boost/;../../dependencies/ttl/;..dependencies/tinyxml&quot;
+ 				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_NET_EXPORTS&quot;
+ 				RuntimeLibrary=&quot;2&quot;
+ 				RuntimeTypeInfo=&quot;true&quot;
+@@ -252,6 +252,14 @@
+ 							UsePrecompiledHeader=&quot;0&quot;
+ 						/&gt;
+ 					&lt;/FileConfiguration&gt;
++					&lt;FileConfiguration
++						Name=&quot;Release|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
+ 				&lt;/File&gt;
+ 				&lt;File
+ 					RelativePath=&quot;..\..\dependencies\enet\host.c&quot;
+@@ -264,6 +272,14 @@
+ 							UsePrecompiledHeader=&quot;0&quot;
+ 						/&gt;
+ 					&lt;/FileConfiguration&gt;
++					&lt;FileConfiguration
++						Name=&quot;Release|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
+ 				&lt;/File&gt;
+ 				&lt;File
+ 					RelativePath=&quot;..\..\dependencies\enet\list.c&quot;
+@@ -276,6 +292,14 @@
+ 							UsePrecompiledHeader=&quot;0&quot;
+ 						/&gt;
+ 					&lt;/FileConfiguration&gt;
++					&lt;FileConfiguration
++						Name=&quot;Release|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
+ 				&lt;/File&gt;
+ 				&lt;File
+ 					RelativePath=&quot;..\..\dependencies\enet\packet.c&quot;
+@@ -288,6 +312,14 @@
+ 							UsePrecompiledHeader=&quot;0&quot;
+ 						/&gt;
+ 					&lt;/FileConfiguration&gt;
++					&lt;FileConfiguration
++						Name=&quot;Release|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
+ 				&lt;/File&gt;
+ 				&lt;File
+ 					RelativePath=&quot;..\..\dependencies\enet\peer.c&quot;
+@@ -300,6 +332,14 @@
+ 							UsePrecompiledHeader=&quot;0&quot;
+ 						/&gt;
+ 					&lt;/FileConfiguration&gt;
++					&lt;FileConfiguration
++						Name=&quot;Release|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
+ 				&lt;/File&gt;
+ 				&lt;File
+ 					RelativePath=&quot;..\..\dependencies\enet\protocol.c&quot;
+@@ -312,6 +352,14 @@
+ 							UsePrecompiledHeader=&quot;0&quot;
+ 						/&gt;
+ 					&lt;/FileConfiguration&gt;
++					&lt;FileConfiguration
++						Name=&quot;Release|Win32&quot;
++						&gt;
++						&lt;Tool
++							Name=&quot;VCCLCompilerTool&quot;
++							UsePrecompiledHeader=&quot;0&quot;
++						/&gt;
++					&lt;/FileConfiguration&gt;
+ 				&lt;/File&gt;
+ 				&lt;File
+ 					RelativePath=&quot;..\..\dependencies\enet\win32.c&quot;
+
+Modified: trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj	2006-06-25 18:15:03 UTC (rev 1365)
++++ trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj	2006-07-04 20:58:08 UTC (rev 1366)
+@@ -125,8 +125,9 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCCLCompilerTool&quot;
++				AdditionalOptions=&quot;-Zm120&quot;
+ 				AdditionalIncludeDirectories=&quot;../../../../dependencies/oSceneLoaderLib/TinyXML;../../../../dependencies/oSceneLoaderLib/include;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ogrenew/OgreMain/include&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_GRAPHICSCONCRETEAPI_EXPORTS&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_GRAPHICSCONCRETEAPI_EXPORTS;_CRT_SECURE_NO_DEPRECATE&quot;
+ 				RuntimeLibrary=&quot;2&quot;
+ 				RuntimeTypeInfo=&quot;true&quot;
+ 				UsePrecompiledHeader=&quot;2&quot;
+
+Modified: trunk/yake/scripts/msvc8/plugins/gui/ceguiOgreRendererAdapter.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/plugins/gui/ceguiOgreRendererAdapter.vcproj	2006-06-25 18:15:03 UTC (rev 1365)
++++ trunk/yake/scripts/msvc8/plugins/gui/ceguiOgreRendererAdapter.vcproj	2006-07-04 20:58:08 UTC (rev 1366)
+@@ -124,7 +124,8 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ogrenew/;../../../../dependencies/ogrenew/OgreMain/include;../../../../dependencies/cegui_mk2/CEGUI;../../../../dependencies/ogrenew/CEGUIRenderer/include&quot;
++				AdditionalOptions=&quot;-Zm135&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ogrenew/;../../../../dependencies/ogrenew/OgreMain/include;../../../../dependencies/cegui_mk2;../../../../dependencies/ogrenew/CEGUIRenderer/include&quot;
+ 				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_CEGUIRENDERERADAPTER_OGRE_EXPORTS&quot;
+ 				RuntimeLibrary=&quot;2&quot;
+ 				UsePrecompiledHeader=&quot;2&quot;
+@@ -147,7 +148,7 @@
+ 				AdditionalDependencies=&quot;OgreMain.lib yapp.lib CEGUIBase.lib OgreGUIRenderer.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/ogrenew/OgreMain/lib/Release;../../../../dependencies/cegui_mk2/lib/;../../../../dependencies/ogrenew/CEGUIRenderer/lib/release;../../../../dependencies/lib&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/ogrenew/OgreMain/lib/release;../../../../dependencies/cegui_mk2/lib/;../../../../dependencies/ogrenew/CEGUIRenderer/lib;../../../../dependencies/lib&quot;
+ 				ModuleDefinitionFile=&quot;../../../../src/yapp/plugins/ceguiOgreRendererAdapter/plugin.def&quot;
+ 				GenerateDebugInformation=&quot;false&quot;
+ 				SubSystem=&quot;2&quot;
+
+Modified: trunk/yake/scripts/msvc8/plugins/physics/terrainPhysMgr.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/plugins/physics/terrainPhysMgr.vcproj	2006-06-25 18:15:03 UTC (rev 1365)
++++ trunk/yake/scripts/msvc8/plugins/physics/terrainPhysMgr.vcproj	2006-07-04 20:58:08 UTC (rev 1366)
+@@ -124,7 +124,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ode/include;../../../../dependencies/ogrenew/ogremain/include&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ode/include;../../../../dependencies/ogrenew/ogremain/include;../../../..\dependencies\ogreaddons\paginglandscape\PlugIns\PagingLandScape2\include&quot;
+ 				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKEPHYSICSODE_PLSM_EXPORTS&quot;
+ 				RuntimeLibrary=&quot;2&quot;
+ 				RuntimeTypeInfo=&quot;true&quot;
+@@ -145,10 +145,10 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;ode.lib physics.lib&quot;
++				AdditionalDependencies=&quot;yapp.lib ode.lib physics.lib ogremain.lib Plugin_PagingLandScapeSceneManager2.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/ode/lib/releasedll;../../../../dependencies/lib&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/ode/lib/releasedll;../../../../dependencies/lib;&quot;../../../../dependencies/ogrenew/ogremain/lib/$(ConfigurationName)&quot;;&quot;../../../../dependencies/ogreaddons/paginglandscape/plugins/paginglandscape2/bin/$(ConfigurationName)&quot;&quot;
+ 				GenerateDebugInformation=&quot;false&quot;
+ 				SubSystem=&quot;2&quot;
+ 				OptimizeReferences=&quot;2&quot;
+
+Modified: trunk/yake/scripts/msvc8/yake.sln
+===================================================================
+--- trunk/yake/scripts/msvc8/yake.sln	2006-06-25 18:15:03 UTC (rev 1365)
++++ trunk/yake/scripts/msvc8/yake.sln	2006-07-04 20:58:08 UTC (rev 1366)
+@@ -1,5 +1,5 @@
+ Microsoft Visual Studio Solution File, Format Version 9.00
+-# Visual Studio 2005
++# Visual C++ Express 2005
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;base&quot;, &quot;base.vcproj&quot;, &quot;{D29771DD-715F-452B-B71C-911BACF5956D}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;graphics&quot;, &quot;graphics.vcproj&quot;, &quot;{ECC8FA24-93AC-4659-8EBD-26B6F418AC64}&quot;
+@@ -134,6 +134,16 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;loader&quot;, &quot;loader.vcproj&quot;, &quot;{2E5A589E-41FE-4BE9-80A0-1F8570944486}&quot;
+ EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplePhysicsDemo&quot;, &quot;samples\physics\samplePhysicsDemo.vcproj&quot;, &quot;{3DA99679-404B-44C7-9267-C97D066F3D96}&quot;
++EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleCar&quot;, &quot;samples\misc\sampleCar.vcproj&quot;, &quot;{EE77E955-42BD-47A4-BDC6-D92759F45D01}&quot;
++EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleRoServer&quot;, &quot;samples\net\sampleRoServer.vcproj&quot;, &quot;{547611C2-43E2-4678-B8E9-92CF69770C40}&quot;
++EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleRoClient&quot;, &quot;samples\net\sampleRoClient.vcproj&quot;, &quot;{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}&quot;
++EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleNetPacket&quot;, &quot;samples\net\sampleNetPacket.vcproj&quot;, &quot;{5473599B-AB7B-4259-B052-4DDC68CBEA54}&quot;
++EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+ 		Debug|Win32 = Debug|Win32
+@@ -262,6 +272,26 @@
+ 		{2E5A589E-41FE-4BE9-80A0-1F8570944486}.Debug|Win32.Build.0 = Debug|Win32
+ 		{2E5A589E-41FE-4BE9-80A0-1F8570944486}.Release|Win32.ActiveCfg = Release|Win32
+ 		{2E5A589E-41FE-4BE9-80A0-1F8570944486}.Release|Win32.Build.0 = Release|Win32
++		{3DA99679-404B-44C7-9267-C97D066F3D96}.Debug|Win32.ActiveCfg = Debug|Win32
++		{3DA99679-404B-44C7-9267-C97D066F3D96}.Debug|Win32.Build.0 = Debug|Win32
++		{3DA99679-404B-44C7-9267-C97D066F3D96}.Release|Win32.ActiveCfg = Release|Win32
++		{3DA99679-404B-44C7-9267-C97D066F3D96}.Release|Win32.Build.0 = Release|Win32
++		{EE77E955-42BD-47A4-BDC6-D92759F45D01}.Debug|Win32.ActiveCfg = Debug|Win32
++		{EE77E955-42BD-47A4-BDC6-D92759F45D01}.Debug|Win32.Build.0 = Debug|Win32
++		{EE77E955-42BD-47A4-BDC6-D92759F45D01}.Release|Win32.ActiveCfg = Release|Win32
++		{EE77E955-42BD-47A4-BDC6-D92759F45D01}.Release|Win32.Build.0 = Release|Win32
++		{547611C2-43E2-4678-B8E9-92CF69770C40}.Debug|Win32.ActiveCfg = Debug|Win32
++		{547611C2-43E2-4678-B8E9-92CF69770C40}.Debug|Win32.Build.0 = Debug|Win32
++		{547611C2-43E2-4678-B8E9-92CF69770C40}.Release|Win32.ActiveCfg = Release|Win32
++		{547611C2-43E2-4678-B8E9-92CF69770C40}.Release|Win32.Build.0 = Release|Win32
++		{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}.Debug|Win32.ActiveCfg = Debug|Win32
++		{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}.Debug|Win32.Build.0 = Debug|Win32
++		{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}.Release|Win32.ActiveCfg = Release|Win32
++		{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}.Release|Win32.Build.0 = Release|Win32
++		{5473599B-AB7B-4259-B052-4DDC68CBEA54}.Debug|Win32.ActiveCfg = Debug|Win32
++		{5473599B-AB7B-4259-B052-4DDC68CBEA54}.Debug|Win32.Build.0 = Debug|Win32
++		{5473599B-AB7B-4259-B052-4DDC68CBEA54}.Release|Win32.ActiveCfg = Release|Win32
++		{5473599B-AB7B-4259-B052-4DDC68CBEA54}.Release|Win32.Build.0 = Release|Win32
+ 	EndGlobalSection
+ 	GlobalSection(SolutionProperties) = preSolution
+ 		HideSolutionNode = FALSE
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000435.html">[Yake-svn] r1367 - trunk/yake/src/yake/plugins/scriptingLua
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#434">[ date ]</a>
+              <a href="thread.html#434">[ thread ]</a>
+              <a href="subject.html#434">[ subject ]</a>
+              <a href="author.html#434">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

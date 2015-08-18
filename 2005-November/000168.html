@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1098 - trunk/yake
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1098%20-%20trunk/yake&In-Reply-To=%3C200511022041.jA2Kf5Yo027194%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000167.html">
+   <LINK REL="Next"  HREF="000169.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1098 - trunk/yake</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1098%20-%20trunk/yake&In-Reply-To=%3C200511022041.jA2Kf5Yo027194%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1098 - trunk/yake">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  2 21:41:05 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000167.html">[Yake-svn] r1097 - trunk/yake/scripts
+</A></li>
+        <LI>Next message: <A HREF="000169.html">[Yake-svn] r1099 - trunk/yake
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#168">[ date ]</a>
+              <a href="thread.html#168">[ thread ]</a>
+              <a href="subject.html#168">[ subject ]</a>
+              <a href="author.html#168">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-02 21:41:04 +0100 (Wed, 02 Nov 2005)
+New Revision: 1098
+
+Modified:
+   trunk/yake/BUILD
+Log:
+general update, only a single SLN for PC/Windows
+
+Modified: trunk/yake/BUILD
+===================================================================
+--- trunk/yake/BUILD	2005-11-02 20:37:46 UTC (rev 1097)
++++ trunk/yake/BUILD	2005-11-02 20:41:04 UTC (rev 1098)
+@@ -1,11 +1,13 @@
+ 
++This file is part of Yake. Copyright (c) by the Yake Team and the contributors.
++
+ This document contains build instructions for different platforms:
+ 
+ CONTENTS
+ --------
+ 
+ 0. Prologue
+-1. BUILD INSTRUCTIONS FOR YAKE ON PC/WIN
++1. BUILD INSTRUCTIONS FOR YAKE ON PC/WINDOWS
+ 2. BUILD INSTRUCTIONS FOR YAKE ON PC/LINUX
+ 
+ 0. Prologue
+@@ -17,27 +19,23 @@
+ You can find it here: <A HREF="http://www.yake.org/wiki">http://www.yake.org/wiki</A> .
+ 
+ 
+-1. BUILD INSTRUCTIONS FOR YAKE ON PC/WIN
+-----------------------------------------
++1. BUILD INSTRUCTIONS FOR YAKE ON PC/WINDOWS
++--------------------------------------------
+ 
+-Last modified: 16/9/2004 by Stephan Kaiser (psy)
++Last modified: 02/11/2005 by Stephan Kaiser (psy)
+ 
+ Please refer to the manual for detailed instructions.
+-In essence, opening the workspaces for Yake and Yapp
+-respectively and doing a complete 'Build' is what you
+-want to do.
++In essence, opening the workspace for Yake and starting
++a complete 'Build' is what you want to do.
+ 
+-You can find the workspaces here:
++You can find the workspace here:
+ 
+-(yake_root_dir)/scripts/yake/yake.sln
++(yake_root_dir)/scripts/msvc71/yake.sln
+ 
+-and
++If you don't have or don't want to use the dependencies package
++containing prebuilt libraries then you have to compile these yourself
++as needed.
+ 
+-(yake_root_dir)/scripts/yapp/yapp.sln
+-
+-If you don't have the dependencies package containing prebuilt libraries,
+-then you have to compile these yourself.
+-
+ See the file &lt;yakeroot&gt;/dependencies/DEPENDENCIES for more information.
+ 
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000167.html">[Yake-svn] r1097 - trunk/yake/scripts
+</A></li>
+	<LI>Next message: <A HREF="000169.html">[Yake-svn] r1099 - trunk/yake
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#168">[ date ]</a>
+              <a href="thread.html#168">[ thread ]</a>
+              <a href="subject.html#168">[ subject ]</a>
+              <a href="author.html#168">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

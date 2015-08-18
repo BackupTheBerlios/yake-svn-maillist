@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1191 - in trunk/yake: src/yake/samples src/yake/samples/audio src/yake/samples/audio/demo1 yake/samples yake/samples/audio yake/samples/audio/demo1
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-January/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1191%20-%20in%20trunk/yake%3A%20src/yake/samples%20src/yake/samples/audio%20src/yake/samples/audio/demo1%20yake/samples%20yake/samples/audio%20yake/samples/audio/demo1&In-Reply-To=%3C200601172050.k0HKoeSZ009370%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000260.html">
+   <LINK REL="Next"  HREF="000262.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1191 - in trunk/yake: src/yake/samples src/yake/samples/audio src/yake/samples/audio/demo1 yake/samples yake/samples/audio yake/samples/audio/demo1</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1191%20-%20in%20trunk/yake%3A%20src/yake/samples%20src/yake/samples/audio%20src/yake/samples/audio/demo1%20yake/samples%20yake/samples/audio%20yake/samples/audio/demo1&In-Reply-To=%3C200601172050.k0HKoeSZ009370%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1191 - in trunk/yake: src/yake/samples src/yake/samples/audio src/yake/samples/audio/demo1 yake/samples yake/samples/audio yake/samples/audio/demo1">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Jan 17 21:50:40 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000260.html">[Yake-svn] r1190 - in trunk/yake/yake/samples: . net net/roclient net/roserver
+</A></li>
+        <LI>Next message: <A HREF="000262.html">[Yake-svn] r1192 - in trunk/yake/scripts/msvc8/samples: . audio
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#261">[ date ]</a>
+              <a href="thread.html#261">[ thread ]</a>
+              <a href="subject.html#261">[ subject ]</a>
+              <a href="author.html#261">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-01-17 21:50:39 +0100 (Tue, 17 Jan 2006)
+New Revision: 1191
+
+Added:
+   trunk/yake/src/yake/samples/audio/
+   trunk/yake/src/yake/samples/audio/demo1/
+   trunk/yake/src/yake/samples/audio/demo1/demo.cpp
+   trunk/yake/src/yake/samples/audio/demo1/pch.cpp
+   trunk/yake/yake/samples/audio/
+   trunk/yake/yake/samples/audio/demo1/
+   trunk/yake/yake/samples/audio/demo1/pch.h
+Log:
+initial revision
+
+Added: trunk/yake/src/yake/samples/audio/demo1/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/audio/demo1/demo.cpp	2006-01-15 21:42:37 UTC (rev 1190)
++++ trunk/yake/src/yake/samples/audio/demo1/demo.cpp	2006-01-17 20:50:39 UTC (rev 1191)
+@@ -0,0 +1,48 @@
++#include &lt;yake/samples/audio/demo1/pch.h&gt;
++
++int main(int argc,char* argv[])
++{
++	std::cout &lt;&lt; &quot;starting...\n&quot;;
++
++	// loading &amp; starting plugin
++	using namespace yake;
++	SharedPtr&lt;base::Library&gt; pLib( new base::Library( &quot;audioOpenAL&quot; ) );
++	SharedPtr&lt;audio::IAudioSystem&gt; pAudio = create_default&lt;audio::IAudioSystem&gt;();
++
++	// create world
++	SharedPtr&lt;audio::IWorld&gt; pWorld;
++	pWorld.reset( pAudio-&gt;createWorld() );
++
++	// init listener
++	SharedPtr&lt;audio::IListener&gt; pListener;
++	pListener.reset( pWorld-&gt;createListener() );
++	pWorld-&gt;setActiveListener( pListener.get() );
++
++	// load audio data
++	SharedPtr&lt;audio::ISource&gt; pSource1;
++	pSource1.reset( pWorld-&gt;createSource() );
++
++	// create sound souce &amp; attach audio data
++	SharedPtr&lt;audio::ISoundData&gt; pData1;
++	pData1.reset( pWorld-&gt;createSoundDataFromFile(&quot;../../media/audio/Forest1.L.wav&quot;) );
++
++	pSource1-&gt;setSoundData( pData1.get() );
++
++	// start playing
++	pSource1-&gt;play();
++
++	// wait for stop
++	std::cout &lt;&lt; &quot;running...\npress a key to stop...\n&quot;;
++	while (!_kbhit())
++		::Sleep(10);
++	_getch();
++
++	pSource1.reset();
++	pData1.reset();
++	pListener.reset();
++	pWorld.reset();
++	pAudio.reset();
++	pLib.reset();
++
++	return 0;
++}
+\ No newline at end of file
+
+Added: trunk/yake/src/yake/samples/audio/demo1/pch.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/audio/demo1/pch.cpp	2006-01-15 21:42:37 UTC (rev 1190)
++++ trunk/yake/src/yake/samples/audio/demo1/pch.cpp	2006-01-17 20:50:39 UTC (rev 1191)
+@@ -0,0 +1 @@
++#include &lt;yake/samples/audio/demo1/pch.h&gt;
+
+Added: trunk/yake/yake/samples/audio/demo1/pch.h
+===================================================================
+--- trunk/yake/yake/samples/audio/demo1/pch.h	2006-01-15 21:42:37 UTC (rev 1190)
++++ trunk/yake/yake/samples/audio/demo1/pch.h	2006-01-17 20:50:39 UTC (rev 1191)
+@@ -0,0 +1,5 @@
++#include &lt;yake/base/yake.h&gt;
++#include &lt;yake/audio/yakeAudio.h&gt;
++#include &lt;conio.h&gt;
++#define WIN32_LEAN_AND_MEAN
++#include &lt;windows.h&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000260.html">[Yake-svn] r1190 - in trunk/yake/yake/samples: . net net/roclient net/roserver
+</A></li>
+	<LI>Next message: <A HREF="000262.html">[Yake-svn] r1192 - in trunk/yake/scripts/msvc8/samples: . audio
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#261">[ date ]</a>
+              <a href="thread.html#261">[ thread ]</a>
+              <a href="subject.html#261">[ subject ]</a>
+              <a href="author.html#261">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

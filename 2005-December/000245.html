@@ -1,0 +1,403 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1175 - trunk/yake/src/yapp/samples/misc/cmdrmayhem
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-December/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1175%20-%20trunk/yake/src/yapp/samples/misc/cmdrmayhem&In-Reply-To=%3C200512072244.jB7Mi6wQ023735%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000244.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1175 - trunk/yake/src/yapp/samples/misc/cmdrmayhem</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1175%20-%20trunk/yake/src/yapp/samples/misc/cmdrmayhem&In-Reply-To=%3C200512072244.jB7Mi6wQ023735%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1175 - trunk/yake/src/yapp/samples/misc/cmdrmayhem">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Dec  7 23:44:06 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000244.html">[Yake-svn] r1174 - trunk/yake/common/media/graphics.materials/scripts
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#245">[ date ]</a>
+              <a href="thread.html#245">[ thread ]</a>
+              <a href="subject.html#245">[ subject ]</a>
+              <a href="author.html#245">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-12-07 23:44:06 +0100 (Wed, 07 Dec 2005)
+New Revision: 1175
+
+Added:
+   trunk/yake/src/yapp/samples/misc/cmdrmayhem/yakeDemo.cpp
+Log:
+initial revision
+
+Added: trunk/yake/src/yapp/samples/misc/cmdrmayhem/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/misc/cmdrmayhem/yakeDemo.cpp	2005-12-07 22:36:04 UTC (rev 1174)
++++ trunk/yake/src/yapp/samples/misc/cmdrmayhem/yakeDemo.cpp	2005-12-07 22:44:06 UTC (rev 1175)
+@@ -0,0 +1,329 @@
++#include &lt;yapp/samples/misc/cmdrmayhem/yakePCH.h&gt;
++#include &lt;yake/audio/yakeAudio.h&gt;
++#include &lt;yapp/raf/yakeRaf.h&gt;
++#include &lt;yapp/model/yakeModelMovableLink.h&gt;
++#include &lt;yake/input/yakeInput.h&gt;
++#include &lt;yapp/loader/yakeXODEParser.h&gt;
++#include &lt;yapp/model/yakePhysicalDataImporter.h&gt;
++#include &lt;yapp/loader/yakeDotLinkLoader.h&gt;
++#include &lt;yapp/common/yakeCameraControllers.h&gt;
++
++using namespace yake;
++
++/** Configuration of the application */
++struct TheConfiguration : public raf::ApplicationConfiguration
++{
++	virtual StringVector getLibraries()
++	{ return MakeStringVector() &lt;&lt; &quot;graphicsOgre&quot; &lt;&lt; &quot;inputOgre&quot; &lt;&lt; &quot;physicsOde&quot;; }
++
++	//virtual StringVector getScriptingSystems()
++	//{ return MakeStringVector() &lt;&lt; &quot;lua&quot;; }
++
++	virtual StringVector getGraphicsSystems()
++	{ return MakeStringVector() &lt;&lt; &quot;ogre3d&quot;; }
++
++	virtual StringVector getInputSystems()
++	{ return MakeStringVector() &lt;&lt; &quot;ogre&quot;; }
++
++	virtual StringVector getPhysicsSystems()
++	{ return MakeStringVector() &lt;&lt; &quot;ode&quot;; }
++
++	virtual bool loadCEGUI()
++	{ return true; }
++};
++
++
++class CharacterController
++{
++};
++
++
++struct Env
++{
++	SharedPtr&lt;model::complex::Model&gt; model_;
++};
++void loadEnvironment(Env&amp; env, graphics::IWorld* pGWorld, physics::IWorld* pPWorld, const String&amp; dotSceneFn, const String&amp; dotXodeFn, const String&amp; dotLinkFn)
++{
++	YAKE_ASSERT( pGWorld );
++	YAKE_ASSERT( pPWorld );
++
++	// Loading graphical part
++	model::Graphical* pG = new model::Graphical();
++	pG-&gt;fromDotScene( dotSceneFn, pGWorld );
++
++	// Loading physical part
++	model::Physical* pP = new model::Physical();
++
++	yake::data::dom::xml::XmlSerializer ser;
++	ser.parse( dotXodeFn, false );
++	YAKE_ASSERT( ser.getDocumentNode() )( dotXodeFn ).error(&quot;Could not load XODE document!&quot;);
++
++	data::parser::xode::XODEParserV1 parser;
++
++	using namespace yake::model;
++	model::XODEListener listener( *pP, pPWorld );
++
++	parser.subscribeToBodySignal( Bind1( &amp;XODEListener::processBody, &amp;listener ) );
++	parser.subscribeToGeomSignal( Bind1( &amp;XODEListener::processGeom, &amp;listener ) );
++
++	parser.load( ser.getDocumentNode() );
++
++	// Bringing it all together!
++	env.model_.reset( new model::complex::Model() );
++
++	env.model_-&gt;addGraphical( pG, &quot;baseGraphical&quot; );
++	env.model_-&gt;addPhysical( pP, &quot;basePhysical&quot; );
++
++	model::DotLinkLoader dotLinkLoader;
++	dotLinkLoader.load( dotLinkFn, *env.model_.get() );
++}
++
++/** Main application state */
++class TheMainState : public raf::RtMainState
++{
++public:
++	TheMainState(raf::Application&amp; owner) :
++		raf::RtMainState(owner),
++		mGround(0),
++		mComplex(0),
++		mPlayerRep(0),
++		mEnv(0)
++	{
++		enableInstantQuitByKey( input::KC_ESCAPE );
++	}
++	~TheMainState()
++	{
++	}
++private:
++protected:
++	virtual void onCreateScene()
++	{
++		YAKE_LOG_INFORMATION(&quot;Creating scene&quot;);
++
++		// create a light
++		graphics::ILight* pLight = getGraphicalWorld()-&gt;createLight();
++		pLight-&gt;setType( graphics::ILight::LT_DIRECTIONAL );
++		pLight-&gt;setDirection( Vector3(0,-1,1) );
++		getGraphicalWorld()-&gt;createSceneNode(&quot;lightnode0&quot;)-&gt;attachLight( pLight );
++
++		getGraphicalWorld()-&gt;setShadowsEnabled( true );
++
++		// position camera and look at the ninja
++		getDefaultCamera()-&gt;setNearClipDistance( 1 );
++		getDefaultCamera()-&gt;setFixedYawAxis(Vector3::kUnitY);
++		getDefaultCamera()-&gt;setPosition(Vector3(7,4,-7));
++
++		// create ground
++		mGround = new model::complex::Model();
++		{
++			const real groundHeight = -2;
++			// visual
++			graphics::ISceneNode* pGroundSN = getGraphicalWorld()-&gt;createSceneNode();
++			graphics::IEntity* pGroundE = getGraphicalWorld()-&gt;createEntity(&quot;plane_1x1.mesh&quot;);
++			pGroundE-&gt;setMaterial(&quot;box&quot;);
++			pGroundE-&gt;setCastsShadow( false );
++			pGroundSN-&gt;attachEntity( pGroundE );
++			pGroundSN-&gt;setScale( Vector3(100,1,100) );
++			pGroundSN-&gt;setPosition( Vector3(0,groundHeight,0) );
++
++			model::Graphical* pG = new model::Graphical();
++			pG-&gt;addSceneNode( pGroundSN );
++			mGround-&gt;addGraphical( pG );
++
++			// physical
++			physics::IActorPtr pGroundPlane = getPhysicalWorld()-&gt;createActor( physics::ACTOR_STATIC );
++			pGroundPlane-&gt;createShape( physics::IShape::PlaneDesc( Vector3(0,1,0), groundHeight ) );
++
++			model::Physical* pP = new model::Physical();
++			pP-&gt;addActor( pGroundPlane, &quot;groundPlane&quot; );
++			mGround-&gt;addPhysical( pP );
++		}
++
++		// sky box
++		getGraphicalWorld()-&gt;setSkyBox(&quot;Examples/SpaceSkyBox&quot;);
++
++		// graphics / physics environment
++		mEnv = new Env();
++		//const String dirMediaRoot = &quot;../../media/samples/dotLink/DynTest/&quot;;
++		//const String sceneBaseName = &quot;DotScene1&quot;;
++		//loadEnvironment( *mEnv, getGraphicalWorld(), getPhysicalWorld(),
++		//	dirMediaRoot+sceneBaseName+&quot;.scene&quot;, dirMediaRoot+sceneBaseName+&quot;.xode&quot;, dirMediaRoot+sceneBaseName+&quot;.link&quot; );
++
++		// create player/avatar
++		mPlayerRep = getPhysicalWorld()-&gt;createAvatar(
++				physics::IAvatar::Desc(
++						Vector3(0.5,2,0), // dimensions
++						Vector3::kZero // initial position
++					) 
++			);
++		YAKE_ASSERT( mPlayerRep );
++		{
++			mComplex = new model::complex::Model();
++			model::Graphical* pG = new model::Graphical();
++			mComplex-&gt;addGraphical( pG );
++			graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode();
++			pG-&gt;addSceneNode( pSN );
++			graphics::IEntity* pE = getGraphicalWorld()-&gt;createEntity(&quot;sphere_d1.mesh&quot;);
++			pSN-&gt;attachEntity( pE );
++			pSN-&gt;setScale( 0.5 * Vector3::kUnitScale );
++
++			model::ModelMovableLink* pLink = new model::ModelMovableLink();
++			mComplex-&gt;addGraphicsController( pLink );
++			pLink-&gt;setSource( mPlayerRep );
++			pLink-&gt;subscribeToPositionChanged( pSN );
++			pLink-&gt;subscribeToOrientationChanged( pSN );
++		}
++
++		// top-down camera controller
++		mTopDownCtrlr.setOffset( Vector3(10,10,-10) );
++		mTopDownCtrlr.setCamera( getDefaultCamera() );
++	}
++	virtual void onDestroyScene()
++	{
++		mTopDownCtrlr.setCamera( 0 );
++		YAKE_SAFE_DELETE( mComplex );
++		YAKE_SAFE_DELETE( mPlayerRep );
++		YAKE_SAFE_DELETE( mGround );
++		YAKE_SAFE_DELETE( mEnv );
++	}
++	virtual void onEnter()
++	{
++		RtMainState::onEnter();
++		using namespace input;
++
++		// controls
++
++		mActionMap.reg( ACTIONID_LEFT, new input::KeyboardActionCondition( getApp().getKeyboard(), KC_A, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_LEFT, boost::bind(&amp;TheMainState::onLeft,this) );
++
++		mActionMap.reg( ACTIONID_RIGHT, new input::KeyboardActionCondition( getApp().getKeyboard(), KC_D, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_RIGHT, boost::bind(&amp;TheMainState::onRight,this) );
++
++		mActionMap.reg( ACTIONID_FORWARD, new input::KeyboardActionCondition( getApp().getKeyboard(), KC_W, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_FORWARD, boost::bind(&amp;TheMainState::onForward,this) );
++
++		mActionMap.reg( ACTIONID_REVERSE, new input::KeyboardActionCondition( getApp().getKeyboard(), KC_S, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_REVERSE, boost::bind(&amp;TheMainState::onReverse,this) );
++
++		mActionMap.reg( ACTIONID_UP, new input::KeyboardActionCondition( getApp().getKeyboard(), KC_SPACE, KAM_PRESSED ) );
++		mActionMap.subscribeToActionId( ACTIONID_UP, boost::bind(&amp;TheMainState::onUp,this) );
++
++		mActionMap.reg( ACTIONID_DOWN, new input::KeyboardActionCondition( getApp().getKeyboard(), KC_C, KAM_PRESSED ) );
++		mActionMap.subscribeToActionId( ACTIONID_DOWN, boost::bind(&amp;TheMainState::onCrouch,this) );
++
++		// for cursor
++		getApp().enableMouseInputForCEGUI(true);
++	}
++	virtual void onExit()
++	{
++		getApp().enableMouseInputForCEGUI(false);
++	}
++	virtual void onFrame(const real timeElapsed)
++	{
++		mActionMap.update();
++
++		Vector3 projViewDir = mTopDownCtrlr.getOffset();
++		projViewDir.y = 0.;
++		if (projViewDir.length() &lt;= 0.01)
++			projViewDir = Vector3::kUnitZ;
++		projViewDir.normalise();
++		Quaternion projViewRot;
++		projViewRot.FromAxes( projViewDir.crossProduct( Vector3::kUnitY ), Vector3::kUnitY, -projViewDir );
++
++		const real maxVel = real(3.0);
++		Vector3 playerTargetVel;
++		ConstDequeIterator&lt; ActionIdList &gt; itAction( mActiveActions );
++		while (itAction.hasMoreElements())
++		{
++			const input::ActionId activeId = itAction.getNext();
++			if (activeId == input::ACTIONID_FORWARD)
++				playerTargetVel += Vector3(0,0,+1);
++			else if (activeId == input::ACTIONID_REVERSE)
++				playerTargetVel += Vector3(0,0,-1);
++			else if (activeId == input::ACTIONID_LEFT)
++				playerTargetVel += Vector3(+1,0,0);
++			else if (activeId == input::ACTIONID_RIGHT)
++				playerTargetVel += Vector3(-1,0,0);
++			else if (activeId == input::ACTIONID_UP)
++				mPlayerRep-&gt;jump();
++			else if (activeId == input::ACTIONID_DOWN)
++			{
++				mPlayerRep-&gt;duck( !mPlayerRep-&gt;isDucking() );
++			}
++		}
++		playerTargetVel = projViewRot * playerTargetVel;
++		mPlayerRep-&gt;setTargetVelocity( playerTargetVel.normalisedCopy() * maxVel );
++
++		if (mComplex)
++		{
++			mComplex-&gt;updatePhysics( timeElapsed );
++			mComplex-&gt;updateGraphics( timeElapsed );
++		}
++
++		{ // top-down controller
++			const real dist = timeElapsed * 4.;
++			Vector3 offset = mTopDownCtrlr.getOffset();
++			if (this-&gt;getApp().getKeyboard()-&gt;isKeyDown(input::KC_I))
++				offset += dist * Vector3::kUnitZ;
++			if (this-&gt;getApp().getKeyboard()-&gt;isKeyDown(input::KC_K))
++				offset += - dist * Vector3::kUnitZ;
++			if (this-&gt;getApp().getKeyboard()-&gt;isKeyDown(input::KC_J))
++				offset += dist * Vector3::kUnitX;
++			if (this-&gt;getApp().getKeyboard()-&gt;isKeyDown(input::KC_L))
++				offset += - dist * Vector3::kUnitX;
++			mTopDownCtrlr.setOffset( offset );
++		}
++
++		mTopDownCtrlr.setTarget( mPlayerRep-&gt;getPosition() );
++		mTopDownCtrlr.update( timeElapsed );
++
++		// prepare for next step
++		mActiveActions.clear();
++	}
++protected:
++	void onForward()
++	{ mActiveActions.insert( input::ACTIONID_FORWARD ); }
++	void onReverse()
++	{ mActiveActions.insert( input::ACTIONID_REVERSE ); }
++	void onUp()
++	{ mActiveActions.insert( input::ACTIONID_UP ); }
++	void onLeft()
++	{ mActiveActions.insert( input::ACTIONID_LEFT ); }
++	void onRight()
++	{ mActiveActions.insert( input::ACTIONID_RIGHT ); }
++	void onCrouch()
++	{ mActiveActions.insert( input::ACTIONID_DOWN ); }
++private:
++	physics::IAvatarPtr		mPlayerRep;
++	model::complex::Model*	mGround;
++	model::complex::Model*	mComplex;
++	input::ActionMap		mActionMap;
++
++	typedef std::set&lt;input::ActionId&gt; ActionIdList;
++	ActionIdList			mActiveActions;
++
++	Env*					mEnv;
++
++	TopDownCameraController	mTopDownCtrlr;
++};
++
++/** The mighty application itself! */
++class TheApp : public raf::ExampleApplication&lt;TheConfiguration&gt;
++{
++public:
++	TheApp() {}
++protected:
++	virtual raf::MainState* createMainState()
++	{
++		return new TheMainState(*this);
++	}
++};
++
++int main( int argc, char** argv )
++{
++	// Use default executor for convenience.
++	// It's always possible to manually execute TheApp::initialise() etc.
++	TheApp theApp;
++	return (raf::runApplication( theApp )) ? 0 : 1;
++}
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000244.html">[Yake-svn] r1174 - trunk/yake/common/media/graphics.materials/scripts
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#245">[ date ]</a>
+              <a href="thread.html#245">[ thread ]</a>
+              <a href="subject.html#245">[ subject ]</a>
+              <a href="author.html#245">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

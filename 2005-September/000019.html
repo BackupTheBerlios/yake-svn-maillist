@@ -1,0 +1,3032 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r947 - in trunk/yake: . src/yake/base src/yake/graphics src/yake/plugins src/yake/plugins/baseLuaBindings src/yake/plugins/graphicsLuaBindings src/yake/plugins/graphicsOgre src/yake/plugins/physicsODE src/yapp src/yapp/ent src/yapp/loader src/yapp/model src/yapp/plugins/entLua src/yapp/raf src/yapp/samples src/yapp/samples/graphics/scripted src/yapp/samples/gui/console src/yapp/samples/model/XODE src/yapp/samples/model/dotLink src/yapp/samples/raf/minimal yake/base yake/base/templates yake/graphics yake/physics yake/plugins/graphicsOgre yake/plugins/physicsODE yapp/ent yapp/gui_addons/console yapp/gui_addons/console/cegui yapp/loader yapp/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r947%20-%20in%20trunk/yake%3A%20.%20src/yake/base%20src/yake/graphics%20src/yake/plugins%20src/yake/plugins/baseLuaBindings%20src/yake/plugins/graphicsLuaBindings%20src/yake/plugins/graphicsOgre%20src/yake/plugins/physicsODE%20src/yapp%20src/yapp/ent%20src/yapp/loader%20src/yapp/model%20src/yapp/plugins/entLua%20src/yapp/raf%20src/yapp/samples%20src/yapp/samples/graphics/scripted%20src/yapp/samples/gui/console%20src/yapp/samples/model/XODE%20src/yapp/samples/model/dotLink%20src/yapp/samples/raf/minimal%20yake/base%20yake/base/templates%20yake/graphics%20yake/physics%20yake/plugins/graphicsOgre%20yake/plugins/physicsODE%20yapp/ent%20yapp/gui_addons/console%20yapp/gui_addons/console/cegui%20yapp/loader%20yapp/model&In-Reply-To=%3C200509262117.j8QLHMRC008165%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000017.html">
+   <LINK REL="Next"  HREF="000018.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r947 - in trunk/yake: . src/yake/base src/yake/graphics src/yake/plugins src/yake/plugins/baseLuaBindings src/yake/plugins/graphicsLuaBindings src/yake/plugins/graphicsOgre src/yake/plugins/physicsODE src/yapp src/yapp/ent src/yapp/loader src/yapp/model src/yapp/plugins/entLua src/yapp/raf src/yapp/samples src/yapp/samples/graphics/scripted src/yapp/samples/gui/console src/yapp/samples/model/XODE src/yapp/samples/model/dotLink src/yapp/samples/raf/minimal yake/base yake/base/templates yake/graphics yake/physics yake/plugins/graphicsOgre yake/plugins/physicsODE yapp/ent yapp/gui_addons/console yapp/gui_addons/console/cegui yapp/loader yapp/model</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r947%20-%20in%20trunk/yake%3A%20.%20src/yake/base%20src/yake/graphics%20src/yake/plugins%20src/yake/plugins/baseLuaBindings%20src/yake/plugins/graphicsLuaBindings%20src/yake/plugins/graphicsOgre%20src/yake/plugins/physicsODE%20src/yapp%20src/yapp/ent%20src/yapp/loader%20src/yapp/model%20src/yapp/plugins/entLua%20src/yapp/raf%20src/yapp/samples%20src/yapp/samples/graphics/scripted%20src/yapp/samples/gui/console%20src/yapp/samples/model/XODE%20src/yapp/samples/model/dotLink%20src/yapp/samples/raf/minimal%20yake/base%20yake/base/templates%20yake/graphics%20yake/physics%20yake/plugins/graphicsOgre%20yake/plugins/physicsODE%20yapp/ent%20yapp/gui_addons/console%20yapp/gui_addons/console/cegui%20yapp/loader%20yapp/model&In-Reply-To=%3C200509262117.j8QLHMRC008165%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r947 - in trunk/yake: . src/yake/base src/yake/graphics src/yake/plugins src/yake/plugins/baseLuaBindings src/yake/plugins/graphicsLuaBindings src/yake/plugins/graphicsOgre src/yake/plugins/physicsODE src/yapp src/yapp/ent src/yapp/loader src/yapp/model src/yapp/plugins/entLua src/yapp/raf src/yapp/samples src/yapp/samples/graphics/scripted src/yapp/samples/gui/console src/yapp/samples/model/XODE src/yapp/samples/model/dotLink src/yapp/samples/raf/minimal yake/base yake/base/templates yake/graphics yake/physics yake/plugins/graphicsOgre yake/plugins/physicsODE yapp/ent yapp/gui_addons/console yapp/gui_addons/console/cegui yapp/loader yapp/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Mon Sep 26 23:17:22 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000017.html">[Yake-svn] r946 - trunk/yake/yake/input
+</A></li>
+        <LI>Next message: <A HREF="000018.html">[Yake-svn] r948 - trunk/yake/dependencies
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#19">[ date ]</a>
+              <a href="thread.html#19">[ thread ]</a>
+              <a href="subject.html#19">[ subject ]</a>
+              <a href="author.html#19">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-26 23:17:18 +0200 (Mon, 26 Sep 2005)
+New Revision: 947
+
+Modified:
+   trunk/yake/buildspec.xml
+   trunk/yake/src/yake/base/Makefile.am
+   trunk/yake/src/yake/base/yakeDebugLogAppender.cpp
+   trunk/yake/src/yake/base/yakeLog.cpp
+   trunk/yake/src/yake/graphics/yakeGraphicsSystem.cpp
+   trunk/yake/src/yake/plugins/Makefile.am
+   trunk/yake/src/yake/plugins/baseLuaBindings/yakeLuaBinder.cpp
+   trunk/yake/src/yake/plugins/graphicsLuaBindings/Makefile.am
+   trunk/yake/src/yake/plugins/graphicsLuaBindings/yakeLuaBinder.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCore.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreGeometryAccess.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreSkeleton.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreViewport.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+   trunk/yake/src/yapp/Makefile.am
+   trunk/yake/src/yapp/ent/yakeEntity.cpp
+   trunk/yake/src/yapp/ent/yakeTrigger.cpp
+   trunk/yake/src/yapp/loader/yakeDotScene.cpp
+   trunk/yake/src/yapp/model/Makefile.am
+   trunk/yake/src/yapp/model/yakeComplexModel.cpp
+   trunk/yake/src/yapp/model/yakeGraphical.cpp
+   trunk/yake/src/yapp/plugins/entLua/yakeEvent_lua.cpp
+   trunk/yake/src/yapp/plugins/entLua/yakeLuaBinder.cpp
+   trunk/yake/src/yapp/plugins/entLua/yakeStateCb_lua.cpp
+   trunk/yake/src/yapp/raf/yakeApplication.cpp
+   trunk/yake/src/yapp/samples/Makefile.am
+   trunk/yake/src/yapp/samples/graphics/scripted/Makefile.am
+   trunk/yake/src/yapp/samples/gui/console/yakeConsoleDemo.cpp
+   trunk/yake/src/yapp/samples/model/XODE/Makefile.am
+   trunk/yake/src/yapp/samples/model/XODE/yakeXODELoaderDemo.cpp
+   trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp
+   trunk/yake/src/yapp/samples/raf/minimal/yakeDemo.cpp
+   trunk/yake/yake/base/templates/yakeRegistry.h
+   trunk/yake/yake/base/yake.h
+   trunk/yake/yake/base/yakeDebugLogAppender.h
+   trunk/yake/yake/base/yakeLog.h
+   trunk/yake/yake/base/yakePrerequisites.h
+   trunk/yake/yake/graphics/yakeEntity.h
+   trunk/yake/yake/graphics/yakeGraphicalWorld.h
+   trunk/yake/yake/graphics/yakeGraphicsSystem.h
+   trunk/yake/yake/physics/yakePhysicsPrerequisites.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h
+   trunk/yake/yake/plugins/physicsODE/OdeBody.h
+   trunk/yake/yake/plugins/physicsODE/OdeShapes.h
+   trunk/yake/yake/plugins/physicsODE/OdeWorld.h
+   trunk/yake/yapp/ent/yakeEntity.h
+   trunk/yake/yapp/gui_addons/console/Makefile.am
+   trunk/yake/yapp/gui_addons/console/cegui/Makefile.am
+   trunk/yake/yapp/gui_addons/console/cegui/yakeCEGUIOutputArea.h
+   trunk/yake/yapp/gui_addons/console/yakeDefaultHistory.h
+   trunk/yake/yapp/gui_addons/console/yakeGenericConsole.h
+   trunk/yake/yapp/loader/yakeDotScene.h
+   trunk/yake/yapp/loader/yakeXODEParser.h
+   trunk/yake/yapp/model/yakeGraphical.h
+   trunk/yake/yapp/model/yakeVehicleSerializerXML.h
+Log:
+patch 1304669 by mj (&quot;summer patch&quot;): interface cleanup &amp; improvements, fixed compatibility issues, improved logging messages, ...
+
+Modified: trunk/yake/buildspec.xml
+===================================================================
+--- trunk/yake/buildspec.xml	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/buildspec.xml	2005-09-26 21:17:18 UTC (rev 947)
+@@ -162,6 +162,9 @@
+ 	&lt;/BuildSharedLibrary&gt;
+ 
+ 	&lt;BuildSharedLibrary
++		name=&quot;yakegraphicsLuaBindings&quot;
++
++	&lt;BuildSharedLibrary
+ 		name=&quot;yappEvents&quot;
+ 		src=&quot;src/yapp/base/event&quot;
+ 	/&gt;
+
+Modified: trunk/yake/src/yake/base/Makefile.am
+===================================================================
+--- trunk/yake/src/yake/base/Makefile.am	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/base/Makefile.am	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,19 +1,11 @@
+ INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/dependencies/ttl $(all_includes)
+-
+-
+-
+ SUBDIRS = native math templates
+-
+-
+-
+-
+ METASOURCES = AUTO
+ lib_LTLIBRARIES = libyakeBase.la
+ libyakeBase_la_SOURCES = yakeDataChunk.cpp yakeDebugLogAppender.cpp \
+-	yakeDebugOutputStream.cpp yakeException.cpp yakeInputStream.cpp yakeLock.cpp yakeLog.cpp \
+-	yakeMimeTypeManager.cpp yakeOutputStream.cpp yakePCH.cpp yakeString.cpp yakeUniqueId.cpp \
+-	yakeUniqueName.cpp yakeMovable.cpp yakeCriticalSection.cpp yakeLibrary.cpp \
+-	yakeParamHolder.cpp
++	yakeException.cpp yakeInputStream.cpp yakeLock.cpp yakeLog.cpp yakeMimeTypeManager.cpp \
++	yakeOutputStream.cpp yakePCH.cpp yakeString.cpp yakeUniqueId.cpp yakeUniqueName.cpp \
++	yakeMovable.cpp yakeCriticalSection.cpp yakeLibrary.cpp yakeParamHolder.cpp
+ libyakeBase_la_LIBADD = \
+ 	$(top_builddir)/src/yake/base/native/Linux/libyakeNativeLinux.la $(top_builddir)/src/yake/base/templates/libyakeTemplates.la \
+ 	$(top_builddir)/src/yake/base/math/libyakeMath.la -lboost_signals
+
+Modified: trunk/yake/src/yake/base/yakeDebugLogAppender.cpp
+===================================================================
+--- trunk/yake/src/yake/base/yakeDebugLogAppender.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/base/yakeDebugLogAppender.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -39,18 +39,16 @@
+ {
+ namespace base
+ {
+-
+-void DebugLogAppender::onLog( const String&amp; rWhat, Log::Severity severity, const String&amp; rSource )
+-{
+-	static native::DebugLog::Severity severityTranslationTable[] =
++	void DebugLogAppender::onLog( const Log::Message&amp; message )
+ 	{
+-		native::DebugLog::INFORMATIONS,
+-		native::DebugLog::WARNINGS,
+-		native::DebugLog::ERRORS
+-	};
+-			
+-	native::debug_Log( rWhat.c_str(), severityTranslationTable[ severity ], rSource.c_str() );
+-}
++		static native::DebugLog::Severity severityTranslationTable[] =
++		{
++			native::DebugLog::INFORMATIONS,
++			native::DebugLog::WARNINGS,
++			native::DebugLog::ERRORS
++		};
+ 
++		native::debug_Log( message.text.c_str(), severityTranslationTable[ message.severity ], message.source.c_str() );
++	}
+ } // base
+ } // yake
+
+Modified: trunk/yake/src/yake/base/yakeLog.cpp
+===================================================================
+--- trunk/yake/src/yake/base/yakeLog.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/base/yakeLog.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -55,45 +55,32 @@
+   mOnLog.connect( rSlot );
+ }
+ 
+-void Log::log( const String&amp; rWhat, Severity severity )
++void Log::log( const String&amp; rWhat,
++					Severity severity,
++					const String&amp; rSource,
++					const String&amp; rAdditionalInfo )
+ {
+-	mOnLog( rWhat, severity, &quot;&quot; );
++	mOnLog( Message( rWhat, severity, rSource, rAdditionalInfo ) );
+ }
+ 
+-void Log::log( const String&amp; rWhat, Severity severity, const String&amp; rSource )
++void log_information( const String&amp; what, const String&amp; source, const String&amp; where )
+ {
+-	mOnLog( rWhat, severity, rSource );
++	Log::instance().log( what, Log::INFORMATIONS, source, where );
+ }
+ 
+-void Log::logPrintf( char * fmt, ... )
++void log_warning( const String&amp; what, const String&amp; source, const String&amp; where )
+ {
+-    static char szBuffer[4097];
+-	memset( szBuffer, 0, 4097 );
+-    va_list list;
+-    va_start( list, fmt );
+-    YAKE_VSNPRINTF( szBuffer, 4096, fmt, list );
+-	mOnLog( szBuffer, INFORMATIONS, &quot;&quot; );
+-    va_end( list );
++	Log::instance().log( what, Log::WARNINGS, source, where );
+ }
+ 
+-void log_information( const String&amp; what, const String&amp; where )
++void log_error( const String&amp; what, const String&amp; source, const String&amp; where )
+ {
+-	Log::instance().log( what, Log::INFORMATIONS, where );
++	Log::instance().log( what, Log::ERRORS, source, where );
+ }
+ 
+-void log_warning( const String&amp; what, const String&amp; where )
+-{
+-	Log::instance().log( what, Log::WARNINGS, where );
+-}
+-
+-void log_error( const String&amp; what, const String&amp; where )
+-{
+-	Log::instance().log( what, Log::ERRORS, where );
+-}
+-
+ void log( const String&amp; what )
+ {
+-	Log::instance().log( what, Log::INFORMATIONS );
++	Log::instance().log( what );
+ }
+ 
+ } // base
+
+Modified: trunk/yake/src/yake/graphics/yakeGraphicsSystem.cpp
+===================================================================
+--- trunk/yake/src/yake/graphics/yakeGraphicsSystem.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/graphics/yakeGraphicsSystem.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -41,6 +41,21 @@
+ 
+ 	YAKE_IMPLEMENT_REGISTRY( IGraphicsSystem );
+ 
++	/// GraphicsEntity
++	GraphicsEntity::GraphicsEntity() : mName( uniqueName::create( &quot;graphics&quot; ) )
++	{
++	}
++	
++	void GraphicsEntity::setName( const String&amp; entityName )
++	{
++		mName = entityName;
++	}
++	
++	String GraphicsEntity::getName() const
++	{
++		return mName;
++	}
++	
+ 	// these destructors are here for rtti to work
+ 	IParticleSystem::~IParticleSystem()
+ 	{
+
+Modified: trunk/yake/src/yake/plugins/Makefile.am
+===================================================================
+--- trunk/yake/src/yake/plugins/Makefile.am	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/Makefile.am	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,4 +1,4 @@
+ INCLUDES = $(all_includes)
+ METASOURCES = AUTO
+ SUBDIRS = scriptingLua inputOgre scriptingLuaBindings graphicsOgre \
+-		graphicsLuaBindings baseLuaBindings
++			graphicsLuaBindings baseLuaBindings physicsODE
+
+Modified: trunk/yake/src/yake/plugins/baseLuaBindings/yakeLuaBinder.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/baseLuaBindings/yakeLuaBinder.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/baseLuaBindings/yakeLuaBinder.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -199,9 +199,15 @@
+ 				    .def( &quot;onLog&quot;, &amp;Log::onLog )
+ 				    .def( &quot;log&quot;, (void(Log::*)( const String&amp;,Log::Severity))&amp;Log::log )
+ 				    .def( &quot;logAt&quot;, (void(Log::*)( const String&amp;,Log::Severity,const String&amp;))&amp;Log::log )
+-				    .def( &quot;instance&quot;, &amp;Log::instance )
++					.scope
++					[
++				    def( &quot;instance&quot;, &amp;Log::instance )
++					]
+ 				];
+ 
++				// Exporting log singleton as logger object
++				pL-&gt;execute( &quot;logger = yake.Log.instance();&quot; );
++
+ 				// Log shortcuts
+ 				module( YAKE_BASE_MODULE )
+ 				[
+
+Modified: trunk/yake/src/yake/plugins/graphicsLuaBindings/Makefile.am
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsLuaBindings/Makefile.am	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsLuaBindings/Makefile.am	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,9 @@
+ INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/dependencies \
+ 	-I$(top_srcdir)/dependencies/luabind -I$(top_srcdir)/dependencies/ttl $(all_includes)
+ METASOURCES = AUTO
+-lib_LTLIBRARIES = libyakegraphicsBindingsLua.la
+-libyakegraphicsBindingsLua_la_LIBADD =\
+-	$(top_builddir)/src/yake/scripting/libyakeScripting.la
+-libyakegraphicsBindingsLua_la_SOURCES = yakeLuaBinder.cpp
++
++lib_LTLIBRARIES = libyakegraphicsLuaBindings.la
++libyakegraphicsLuaBindings_la_SOURCES = yakeLuaBinder.cpp
++libyakegraphicsLuaBindings_la_LIBADD = \
++	$(top_builddir)/src/yake/scripting/libyakeScripting.la $(top_builddir)/src/yake/plugins/scriptingLua/libyakescriptingLua.la \
++	-lluabind
+
+Modified: trunk/yake/src/yake/plugins/graphicsLuaBindings/yakeLuaBinder.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsLuaBindings/yakeLuaBinder.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsLuaBindings/yakeLuaBinder.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -24,6 +24,7 @@
+ #include &lt;yake/plugins/scriptingLua/ScriptingSystemLua.h&gt;
+ #include &lt;yake/plugins/graphicsLuaBindings/yakeLuaBinder.h&gt;
+ #include &lt;luabind/luabind.hpp&gt;
++#include &lt;luabind/iterator_policy.hpp&gt;
+ 
+ #include &lt;yake/graphics/yakeGraphics.h&gt;
+ #include &lt;yake/graphics/yakeGeometryAccess.h&gt;
+@@ -50,23 +51,33 @@
+ 
+ 				module( YAKE_GRAPHICS_MODULE )
+ 				[
+-				    class_&lt;IParticleSystem&gt;( &quot;IParticleSystem&quot; )
++				    class_&lt;GraphicsEntity&gt;( &quot;GraphicsEntity&quot; )
++				    .def( &quot;getName&quot;, &amp;GraphicsEntity::getName )
++				    .def( &quot;setName&quot;, &amp;GraphicsEntity::setName )
++				];
++				YAKE_LOG( &quot;GraphicsEntity bound...&quot; );
++
++				module( YAKE_GRAPHICS_MODULE )
++				[
++				    class_&lt;IParticleSystem,GraphicsEntity&gt;( &quot;IParticleSystem&quot; )
+ 				    .def( &quot;setVisible&quot;, &amp;IParticleSystem::setVisible )
+ 				];
++				YAKE_LOG( &quot;IParticleSystem bound...&quot; );
+ 
+ 				module( YAKE_GRAPHICS_MODULE )
+ 				[
+-				    class_&lt;ISkeleton&gt;( &quot;ISkeleton&quot; )
++				    class_&lt;ISkeleton,GraphicsEntity&gt;( &quot;ISkeleton&quot; )
+ 				    .def( &quot;enableAnimation&quot;, &amp;ISkeleton::enableAnimation )
+ 				    .def( &quot;advanceAnimation&quot;, &amp;ISkeleton::advanceAnimation )
+ 				    .def( &quot;advanceAllAnimations&quot;, &amp;ISkeleton::advanceAllAnimations )
+ 				    .def( &quot;setAnimationWeight&quot;, &amp;ISkeleton::setAnimationWeight )
+ 				    .def( &quot;attachEntityToBone&quot;, &amp;ISkeleton::attachEntityToBone )
+ 				];
++				YAKE_LOG( &quot;ISkeleton bound...&quot; );
+ 
+ 				module( YAKE_GRAPHICS_MODULE )
+ 				[
+-				    class_&lt;ILight&gt;( &quot;ILight&quot; )
++				    class_&lt;ILight,GraphicsEntity&gt;( &quot;ILight&quot; )
+ 				    .enum_( &quot;LightType&quot; )
+ 				    [
+ 				        value(&quot;LT_POINT&quot;, ILight::LT_POINT ),
+@@ -91,22 +102,22 @@
+ 				    .def( &quot;setDirection&quot;, &amp;ILight::setDirection )
+ 				    .def( &quot;getDirection&quot;, &amp;ILight::getDirection )
+ 				];
++				YAKE_LOG( &quot;ILight bound...&quot; );
+ 
+ 				module( YAKE_GRAPHICS_MODULE )
+ 				[
+-				    class_&lt;IEntity&gt;( &quot;IEntity&quot; )
++				    class_&lt;IEntity,GraphicsEntity&gt;( &quot;IEntity&quot; )
+ 				    .def( &quot;getSkeleton&quot;, &amp;IEntity::getSkeleton )
+ 				    .def( &quot;setVisible&quot;, &amp;IEntity::setVisible )
+ 				    .def( &quot;setMaterial&quot;, &amp;IEntity::setMaterial )
+ 				    .def( &quot;setSubEntityMaterial&quot;, &amp;IEntity::setSubEntityMaterial )
+ 				    .def( &quot;setCastsShadow&quot;, &amp;IEntity::setCastsShadow )
+-				    .def( &quot;getName&quot;, (String(IEntity::*)() const)&amp;IEntity::getName )
+-
+ 				];
++				YAKE_LOG( &quot;IEntity bound...&quot; );
+ 
+ 				module( YAKE_GRAPHICS_MODULE )
+ 				[
+-				    class_&lt;ICamera, Movable&gt;( &quot;ICamera&quot; )
++				    class_&lt;ICamera, bases&lt;Movable, GraphicsEntity&gt; &gt;( &quot;ICamera&quot; )
+ 				    .enum_( &quot;SceneDetailLevel&quot; )
+ 				    [
+ 				        value( &quot;SDL_POINTS&quot;, ICamera::SDL_POINTS ),
+@@ -124,11 +135,13 @@
+ 				    .def( &quot;getDetailLevel&quot;, &amp;ICamera::getDetailLevel )
+ 				    .def( &quot;setNearClipDistance&quot;, &amp;ICamera::setNearClipDistance )
+ 				    .def( &quot;getNearClipDistance&quot;, &amp;ICamera::getNearClipDistance )
++				    .def( &quot;getFarClipDistance&quot;, &amp;ICamera::getFarClipDistance )
+ 				    .def( &quot;setFarClipDistance&quot;, &amp;ICamera::setFarClipDistance )
+ 				    .def( &quot;setFOV&quot;, &amp;ICamera::setFOV )
+ 				    .def( &quot;getFOV&quot;, &amp;ICamera::getFOV )
+-				    .def( &quot;setAspectRatio&quot;, &amp;ICamera::getAspectRatio )
+-				    .def( &quot;setDirection&quot;, &amp;ICamera::setDirection )
++					 .def( &quot;setAspectRatio&quot;, &amp;ICamera::setAspectRatio )
++					 .def( &quot;getAspectRatio&quot;, &amp;ICamera::getAspectRatio )
++					 .def( &quot;setDirection&quot;, &amp;ICamera::setDirection )
+ 				    .def( &quot;getDirection&quot;, &amp;ICamera::getDirection )
+ 				    .def( &quot;getUp&quot;, &amp;ICamera::getUp )
+ 				    .def( &quot;getRight&quot;, &amp;ICamera::getRight )
+@@ -144,10 +157,11 @@
+ 				    .def( &quot;getProjectionMatrix&quot;, &amp;ICamera::getProjectionMatrix )
+ 				    .def( &quot;getViewMatrix&quot;, &amp;ICamera::getViewMatrix )
+ 				];
++				YAKE_LOG( &quot;ICamera bound...&quot; );
+ 
+ 				module( YAKE_GRAPHICS_MODULE )
+ 				[
+-				    class_&lt;ISceneNode, Movable&gt;( &quot;ISceneNode&quot; )
++				    class_&lt;ISceneNode, bases&lt;Movable, GraphicsEntity&gt; &gt;( &quot;ISceneNode&quot; )
+ 				    .def( &quot;addChildNode&quot;, &amp;ISceneNode::addChildNode )
+ 				    .def( &quot;createChildNode&quot;, &amp;ISceneNode::createChildNode )
+ 				    .def( &quot;attachEntity&quot;, &amp;ISceneNode::attachEntity )
+@@ -167,8 +181,8 @@
+ 				    .def( &quot;detachLight&quot;, (void(ISceneNode::*)(ILight*))&amp;ISceneNode::detach )
+ 				    .def( &quot;detachCamera&quot;, (void(ISceneNode::*)(ICamera*))&amp;ISceneNode::detach )
+ 				    .def( &quot;detachParticleSystem&quot;, (void(ISceneNode::*)(IParticleSystem*))&amp;ISceneNode::detach )
+-				    .def( &quot;getName&quot;, (String(ISceneNode::*)()const)&amp;ISceneNode::getName )
+ 				];
++				YAKE_LOG( &quot;ISceneNode bound...&quot; );
+ 
+ 				module( YAKE_GRAPHICS_MODULE )
+ 				[
+@@ -178,10 +192,11 @@
+ 				    .def( &quot;setDimensions&quot;, &amp;IViewport::setDimensions )
+ 				    .def( &quot;setZ&quot;, &amp;IViewport::setZ )
+ 				];
++				YAKE_LOG( &quot;IViewport bound...&quot; );
+ 
+ 				module( YAKE_GRAPHICS_MODULE )
+ 				[
+-				    class_&lt;IWorld&gt;( &quot;IWorld&quot; )
++				    class_&lt;yake::graphics::IWorld&gt;( &quot;IWorld&quot; )
+ 				    .def( &quot;createLight&quot;, &amp;IWorld::createLight )
+ 				    .def( &quot;createCamera&quot;, &amp;IWorld::createCamera )
+ 				    .def( &quot;createSceneNode&quot;, &amp;IWorld::createSceneNode )
+@@ -199,6 +214,7 @@
+ 				    .def( &quot;getRenderWindowHeight&quot;, &amp;IWorld::getRenderWindowHeight )
+ 				    .def( &quot;pickEntity&quot;, &amp;IWorld::pickEntity )
+ 				];
++				YAKE_LOG( &quot;IWorld bound...&quot; );
+ 
+ 				module( YAKE_GRAPHICS_MODULE )
+ 				[
+@@ -206,10 +222,9 @@
+ 				    .def( &quot;shutdown&quot;, &amp;IGraphicsSystem::shutdown )
+ 				    .def( &quot;createWorld&quot;, &amp;IGraphicsSystem::createWorld )
+ 				];
+-
++				YAKE_LOG( &quot;IGraphicsSystem bound...&quot; );
+ 			}
+ 
+-
+ 		} // namespace lua
+ 	} // namespace graphics
+ } // namespace yake
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -152,6 +152,12 @@
+ 	}
+ 	
+ 	//------------------------------------------------------
++	void OgreCamera::roll( const  real degrees )
++	{
++		mCam-&gt;roll( Ogre::Degree( degrees ) );
++	}
++	
++	//------------------------------------------------------
+ 	Ogre::ProjectionType yake2Ogre( const ICamera::ProjectionType type )
+ 	{
+ 		switch (type)
+@@ -266,7 +272,7 @@
+ 		YAKE_ASSERT( mCam ).debug(&quot;need a camera!&quot;);
+ 		return mCam-&gt;getAspectRatio();
+ 	}
+-
++	
+ }
+ }
+ }
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCore.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCore.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCore.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -76,9 +76,7 @@
+ 				const bool bShutdownOgre /*= true*/,
+ 				const bool bParseDefaultResourceFile /*= true*/,
+ 				Ogre::RenderWindow* pRenderWindow /*= 0*/) :
+-		mShutdownOgre( bShutdownOgre ),
+-		mSysFL( 0 ),
+-		mRoot( 0 )
++		mShutdownOgre( bShutdownOgre )
+ 	{
+ 		mReady = false;
+ 		try {
+@@ -263,7 +261,6 @@
+ 
+ 	void OgreCore::update( real timeElapsed )
+ 	{
+-		YAKE_DECLARE_FUNCTION( update );
+ 		//HACK/FIXME
+ 		static bool bFirstTime = true;
+ 		if (bFirstTime)
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -97,20 +97,6 @@
+ 			mEntity-&gt;setCastShadows( castsShadow );
+ 	}
+ 
+-
+-	//------------------------------------------------------
+-	String OgreEntity::getName() const
+-	{
+-		YAKE_ASSERT( mEntity ).debug( &quot;need an entity&quot; );
+-		return String( mEntity-&gt;getName().c_str() );
+-	}
+-
+-	//------------------------------------------------------
+-	void OgreEntity::getName(String&amp; name)
+-	{
+-		YAKE_ASSERT( mEntity ).debug( &quot;need an entity&quot; );
+-		name = mEntity-&gt;getName().c_str();
+-	}
+ }
+ }
+ }
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreGeometryAccess.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreGeometryAccess.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreGeometryAccess.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -74,12 +74,12 @@
+ 
+ 	//-----------------------------------------------------
+ 	OgreSubmeshAccess::OgreSubmeshAccess( Ogre::MeshPtr&amp; parentMesh, Ogre::SubMesh* subMesh )
+-			: mMesh(parentMesh),
+-				mSubmesh( subMesh ),
++			: 	mSubmesh( subMesh ),
++				mMesh(parentMesh),
+ 				mpLockedPositions(0),
++				mpLockedNormals(0),
+ 				mpLockedColours(0),
+-				mpLockedIndices(0),
+-				mpLockedNormals(0)
++				mpLockedIndices(0)
+ 	{
+ 		YAKE_ASSERT( !mMesh.isNull() );
+ 		for (int i=0; i&lt;MAX_TEX_COORDS; ++i)
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -231,7 +231,7 @@
+ 		YAKE_ASSERT( mLight ).debug( &quot;need actual light!&quot; );
+ 		return VEC_OGRE2YAKE( mLight-&gt;getDirection() );
+ 	}
+-
++	
+ } // ogre3d
+ } // graphics
+ } // yake
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -37,7 +37,7 @@
+ 
+ 	//------------------------------------------------------
+ 	OgreNode::OgreNode( Ogre::SceneManager * sceneMgr, const String&amp; name /*= &quot;&quot;*/ ) : 
+-		mSceneMgr( sceneMgr ), mSceneNode( 0 )
++			mSceneNode( 0 ) ,mSceneMgr( sceneMgr )
+ 	{
+ 		YAKE_ASSERT( sceneMgr ).debug(&quot;need a scene manager!&quot;);
+ 		String id = name;
+@@ -55,7 +55,6 @@
+ 		{
+ 			mSceneNode-&gt;removeAllChildren();
+ 			mSceneMgr-&gt;destroySceneNode( mSceneNode-&gt;getName() );
+-			mSceneNode = 0;
+ 		}
+ 		mLights.clear();
+ 		mEntities.clear();
+@@ -76,6 +75,26 @@
+ 	}
+ 
+ 	//------------------------------------------------------
++	Vector3 OgreNode::getPosition( ISceneNode::TransformSpace ts ) const
++	{
++		switch( ts )
++		{
++			case TS_LOCAL:
++				return Vector3();
++				
++			case TS_PARENT:
++				return getPosition();
++				
++			case TS_WORLD:
++				return getDerivedPosition();
++			
++			default:
++				YAKE_ASSERT( 0 ).error( &quot;Unknown transform space&quot; );
++				return Vector3();
++		}
++	}
++
++	//------------------------------------------------------
+ 	void OgreNode::setOrientation( const Quaternion &amp; orientation )
+ 	{
+ 		YAKE_ASSERT( mSceneNode ).debug(&quot;need a scene node!&quot;);
+@@ -252,24 +271,11 @@
+ 					return pNode;
+ 			}
+ 		}
++		
+ 		return 0;
+ 	}
+ 
+ 	//------------------------------------------------------
+-	String OgreNode::getName() const
+-	{
+-		YAKE_ASSERT( mSceneNode ).debug(&quot;need a scene node!&quot;);
+-		return String( mSceneNode-&gt;getName().c_str() );
+-	}
+-
+-	//------------------------------------------------------
+-	void OgreNode::getName(String&amp; name)
+-	{
+-		YAKE_ASSERT( mSceneNode ).debug(&quot;need a scene node!&quot;);
+-		name = mSceneNode-&gt;getName().c_str();
+-	}
+-
+-	//------------------------------------------------------
+ 	const EntityPtrList&amp; OgreNode::getEntities() const
+ 	{
+ 		return mEntities;
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreParticleSystem.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -50,6 +50,6 @@
+ 	{
+ 		mParticleSys-&gt;setVisible( visible );
+ 	}
+-
++	
+ } // graphics
+-} // yake
+\ No newline at end of file
++} // yake
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreSkeleton.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreSkeleton.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreSkeleton.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -73,7 +73,6 @@
+ 		}*/
+ 	}
+ 
+-
+ 	//------------------------------------------------------
+ 	void OgreSkeleton::setAnimationWeight( const String&amp; rAnimName, real weight )
+ 	{
+@@ -85,7 +84,7 @@
+ 	{
+ 		mEntity.attachObjectToBone( rBoneName, static_cast&lt;OgreEntity*&gt;( pEntity )-&gt;getEntity_() );
+ 	}
+-
++	
+ } // ogre3d
+ } // graphics
+ } // yake
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreViewport.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreViewport.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreViewport.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -105,7 +105,9 @@
+ 	//------------------------------------------------------
+ 	void OgreViewport::attachCamera( ICamera* pCam )
+ 	{
+-		YAKE_ASSERT(1==0);
++		mCamera = dynamic_cast&lt;OgreCamera*&gt;( pCam );
++		
++		mViewport-&gt;setCamera( mCamera-&gt;getCamera_() );
+ 	}
+ 
+ 	//------------------------------------------------------
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -82,14 +82,14 @@
+ 	}
+ 	
+ 	//-----------------------------------------------------
+-	ISceneNode* GraphicalWorld::createSceneNode( const String&amp; name /*= &quot;&quot;*/ )
++	ISceneNode* GraphicalWorld::createSceneNode( const String&amp; name )
+ 	{
+ 		YAKE_ASSERT( msCore ).debug(&quot;need a core!&quot;);
+ 		return new OgreNode( msCore-&gt;getSceneMgr(), name );
+ 	}
+ 
+ 	//-----------------------------------------------------
+-	IEntity* GraphicalWorld::createEntity( const String &amp; mesh )
++	IEntity* GraphicalWorld::createEntity( const String&amp; mesh )
+ 	{
+ 		YAKE_ASSERT( msCore ).debug(&quot;need a core!&quot;);
+ 		OgreEntity* pEntity = new OgreEntity( msCore-&gt;getSceneMgr(), mesh );
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -147,9 +147,9 @@
+ 		}
+  		else if ( IShape::TriMeshDesc* pTriMeshDesc = dynamic_cast&lt;IShape::TriMeshDesc*&gt;( pShapeDesc ) )
+  		{
+- 			dTriMeshDataID dataId = mOdeWorld-&gt;getMeshDataById( pTriMeshDesc-&gt;meshId );
++			OdeTriMesh::MeshData data = mOdeWorld-&gt;getMeshDataById( pTriMeshDesc-&gt;meshId );
+ 			
+-			OdeTriMesh* pMesh = new OdeTriMesh( mOdeWorld-&gt;_getOdeSpace(), this, dataId );
++			OdeTriMesh* pMesh = new OdeTriMesh( mOdeWorld-&gt;_getOdeSpace(), this, data.id );
+ 			
+ 			YAKE_ASSERT( pMesh ).error( &quot;Mesh with such id wasn't found!&quot; );
+ 			
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -84,6 +84,67 @@
+ 		}
+ 		
+ 		//---------------------------------------------------
++		/**
++		 *     Parse mass description struct and fill ODE mass struct.
++		 * @param desc Mass description.
++		 * @param mass Mass struct to fill.
++		 */
++		void parseMassDesc( const IBody::MassDesc&amp; desc, dMass* mass )
++		{
++			if ( const IBody::SphereMassDesc* sphereMassDesc = dynamic_cast&lt;const IBody::SphereMassDesc*&gt;( &amp;desc ) )
++			{
++				dMassSetSphere( mass, sphereMassDesc-&gt;density, sphereMassDesc-&gt;radius );
++			}
++			else if ( const IBody::BoxMassDesc* boxMassDesc = dynamic_cast&lt;const IBody::BoxMassDesc*&gt;( &amp;desc ) )
++			{
++				dMassSetBox( mass, boxMassDesc-&gt;density, boxMassDesc-&gt;sizeX, boxMassDesc-&gt;sizeY, boxMassDesc-&gt;sizeZ );
++			}
++			else if ( const IBody::CapsuleMassDesc* capsuleMassDesc = dynamic_cast&lt;const IBody::CapsuleMassDesc*&gt;( &amp;desc ) )
++			{
++				dMassSetCappedCylinder( mass,
++												capsuleMassDesc-&gt;density,
++												2, 							// along Y axis
++												capsuleMassDesc-&gt;radius,
++												capsuleMassDesc-&gt;length );
++			}
++			else if ( const IBody::CylinderMassDesc* cylMassDesc = dynamic_cast&lt;const IBody::CylinderMassDesc*&gt;( &amp;desc ) )
++			{
++				dMassSetCylinder( mass,
++										cylMassDesc-&gt;density,
++										2,							// along Y axis
++										cylMassDesc-&gt;radius,
++										cylMassDesc-&gt;length );
++			}
++			else
++			{
++				YAKE_ASSERT( 0 ).error( &quot;Unsupported/unknown mass description type!&quot; );
++			}
++			
++			dMassTranslate( mass, desc.offset.x, desc.offset.y, desc.offset.z );
++		}
++		
++		//---------------------------------------------------
++		void OdeBody::setMass( const MassDesc&amp; rDesc )
++		{
++			parseMassDesc( rDesc, &amp;mMass );
++			
++			mOdeBody-&gt;setMass( &amp;mMass );
++		}
++		
++		//---------------------------------------------------
++		void OdeBody::addMass( const MassDesc&amp; rDesc )
++		{
++			dMass massToAdd;
++			
++			parseMassDesc( rDesc, &amp;massToAdd );
++			
++			dMassAdd( &amp;mMass, &amp;massToAdd );
++			
++			mOdeBody-&gt;setMass( &amp;mMass );
++		}
++
++		
++		//---------------------------------------------------
+ 		void OdeBody::addForce( const Force&amp; force )
+ 		{
+ 			//@todo apply force over several time steps according to duration.
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,18 +1,18 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+    Foundation; either version 2 of the License, or (at your option) any later
+    version.
+-
++ 
+    This program is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
++ 
+    You should have received a copy of the GNU Lesser General Public License along with
+    this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+    Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+@@ -27,23 +27,25 @@
+ #include &lt;yake/plugins/physicsODE/yakePCH.h&gt;
+ #include &lt;yake/plugins/physicsODE/OdeShapes.h&gt;
+ 
+-namespace yake {
+-namespace physics {
++namespace yake
++{
++	namespace physics
++	{
+ 
+ 		//-----------------------------------------------------
+ 		//	OdeGeom
+ 		//-----------------------------------------------------
+-		
++
+ 		//-----------------------------------------------------
+-		OdeGeom::OdeGeom(OdeActor* pOwner) : 
+-			mOdeGeomID( 0 ), 
+-			mOdeSpace( 0 ), 
+-			mOdeGeom( 0 ),
+-			mOwner( pOwner )
++		OdeGeom::OdeGeom(OdeActor* pOwner) :
++				mOdeGeomID( 0 ),
++				mOdeSpace( 0 ),
++				mOdeGeom( 0 ),
++				mOwner( pOwner )
+ 		{
+ 			YAKE_ASSERT( mOwner );
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		OdeGeom::~OdeGeom()
+ 		{
+@@ -57,57 +59,57 @@
+ 				mOdeGeomID = 0;
+ 			}
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+-		dGeomID OdeGeom::_getOdeGeomID() const 
++		dGeomID OdeGeom::_getOdeGeomID() const
+ 		{
+-			return mOdeGeomID; 
++			return mOdeGeomID;
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+-		dSpace* OdeGeom::_getOdeSpace() const	
+-		{ 
++		dSpace* OdeGeom::_getOdeSpace() const
++		{
+ 			return mOdeSpace;
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		void OdeGeom::_setData( void* pData )
+ 		{
+ 			dGeomSetData( mOdeGeomID, pData );
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+- 		void* OdeGeom::_getData() const
++		void* OdeGeom::_getData() const
+ 		{
+ 			return dGeomGetData( mOdeGeomID );
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+-		dGeom* OdeGeom::_getOdeGeomPtr() 
+-		{ 
++		dGeom* OdeGeom::_getOdeGeomPtr()
++		{
+ 			return mOdeGeom;
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		const OdeMaterial&amp; OdeGeom::getMaterial() const
+ 		{
+ 			return mMaterial;
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		void OdeGeom::setMaterial( OdeMaterial const&amp; rMaterial )
+ 		{
+ 			mMaterial = rMaterial;
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+-		 void OdeGeom::setPosition( Vector3 const&amp; rPosition )
+-		 {
++		void OdeGeom::setPosition( Vector3 const&amp; rPosition )
++		{
+ 			if (getType() == ST_PLANE)
+ 				return;
+ 			dGeomSetPosition( mOdeGeomID, rPosition.x, rPosition.y, rPosition.z );
+-		 }
+-		 
++		}
++
+ 		//-----------------------------------------------------
+ 		Vector3 OdeGeom::getPosition() const
+ 		{
+@@ -116,7 +118,7 @@
+ 			const dReal* pos = dGeomGetPosition( mOdeGeomID );
+ 			return Vector3( real(pos[0]), real(pos[1]), real(pos[2]) );
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		void OdeGeom::setOrientation( Quaternion const&amp; rOrientation )
+ 		{
+@@ -125,7 +127,7 @@
+ 			const dQuaternion q = { rOrientation.w, rOrientation.x, rOrientation.y, rOrientation.z };
+ 			dGeomSetQuaternion( mOdeGeomID, q );
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		Quaternion OdeGeom::getOrientation() const
+ 		{
+@@ -134,25 +136,25 @@
+ 
+ 			dQuaternion q;
+ 			dGeomGetQuaternion( mOdeGeomID, q );
+-			
++
+ 			return Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) );
+ 		}
+ 
+ 		//-----------------------------------------------------
+ 		//	OdeTriMesh
+ 		//-----------------------------------------------------
+-		
++
+ 		//-----------------------------------------------------
+ 		OdeTriMesh::OdeTriMesh( dSpace* pSpace, OdeActor* pOwner, dTriMeshDataID meshDataId ) :
+-			OdeGeom( pOwner )
++				OdeGeom( pOwner )
+ 		{
+ 			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+-			
++
+ 			mOdeSpace = pSpace;
+ 
+ 			// enjoy!
+ 			mOdeGeomID = dCreateTriMesh( mOdeSpace-&gt;id(), meshDataId, 0, 0, 0 );
+-			
++
+ 			// enabling collisions with spheres and boxes
+ 			dGeomTriMeshEnableTC( mOdeGeomID, dSphereClass, 1 );
+ 			dGeomTriMeshEnableTC( mOdeGeomID, dBoxClass, 1 );
+@@ -165,107 +167,107 @@
+ 		{
+ 			return ST_TRIANGLE_MESH;
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		OdeTriMesh::~OdeTriMesh()
+ 		{
+ 			dGeomDestroy( mOdeGeomID );
+-			
++
+ 		}
+ 
+ 		//-----------------------------------------------------
+-		dTriMeshDataID OdeTriMesh::buildMeshData( TriangleMeshDesc::VertexVector const&amp; rVertices,
+-						 		  	  				TriangleMeshDesc::IndexVector const&amp; rIndices,
+-						 		  	 				TriangleMeshDesc::NormalVector const&amp; rNormals )
++		//-----------------------------------------------------
++		void OdeTriMesh::buildMeshData(	MeshData&amp; dataToFill,
++		                                TriangleMeshDesc::VertexVector const&amp; rVertices,
++		                                TriangleMeshDesc::IndexVector const&amp; rIndices,
++		                                TriangleMeshDesc::NormalVector const&amp; rNormals )
+ 		{
+ 			YAKE_ASSERT( !rVertices.empty() ).error( &quot;Wont create empty mesh!&quot;);
+ 			YAKE_ASSERT( !rIndices.empty() ).error( &quot;Vertices without indices are meaningless!&quot; );
++			// Performing conversion to ODE internal format
++			dReal*		pVertices;
++			uint32*		pIndices;
++			dReal*		pNormals;
+ 
+-			// Performing conversion to ODE internal format
+-			dReal*		pVertices = 0;
+- 			uint32*		pIndices = 0;
+- 			dReal*		pNormals = 0;
+- 			
+ 			// stuffing vertices
+- 			pVertices = new dReal[ 3*rVertices.size() ];
+- 			uint32 elementCounter = 0;
++			pVertices = new dReal[ 3*rVertices.size() ];
++			uint32 elementCounter = 0;
+ 
+- 			ConstVectorIterator&lt;TriangleMeshDesc::VertexVector&gt; itV( rVertices.begin(), rVertices.end() );
+- 			while ( itV.hasMoreElements() )
+- 			{
+- 				Vector3 const&amp; v = itV.getNext();
+- 				pVertices[ elementCounter*3 + 0 ] = v.x;
+- 				pVertices[ elementCounter*3 + 1 ] = v.y;
+- 				pVertices[ elementCounter*3 + 2 ] = v.z;
+- 				++elementCounter;
+- 			}
+- 			
++			ConstVectorIterator&lt;TriangleMeshDesc::VertexVector&gt; itV( rVertices.begin(), rVertices.end() );
++			while ( itV.hasMoreElements() )
++			{
++				Vector3 const&amp; v = itV.getNext();
++				pVertices[ elementCounter*3 + 0 ] = v.x;
++				pVertices[ elementCounter*3 + 1 ] = v.y;
++				pVertices[ elementCounter*3 + 2 ] = v.z;
++				++elementCounter;
++			}
++
+ 			// pouring indices
+ 			pIndices = new uint32[ rIndices.size() ];
+ 			elementCounter = 0;
+- 			
++
+ 			ConstVectorIterator&lt;TriangleMeshDesc::IndexVector&gt; itI( rIndices.begin(), rIndices.end() );
+- 			while ( itI.hasMoreElements() )
+- 			{
+- 				pIndices[ elementCounter++] = itI.getNext();
+- 			}
++			while ( itI.hasMoreElements() )
++			{
++				pIndices[ elementCounter++] = itI.getNext();
++			}
+ 
+ 			// spice-up with normals
+- 			if ( !rNormals.empty() ) // according to taste (normals are optional)
+- 			{
+- 				pNormals = new dReal[ 3*rNormals.size() ];
+- 				elementCounter  = 0;
+- 				
++			if ( !rNormals.empty() ) // according to taste (normals are optional)
++			{
++				pNormals = new dReal[ 3*rNormals.size() ];
++				elementCounter  = 0;
++
+ 				ConstVectorIterator&lt;TriangleMeshDesc::NormalVector&gt; itN( rNormals.begin(), rNormals.end() );
+- 				while ( itN.hasMoreElements() )
+- 				{
+- 					Vector3 const&amp; v = itN.getNext();
+- 					pNormals[ elementCounter*3 + 0 ] = v.x;
+- 					pNormals[ elementCounter*3 + 1 ] = v.y;
+- 					pNormals[ elementCounter*3 + 2 ] = v.z;
+- 					++elementCounter;
+- 				}
+- 			}
+- 
++				while ( itN.hasMoreElements() )
++				{
++					Vector3 const&amp; v = itN.getNext();
++					pNormals[ elementCounter*3 + 0 ] = v.x;
++					pNormals[ elementCounter*3 + 1 ] = v.y;
++					pNormals[ elementCounter*3 + 2 ] = v.z;
++					++elementCounter;
++				}
++			}
++
+ 			// serving up
+- 			dTriMeshDataID dataId = dGeomTriMeshDataCreate();
+- 
+- 			if ( !rNormals.empty() )
+- 			{
+- 				dGeomTriMeshDataBuildDouble1( dataId,
+- 												 pVertices,
+- 												 sizeof( dReal )*3,
+- 												 rVertices.size(),
+- 												 pIndices,
+- 												 rIndices.size(),
+- 												 sizeof( uint32 )*3,
+- 												 pNormals );
+- 			}
+- 			else
+- 			{
+- 				dGeomTriMeshDataBuildDouble(  dataId,
+- 												pVertices,
+- 												sizeof( dReal )*3,
+- 												rVertices.size(),
+- 												pIndices,
+- 												rIndices.size(),
+- 												sizeof( uint32 )*3 );
+- 			}
+-			
+-			YAKE_SAFE_DELETE( pNormals );
+-			YAKE_SAFE_DELETE( pVertices );
+-			YAKE_SAFE_DELETE( pIndices );
+-			
+-			return dataId;
++			dTriMeshDataID dataId = dGeomTriMeshDataCreate();
++
++			if ( !rNormals.empty() )
++			{
++				dGeomTriMeshDataBuildDouble1( dataId,
++				                              pVertices,
++				                              sizeof( dReal )*3,
++				                              rVertices.size(),
++				                              pIndices,
++				                              rIndices.size(),
++				                              sizeof( uint32 )*3,
++				                              pNormals );
++			}
++			else
++			{
++				dGeomTriMeshDataBuildDouble(  dataId,
++				                              pVertices,
++				                              sizeof( dReal )*3,
++				                              rVertices.size(),
++				                              pIndices,
++				                              rIndices.size(),
++				                              sizeof( uint32 )*3 );
++			}
++
++			dataToFill.normals = pNormals;
++			dataToFill.vertices = pVertices;
++			dataToFill.indices = pIndices;
++			dataToFill.id = dataId;
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		//	OdeSphere
+ 		//-----------------------------------------------------
+ 
+ 		//-----------------------------------------------------
+ 		OdeSphere::OdeSphere( dSpace* pSpace, OdeActor* pOwner, real radius ) :
+-			OdeGeom( pOwner )
++				OdeGeom( pOwner )
+ 		{
+ 			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+ 
+@@ -278,7 +280,7 @@
+ 
+ 			_setData( this );
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		ShapeType OdeSphere::getType() const
+ 		{
+@@ -289,44 +291,44 @@
+ 		//	OdeCCylinder
+ 		//-----------------------------------------------------
+ 
+-		//-----------------------------------------------------			
++		//-----------------------------------------------------
+ 		OdeCCylinder::OdeCCylinder( dSpace* pSpace, OdeActor* pOwner, real radius, real length ) :
+-			OdeGeom( pOwner )
++				OdeGeom( pOwner )
+ 		{
+ 			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+-			
++
+ 			mOdeSpace = pSpace;
+-			
++
+ 			YAKE_ASSERT( radius &gt; 0 ).error( &quot;Radius should be invalid!&quot; );
+ 			YAKE_ASSERT( length &gt; 0 ).error( &quot;Length should be positive!&quot; );
+ 
+ 			mOdeGeom = new dCCylinder( mOdeSpace-&gt;id(), static_cast&lt;dReal&gt;( radius ), static_cast&lt;dReal&gt;( length ) );
+-			
++
+ 			mOdeGeomID = mOdeGeom-&gt;id();
+ 
+ 			_setData( this );
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		ShapeType OdeCCylinder::getType() const
+ 		{
+ 			return ST_CYLINDER;
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		//	OdeBox
+ 		//-----------------------------------------------------
+-		
+-		//-----------------------------------------------------			
+-		OdeBox::OdeBox( dSpace* pSpace, OdeActor* pOwner, real sizex, real sizey, real sizez) : 
+-			OdeGeom( pOwner )
++
++		//-----------------------------------------------------
++		OdeBox::OdeBox( dSpace* pSpace, OdeActor* pOwner, real sizex, real sizey, real sizez) :
++				OdeGeom( pOwner )
+ 		{
+ 			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+-			
++
+ 			mOdeSpace = pSpace;
+-			
++
+ 			mOdeGeom = new dBox( mOdeSpace-&gt;id(), sizex, sizey, sizez );
+-			
++
+ 			mOdeGeomID = mOdeGeom-&gt;id();
+ 
+ 			_setData( this );
+@@ -341,19 +343,19 @@
+ 		//-----------------------------------------------------
+ 		//	OdePlane
+ 		//-----------------------------------------------------
+-		
++
+ 		//-----------------------------------------------------
+ 		OdePlane::OdePlane( dSpace* pSpace, OdeActor* pOwner, real a, real b, real c, real d ) :
+-			OdeGeom( pOwner )
++				OdeGeom( pOwner )
+ 		{
+ 			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+-			
++
+ 			mOdeSpace = pSpace;
+ 
+ 			YAKE_ASSERT( a != 0. || b != 0. || c != 0. ).error( &quot;Invalid plane equation!&quot; );
+-			
++
+ 			Vector3 normal = Vector3( a, b, c );
+-			
++
+ 			if ( normal.squaredLength() &lt; 0.02 )
+ 				normal = Vector3( 0, 1, 0 );
+ 			else
+@@ -365,36 +367,36 @@
+ 
+ 			_setData( this );
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		ShapeType OdePlane::getType() const
+ 		{
+ 			return ST_PLANE;
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		//	OdeTransformGeom
+ 		//-----------------------------------------------------
+-		
++
+ 		//-----------------------------------------------------
+-		OdeTransformGeom::OdeTransformGeom( dSpace* pSpace, OdeActor* pOwner ) : 
+-			OdeGeom( pOwner ),
+-			mAttachedGeom( NULL )
++		OdeTransformGeom::OdeTransformGeom( dSpace* pSpace, OdeActor* pOwner ) :
++				OdeGeom( pOwner ),
++				mAttachedGeom( NULL )
+ 		{
+ 			YAKE_ASSERT( pSpace ).debug( &quot;Need a valid space!&quot; );
+-			
++
+ 			mOdeSpace = pSpace;
+-			
++
+ 			mOdeGeom = new dGeomTransform( mOdeSpace-&gt;id() );
+ 			YAKE_ASSERT( mOdeGeom );
+ 			mOdeGeomID = mOdeGeom-&gt;id();
+-			
++
+ 			dGeomTransformSetCleanup( mOdeGeomID, 1 );
+ 			dGeomTransformSetInfo( mOdeGeomID, 1 );
+ 
+ 			_setData( this );
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		ShapeType OdeTransformGeom::getType() const
+ 		{
+@@ -403,11 +405,11 @@
+ 
+ 		//-----------------------------------------------------
+ 		void OdeTransformGeom::attachGeom( OdeGeom* pGeom )
+-		{ 
++		{
+ 			YAKE_ASSERT( pGeom ).error( &quot;Attachment failed due to invalid geom passed!&quot; );
+-			
++
+ 			mAttachedGeom = pGeom;
+-			
++
+ 			mAttachedGeom-&gt;_setData( this-&gt;_getData() );
+ 
+ 			dSpace* pSpace = mAttachedGeom-&gt;_getOdeSpace();
+@@ -416,79 +418,79 @@
+ 			pSpace-&gt;remove( mAttachedGeom-&gt;_getOdeGeomID() );
+ 			dGeomTransformSetGeom( mOdeGeomID, mAttachedGeom-&gt;_getOdeGeomID() );
+ 		}
+-		
++
+ 		//-----------------------------------------------------
+ 		OdeGeom* OdeTransformGeom::getAttachedGeom() const
+-		{ 
++		{
+ 			return mAttachedGeom;
+ 		}
+-		
+-// /*		//-----------------------------------------------------
+-// 		void OdeCollisionGeomBase::tfAttachGeom( ICollisionGeometry* pGeom )
+-// 		{ YAKE_ASSERT(1==0).error(&quot;not implemented&quot;); }
+-// 		//-----------------------------------------------------
+-// 		ICollisionGeometry* OdeCollisionGeomBase::tfGetAttachedGeom() const
+-// 		{ return 0; }
+-// 		//-----------------------------------------------------
+-// 		Vector3 OdeCollisionGeomBase::planeGetNormal() const
+-// 		{ return Vector3::kZero; }
+-// 		//-----------------------------------------------------
+-// 		String OdeCollisionGeomBase::meshGetName() const
+-// 		{ return &quot;&quot;; }
+-// 		//-----------------------------------------------------
+-// 		real OdeCollisionGeomBase::planeGetDistance() const
+-// 		{ return 0; }
+-// 		//-----------------------------------------------------
+-// 		real OdeCollisionGeomBase::sphereGetRadius() const
+-// 		{ return 0; }
+-// 		//-----------------------------------------------------
+-// 		void OdeCollisionGeomBase::sphereSetRadius(const real radius)
+-// 		{}
+-// 		//-----------------------------------------------------
+-// 		Vector3 OdeCollisionGeomBase::boxGetDimensions() const
+-// 		{ return Vector3::kZero; }
+-// 		//-----------------------------------------------------
+-// 		Vector3 OdeCollisionGeomBase::rayGetOrigin() const
+-// 		{ return Vector3::kZero; }
+-// 		//-----------------------------------------------------
+-// 		Quaternion OdeCollisionGeomBase::rayGetOrientation() const
+-// 		{ return Quaternion::kIdentity; }
+-// 
+-// 		//-----------------------------------------------------
+-// 		real OdeCollisionGeomSphere::sphereGetRadius() const
+-// 		{
+-// 			return static_cast&lt;dSphere*&gt;(mOdeGeom)-&gt;getRadius();
+-// 		}
+-// 
+-// 		//-----------------------------------------------------
+-// 		void OdeCollisionGeomSphere::sphereSetRadius(const real radius)
+-// 		{
+-// 			static_cast&lt;dSphere*&gt;(mOdeGeom)-&gt;setRadius(radius);
+-// 		}
+-// 
+-// 		//-----------------------------------------------------
+-// 		Vector3 OdeCollisionGeomBox::boxGetDimensions() const
+-// 		{
+-// 			dVector3 lengths;
+-// 			static_cast&lt;dBox*&gt;(mOdeGeom)-&gt;getLengths(lengths);
+-// 			return Vector3( lengths[0], lengths[1], lengths[2] );
+-// 		}
+-// 
+-// 
+-// 		//-----------------------------------------------------
+-// 		Vector3 OdeCollisionGeomPlane::planeGetNormal() const
+-// 		{
+-// 			dVector4 params;
+-// 			static_cast&lt;dPlane*&gt;(mOdeGeom)-&gt;getParams(params);
+-// 			return Vector3( params[0], params[1], params[2] );
+-// 		}
+-// 		//-----------------------------------------------------
+-// 		real OdeCollisionGeomPlane::planeGetDistance() const
+-// 		{
+-// 			dVector4 params;
+-// 			static_cast&lt;dPlane*&gt;(mOdeGeom)-&gt;getParams(params);
+-// 			return params[3];
+-// 		}
+ 
+-} // physics
++		// /*		//-----------------------------------------------------
++		// 		void OdeCollisionGeomBase::tfAttachGeom( ICollisionGeometry* pGeom )
++		// 		{ YAKE_ASSERT(1==0).error(&quot;not implemented&quot;); }
++		// 		//-----------------------------------------------------
++		// 		ICollisionGeometry* OdeCollisionGeomBase::tfGetAttachedGeom() const
++		// 		{ return 0; }
++		// 		//-----------------------------------------------------
++		// 		Vector3 OdeCollisionGeomBase::planeGetNormal() const
++		// 		{ return Vector3::kZero; }
++		// 		//-----------------------------------------------------
++		// 		String OdeCollisionGeomBase::meshGetName() const
++		// 		{ return &quot;&quot;; }
++		// 		//-----------------------------------------------------
++		// 		real OdeCollisionGeomBase::planeGetDistance() const
++		// 		{ return 0; }
++		// 		//-----------------------------------------------------
++		// 		real OdeCollisionGeomBase::sphereGetRadius() const
++		// 		{ return 0; }
++		// 		//-----------------------------------------------------
++		// 		void OdeCollisionGeomBase::sphereSetRadius(const real radius)
++		// 		{}
++		// 		//-----------------------------------------------------
++		// 		Vector3 OdeCollisionGeomBase::boxGetDimensions() const
++		// 		{ return Vector3::kZero; }
++		// 		//-----------------------------------------------------
++		// 		Vector3 OdeCollisionGeomBase::rayGetOrigin() const
++		// 		{ return Vector3::kZero; }
++		// 		//-----------------------------------------------------
++		// 		Quaternion OdeCollisionGeomBase::rayGetOrientation() const
++		// 		{ return Quaternion::kIdentity; }
++		//
++		// 		//-----------------------------------------------------
++		// 		real OdeCollisionGeomSphere::sphereGetRadius() const
++		// 		{
++		// 			return static_cast&lt;dSphere*&gt;(mOdeGeom)-&gt;getRadius();
++		// 		}
++		//
++		// 		//-----------------------------------------------------
++		// 		void OdeCollisionGeomSphere::sphereSetRadius(const real radius)
++		// 		{
++		// 			static_cast&lt;dSphere*&gt;(mOdeGeom)-&gt;setRadius(radius);
++		// 		}
++		//
++		// 		//-----------------------------------------------------
++		// 		Vector3 OdeCollisionGeomBox::boxGetDimensions() const
++		// 		{
++		// 			dVector3 lengths;
++		// 			static_cast&lt;dBox*&gt;(mOdeGeom)-&gt;getLengths(lengths);
++		// 			return Vector3( lengths[0], lengths[1], lengths[2] );
++		// 		}
++		//
++		//
++		// 		//-----------------------------------------------------
++		// 		Vector3 OdeCollisionGeomPlane::planeGetNormal() const
++		// 		{
++		// 			dVector4 params;
++		// 			static_cast&lt;dPlane*&gt;(mOdeGeom)-&gt;getParams(params);
++		// 			return Vector3( params[0], params[1], params[2] );
++		// 		}
++		// 		//-----------------------------------------------------
++		// 		real OdeCollisionGeomPlane::planeGetDistance() const
++		// 		{
++		// 			dVector4 params;
++		// 			static_cast&lt;dPlane*&gt;(mOdeGeom)-&gt;getParams(params);
++		// 			return params[3];
++		// 		}
++
++	} // physics
+ } // yake
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -71,7 +71,13 @@
+  		{
+ 			for ( MeshDataMap::iterator i = mMeshDataMap.begin(); i != mMeshDataMap.end(); ++i )
+ 			{
+-				dGeomTriMeshDataDestroy( i-&gt;second );
++				OdeTriMesh::MeshData mesh_data = i-&gt;second;
++				
++				dGeomTriMeshDataDestroy( mesh_data.id );
++				
++				YAKE_SAFE_DELETE_ARRAY( mesh_data.vertices );
++				YAKE_SAFE_DELETE_ARRAY( mesh_data.indices );
++				YAKE_SAFE_DELETE_ARRAY( mesh_data.normals );
+ 			}
+ 
+  			YAKE_SAFE_DELETE( mOdeContactGroup );
+@@ -323,16 +329,19 @@
+ 		//-----------------------------------------------------
+ 		TriangleMeshId OdeWorld::createTriangleMesh( TriangleMeshDesc const&amp; rTriMeshDesc )
+ 		{
+-			dTriMeshDataID dataId = OdeTriMesh::buildMeshData(	rTriMeshDesc.vertices,
+-																rTriMeshDesc.indices,
+-																rTriMeshDesc.normals );
++			OdeTriMesh::MeshData data;
++			
++			OdeTriMesh::buildMeshData( data,
++												rTriMeshDesc.vertices,
++												rTriMeshDesc.indices,
++												rTriMeshDesc.normals );
+ 
+-			mMeshDataMap.insert( MeshDataMap::value_type( mNextMeshId, dataId ) );
++			mMeshDataMap.insert( MeshDataMap::value_type( mNextMeshId, data ) );
+ 			
+ 			return mNextMeshId++;
+ 		}
+ 		//-----------------------------------------------------
+-		dTriMeshDataID OdeWorld::getMeshDataById(  TriangleMeshId id ) const
++		OdeTriMesh::MeshData OdeWorld::getMeshDataById(  TriangleMeshId id ) const
+ 		{
+ 			MeshDataMap::const_iterator i = mMeshDataMap.find( id );
+ 			
+
+Modified: trunk/yake/src/yapp/Makefile.am
+===================================================================
+--- trunk/yake/src/yapp/Makefile.am	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/Makefile.am	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,3 +1,3 @@
+ INCLUDES = $(all_includes)
+ METASOURCES = AUTO
+-SUBDIRS = base loader model statemachine ent gui msg plugins samples
++SUBDIRS = base loader model statemachine ent gui msg plugins samples raf
+
+Modified: trunk/yake/src/yapp/ent/yakeEntity.cpp
+===================================================================
+--- trunk/yake/src/yapp/ent/yakeEntity.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/ent/yakeEntity.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -79,7 +79,7 @@
+ 		++mAge;
+ 		_tickComponents();
+ 	}
+-	void Entity::addComponent( const String&amp; tag, SharedPtr&lt;EntityComponent&gt;&amp; pComponent, size_t prio /*= 0*/ )
++	void Entity::addComponent( const String&amp; tag, const SharedPtr&lt;EntityComponent&gt;&amp; pComponent, size_t prio /*= 0*/ )
+ 	{
+ 		YAKE_ASSERT( prio == 0 )(prio).warning(&quot;Only 0 priorities are currently supported!&quot;);
+ 		YAKE_ASSERT( !tag.empty() ).warning(&quot;&quot;);
+
+Modified: trunk/yake/src/yapp/ent/yakeTrigger.cpp
+===================================================================
+--- trunk/yake/src/yapp/ent/yakeTrigger.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/ent/yakeTrigger.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -66,6 +66,7 @@
+ 			if (itFind == mVolumes.end())
+ 				return pV;
+ 			mVolumes.erase( itFind );
++			return pV;
+ 		}
+ 		void VolumeSet::translate(const Vector3&amp;)
+ 		{
+
+Modified: trunk/yake/src/yapp/loader/yakeDotScene.cpp
+===================================================================
+--- trunk/yake/src/yapp/loader/yakeDotScene.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/loader/yakeDotScene.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -46,8 +46,6 @@
+ 	//------------------------------------------------------
+ 	bool DotSceneParser::load( const SharedPtr&lt;dom::INode&gt;&amp; docNode )
+ 	{
+-		YAKE_DECLARE_FUNCTION( load );
+-		
+ 		YAKE_LOG( &quot;load()&quot; );
+ 		
+ 		YAKE_ASSERT( docNode.get() );
+@@ -67,8 +65,6 @@
+ 	//------------------------------------------------------
+ 	void DotSceneParser::readScene( const SharedPtr&lt;dom::INode&gt;&amp; pNode )
+ 	{
+-		YAKE_DECLARE_FUNCTION( readScene );
+-		
+ 		//const String name = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+ 		//YAKE_LOG( &quot;readScene() [&quot; + name + &quot;]&quot; );
+ 		
+@@ -84,8 +80,6 @@
+ 	//------------------------------------------------------
+ 	void DotSceneParser::readNodes( const SharedPtr&lt;dom::INode&gt;&amp; pNodes )
+ 	{
+-		YAKE_DECLARE_FUNCTION( readNodes );
+-		
+ 		YAKE_LOG( &quot;readNodes()&quot; );
+ 		YAKE_ASSERT( pNodes );
+ 		
+@@ -99,8 +93,6 @@
+ 	//------------------------------------------------------
+ 	void DotSceneParser::readNode( const SharedPtr&lt;dom::INode&gt;&amp; pNode, String parentNodeName )
+ 	{
+-		YAKE_DECLARE_FUNCTION( readNode );
+-		
+ 		String nodeName = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+ 		
+ 		YAKE_LOG( &quot;readNode() [name=&quot; + nodeName + &quot;]&quot; );
+@@ -184,8 +176,6 @@
+ 	//------------------------------------------------------
+ 	void DotSceneParser::readEntity( const SharedPtr&lt;dom::INode&gt;&amp; pNode, String parentNodeName )
+ 	{
+-		YAKE_DECLARE_FUNCTION( readEntity );
+-		
+ 		YAKE_ASSERT( pNode );
+ 		
+ 		EntityDesc desc;
+@@ -231,17 +221,17 @@
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void DotSceneParser::readRotation( const SharedPtr&lt;dom::INode&gt;&amp; pNode, Quaternion &amp; rotation )
++	void DotSceneParser::readRotation( const SharedPtr&lt;dom::INode&gt;&amp; pNode, Quaternion&amp; rotation )
+ 	{
+ 		YAKE_ASSERT( pNode );
+-		if (pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qx&quot;) != &quot;&quot;)
++		if ( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qx&quot;) != &quot;&quot; )
+ 		{
+ 			rotation.x = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qx&quot;) );
+ 			rotation.y = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qy&quot;) );
+ 			rotation.z = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qz&quot;) );
+ 			rotation.w = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qw&quot;) );
+ 		}
+-		if (pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisX&quot;) != &quot;&quot;)
++		else if ( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisX&quot;) != &quot;&quot; )
+ 		{
+ 			Vector3 axis;
+ 			axis.x = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisX&quot;) );
+@@ -249,7 +239,7 @@
+ 			axis.z = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisZ&quot;) );
+ 			rotation.FromAxes( &amp;axis );
+ 		}
+-		if (pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;angleX&quot;) != &quot;&quot;)
++		else if ( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;angleX&quot;) != &quot;&quot; )
+ 		{
+ 			Vector3 axis;
+ 			axis.x = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;angleX&quot;) );
+@@ -262,8 +252,6 @@
+ 	//------------------------------------------------------
+ 	void DotSceneParser::readColour( const SharedPtr&lt;dom::INode&gt;&amp; pNode, Color&amp; colour )
+ 	{
+-		YAKE_DECLARE_FUNCTION( readColour );
+-		
+ 		YAKE_ASSERT( pNode );
+ 		
+ 		String r = pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;r&quot;);
+@@ -301,8 +289,6 @@
+ 	//------------------------------------------------------
+ 	void DotSceneParser::readLight( const SharedPtr&lt;dom::INode&gt;&amp; pNode, String parentNodeName )
+ 	{
+-		YAKE_DECLARE_FUNCTION( readLight );
+-		
+ 		String name = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+ 
+ 		LightDesc desc;
+@@ -374,8 +360,6 @@
+ 	//------------------------------------------------------
+ 	void DotSceneParser::readCamera( const SharedPtr&lt;dom::INode&gt;&amp; pNode, String parentNodeName )
+ 	{
+-		YAKE_DECLARE_FUNCTION( readCamera );
+-		
+ 		String name = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+ 
+ 		CameraDesc desc;
+@@ -395,6 +379,12 @@
+ 		
+ 		desc.fov = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;fov&quot; ) );
+ 		
++		// Reading aspect ratio
++		String aspectRatio = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;aspectRatio&quot; );
++		// default value is 1.333 ( 640/480, 800/600, etc... )
++		desc.aspectRatio =
++				aspectRatio == &quot;&quot; ? 1.333 : StringUtil::parseReal( aspectRatio );
++		
+ 		const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
+ 		for ( dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it )
+ 		{
+
+Modified: trunk/yake/src/yapp/model/Makefile.am
+===================================================================
+--- trunk/yake/src/yapp/model/Makefile.am	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/model/Makefile.am	2005-09-26 21:17:18 UTC (rev 947)
+@@ -4,6 +4,5 @@
+ lib_LTLIBRARIES = libyappModel.la
+ libyappModel_la_SOURCES = yakeComplexModel.cpp yakeGraphical.cpp \
+ 	yakePhysical.cpp yakeVehicle.cpp yakeActor.cpp yakeModelLink.cpp \
+-	yakeModelMovableLink.cpp yakeNativeEngine.cpp yakeNativeWheel.cpp \
+-	yakeVehiclePhysicalComponent.cpp yakeVehicleSerializerXML.cpp yakeVehicleTpl.cpp
++	yakeModelMovableLink.cpp yakeVehiclePhysicalComponent.cpp yakeVehicleTpl.cpp
+ libyappModel_la_LIBADD = $(top_builddir)/src/yapp/loader/libyappLoader.la
+
+Modified: trunk/yake/src/yapp/model/yakeComplexModel.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeComplexModel.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/model/yakeComplexModel.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -33,39 +33,46 @@
+ namespace complex {
+ 
+ 	//-----------------------------------------------------
+-	Model::Model() : mParent(0)
++	Model::Model() : mParent( 0 )
+ 	{
+ 	}
++	
+ 	//-----------------------------------------------------
+ 	Model::~Model()
+ 	{
+ 	}
++	
+ 	//-----------------------------------------------------
+ 	void Model::setParentModel( Model* pModel )
+ 	{
+ 		mParent = pModel;
+ 	}
++	
+ 	//-----------------------------------------------------
+ 	Model* Model::getParentModel() const
+ 	{
+ 		return mParent;
+ 	}
++	
+ 	//-----------------------------------------------------
+-	void Model::addChildModel( SharedPtr&lt;Model&gt; &amp; rModel )
++	void Model::addChildModel( SharedPtr&lt;Model&gt;&amp; rModel )
+ 	{
+ 		YAKE_ASSERT( rModel.get() );
+ 		mChildren.push_back( rModel );
+ 	}
++	
+ 	//-----------------------------------------------------
+-	SharedPtr&lt;Model&gt; Model::getChildModelByName( const String &amp; rName ) const
++	SharedPtr&lt;Model&gt; Model::getChildModelByName( const String&amp; rName ) const
+ 	{
+ 		return SharedPtr&lt;Model&gt;();
+ 	}
++	
+ 	//-----------------------------------------------------
+-	SharedPtr&lt;Model&gt; Model::removeChildModel( const String &amp; rName )
++	SharedPtr&lt;Model&gt; Model::removeChildModel( const String&amp; rName )
+ 	{
+ 		return SharedPtr&lt;Model&gt;();
+ 	}
++	
+ 	//-----------------------------------------------------
+ 	SharedPtr&lt;Model&gt; Model::removeChildModel( const SharedPtr&lt;Model&gt;&amp; rModel )
+ 	{
+@@ -84,29 +91,29 @@
+ 	}
+ 
+ 	//-----------------------------------------------------
+-	void Model::addPhysical(const SharedPtr&lt;Physical&gt; &amp; pPhysical, const String &amp; rName)
++	void Model::addPhysical( const SharedPtr&lt;Physical&gt;&amp; pPhysical, const String&amp; rName )
+ 	{
+ 		YAKE_ASSERT( pPhysical.get() );
+ 		String name = rName;
+ 		if (name != &quot;&quot;)
+ 		{
+ 			PhysicalMap::const_iterator itFind = mPhysicals.find( name );
+-			YAKE_ASSERT( itFind == mPhysicals.end() ).debug(&quot;submodel needs a unique name! name already taken!&quot;);
++			YAKE_ASSERT( itFind == mPhysicals.end() ).debug( &quot;submodel needs a unique name! name already taken!&quot; );
+ 		}
+ 		else
+-			name = uniqueName::create(&quot;auto_&quot;);
++			name = uniqueName::create( &quot;auto_&quot; );
+ 		mPhysicals.insert( std::make_pair(name,pPhysical) );
+ 	}
+ 
+ 	//-----------------------------------------------------
+-	void Model::addGraphical(const SharedPtr&lt;Graphical&gt; &amp; pGraphical, const String &amp; rName)
++	void Model::addGraphical( const SharedPtr&lt;Graphical&gt;&amp; pGraphical, const String&amp; rName )
+ 	{
+ 		YAKE_ASSERT( pGraphical.get() );
+ 		String name = rName;
+-		if (name != &quot;&quot;)
++		if ( name != &quot;&quot; )
+ 		{
+ 			GraphicalMap::const_iterator itFind = mGraphicals.find( name );
+-			YAKE_ASSERT( itFind == mGraphicals.end() ).debug(&quot;submodel needs a unique name! name already taken!&quot;);
++			YAKE_ASSERT( itFind == mGraphicals.end() ).debug( &quot;submodel needs a unique name! name already taken!&quot; );
+ 		}
+ 		else
+ 			name = uniqueName::create(&quot;auto_&quot;);
+@@ -114,37 +121,43 @@
+ 	}
+ 
+ 	//-----------------------------------------------------
+-	Physical* Model::getPhysicalByName( const String &amp; rName ) const
++	Physical* Model::getPhysicalByName( const String&amp; rName ) const
+ 	{
+ 		PhysicalMap::const_iterator itFind = mPhysicals.find( rName );
++		
+ 		if (itFind == mPhysicals.end())
+ 			return 0;
++		
+ 		return itFind-&gt;second.get();
+ 	}
+ 
+ 	//-----------------------------------------------------
+-	Graphical* Model::getGraphicalByName( const String &amp; rName ) const
++	Graphical* Model::getGraphicalByName( const String&amp; rName ) const
+ 	{
+ 		GraphicalMap::const_iterator itFind = mGraphicals.find( rName );
+-		if (itFind == mGraphicals.end())
++		
++		if ( itFind == mGraphicals.end() )
+ 			return 0;
++		
+ 		return itFind-&gt;second.get();
+ 	}
+ 
+ 	//-----------------------------------------------------
+-	void Model::addGraphicsController(const SharedPtr&lt;IObjectController&gt; &amp; pController, const String &amp; rName)
++	void Model::addGraphicsController(const SharedPtr&lt;IObjectController&gt;&amp; pController, const String&amp; rName)
+ 	{
+-		YAKE_ASSERT( 0==1 ).warning(&quot;IS THIS REALLY A GRAPHICS CONTROLLER?&quot;);
++		YAKE_ASSERT( 0 == 1 ).warning( &quot;IS THIS REALLY A GRAPHICS CONTROLLER?&quot; );
+ 		YAKE_ASSERT( pController.get() );
+-		YAKE_ASSERT( rName.length() == 0 ).warning(&quot;tagging not implemented!&quot;);
++		YAKE_ASSERT( rName.length() == 0 ).warning( &quot;tagging not implemented!&quot; );
++		
+ 		mControllers.push_back( pController );
+ 	}
+ 
+ 	//-----------------------------------------------------
+-	void Model::addLink( const SharedPtr&lt;ModelLink&gt; &amp; pModelLink, const String &amp; rName )
++	void Model::addLink( const SharedPtr&lt;ModelLink&gt;&amp; pModelLink, const String&amp; rName )
+ 	{
+ 		YAKE_ASSERT( pModelLink.get() );
+-		YAKE_ASSERT( rName.length() == 0 ).warning(&quot;tagging not implemented!&quot;);
++		YAKE_ASSERT( rName.length() == 0 ).warning( &quot;tagging not implemented!&quot; );
++		
+ 		mControllers.push_back( pModelLink );
+ 	}
+ 
+@@ -152,6 +165,7 @@
+ 	void Model::updatePhysics( real timeElapsed )
+ 	{
+ 	}
++	
+ 	//-----------------------------------------------------
+ 	void Model::updateGraphics( real timeElapsed )
+ 	{
+
+Modified: trunk/yake/src/yapp/model/yakeGraphical.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeGraphical.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/model/yakeGraphical.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -259,8 +259,6 @@
+ 	//-----------------------------------------------------
+ 	void Graphical::DotSceneListener::processSceneNode( const SceneNodeDesc desc )
+ 	{
+-		YAKE_DECLARE_FUNCTION( processSceneNode );
+-		
+ 		YAKE_LOG( &quot;Processing scene node &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
+ 				
+ 		graphics::ISceneNode* pSN = mGWorld-&gt;createSceneNode( desc.name );
+@@ -272,6 +270,7 @@
+ 			parentSN-&gt;addChildNode( pSN );
+ 		}
+ 		
++		pSN-&gt;setName( desc.name );
+ 		pSN-&gt;setPosition( desc.transform.position );
+ 		pSN-&gt;setOrientation( desc.transform.rotation );
+ 		pSN-&gt;setScale( desc.transform.scale );
+@@ -279,13 +278,38 @@
+ 		mSceneNodes[ desc.name ] = pSN;
+ 
+ 		mOwner.addSceneNode( pSN, parentSN ? false : true );
++		
++		// look if this node is tracked
++		// TODO current scheme allows node to be tracked by only one target
++		TrackerMap::iterator end = mTrackersTargets.end();
++		for( TrackerMap::iterator trackRecord = mTrackersTargets.begin(); trackRecord != end; ++trackRecord )
++		{
++			if ( trackRecord-&gt;second == desc.name )
++			{
++				YAKE_LOG( &quot;Setting track target for camera &quot; + trackRecord-&gt;first + &quot; ...&quot; );
++			
++				CameraInfo info = mCameras[ trackRecord-&gt;first ];
++				
++				YAKE_LOG( &quot;Camera info found. Acquiring camera...&quot; );
++				
++				graphics::ICamera* tracker = info.camera;
++				
++				YAKE_LOG( &quot;Got camera. Setting orientation...&quot; );
++				
++				tracker-&gt;lookAt( pSN-&gt;getPosition( graphics::ISceneNode::TS_WORLD ) );
++				
++				YAKE_LOG( &quot;Orientation was set up...&quot; );
++				
++				// cleaning up
++				mTrackersTargets.erase( trackRecord );
++				break;
++			}
++		}
+ 	}
+ 	
+ 	//-----------------------------------------------------
+ 	void Graphical::DotSceneListener::processEntity( const EntityDesc desc )
+ 	{
+-		YAKE_DECLARE_FUNCTION( processEntity );
+-		
+ 		YAKE_LOG( &quot;Processing entity &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
+ 		
+ 		graphics::IEntity* pEntity = mGWorld-&gt;createEntity( desc.meshFile );
+@@ -310,8 +334,6 @@
+ 	//-----------------------------------------------------
+ 	void Graphical::DotSceneListener::processCamera( const CameraDesc desc )
+ 	{
+-		YAKE_DECLARE_FUNCTION( processCamera );
+-		
+ 		YAKE_LOG( &quot;Processing camera &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
+ 		
+ 		graphics::ICamera* pCamera = mGWorld-&gt;createCamera();
+@@ -323,13 +345,26 @@
+ 			parentSN-&gt;attachCamera( pCamera );
+ 		}
+ 		
+-		pCamera-&gt;setFOV( desc.fov );
++		pCamera-&gt;setName( desc.name );
++		pCamera-&gt;setFOV( Math::DegreesToRadians( desc.fov ) );
+ 		pCamera-&gt;setAspectRatio( desc.aspectRatio );
+ 		pCamera-&gt;setProjectionType( desc.projectionType );
+ 		pCamera-&gt;setNearClipDistance( desc.clipping.nearClip );
+ 		pCamera-&gt;setFarClipDistance( desc.clipping.farClip );
+-		pCamera-&gt;setDirection( desc.normal );
+ 		
++	//	pCamera-&gt;setDirection( desc.normal );
++		
++		pCamera-&gt;setPosition( Vector3() );
++		pCamera-&gt;setOrientation( Quaternion::kIdentity );
++		
++		
++		if ( desc.trackTargetName != &quot;&quot; )
++		{
++			YAKE_LOG( &quot;Saving tracking record for camera &quot; + desc.name + &quot; ... &quot; );
++			
++			mTrackersTargets.insert( TrackerMap::value_type( desc.name, desc.trackTargetName ) );
++		}
++		
+ 		CameraInfo info;
+ 		
+ 		info.camera = pCamera;
+@@ -341,8 +376,6 @@
+ 	//-----------------------------------------------------
+ 	void Graphical::DotSceneListener::processLight( const LightDesc desc )
+ 	{
+-		YAKE_DECLARE_FUNCTION( processLight );
+-		
+ 		YAKE_LOG( &quot;Processing light &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
+ 		
+ 		graphics::ILight* pLight = mGWorld-&gt;createLight();
+@@ -354,8 +387,19 @@
+ 			parentSN-&gt;attachLight( pLight );
+ 		}
+ 		
++		pLight-&gt;setName( desc.name );
+ 		pLight-&gt;setType( desc.type );
+ 		pLight-&gt;setCastsShadows( desc.castsShadows );
++		
++		if ( desc.castsShadows )
++		{
++			YAKE_LOG( &quot;  light casts shadows&quot; );
++		}
++		else
++		{
++			YAKE_LOG( &quot;  light doesn't cast shadows&quot; );
++		}
++		
+ 		pLight-&gt;setDiffuseColour( desc.diffuseColor );
+ 		pLight-&gt;setSpecularColour( desc.specularColor );
+ 		pLight-&gt;setAttenuation( desc.attenuation.range,
+
+Modified: trunk/yake/src/yapp/plugins/entLua/yakeEvent_lua.cpp
+===================================================================
+--- trunk/yake/src/yapp/plugins/entLua/yakeEvent_lua.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/plugins/entLua/yakeEvent_lua.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -39,17 +39,17 @@
+ 	{
+ 		try {
+ 			//std::cout &lt;&lt; &quot;executeEntityEvent(\&quot;&quot; &lt;&lt; evtName.c_str() &lt;&lt; &quot;\&quot;)\n&quot;;
+-			luabind::object evtTbl = luabind::get_globals(L)[&quot;events&quot;];
++			luabind::object evtTbl = luabind::globals(L)[&quot;events&quot;];
+ 			if (!evtTbl.is_valid())
+ 				throw &quot;event table is not valid&quot;;
+ 
+-			luabind::object fnTbl = pEntity-&gt;isServer() ? evtTbl.at(&quot;server&quot;) : evtTbl.at(&quot;client&quot;);
++			luabind::object fnTbl = pEntity-&gt;isServer() ? luabind::gettable( evtTbl, &quot;server&quot; ) : luabind::gettable( evtTbl, &quot;client&quot; );
+ 			//luabind::object fnTbl = evtTbl[&quot;server&quot;];
+-			if (!fnTbl.is_valid() || fnTbl.type() != LUA_TTABLE)
++			if (!fnTbl.is_valid() || luabind::type( fnTbl ) != LUA_TTABLE)
+ 				throw &quot;event functions table is not valid&quot;;
+ 
+ 			luabind::object evtFn = fnTbl[ evtName ];
+-			if (!evtFn.is_valid() || evtFn.type() != LUA_TFUNCTION)
++			if (!evtFn.is_valid() || luabind::type( evtFn ) != LUA_TFUNCTION)
+ 				throw &quot;event function does not exist or is invalid&quot;;
+ 
+ 			luabind::call_member&lt;void&gt;( fnTbl, evtName.c_str() );
+
+Modified: trunk/yake/src/yapp/plugins/entLua/yakeLuaBinder.cpp
+===================================================================
+--- trunk/yake/src/yapp/plugins/entLua/yakeLuaBinder.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/plugins/entLua/yakeLuaBinder.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -105,22 +105,22 @@
+ 				lua_State* L = pLuaVM-&gt;getLuaState();
+ 				YAKE_ASSERT( L );
+ 
+-				luabind::object globals = luabind::get_globals(L);
++				luabind::object globals = luabind::globals(L);
+ 
+ 				//
+ 				//globals[&quot;theVM&quot;] = pVM;
+ 
+ 				// create basic tables
+-				if (globals[&quot;events&quot;].type() != LUA_TTABLE)
++				if ( luabind::type( globals[&quot;events&quot;] ) != LUA_TTABLE)
+ 					globals[&quot;events&quot;] = luabind::newtable(L);
+ 
+ 				luabind::object eventsTbl = globals[&quot;events&quot;];
+-				if (eventsTbl[&quot;client&quot;].type() != LUA_TTABLE)
++				if ( luabind::type( eventsTbl[&quot;client&quot;] ) != LUA_TTABLE)
+ 					eventsTbl[&quot;client&quot;] = luabind::newtable(L);
+-				if (eventsTbl[&quot;server&quot;].type() != LUA_TTABLE)
++				if ( luabind::type( eventsTbl[&quot;server&quot;] ) != LUA_TTABLE)
+ 					eventsTbl[&quot;server&quot;] = luabind::newtable(L);
+ 
+-				if (globals[&quot;states&quot;].type() != LUA_TTABLE)
++				if ( luabind::type( globals[&quot;states&quot;] ) != LUA_TTABLE)
+ 					globals[&quot;states&quot;] = luabind::newtable(L);
+ 				luabind::object statesTbl = globals[&quot;states&quot;];
+ 
+@@ -142,7 +142,7 @@
+ 				YAKE_LOG_INFORMATION(&quot;Looking for a Lua meta class converter for class: &quot; + theClass-&gt;getName());
+ 				while (!done)
+ 				{
+-					if (globals[&quot;getAs_&quot;+theClass-&gt;getName()].type() == LUA_TFUNCTION)
++					if ( luabind::type( globals[&quot;getAs_&quot;+theClass-&gt;getName()] ) == LUA_TFUNCTION)
+ 					{
+ 						done = true;
+ 					}
+
+Modified: trunk/yake/src/yapp/plugins/entLua/yakeStateCb_lua.cpp
+===================================================================
+--- trunk/yake/src/yapp/plugins/entLua/yakeStateCb_lua.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/plugins/entLua/yakeStateCb_lua.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -43,25 +43,25 @@
+ 	{
+ 		try {
+ 			//std::cout &lt;&lt; &quot;executeEntityEvent(\&quot;&quot; &lt;&lt; evtName.c_str() &lt;&lt; &quot;\&quot;)\n&quot;;
+-			luabind::object machineTbl = (machineName == &quot;default&quot;) ? luabind::get_globals(L) : luabind::get_globals(L)[&quot;machine_&quot;+machineName];
+-			if (!machineTbl.is_valid() || machineTbl.type() != LUA_TTABLE)
++			luabind::object machineTbl = (machineName == &quot;default&quot;) ? luabind::globals(L) : luabind::globals(L)[&quot;machine_&quot;+machineName];
++			if (!machineTbl.is_valid() || luabind::type( machineTbl ) != LUA_TTABLE)
+ 				throw &quot;machine table is not valid&quot;;
+ 
+ 			luabind::object statesTbl = machineTbl[&quot;states&quot;];
+-			if (!statesTbl.is_valid() || statesTbl.type() != LUA_TTABLE)
++			if (!statesTbl.is_valid() || luabind::type( statesTbl ) != LUA_TTABLE)
+ 				throw &quot;states table is not valid&quot;;
+ 
+ 			luabind::object stateTbl = statesTbl[stateName];
+-			if (!stateTbl.is_valid() || stateTbl.type() != LUA_TTABLE)
++			if (!stateTbl.is_valid() || luabind::type( stateTbl ) != LUA_TTABLE)
+ 				throw &quot;state table is not valid&quot;;
+ 
+ 			//luabind::object fnTbl = pEntity-&gt;isServer() ? stateTbl.at(&quot;server&quot;) : stateTbl.at(&quot;client&quot;);
+ 			luabind::object fnTbl = stateTbl[&quot;server&quot;];
+-			if (!fnTbl.is_valid() || fnTbl.type() != LUA_TTABLE)
++			if (!fnTbl.is_valid() || luabind::type( fnTbl ) != LUA_TTABLE)
+ 				throw &quot;state functions table is not valid&quot;;
+ 
+ 			luabind::object fnObj = fnTbl[ fn.c_str() ];
+-			if (!fnObj.is_valid() || fnObj.type() != LUA_TFUNCTION) // function defined?
++			if (!fnObj.is_valid() || luabind::type( fnObj ) != LUA_TFUNCTION) // function defined?
+ 				return true;
+ 
+ 			luabind::call_member&lt;void&gt;( fnTbl, fn.c_str() );
+
+Modified: trunk/yake/src/yapp/raf/yakeApplication.cpp
+===================================================================
+--- trunk/yake/src/yapp/raf/yakeApplication.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/raf/yakeApplication.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -41,7 +41,7 @@
+ 		{
+ 			return systems.begin()-&gt;second.get();
+ 		}
+-		AssocVector&lt;String,SharedPtr&lt;SystemType&gt; &gt;::iterator itFind = systems.find( name );
++		typename AssocVector&lt;String,SharedPtr&lt;SystemType&gt; &gt;::iterator itFind = systems.find( name );
+ 		if (itFind == systems.end())
+ 			return 0;
+ 		return itFind-&gt;second.get();
+
+Modified: trunk/yake/src/yapp/samples/Makefile.am
+===================================================================
+--- trunk/yake/src/yapp/samples/Makefile.am	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/samples/Makefile.am	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,3 +1,3 @@
+ INCLUDES = $(all_includes)
+ METASOURCES = AUTO
+-SUBDIRS = base model misc graphics gui
++SUBDIRS = base model misc graphics gui raf
+
+Modified: trunk/yake/src/yapp/samples/graphics/scripted/Makefile.am
+===================================================================
+--- trunk/yake/src/yapp/samples/graphics/scripted/Makefile.am	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/samples/graphics/scripted/Makefile.am	2005-09-26 21:17:18 UTC (rev 947)
+@@ -7,4 +7,4 @@
+ 	$(top_builddir)/src/yake/scripting/libyakeScripting.la $(top_builddir)/src/yake/physics/libyakePhysics.la \
+ 	$(top_builddir)/src/yake/input/libyakeInput.la $(top_builddir)/src/yake/graphics/libyakeGraphics.la \
+ 	$(top_builddir)/src/yake/base/libyakeBase.la $(top_builddir)/src/yake/audio/libyakeAudio.la \
+-	$(top_builddir)/src/yake/data/libyakeData.la -llua -llualib -lluabind
++	$(top_builddir)/src/yake/data/libyakeData.la $(top_builddir)/src/yapp/ent/libyappEnt.la -llua -llualib -lluabind
+
+Modified: trunk/yake/src/yapp/samples/gui/console/yakeConsoleDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/gui/console/yakeConsoleDemo.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/samples/gui/console/yakeConsoleDemo.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -514,8 +514,8 @@
+ 	 */
+ 	void initGui()
+ 	{
+-		//mGuiRendererAdapter = loadPlugin( &quot;CEGUIOgreAdapter&quot; );
+-		mGuiRendererAdapter = loadPlugin( &quot;ceguiOgreRendererAdapter&quot; );
++		mGuiRendererAdapter = loadPlugin( &quot;CEGUIOgreAdapter&quot; );
++		//mGuiRendererAdapter = loadPlugin( &quot;ceguiOgreRendererAdapter&quot; );
+ 		YAKE_ASSERT( mGuiRendererAdapter );
+ 
+ 		YAKE_LOG( &quot;Starting adapter version &quot; + mGuiRendererAdapter-&gt;getName() );
+
+Modified: trunk/yake/src/yapp/samples/model/XODE/Makefile.am
+===================================================================
+--- trunk/yake/src/yapp/samples/model/XODE/Makefile.am	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/samples/model/XODE/Makefile.am	2005-09-26 21:17:18 UTC (rev 947)
+@@ -6,5 +6,6 @@
+ 	$(top_builddir)/src/yapp/loader/libyappLoader.la $(top_builddir)/src/yapp/base/libyappBase.la \
+ 	$(top_builddir)/src/yake/data/libyakeData.la $(top_builddir)/src/yake/physics/libyakePhysics.la \
+ 	$(top_builddir)/src/yake/input/libyakeInput.la $(top_builddir)/src/yake/graphics/libyakeGraphics.la \
+-	$(top_builddir)/src/yake/audio/libyakeAudio.la $(top_builddir)/src/yake/base/libyakeBase.la
++	$(top_builddir)/src/yake/audio/libyakeAudio.la $(top_builddir)/src/yake/base/libyakeBase.la \
++	$(top_builddir)/src/yake/scripting/libyakeScripting.la
+ XODEloader_SOURCES = yakeXODELoaderDemo.cpp
+
+Modified: trunk/yake/src/yapp/samples/model/XODE/yakeXODELoaderDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/model/XODE/yakeXODELoaderDemo.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/samples/model/XODE/yakeXODELoaderDemo.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -42,7 +42,7 @@
+ private:
+ 	SharedPtr&lt;physics::IWorld&gt;			mPWorld;
+ 
+-	app::model::Physical* 				mPhysical;
++	model::Physical* 						mPhysical;
+ 	
+ 	String	mWorldFilename;
+ public:
+@@ -58,7 +58,7 @@
+ 
+ 	void setupWorld()
+ 	{
+-		mPhysical = new app::model::Physical();
++		mPhysical = new model::Physical();
+ 		YAKE_ASSERT( mPhysical );
+ 		
+ 		yake::data::dom::xml::XmlSerializer ser;
+
+Modified: trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -84,7 +84,6 @@
+ 	{
+ 		std::cout &lt;&lt; &quot;MB: &quot; &lt;&lt; static_cast&lt;int&gt;( btn ) &lt;&lt; std::endl;
+ 	}
+-
+ 	
+ 	int createCameraViewportPair( real sx, real sy, real w, real h, int z )
+ 	{
+
+Modified: trunk/yake/src/yapp/samples/raf/minimal/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/raf/minimal/yakeDemo.cpp	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/src/yapp/samples/raf/minimal/yakeDemo.cpp	2005-09-26 21:17:18 UTC (rev 947)
+@@ -38,6 +38,7 @@
+ {
+ 	// Use default executor for convenience.
+ 	// It's always possible to manually execute TheApp::initialise() etc.
+-	return (raf::runApplication( TheApp() )) ? 0 : 1;
++	TheApp app;
++	return (raf::runApplication( app )) ? 0 : 1;
+ }
+ 
+
+Modified: trunk/yake/yake/base/templates/yakeRegistry.h
+===================================================================
+--- trunk/yake/yake/base/templates/yakeRegistry.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/base/templates/yakeRegistry.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -96,7 +96,7 @@
+ 
+ 	SharedPtr&lt; ICreator &gt; getDefaultCreator()
+ 	{
+-		YAKE_ASSERT( getIdentifiers().size() &gt; 0 ).debug( &quot;No default creator available.&quot; ); // todo: does not work in release mode, should throw exception
++		YAKE_ASSERT( ( Manager&lt; typename ConfigClass::Id, SharedPtr&lt; typename ConfigClass::ICreator&gt;,RegisterFunctionsNames &gt;::getIdentifiers().size() ) &gt; 0 ).debug( &quot;No default creator available.&quot; ); // todo: does not work in release mode, should throw exception
+ 		if( !m_pDefaultCreator ) m_pDefaultCreator = getObject( *Manager&lt; typename ConfigClass::Id, SharedPtr&lt; typename ConfigClass::ICreator &gt;, RegisterFunctionsNames &gt;::getIdentifiers().begin() ); // todo: (if(!m_pDefaultCreator) m_pDefaultCreator = front();
+ 		return m_pDefaultCreator;
+ 	}
+
+Modified: trunk/yake/yake/base/yake.h
+===================================================================
+--- trunk/yake/yake/base/yake.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/base/yake.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -38,7 +38,9 @@
+ //    INTERFACE STRUCTURES / UTILITY CLASSES
+ //============================================================================
+ 
++#	if YAKE_COMPILER == COMPILER_MSVC
+ #pragma comment(lib, &quot;base.lib&quot;)
++#	endif
+ 
+ namespace yake
+ {
+@@ -46,7 +48,7 @@
+ {
+ 
+ extern YAKE_BASE_API Version linktime;
+-const Version compiletime ( 0, 2, 0 );
++const Version compiletime ( 0, 3, 0 );
+ 
+ } // base
+ } // yake
+
+Modified: trunk/yake/yake/base/yakeDebugLogAppender.h
+===================================================================
+--- trunk/yake/yake/base/yakeDebugLogAppender.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/base/yakeDebugLogAppender.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -50,7 +50,7 @@
+ {
+ // Methods
+ public:
+-	static void onLog( const String&amp; rWhat, Log::Severity, const String&amp; rSource );
++	static void onLog( const Log::Message&amp; );
+ };
+ 
+ } // base
+
+Modified: trunk/yake/yake/base/yakeLog.h
+===================================================================
+--- trunk/yake/yake/base/yakeLog.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/base/yakeLog.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -53,7 +53,38 @@
+ // Types
+ public:
+ 	enum Severity { INFORMATIONS, WARNINGS, ERRORS };
+-	typedef Signal3&lt; void (const String&amp;, Severity, const String&amp;) &gt; OnLog;
++	
++	/**
++	 * Class representing log message.
++	*/
++	struct Message
++	{
++		/// Log message text.
++		String		text;
++		
++		/// Message severity.
++		Severity		severity;
++		
++		/// Message source, like &quot;kernel&quot; or &quot;module X&quot;.
++		String		source;
++		
++		/// Any additional info, like &quot;file foo.cpp, line 666&quot;.
++		String		additionalInfo;
++		
++		Message( 
++				const String&amp; msgText,
++				Severity msgSeverity,
++				const String&amp; msgSrc,
++				const String&amp; msgInfo ):	text( msgText ),
++													severity( msgSeverity ),
++													source( msgSrc ),
++													additionalInfo( msgInfo )
++		{
++		}
++	};
++	
++	/// Log signal type.
++	typedef Signal3&lt; void (const Message&amp;) &gt; OnLog;
+ 
+ // Class
+ public:
+@@ -62,21 +93,28 @@
+ 
+ // Methods
+ public:
++	/// Subscribe to log messages.
+ 	void onLog( const OnLog::slot_type&amp; rSlot );
+-	void log( const String&amp; rWhat, Severity severity );
+-	void log( const String&amp; rWhat, Severity severity, const String&amp; rSource );
+-	void logPrintf(char *fmt, ...); // todo: remove this &lt;= Er.. no!
++	
++	/// Log message.
++	void log( const String&amp; rWhat,
++				 Severity severity = INFORMATIONS, 
++				 const String&amp; rSource = &quot;yake&quot;, 
++				 const String&amp; rAdditionalInfo = &quot;&quot; );
++//deprecated method: for rich typesafe formatting use boost::format library
++//void logPrintf(char *fmt, ...); // todo: remove this &lt;= Er.. no!
+ 
+ // Data
+ private:
++	/// Log signal itself.
+ 	OnLog mOnLog;
+ 
+ 	YAKE_BUILD_PHOENIX_SINGLETON(Log)
+ };
+ 
+-void YAKE_BASE_API log_information( const String&amp; what, const String&amp; where );
+-void YAKE_BASE_API log_warning( const String&amp; what, const String&amp; where );
+-void YAKE_BASE_API log_error( const String&amp; what, const String&amp; where );
++void YAKE_BASE_API log_information( const String&amp; what, const String&amp; source, const String&amp; where );
++void YAKE_BASE_API log_warning( const String&amp; what, const String&amp; source, const String&amp; where );
++void YAKE_BASE_API log_error( const String&amp; what, const String&amp; source, const String&amp; where );
+ 
+ // the simplest form of logging. Adds nothing to &quot;what&quot;.
+ // Useful in scripts where you just want to log something without &quot;where&quot;
+@@ -100,12 +138,11 @@
+ #	define TOSTRING(x) STRINGIFY (x)
+ #endif
+ 
+-#define YAKE_LOG_INFORMATION( what ) yake::base::log_information( what, &quot;File: &quot;__FILE__&quot;@&quot;TOSTRING(__LINE__) );
+-#define YAKE_LOG_WARNING( what ) yake::base::log_warning( what, &quot;File: &quot;__FILE__&quot;@&quot;TOSTRING(__LINE__) );
+-#define YAKE_LOG_ERROR( what ) yake::base::log_error( what, &quot;File: &quot;__FILE__&quot;@&quot;TOSTRING(__LINE__) );
+-#define YAKE_LOG( what ) yake::base::log_information( what, &quot;File: &quot;__FILE__&quot;@&quot;TOSTRING(__LINE__) );
++#define YAKE_LOG_INFORMATION( what ) yake::base::log_information( what, &quot;yake&quot;, &quot;File: &quot;__FILE__&quot;@&quot;TOSTRING(__LINE__) );
++#define YAKE_LOG_WARNING( what ) yake::base::log_warning( what, &quot;yake&quot;, &quot;File: &quot;__FILE__&quot;@&quot;TOSTRING(__LINE__) );
++#define YAKE_LOG_ERROR( what ) yake::base::log_error( what, &quot;yake&quot;, &quot;File: &quot;__FILE__&quot;@&quot;TOSTRING(__LINE__) );
++#define YAKE_LOG( what ) yake::base::log_information( what, &quot;yake&quot;, &quot;File: &quot;__FILE__&quot;@&quot;TOSTRING(__LINE__) );
+ 
+-
+ } // base
+ } // yake
+ 
+
+Modified: trunk/yake/yake/base/yakePrerequisites.h
+===================================================================
+--- trunk/yake/yake/base/yakePrerequisites.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/base/yakePrerequisites.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -109,7 +109,7 @@
+ // todo: remove, deprecated, use safe_delete(_array)
+ #define YAKE_SAFE_RELEASE(ptr)              if(ptr) { ptr-&gt;release(); ptr = 0; }
+ #define YAKE_SAFE_DELETE(ptr)               if(ptr) { delete ptr; ptr = 0; }
+-#define YAKE_SAFE_DELETE_ARRAY(ptr_array)   if(ptr) { delete [] ptr_array; ptr_array = 0; }
++#define YAKE_SAFE_DELETE_ARRAY(ptr_array)   if(ptr_array) { delete [] ptr_array; ptr_array = 0; }
+ 
+ #define YAKE_DECLARE_CLASS(name)            static const char * yake_private_currentClass() { return #name; }
+ #define YAKE_DECLARE_GLOBAL                 YAKE_DECLARE_CLASS( global )
+
+Modified: trunk/yake/yake/graphics/yakeEntity.h
+===================================================================
+--- trunk/yake/yake/graphics/yakeEntity.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/graphics/yakeEntity.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -38,7 +38,17 @@
+ 	class YAKE_GRAPHICS_INTERFACE_API GraphicsEntity
+ 	{
+ 	public:
++		/// Constructor. Initialises mName with some unique value.
++		GraphicsEntity();
++		
+ 		virtual ~GraphicsEntity() {}
++		
++		void setName( const String&amp; entityName );
++		String getName() const;
++		
++	protected:
++		/// Entity name tag.
++		String	mName;
+ 	};
+ 
+ }
+
+Modified: trunk/yake/yake/graphics/yakeGraphicalWorld.h
+===================================================================
+--- trunk/yake/yake/graphics/yakeGraphicalWorld.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/graphics/yakeGraphicalWorld.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -122,10 +122,6 @@
+ 		virtual void setSubEntityMaterial( const String &amp; subEntity, const String &amp; materialName ) = 0;
+ 		//virtual void setReceivesShadows( bool receivesShadows ) = 0;
+ 		virtual void setCastsShadow( bool castsShadow ) = 0;
+-
+-		//@todo move into base class!?
+-		virtual String getName() const = 0;
+-		virtual void getName(String&amp; name) = 0;
+ 	};
+ 
+ 	/** A concrete instance of a camera in a scene.
+@@ -208,6 +204,7 @@
+ 		inline void rotate( const Vector3&amp; axis, real degrees );
+ 		inline void pitch( const real degrees );
+ 		virtual void yaw( const real degrees ) = 0;
++		virtual void roll( const  real degrees ) = 0;
+ 
+ 		/** Return a ray in world space coordinates as cast from the camera through a viewport
+ 			position.
+@@ -257,6 +254,13 @@
+ 			TS_PARENT,
+ 			TS_WORLD
+ 		};
++
++		/** Returns the position in parent's transform space. */
++		virtual Vector3 getPosition() const = 0;
++		
++		/** Returns scene node position in transform space specified by ts parameter. */
++		virtual Vector3 getPosition( TransformSpace ts ) const = 0;
++		
+ 		/** Adds a node as a child to this node.
+ 		*/
+ 		virtual void addChildNode( ISceneNode* pNode ) = 0;
+@@ -346,16 +350,6 @@
+ 		*/
+ 		virtual void detach( IParticleSystem* pPS ) = 0;
+ 
+-		/** Return the name of this scene node.
+-		*/
+-		virtual String getName() const = 0;
+-
+-		/** Return the name of this scene node.
+-		*/
+-		virtual void getName(String&amp; name) = 0;
+-
+-		//virtual void setName(const String&amp; name) = 0;
+-
+ 		/** Return the position as transformed through the hierarchy of nodes.
+ 		*/
+ 		virtual Vector3 getDerivedPosition() const = 0;
+@@ -444,8 +438,8 @@
+ 
+ 		virtual IEntity* pickEntity(const Ray&amp; ray) = 0;
+ 
+-		YAKE_MEMBERSIGNAL_PUREINTERFACE( public, void(real), PreRender )
+-		YAKE_MEMBERSIGNAL_PUREINTERFACE( public, void(real), PostRender )
++		YAKE_MEMBERSIGNAL_PUREINTERFACE( public, void(real), PreRender );
++		YAKE_MEMBERSIGNAL_PUREINTERFACE( public, void(real), PostRender );
+ 	};
+ 
+ } // graphics
+
+Modified: trunk/yake/yake/graphics/yakeGraphicsSystem.h
+===================================================================
+--- trunk/yake/yake/graphics/yakeGraphicsSystem.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/graphics/yakeGraphicsSystem.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -74,7 +74,7 @@
+ 	{
+ 		typedef AssocVector&lt;String, String&gt; ParamMap;
+ 
+-		YAKE_DECLARE_REGISTRY_01(IGraphicsSystem, String, ParamMap)		
++		YAKE_DECLARE_REGISTRY_01(IGraphicsSystem, String, ParamMap);
+ 	
+ 		virtual ~IGraphicsSystem();
+ 
+@@ -94,7 +94,7 @@
+ 		// todo: meta: not needed, typeid(ptr) returns the concrete type info (see abstract factory sample code) 
+ 		virtual const std::type_info &amp; get_type_info() = 0;
+ 	};
+-
++	
+ } // graphics
+ } // yake
+ 
+
+Modified: trunk/yake/yake/physics/yakePhysicsPrerequisites.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsPrerequisites.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/physics/yakePhysicsPrerequisites.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -136,8 +136,8 @@
+ 		{
+ 		}
+ 		VertexVector	vertices;
++		IndexVector		indices;
+ 		NormalVector	normals;
+-		IndexVector		indices;
+ 	};
+ }
+ }
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -78,6 +78,7 @@
+ 		virtual void moveRelative( const Vector3&amp; rVec );
+ 		virtual void lookAt( const Vector3&amp; target );
+ 		virtual void yaw( const real degrees );
++		virtual void roll( const  real degrees );
+ 
+ 
+ 		// ICamera
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -46,10 +46,6 @@
+ 		virtual void setSubEntityMaterial( const String&amp; subEntity, const String&amp; materialName );
+ 		virtual void setCastsShadow( bool castsShadow );
+ 
+-		virtual String getName() const;
+-		virtual void getName(String&amp; name);
+-		//virtual void setName(const String&amp; name);
+-
+ 		Ogre::Entity* getEntity_() const
+ 		{ return mEntity; }
+ 	protected:
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -40,6 +40,7 @@
+ 
+ 		virtual void setPosition( const Vector3 &amp; position );
+ 		virtual Vector3 getPosition() const;
++		virtual Vector3 getPosition( TransformSpace ts ) const;
+ 		virtual void setOrientation( const Quaternion &amp; orientation );
+ 		virtual Quaternion getOrientation() const;
+ 
+@@ -74,10 +75,6 @@
+ 		virtual void detach( IParticleSystem* pPS );
+ 
+ 
+-		virtual String getName() const;
+-		virtual void getName(String&amp; name);
+-		//virtual void setName(const String&amp; name);
+-
+ 		Ogre::SceneNode* getSceneNode_() const
+ 		{ return mSceneNode; }
+ 	protected:
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeBody.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeBody.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/plugins/physicsODE/OdeBody.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -44,10 +44,8 @@
+ 
+ 			virtual void setMass( const real mass );
+ 			virtual real getMass() const;
+-			virtual void setMass( const MassDesc&amp; rDesc )
+-			{ YAKE_ASSERT(0); }
+-			virtual void addMass( const MassDesc&amp; rDesc )
+-			{ YAKE_ASSERT(0); }
++			virtual void setMass( const MassDesc&amp; rDesc );
++			virtual void addMass( const MassDesc&amp; rDesc );
+ 
+ 			virtual void setLinearVelocity( Vector3 const&amp; rVelocity );
+ 			virtual Vector3 getLinearVelocity() const;
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeShapes.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeShapes.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/plugins/physicsODE/OdeShapes.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -118,21 +118,30 @@
+ 		
+ 		class OdeTriMesh : public OdeGeom
+ 		{
+-		public:
+-			OdeTriMesh::OdeTriMesh( dSpace* pSpace, OdeActor* pOwner, dTriMeshDataID meshDataId ); 
+-			virtual ~OdeTriMesh();
++			public:
+ 
+-			virtual ShapeType getType() const;
+-			
+-			static dTriMeshDataID buildMeshData( TriangleMeshDesc::VertexVector const&amp; rVertices,
+-						 		  	  			TriangleMeshDesc::IndexVector const&amp; rIndices,
+-						 		  	 			TriangleMeshDesc::NormalVector const&amp; rNormals );
++				struct MeshData
++				{
++					MeshData() : id( NULL ), vertices( NULL ), indices( NULL ), normals( NULL )
++					{}
+ 
+- 		
+-		protected:
+- 		  	TriangleMeshDesc::VertexVector		mVertices;
+-		 	TriangleMeshDesc::IndexVector		mIndices;
+-			TriangleMeshDesc::NormalVector		mNormals;
++					dTriMeshDataID id;
++
++				/// We need to store these here 'cause ODE doesn't copy data on mesh data construction
++					dReal*		vertices;
++					uint32*		indices;
++					dReal*		normals;
++				};
++
++				OdeTriMesh( dSpace* pSpace, OdeActor* pOwner, dTriMeshDataID meshDataId );
++				virtual ~OdeTriMesh();
++
++				virtual ShapeType getType() const;
++
++				static void buildMeshData(	MeshData&amp; dataToFill,
++													TriangleMeshDesc::VertexVector const&amp; rVertices,
++													TriangleMeshDesc::IndexVector const&amp; rIndices,
++													TriangleMeshDesc::NormalVector const&amp; rNormals );
+ 		};
+ 		
+ } // physics
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeWorld.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeWorld.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yake/plugins/physicsODE/OdeWorld.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -27,6 +27,8 @@
+ #ifndef YAKE_ODEWORLD_H
+ #define YAKE_ODEWORLD_H
+ 
++#include &quot;yake/plugins/physicsODE/OdeShapes.h&quot;
++
+ namespace yake {
+ 
+ 	using namespace math;
+@@ -95,7 +97,7 @@
+ 			real _getStepSize() const
+ 			{ return mStepSize; }
+ 
+-			dTriMeshDataID getMeshDataById(  TriangleMeshId id ) const;
++			OdeTriMesh::MeshData getMeshDataById(  TriangleMeshId id ) const;
+ 		
+ 		protected:
+ 			real				mTime;
+@@ -108,7 +110,7 @@
+ 			BodyList			mBodies;
+ 		
+ 			TriangleMeshId		mNextMeshId;	
+-			typedef AssocVector&lt; TriangleMeshId, dTriMeshDataID &gt; MeshDataMap;
++			typedef AssocVector&lt; TriangleMeshId, OdeTriMesh::MeshData &gt; MeshDataMap;
+ 			MeshDataMap			mMeshDataMap;
+ 
+ 			StringVector		mCurrentSolverParams;
+
+Modified: trunk/yake/yapp/ent/yakeEntity.h
+===================================================================
+--- trunk/yake/yapp/ent/yakeEntity.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yapp/ent/yakeEntity.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -62,7 +62,7 @@
+ 
+ 		OBJECT_PROPS_NONE(Entity);
+ 
+-		void addComponent( const String&amp; tag, SharedPtr&lt;EntityComponent&gt;&amp; pComponent, size_t prio = 0 );
++		void addComponent( const String&amp; tag, const SharedPtr&lt;EntityComponent&gt;&amp; pComponent, size_t prio = 0 );
+ 		SharedPtr&lt;EntityComponent&gt; removeComponent( EntityComponent* pComponent );
+ 		SharedPtr&lt;EntityComponent&gt; removeComponent( const String&amp; tag );
+ 		EntityComponent* getComponent( const String&amp; tag );
+
+Modified: trunk/yake/yapp/gui_addons/console/Makefile.am
+===================================================================
+--- trunk/yake/yapp/gui_addons/console/Makefile.am	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yapp/gui_addons/console/Makefile.am	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,6 +1,3 @@
+-INCLUDES = 
++INCLUDES = yakeGenericConsole.h yakeDefaultHistory.h yakeConsoleLuaProcessor.h
+ METASOURCES = AUTO
+-_SOURCES = yakeGenericConsole.h
+-_SOURCES = yakeGenericConsole.h yakeDefaultHistory.h
+-_SOURCES = yakeGenericConsole.h yakeDefaultHistory.h yakeConsoleLuaProcessor.h
+ SUBDIRS = cegui
+
+Modified: trunk/yake/yapp/gui_addons/console/cegui/Makefile.am
+===================================================================
+--- trunk/yake/yapp/gui_addons/console/cegui/Makefile.am	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yapp/gui_addons/console/cegui/Makefile.am	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,4 +1,3 @@
+-INCLUDES = 
++INCLUDES = yakeCEGUIInputArea.h yakeCEGUIOutputArea.h
+ METASOURCES = AUTO
+-_SOURCES = yakeCEGUIInputArea.h
+-_SOURCES = yakeCEGUIInputArea.h yakeCEGUIOutputArea.h
++
+
+Modified: trunk/yake/yapp/gui_addons/console/cegui/yakeCEGUIOutputArea.h
+===================================================================
+--- trunk/yake/yapp/gui_addons/console/cegui/yakeCEGUIOutputArea.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yapp/gui_addons/console/cegui/yakeCEGUIOutputArea.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -75,7 +75,7 @@
+ 			 */
+ 			void addMessage( const MessageType&amp; msg )
+ 			{
+-				CEGUI::ListboxTextItem* item = new CEGUI::ListboxTextItem( msg.text_.c_str() );
++				CEGUI::ListboxTextItem* item = new CEGUI::ListboxTextItem( (CEGUI::utf8*)msg.text_.c_str() );
+ 
+ 				outputBox_-&gt;addItem( item );
+ 
+
+Modified: trunk/yake/yapp/gui_addons/console/yakeDefaultHistory.h
+===================================================================
+--- trunk/yake/yapp/gui_addons/console/yakeDefaultHistory.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yapp/gui_addons/console/yakeDefaultHistory.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -100,4 +100,4 @@
+ }
+ }
+ 
+-#endif 
+\ No newline at end of file
++#endif 
+
+Modified: trunk/yake/yapp/gui_addons/console/yakeGenericConsole.h
+===================================================================
+--- trunk/yake/yapp/gui_addons/console/yakeGenericConsole.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yapp/gui_addons/console/yakeGenericConsole.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -128,7 +128,7 @@
+ 		{
+ 			OutputPolicy&lt;MessageType&gt;::clearScroll();
+ 		
+-			const string_t cmd = getPreviousCommand();
++			const string_t cmd = HistoryPolicy&lt;MessageType&gt;::getPreviousCommand();
+ 
+ 			InputPolicy::setCommand( cmd );
+ 		}
+@@ -141,7 +141,7 @@
+ 		{
+ 			OutputPolicy&lt;MessageType&gt;::clearScroll();
+ 		
+-			const string_t cmd = getNextCommand();
++			const string_t cmd = HistoryPolicy&lt;MessageType&gt;::getNextCommand();
+ 
+ 			InputPolicy::setCommand( cmd );
+ 		}
+
+Modified: trunk/yake/yapp/loader/yakeDotScene.h
+===================================================================
+--- trunk/yake/yapp/loader/yakeDotScene.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yapp/loader/yakeDotScene.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -94,7 +94,7 @@
+ 			bool						castsShadows;
+ 			Color						diffuseColor;
+ 			Color						specularColor;
+-			Vector3						normal;
++			Vector3					normal;
+ 			
+ 			struct Range
+ 			{
+@@ -110,6 +110,9 @@
+ 				real linear;
+ 				real quadratic;
+ 			}							attenuation;
++			
++			LightDesc() : visible( true ), castsShadows( false )
++			{}
+ 		};
+ 		
+ 		typedef AssocVector&lt; String, NodeDesc &gt; SceneNodeDescMap;
+
+Modified: trunk/yake/yapp/loader/yakeXODEParser.h
+===================================================================
+--- trunk/yake/yapp/loader/yakeXODEParser.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yapp/loader/yakeXODEParser.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -40,8 +40,6 @@
+ 	*/
+ 	class YAPP_BASE_API XODEParser
+ 	{
+-		YAKE_DECLARE_CLASS( XODEParser );
+-
+ 	public:
+ 		XODEParser( model::Physical&amp; rBaseModel );
+ 		virtual ~XODEParser() {}
+@@ -171,7 +169,6 @@
+ 	
+ 	class YAPP_BASE_API XODEParserV1 : public XODEParser
+ 	{
+-		YAKE_DECLARE_CLASS( XODEParserV1 );
+ 	public:
+ 		XODEParserV1( model::Physical&amp; rBaseModel ):XODEParser( rBaseModel ) {}
+ 		virtual ~XODEParserV1() {}
+
+Modified: trunk/yake/yapp/model/yakeGraphical.h
+===================================================================
+--- trunk/yake/yapp/model/yakeGraphical.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yapp/model/yakeGraphical.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -144,6 +144,9 @@
+ 			typedef AssocVector&lt; String, CameraInfo &gt; CameraMap;
+ 			typedef AssocVector&lt; String, LightInfo &gt; LightMap;
+ 			
++			typedef std::map&lt; String, String &gt; TrackerMap;
++			TrackerMap		mTrackersTargets;
++			
+ 			SceneNodeMap	mSceneNodes;
+ 			EntityMap		mEntities;
+ 			CameraMap		mCameras;
+
+Modified: trunk/yake/yapp/model/yakeVehicleSerializerXML.h
+===================================================================
+--- trunk/yake/yapp/model/yakeVehicleSerializerXML.h	2005-09-26 17:24:33 UTC (rev 946)
++++ trunk/yake/yapp/model/yakeVehicleSerializerXML.h	2005-09-26 21:17:18 UTC (rev 947)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -54,8 +54,7 @@
+ 			\param
+ 			\return 
+ 		*/
+-		virtual bool load(	const SharedPtr&lt;dom::INode&gt; &amp; docNode,
+-							app::model::vehicle::VehicleTemplate &amp; tpl);
++		virtual bool load(	const SharedPtr&lt;dom::INode&gt; &amp; docNode, model::vehicle::VehicleTemplate &amp; tpl);
+ 
+ 		/** Prepare for next run of load/store.
+ 		*/
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000017.html">[Yake-svn] r946 - trunk/yake/yake/input
+</A></li>
+	<LI>Next message: <A HREF="000018.html">[Yake-svn] r948 - trunk/yake/dependencies
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#19">[ date ]</a>
+              <a href="thread.html#19">[ thread ]</a>
+              <a href="subject.html#19">[ subject ]</a>
+              <a href="author.html#19">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

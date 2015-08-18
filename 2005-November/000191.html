@@ -1,0 +1,741 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1121 - trunk/yake/src/yake/plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1121%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200511092103.jA9L3Xgx023001%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000190.html">
+   <LINK REL="Next"  HREF="000192.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1121 - trunk/yake/src/yake/plugins/physicsODE</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1121%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200511092103.jA9L3Xgx023001%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1121 - trunk/yake/src/yake/plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  9 22:03:33 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000190.html">[Yake-svn] r1120 - in trunk/yake/src: yake/plugins/physicsODE yapp/base/event yapp/loader
+</A></li>
+        <LI>Next message: <A HREF="000192.html">[Yake-svn] r1122 - trunk/yake/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#191">[ date ]</a>
+              <a href="thread.html#191">[ thread ]</a>
+              <a href="subject.html#191">[ subject ]</a>
+              <a href="author.html#191">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-09 22:03:23 +0100 (Wed, 09 Nov 2005)
+New Revision: 1121
+
+Modified:
+   trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+Log:
+patch 1350326 by mj (modified by psy)
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-11-09 20:57:59 UTC (rev 1120)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-11-09 21:03:23 UTC (rev 1121)
+@@ -34,16 +34,15 @@
+ namespace yake {
+ namespace physics {
+ 
+-	//-----------------------------------------------------
+-	//	OdeActor
+-	//-----------------------------------------------------
++    //-----------------------------------------------------
++    //	OdeActor
++    //-----------------------------------------------------
+ 	
+-	//-----------------------------------------------------
+-	//-----------------------------------------------------
+-	OdeActor::OdeActor( OdeWorld* pWorld, bool bDynamic ) :
+-			mOdeWorld(pWorld),
+-			mBody(0)
+-	{
++    //-----------------------------------------------------
++    OdeActor::OdeActor( OdeWorld* pWorld, bool bDynamic ) :
++		mOdeWorld(pWorld),
++		mBody(0)
++    {
+ 		if (bDynamic)
+ 		{
+ 			mBody = new OdeBody( mOdeWorld, *this );
+@@ -53,77 +52,79 @@
+ 		}
+ 		this-&gt;setPosition( Vector3::kZero );
+ 		this-&gt;setOrientation( Quaternion::kIdentity );
+-	}
++    }
+ 
+-	//-----------------------------------------------------
+-	OdeActor::~OdeActor()
+-	{
++    //-----------------------------------------------------
++    OdeActor::~OdeActor()
++    {
+ 		YAKE_SAFE_DELETE( mBody );
+ 		// destroy all shapes
+ 		mShapes.clear();
+-	}
++    }
+ 
+-	//-----------------------------------------------------
+-	IWorld* OdeActor::getCreator() const
+-	{
++    //-----------------------------------------------------
++    IWorld* OdeActor::getCreator() const
++    {
+ 		return mOdeWorld;
+-	}
++    }
+ 
+-	//-----------------------------------------------------
+-	void OdeActor::setEnabled(const bool enabled)
+-	{
++    //-----------------------------------------------------
++    void OdeActor::setEnabled(const bool enabled)
++    {
+ 		YAKE_ASSERT( 0 &amp;&amp; &quot;NOT IMPLEMENTED&quot; );
+-	}
++    }
+ 
+-	//-----------------------------------------------------
+-	bool OdeActor::isEnabled() const
+-	{
++    //-----------------------------------------------------
++    bool OdeActor::isEnabled() const
++    {
+ 		return true;
+-	}
+-	
+-	//-----------------------------------------------------
+-	OdeGeom* OdeActor::createTransformGeomIfNeeded(	OdeGeom* pGeom,
+-														const Vector3&amp; rOffset,
+-														const Quaternion&amp; rRelOrientation )
+-	{
++    }
++
++    //-----------------------------------------------------
++    OdeGeom* OdeActor::createTransformGeomIfNeeded(	OdeGeom* pGeom,
++	    const Vector3&amp; rOffset,
++	    const Quaternion&amp; rRelOrientation )
++    {
+ 		//if ( rOffset == Vector3::kZero &amp;&amp; rRelOrientation == Quaternion::kIdentity )
+-		//	return pGeom;
+-			
++		//    return pGeom;
++
+ 		OdeTransformGeom* pTrans = new OdeTransformGeom( mOdeWorld-&gt;_getOdeSpace(), this );
+ 		pTrans-&gt;attachGeom( pGeom );
+-		
++
+ 		pTrans-&gt;setPosition( rOffset );
+ 		pTrans-&gt;setOrientation( rRelOrientation );
+-		
++
+ 		return pTrans;
+-	}
++    }
+ 
+-	//-----------------------------------------------------
+-	OdeGeom* OdeActor::createShapeFromDesc( IShape::Desc const&amp; rShapeDesc )
+-	{
++    //-----------------------------------------------------
++    OdeGeom* OdeActor::createShapeFromDesc( const IShape::Desc&amp; rShapeDesc )
++    {
+ 		IShape::Desc* pShapeDesc = &amp;const_cast&lt;IShape::Desc&amp;&gt;( rShapeDesc );
+-		
++
+ 		IMaterial* pMaterial = this-&gt;getCreator()-&gt;getMaterial( pShapeDesc-&gt;material );
++
+ 		if ( !pMaterial )
+-			pMaterial = this-&gt;getCreator()-&gt;getMaterial(&quot;default&quot;);
++			pMaterial = this-&gt;getCreator()-&gt;getMaterial( &quot;default&quot; );
+ 
+-		YAKE_ASSERT( pMaterial );
+-	
++		OdeMaterial* pOdeMaterial = pMaterial ? dynamic_cast&lt;OdeMaterial*&gt;( pMaterial ) : 0;
++		YAKE_ASSERT( pOdeMaterial );
++
+ 		OdeGeom* result = 0;
+-		
++
+ 		if ( IShape::SphereDesc* pSphereDesc = dynamic_cast&lt;IShape::SphereDesc*&gt;( pShapeDesc ) )
+ 		{
+ 			OdeSphere* pSphere = new OdeSphere( mOdeWorld-&gt;_getOdeSpace(), this, pSphereDesc-&gt;radius );
+-			
++
+ 			result = createTransformGeomIfNeeded( pSphere, rShapeDesc.position, rShapeDesc.orientation );
+ 		}
+ 		else if ( IShape::BoxDesc* pBoxDesc = dynamic_cast&lt;IShape::BoxDesc*&gt;( pShapeDesc ) )
+ 		{
+ 			OdeBox* pBox = new OdeBox( mOdeWorld-&gt;_getOdeSpace(), 
+-										this,
+-										pBoxDesc-&gt;dimensions.x, 
+-										pBoxDesc-&gt;dimensions.y,
+-										pBoxDesc-&gt;dimensions.z  );
++				this,
++				pBoxDesc-&gt;dimensions.x, 
++				pBoxDesc-&gt;dimensions.y,
++				pBoxDesc-&gt;dimensions.z  );
+ 			result = createTransformGeomIfNeeded( pBox, rShapeDesc.position, rShapeDesc.orientation );
+ 		}
+ 		else if ( IShape::PlaneDesc* pPlaneDesc = dynamic_cast&lt;IShape::PlaneDesc*&gt;( pShapeDesc ) )
+@@ -132,272 +133,245 @@
+ 			/// Calculating absolute coordinates instead...
+ 			Vector3 normal( pPlaneDesc-&gt;orientation*pPlaneDesc-&gt;normal );
+ 			normal.normalise();
+-			
+- 			real d = pPlaneDesc-&gt;d + normal.dotProduct( pPlaneDesc-&gt;position ); 
+-			
++
++			real d = pPlaneDesc-&gt;d + normal.dotProduct( pPlaneDesc-&gt;position ); 
++
+ 			OdePlane* pPlane = new OdePlane(	mOdeWorld-&gt;_getOdeSpace(), 
+-												this,
+-												normal.x,
+-												normal.y,
+-												normal.z,
+-												d );
++				this,
++				normal.x,
++				normal.y,
++				normal.z,
++				d );
+ 			result = pPlane;
+ 		}
+ 		else if ( IShape::CapsuleDesc* pCapsuleDesc = dynamic_cast&lt;IShape::CapsuleDesc*&gt;( pShapeDesc ) )
+ 		{
+ 			OdeCCylinder* pCapsule = new OdeCCylinder( mOdeWorld-&gt;_getOdeSpace(), 
+-										this,
+-										pCapsuleDesc-&gt;radius,
+-										pCapsuleDesc-&gt;height  );
++				this,
++				pCapsuleDesc-&gt;radius,
++				pCapsuleDesc-&gt;height  );
+ 			result = createTransformGeomIfNeeded( pCapsule, rShapeDesc.position, rShapeDesc.orientation );
+ 		}
+- 		else if ( IShape::TriMeshDesc* pTriMeshDesc = dynamic_cast&lt;IShape::TriMeshDesc*&gt;( pShapeDesc ) )
+- 		{
+-			OdeTriMesh::MeshData data = mOdeWorld-&gt;getMeshDataById( pTriMeshDesc-&gt;meshId );
+-			
+-			OdeTriMesh* pMesh = new OdeTriMesh( mOdeWorld-&gt;_getOdeSpace(), this, data.id );
+-			
+-			YAKE_ASSERT( pMesh ).error( &quot;Mesh with such id wasn't found!&quot; );
+-			
+- 			result = createTransformGeomIfNeeded( pMesh, rShapeDesc.position, rShapeDesc.orientation );
+- 		}
++		else if ( IShape::TriMeshDesc* pTriMeshDesc = dynamic_cast&lt;IShape::TriMeshDesc*&gt;( pShapeDesc ) )
++		{
++			YAKE_ASSERT( false ).error( &quot;FIXME mesh reading is not implemented as it should be!&quot; );
+ 
++			//OdeTriMesh::MeshData data = mOdeWorld-&gt;getMeshDataById( pTriMeshDesc-&gt;meshId );
++
++			//	OdeTriMesh* pMesh = new OdeTriMesh( mOdeWorld-&gt;_getOdeSpace(), this, data.id );
++
++			//YAKE_ASSERT( pMesh ).error( &quot;Mesh with such id wasn't found!&quot; );
++
++			result = 0;//createTransformGeomIfNeeded( pMesh, rShapeDesc.position, rShapeDesc.orientation );
++		}
++
+ 		YAKE_ASSERT( result != 0 ).error( &quot;Unsupported shape type!&quot; );
+-	
++
+ 		/// setting material if any
+ 
+-		YAKE_ASSERT( pMaterial );
+-		result-&gt;setMaterial( static_cast&lt;OdeMaterial*&gt;(pMaterial) );
++		YAKE_ASSERT( pOdeMaterial );
++		result-&gt;setMaterial( pOdeMaterial );
+ 
+-		if (result)
++		if ( result )
+ 		{
+ 			mShapes.push_back( SharedPtr&lt;OdeGeom&gt;(result) );
+-			if (result-&gt;getType() != ST_PLANE)
+-			{
+-				result-&gt;setPosition( pShapeDesc-&gt;position );
+-				result-&gt;setOrientation( pShapeDesc-&gt;orientation );
+-			}
++			// plane is not a movable geom. Its position is determined on creation!
++		// if (result-&gt;getType() != ST_PLANE)
++		// {
++		//     result-&gt;setPosition( pShapeDesc-&gt;position );
++		//     result-&gt;setOrientation( pShapeDesc-&gt;orientation );
++		// }
+ 		}
+ 
+ 		return result;
+-	}
++    }
+ 
+-	//-----------------------------------------------------
+-	bool operator == (const SharedPtr&lt;OdeGeom&gt;&amp; lhs, const OdeGeom* rhs)
+-	{
++    //-----------------------------------------------------
++    bool operator == (const SharedPtr&lt;OdeGeom&gt;&amp; lhs, const OdeGeom* rhs)
++    {
+ 		return (lhs.get() == rhs);
+-	}
+-	void OdeActor::destroyShape( IShape* pShape )
+-	{
++    }
++
++    //-----------------------------------------------------
++    void OdeActor::destroyShape( IShape* pShape )
++    {
+ 		OdeGeom* pGeom = dynamic_cast&lt;OdeGeom*&gt;( pShape );
+ 		ShapeList::iterator victim = std::find( mShapes.begin(), mShapes.end(), pGeom );
+ 		mShapes.erase( victim );
+-	}
++    }
+ 
+-	//-----------------------------------------------------
+-	IShapePtrList OdeActor::getShapes() const
+-	{
++    //-----------------------------------------------------
++    IShapePtrList OdeActor::getShapes() const
++    {
+ 		IShapePtrList ret;
+ 		//ret.reserve( mShapes.size() );
+ 		//std::copy( mShapes.begin(), mShapes.end(), std::back_inserter( mShapes ) );
+ 		for (ShapeList::const_iterator it = mShapes.begin(); it != mShapes.end(); ++it)
+ 			ret.push_back( dynamic_cast&lt;IShape*&gt;(it-&gt;get()) );
+ 		return ret;
+-	}
++    }
+ 
+-	//-----------------------------------------------------
+-// 	void OdeActor::postStep( real timeElapsed )
+-// 	{
+-// 		Vector&lt; OdeActor* &gt; its;
+-// 		for (CollisionList::iterator it = mCollisions.begin(); it != mCollisions.end(); ++it)
+-// 		{
+-// 			CollisionInfo&amp; info = it-&gt;second;
+-// 			info.time += timeElapsed;
+-// 			if (info.time &gt;= 0.1)
+-// 			{
+-// 				mLeaveCollisionSignal( this, it-&gt;first );
+-// 				its.push_back( it-&gt;first );
+-// 			}
+-// 		}
+-// 		VectorIterator&lt; Vector&lt; OdeActor* &gt; &gt; itErase(
+-// 			its.begin(), its.end() );
+-// 		while (itErase.hasMoreElements())
+-// 		{
+-// 			CollisionList::iterator itFind = mCollisions.find( itErase.getNext() );
+-// 			if (itFind != mCollisions.end())
+-// 				mCollisions.erase( itFind );
+-// 		}
+-// 		its.clear();
+-// 	}
++    //-----------------------------------------------------
++    // 	void OdeActor::postStep( real timeElapsed )
++    // 	{
++    // 		Vector&lt; OdeActor* &gt; its;
++    // 		for (CollisionList::iterator it = mCollisions.begin(); it != mCollisions.end(); ++it)
++    // 		{
++    // 			CollisionInfo&amp; info = it-&gt;second;
++    // 			info.time += timeElapsed;
++    // 			if (info.time &gt;= 0.1)
++    // 			{
++    // 				mLeaveCollisionSignal( this, it-&gt;first );
++    // 				its.push_back( it-&gt;first );
++    // 			}
++    // 		}
++    // 		VectorIterator&lt; Vector&lt; OdeActor* &gt; &gt; itErase(
++    // 			its.begin(), its.end() );
++    // 		while (itErase.hasMoreElements())
++    // 		{
++    // 			CollisionList::iterator itFind = mCollisions.find( itErase.getNext() );
++    // 			if (itFind != mCollisions.end())
++    // 				mCollisions.erase( itFind );
++    // 		}
++    // 		its.clear();
++    // 	}
+ 
+-	//-----------------------------------------------------
+-	void OdeActor::_collide( OdeActor* pOther, dGeomID geomA, dGeomID geomB, dJointGroup* contactJointGroup )
+-	{
+- 		YAKE_ASSERT( pOther ).debug( &quot;Need the other object participating in the collision!&quot; );
++//#define DEBUG_COLLISIONS
++
++    //-----------------------------------------------------
++    void OdeActor::_collide( OdeActor* pOther, dGeomID geomA, dGeomID geomB, dJointGroup* contactJointGroup )
++    {
++		YAKE_ASSERT( pOther ).debug( &quot;Need the other object participating in the collision!&quot; );
+ 		YAKE_ASSERT( contactJointGroup ).error( &quot;Need a joint group for contact joints!&quot; );
+ 
+-		
+-		/// FIXME Is this needed ?
++		// filtering out useless geom combinations...
+ 		if ( ( dGeomGetClass( geomA ) == dRayClass ) || ( dGeomGetClass( geomB ) == dRayClass ) )
+ 			return;
+ 
+-		OdeGeom* pShapeA = reinterpret_cast&lt;OdeGeom*&gt;(dGeomGetData( geomA ));
+-		OdeGeom* pShapeB = reinterpret_cast&lt;OdeGeom*&gt;(dGeomGetData( geomB ));
+-		
+-		OdeActor* pActorA = pShapeA-&gt;getOwner();
+-		OdeActor* pActorB = pShapeB-&gt;getOwner();
++		OdeGeom* pShapeA = reinterpret_cast&lt;OdeGeom*&gt;( dGeomGetData( geomA ) );
++		OdeGeom* pShapeB = reinterpret_cast&lt;OdeGeom*&gt;( dGeomGetData( geomB ) );
+ 
++#ifdef DEBUG_COLLISIONS
++	YAKE_LOG( &quot;Actor collision function entered...&quot; );
++#endif 
++
+ 		const OdeMaterial&amp; rMatA = *pShapeA-&gt;getMaterial();
+ 		const OdeMaterial&amp; rMatB = *pShapeB-&gt;getMaterial();
+-		
+-		/// FIXME Implement materials!
+-		float softness =  rMatA.mSoftness + rMatB.mSoftness; //this-&gt;getSoftness() + pOther-&gt;getSoftness();
+ 
+-		/// FIXME what's this??? Magic number!
+-		const int N = 40;
+-		dContact contact[N];
++		dContact contact[ MAX_CONTACTS ];
+ 
+ 		// initiating collision detection
+-		int n = dCollide( geomA, geomB, N, &amp;contact[0].geom, sizeof( dContact ) );
++		int numCollided = dCollide( geomA, geomB, MAX_CONTACTS, &amp;contact[0].geom, sizeof( dContact ) );
++		if (numCollided == 0)
++			return;
+ 
+-		if ( n &gt; 0 )
++		//HACK FIXME implement collision cache!!!
++		// fire collision events
++		CollisionCache::iterator itFind = mCollisions.find( pOther );
++		if ( itFind == mCollisions.end() )
+ 		{
+-			// fire collision events
+-			CollisionCache::iterator itFind = mCollisions.find( pOther );
+-			if ( itFind == mCollisions.end() )
++			// new collision
++			CollisionInfo info = 0;
++			mCollisions.insert( CollisionCache::value_type( pOther, info ) );
++
++			//mEnterCollisionSignal( this, pOther );
++		}
++		else
++		{
++			// still colliding, so reset timeout
++			itFind-&gt;second = 0;
++		}
++
++		// calculate soft cfm parameter[0..10^-6] from softness [0..1]
++		float softness = ( rMatA.mSoftness + rMatB.mSoftness ) / 1000000.0f;
++
++#ifdef DEBUG_COLLISIONS
++		YAKE_LOG( String(&quot;Collision: softness was set to &quot;) &lt;&lt; softness );
++#endif
++
++	    // create contact joints
++	    for ( int i = 0; i &lt; numCollided; ++i )
++	    {
++			contact[i].surface.mode =
++			    dContactSoftERP
++			    |dContactSoftCFM
++			    |dContactBounce
++			    |dContactApprox1;
++
++			// Setting contact softness...
++			if ( softness &gt; 0 )
+ 			{
+-				// new collision
+-				CollisionInfo info = 0;
+-				mCollisions.insert( CollisionCache::value_type( pOther, info ) );
+-				/// FIXME  collision signal!  //mEnterCollisionSignal( this, pOther );
++				contact[i].surface.mode |= dContactSoftCFM;
++				contact[i].surface.soft_cfm = softness;
+ 			}
+-			else
++
++			// determine surface friction coefficients
++			// frictionCoefficient [0..1]
++			real frictionCoefficient = std::min( rMatA.mFriction, rMatB.mFriction );
++
++#ifdef DEBUG_COLLISIONS
++		YAKE_LOG( String(&quot;Collision: frictionCoefficient was set to &quot;) &lt;&lt; frictionCoefficient );
++#endif
++
++			contact[i].surface.mu = frictionCoefficient*dInfinity; 
++			float friction2 = std::min( rMatA.mFriction2, rMatB.mFriction2 ); 
++			if ( friction2 &gt; 0.f )
+ 			{
+-				// still colliding, so reset timeout
+-				itFind-&gt;second = 0;
++				contact[i].surface.mode |= dContactMu2;
++				contact[i].surface.mu2 = friction2; // 0 or 10
+ 			}
+-			
+-			// create contact joints
+-			for ( int i = 0; i &lt; n; ++i ) 
+-			{
+-				contact[i].surface.mode = //dContactSlip1
+-										//dContactSlip2
+-										dContactSoftERP
+-										//|dContactSoftCFM
+-										//|dContactBounce
+-										|dContactApprox1
+-										//|dContactMu2
+-										;
+-				if ( softness &gt; 0 )
+-				{
+-					contact[i].surface.mode |= dContactSoftCFM;
+-					contact[i].surface.soft_cfm = softness;
+-				}
+-				
+-				///FIXME Implement materials!
+-				contact[i].surface.mu = std::min( rMatA.mFriction, rMatB.mFriction );
+-				float friction2 = std::min( rMatA.mFriction2, rMatB.mFriction2 ); //std::min(this-&gt;getFriction2(), pOther-&gt;getFriction2());
+-				if ( friction2 &gt; 0.f )
+-				{
+-					contact[i].surface.mode |= dContactMu2;
+-					contact[i].surface.mu2 = friction2; // 0 or 10
+-				}
+-				contact[i].surface.slip1 = 0; // 0.1
+-				contact[i].surface.slip2 = 0.1;
+ 
+-#ifdef DEAD
+-				// FIXME put that stuff in material: if ( mLateralSlip &amp;&amp; mSlipNormalSource )
+-				{
+-					// velocities &amp; coefficients
+-// 					Vector3 linVel = mBody-&gt;getLinearVelocity();
+-// 					Vector3 angVel = mBody-&gt;getAngularVelocity();
++			contact[i].surface.slip1 = 0.1; //FIXME need to set this right
++			contact[i].surface.slip2 = 0.1; //FIXME need to set this right
++			contact[i].surface.motion1 = 0; //
++			contact[i].surface.motion2 = 0;
+ 
+-					// contact normal
+-					const Vector3 normal = Vector3( contact[i].geom.normal[0],
+-													contact[i].geom.normal[1],
+-													contact[i].geom.normal[2] ).normalisedCopy();
++			//FIXME soft erp parameter should be correct
++			contact[i].surface.soft_erp = 0.9; 
+ 
+-					const Vector3 mSlipNormal = Vector3( 1, 0, 0 ); // FIXME Bad hack
+-					//mSlipNormal = mSlipNormalSource-&gt;getLateralSlipNormal();
+-					
+-					real mSlipLinearCoeff = 0.7; /// FIXME bad hack
+-					real mSlipAngularCoeff = 0.7; /// FIXME bad hack 
+-					
+-					/// FIXME Error tolerance is hardcoded!
+-					if ( (mSlipNormal - normal).length() &lt; 0.01 )
+-					{
+-						YAKE_LOG_WARNING( &quot;warning: OdeActor::_collide: normal == slipNormal&quot; );
+-					}
+-					else
+-					{
+-						real dot = normal.dotProduct( mSlipNormal );
+-						/// FIXME Error tolerance hardcoded
+-						if (dot &lt; 0.9 &amp;&amp; dot &gt; -0.9)
+-						{
+-							// find the fdir1 direction
+-							Vector3 perpVec = mSlipNormal.crossProduct( normal );
+-							perpVec.normalise();
++			real restitution = std::max( rMatA.mRestitution, rMatB.mRestitution );
++			contact[i].surface.bounce = restitution; 
+ 
+-							// set contact info
+-							contact[i].surface.mode |= dContactFDir1|dContactSlip2;
++#ifdef DEBUG_COLLISIONS
++		YAKE_LOG( String(&quot;Collision: restitution was set to &quot;) &lt;&lt; restitution );
++#endif
+ 
+-							//  (kLinearVel*f)*linearVel + (kAngularVel*f)*angularVel
+-//							contact[i].surface.slip2 =	mSlipLinearCoeff * linVel.length() +
+-//													mSlipAngularCoeff * angVel.length();
++			//FIXME bounce velocity needs to be tuned
++			contact[i].surface.bounce_vel = 0.1;
+ 
+-							contact[i].fdir1[0] = perpVec.x;
+-							contact[i].fdir1[1] = perpVec.y;
+-							contact[i].fdir1[2] = perpVec.z;
+-						}
+-					}
+-				}
+-#endif
+-				contact[i].surface.motion1 = 0;
+-				contact[i].surface.motion2 = 0;
++			dJointID contactJointID = dJointCreateContact(	mOdeWorld-&gt;_getOdeID(),
++				contactJointGroup-&gt;id(),
++				contact + i );
++			dJointAttach ( contactJointID, dGeomGetBody( geomA ), dGeomGetBody( geomB ) );
++	    } // for each contact
++    }
+ 
+-				contact[i].surface.soft_erp = 0.95; // 0.8
+-				//contact[i].surface.bounce = 0.05; //0.05
+-				//contact[i].surface.bounce_vel = 0.025; //0.025
+-				
+-				//for (int j=1; j&lt;=mNumJointsPerContact; ++j)
+-				{
+-					dJointID c = dJointCreateContact (
+-									mOdeWorld-&gt;_getOdeID(),
+-									contactJointGroup-&gt;id(),
+-									contact + i );
+-					dJointAttach ( c, dGeomGetBody( geomA ), dGeomGetBody( geomB ) );
+-				}
+-			}
+-		}
+-	}
+-	
+-	//-----------------------------------------------------
+-	IShape* OdeActor::createShape( const IShape::Desc&amp; rShapeDesc, real massOrDensity, IBody::quantityType type )
+-	{
++    //-----------------------------------------------------
++    IShape* OdeActor::createShape( const IShape::Desc&amp; rShapeDesc, real massOrDensity, IBody::quantityType type )
++    {
+ 		if ( mBody &amp;&amp; dynamic_cast&lt;const IShape::PlaneDesc*&gt;( &amp;rShapeDesc ) )
+ 			YAKE_ASSERT( false ).error( &quot;Attempted to attach immovable plane shape to movable actor!&quot; );
+-			
++
+ 		OdeGeom* pShape = createShapeFromDesc( rShapeDesc );
+ 		YAKE_ASSERT( pShape );
+-
+ 		YAKE_ASSERT( mBody || !(massOrDensity) ).warning( &quot;Attempt to set mass on nonexistant body!&quot; );
+-		
++
+ 		if (mBody)
+ 		{
+ 			dGeomSetBody( pShape-&gt;_getOdeGeomID(), mBody-&gt;_getOdeBody()-&gt;id() );
+ 
+ 			if (massOrDensity)
+ 			{
+-				mBody-&gt;_applyMassDescFromShapeDesc( rShapeDesc, massOrDensity, type );
++			mBody-&gt;_applyMassDescFromShapeDesc( rShapeDesc, massOrDensity, type );
+ 			}
+ 		}
+-		
++
+ 		return pShape;
+-	}
+-	
+-	//-----------------------------------------------------
+-	void OdeActor::setPosition( const Vector3&amp; rPosition )
+-	{
++    }
++
++    //-----------------------------------------------------
++    void OdeActor::setPosition( const Vector3&amp; rPosition )
++    {
+ 		mPosition = rPosition;
+ 		if (mBody)
+ 			mBody-&gt;setPosition( rPosition );
+@@ -408,13 +382,13 @@
+ 				i-&gt;get()-&gt;setPosition( mPosition );
+ 			}
+ 		}
+-	}
+-	
+-	//-----------------------------------------------------
+-	void OdeActor::setOrientation( const Quaternion&amp; rOrientation )
+-	{
++    }
++
++    //-----------------------------------------------------
++    void OdeActor::setOrientation( const Quaternion&amp; rOrientation )
++    {
+ 		mOrientation = rOrientation;
+-		
++
+ 		if (mBody)
+ 			mBody-&gt;setOrientation( rOrientation );
+ 		else
+@@ -424,36 +398,36 @@
+ 				i-&gt;get()-&gt;setOrientation( mOrientation );
+ 			}
+ 		}
+-	}
+-	
+-	//-----------------------------------------------------
+-	Vector3 OdeActor::getPosition() const
+-	{
++    }
++
++    //-----------------------------------------------------
++    Vector3 OdeActor::getPosition() const
++    {
+ 		if (mBody)
+ 			return mBody-&gt;getPosition();
+ 		return mPosition;
+-	}
+-	
+-	//-----------------------------------------------------
+-	Quaternion OdeActor::getOrientation() const
+-	{
++    }
++
++    //-----------------------------------------------------
++    Quaternion OdeActor::getOrientation() const
++    {
+ 		if (mBody)
+ 			return mBody-&gt;getOrientation();
+ 		return mOrientation;
+-	}
+-	
+-	//-----------------------------------------------------
+-	IBody&amp; OdeActor::getBody() const
+-	{
++    }
++
++    //-----------------------------------------------------
++    IBody&amp; OdeActor::getBody() const
++    {
+ 		YAKE_ASSERT( mBody );
+ 		return *mBody;
+-	}
+-		
+-	//-----------------------------------------------------
+-	IBody* OdeActor::getBodyPtr() const
+-	{
++    }
++
++    //-----------------------------------------------------
++    IBody* OdeActor::getBodyPtr() const
++    {
+ 		return mBody;
+-	}
++    }
+ 
+ } // physics
+ } // yake
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000190.html">[Yake-svn] r1120 - in trunk/yake/src: yake/plugins/physicsODE yapp/base/event yapp/loader
+</A></li>
+	<LI>Next message: <A HREF="000192.html">[Yake-svn] r1122 - trunk/yake/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#191">[ date ]</a>
+              <a href="thread.html#191">[ thread ]</a>
+              <a href="subject.html#191">[ subject ]</a>
+              <a href="author.html#191">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

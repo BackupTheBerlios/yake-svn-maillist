@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r930 - in trunk/yake: scripts/yake/plugins/physics src/yake/plugins/physicsNX yake/plugins/physicsNX
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r930%20-%20in%20trunk/yake%3A%20scripts/yake/plugins/physics%20src/yake/plugins/physicsNX%20yake/plugins/physicsNX&In-Reply-To=%3C200509232041.j8NKf6s3004650%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000000.html">
+   <LINK REL="Next"  HREF="000002.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r930 - in trunk/yake: scripts/yake/plugins/physics src/yake/plugins/physicsNX yake/plugins/physicsNX</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r930%20-%20in%20trunk/yake%3A%20scripts/yake/plugins/physics%20src/yake/plugins/physicsNX%20yake/plugins/physicsNX&In-Reply-To=%3C200509232041.j8NKf6s3004650%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r930 - in trunk/yake: scripts/yake/plugins/physics src/yake/plugins/physicsNX yake/plugins/physicsNX">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 23 22:41:06 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000000.html">[Yake-svn] r929 - trunk/yake/src/yapp/loader
+</A></li>
+        <LI>Next message: <A HREF="000002.html">[Yake-svn] r931 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#1">[ date ]</a>
+              <a href="thread.html#1">[ thread ]</a>
+              <a href="subject.html#1">[ subject ]</a>
+              <a href="author.html#1">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-23 22:41:06 +0200 (Fri, 23 Sep 2005)
+New Revision: 930
+
+Modified:
+   trunk/yake/scripts/yake/plugins/physics/physicsNX.vcproj
+   trunk/yake/src/yake/plugins/physicsNX/NxPhysicsSystem.cpp
+   trunk/yake/src/yake/plugins/physicsNX/yakeMaterialNx.cpp
+   trunk/yake/src/yake/plugins/physicsNX/yakePhysicsTrimeshNx.cpp
+   trunk/yake/src/yake/plugins/physicsNX/yakeWorldNx.cpp
+   trunk/yake/yake/plugins/physicsNX/NxPhysicsSystem.h
+   trunk/yake/yake/plugins/physicsNX/yakeMaterialNx.h
+   trunk/yake/yake/plugins/physicsNX/yakePCH.h
+Log:
+patch 1230764 by Joel Croteau - updated physicsNX to use Nx 2.2
+
+Modified: trunk/yake/scripts/yake/plugins/physics/physicsNX.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/plugins/physics/physicsNX.vcproj	2005-09-21 21:04:05 UTC (rev 929)
++++ trunk/yake/scripts/yake/plugins/physics/physicsNX.vcproj	2005-09-23 20:41:06 UTC (rev 930)
+@@ -19,7 +19,7 @@
+ 			&lt;Tool
+ 				Name=&quot;VCCLCompilerTool&quot;
+ 				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;$(NXSDK_DIR)/Physics/Include;$(NXSDK_DIR)/Foundation/include;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/&quot;
++				AdditionalIncludeDirectories=&quot;$(NXSDK_DIR)/Physics/Include;$(NXSDK_DIR)/Foundation/include;$(NXSDK_DIR)/NxExtensions/Include;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/&quot;
+ 				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKE_PHYSICS_NX_EXPORTS&quot;
+ 				MinimalRebuild=&quot;TRUE&quot;
+ 				BasicRuntimeChecks=&quot;3&quot;
+@@ -34,10 +34,10 @@
+ 				Name=&quot;VCCustomBuildTool&quot;/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;physics.lib NxPhysics.lib&quot;
++				AdditionalDependencies=&quot;physics.lib NxPhysics.lib NxExtensionsDLL.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;$(NXSDK_DIR)/Physics/lib/win32/release;../../../../dependencies/lib&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;$(NXSDK_DIR)/Physics/lib/win32/release;$(NXSDK_DIR)/NxExtensions/lib/win32/release;../../../../dependencies/lib&quot;
+ 				ModuleDefinitionFile=&quot;&quot;
+ 				GenerateDebugInformation=&quot;TRUE&quot;
+ 				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+@@ -73,7 +73,7 @@
+ 			CharacterSet=&quot;2&quot;&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;$(NXSDK_DIR)/Physics/Include;$(NXSDK_DIR)/Foundation/include;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/&quot;
++				AdditionalIncludeDirectories=&quot;$(NXSDK_DIR)/Physics/Include;$(NXSDK_DIR)/Foundation/include;$(NXSDK_DIR)/NxExtensions/Include;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/&quot;
+ 				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_PHYSICS_NX_EXPORTS&quot;
+ 				RuntimeLibrary=&quot;2&quot;
+ 				RuntimeTypeInfo=&quot;TRUE&quot;
+@@ -86,7 +86,7 @@
+ 				Name=&quot;VCCustomBuildTool&quot;/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;physics.lib NxPhysics.lib&quot;
++				AdditionalDependencies=&quot;physics.lib NxPhysics.lib NxExtensionsDLL.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;1&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;$(NXSDK_DIR)/Physics/lib/win32/release;../../../../dependencies/lib&quot;
+
+Modified: trunk/yake/src/yake/plugins/physicsNX/NxPhysicsSystem.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsNX/NxPhysicsSystem.cpp	2005-09-21 21:04:05 UTC (rev 929)
++++ trunk/yake/src/yake/plugins/physicsNX/NxPhysicsSystem.cpp	2005-09-23 20:41:06 UTC (rev 930)
+@@ -83,7 +83,13 @@
+ 		return NxPhysicsSystem::mpNxSDK;
+ 	}
+ 
++	NxExtensions* getNxExt()
++	{
++		return NxPhysicsSystem::mpNxExt;
++	}
++
+ 	NxPhysicsSDK* NxPhysicsSystem::mpNxSDK = 0;
++	NxExtensions* NxPhysicsSystem::mpNxExt = 0;
+ 
+ 	//------------------------------------------------------
+ 	NxPhysicsSystem::NxPhysicsSystem() : IPhysicsSystem()
+@@ -95,16 +101,15 @@
+ 		if (!mpNxSDK)
+ 			return;
+ 
++		YAKE_ASSERT(!mpNxExt);
++		if (mpNxExt)
++			return;
++		mpNxExt = GetNxExtensions(0, &amp;gErrorStream, 0);
++
+ 		// default settings
+ 		mpNxSDK-&gt;setParameter(NX_MIN_SEPARATION_FOR_PENALTY, -0.05f);
+ 
+-		// default material
+-		NxMaterial	defaultMaterial;
+-		defaultMaterial.restitution		= 0.0f;
+-		defaultMaterial.staticFriction	= 0.9f;
+-		defaultMaterial.dynamicFriction	= 0.9f;
+-		YAKE_ASSERT( defaultMaterial.isValid() );
+-		mpNxSDK-&gt;setMaterialAtIndex(0, &amp;defaultMaterial);
++
+ 	}
+ 
+ 	//------------------------------------------------------
+
+Modified: trunk/yake/src/yake/plugins/physicsNX/yakeMaterialNx.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsNX/yakeMaterialNx.cpp	2005-09-21 21:04:05 UTC (rev 929)
++++ trunk/yake/src/yake/plugins/physicsNX/yakeMaterialNx.cpp	2005-09-23 20:41:06 UTC (rev 930)
+@@ -44,16 +44,21 @@
+ 	MaterialNx::~MaterialNx()
+ 	{
+ 		//@todo
++		mpScene-&gt;releaseMaterial(*mpScene-&gt;getMaterialFromIndex(mNxMatIndex));
+ 	}
+-	void MaterialNx::_createFromDesc( const IMaterial::Desc &amp; rDesc )
++	void MaterialNx::_createFromDesc( const IMaterial::Desc &amp; rDesc, NxScene* pScene )
+ 	{
+-		NxMaterial nxMat;
+-		nxMat.setToDefault();
+-		nxMat.restitution = toNx( rDesc.mRestitution );
+-		nxMat.staticFriction = toNx( rDesc.mStaticFriction );
+-		nxMat.staticFrictionV = 0;
+-		YAKE_ASSERT( nxMat.isValid() );
+-		mNxMatIndex = getNxSDK()-&gt;addMaterial( nxMat );
++		mpScene = pScene;
++		NxMaterialDesc nxDesc;
++		NxMaterial* defaultMaterial = mpScene-&gt;getMaterialFromIndex(0);
++		defaultMaterial-&gt;saveToDesc(nxDesc);
++		nxDesc.restitution = toNx( rDesc.mRestitution );
++		nxDesc.staticFriction = toNx( rDesc.mStaticFriction );
++		nxDesc.staticFrictionV = 0.0f;
++		YAKE_ASSERT( nxDesc.isValid() );
++		NxMaterial* nxMat = mpScene-&gt;createMaterial(nxDesc);
++
++		mNxMatIndex = nxMat-&gt;getMaterialIndex();
+ 	}
+ 	void MaterialNx::setBounciness(const real bounciness)
+ 	{
+@@ -66,21 +71,21 @@
+ 	}
+ 	void MaterialNx::setRestitution(const real restitution)
+ 	{
+-		NxMaterial* pNxMat = getNxSDK()-&gt;getMaterial( mNxMatIndex );
++		NxMaterial* pNxMat = mpScene-&gt;getMaterialFromIndex( mNxMatIndex );
+ 		YAKE_ASSERT( pNxMat );
+-		pNxMat-&gt;restitution = restitution;
++		pNxMat-&gt;setRestitution(restitution);
+ 	}
+ 	void MaterialNx::setStaticFriction(const real friction)
+ 	{
+-		NxMaterial* pNxMat = getNxSDK()-&gt;getMaterial( mNxMatIndex );
++		NxMaterial* pNxMat = mpScene-&gt;getMaterialFromIndex( mNxMatIndex );
+ 		YAKE_ASSERT( pNxMat );
+-		pNxMat-&gt;staticFriction = friction;
++		pNxMat-&gt;setStaticFriction(friction);
+ 	}
+ 	void MaterialNx::setStaticFrictionV(const real friction)
+ 	{
+-		NxMaterial* pNxMat = getNxSDK()-&gt;getMaterial( mNxMatIndex );
++		NxMaterial* pNxMat = mpScene-&gt;getMaterialFromIndex( mNxMatIndex );
+ 		YAKE_ASSERT( pNxMat );
+-		pNxMat-&gt;staticFrictionV = friction;
++		pNxMat-&gt;setStaticFrictionV(friction);
+ 	}
+ 	void MaterialNx::setStaticFrictionVEnabled(bool enabled)
+ 	{
+
+Modified: trunk/yake/src/yake/plugins/physicsNX/yakePhysicsTrimeshNx.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsNX/yakePhysicsTrimeshNx.cpp	2005-09-21 21:04:05 UTC (rev 929)
++++ trunk/yake/src/yake/plugins/physicsNX/yakePhysicsTrimeshNx.cpp	2005-09-23 20:41:06 UTC (rev 930)
+@@ -88,7 +88,7 @@
+ 		//meshDesc.heightFieldVerticalExtent  = 0;
+ 
+ 		//
+-		NxTriangleMesh* pMesh = getNxSDK()-&gt;createTriangleMesh( meshDesc );
++		NxTriangleMesh* pMesh = getNxExt()-&gt;NxCreateTriangleMesh( getNxSDK(), meshDesc );
+ 		YAKE_ASSERT( pMesh );
+ 		if(!pMesh)
+ 			return 0;
+
+Modified: trunk/yake/src/yake/plugins/physicsNX/yakeWorldNx.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsNX/yakeWorldNx.cpp	2005-09-21 21:04:05 UTC (rev 929)
++++ trunk/yake/src/yake/plugins/physicsNX/yakeWorldNx.cpp	2005-09-23 20:41:06 UTC (rev 930)
+@@ -165,6 +165,16 @@
+ 
+ 		mCurrTime = 0.;
+ 
++		// default material
++		NxMaterial*	defaultMaterial = mpScene-&gt;getMaterialFromIndex(0);
++		defaultMaterial-&gt;setRestitution(0.0f);
++		defaultMaterial-&gt;setStaticFriction(0.9f);
++		defaultMaterial-&gt;setDynamicFriction(0.9f);
++
++		NxMaterialDesc defaultMaterialDesc;
++		defaultMaterial-&gt;saveToDesc(defaultMaterialDesc);
++		YAKE_ASSERT( defaultMaterialDesc.isValid() );
++
+ 		return true;
+ 	}
+ 	void WorldNx::step(const real timeElapsed)
+@@ -278,7 +288,7 @@
+ 		YAKE_ASSERT( pMaterial );
+ 		if (!pMaterial)
+ 			return 0;
+-		pMaterial-&gt;_createFromDesc( rkMatDesc );
++		pMaterial-&gt;_createFromDesc( rkMatDesc, mpScene );
+ 
+ 		mMaterials.push_back( pMaterial );
+ 		return pMaterial;
+
+Modified: trunk/yake/yake/plugins/physicsNX/NxPhysicsSystem.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsNX/NxPhysicsSystem.h	2005-09-21 21:04:05 UTC (rev 929)
++++ trunk/yake/yake/plugins/physicsNX/NxPhysicsSystem.h	2005-09-23 20:41:06 UTC (rev 930)
+@@ -41,6 +41,7 @@
+ 		virtual SharedPtr&lt;IWorld&gt; createWorld();
+ 	public:
+ 		static NxPhysicsSDK*	mpNxSDK;
++		static NxExtensions*	mpNxExt;
+ 	};
+ 
+ }
+
+Modified: trunk/yake/yake/plugins/physicsNX/yakeMaterialNx.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsNX/yakeMaterialNx.h	2005-09-21 21:04:05 UTC (rev 929)
++++ trunk/yake/yake/plugins/physicsNX/yakeMaterialNx.h	2005-09-23 20:41:06 UTC (rev 930)
+@@ -46,11 +46,12 @@
+ 		virtual void setStaticFrictionVEnabled(bool enabled);
+ 
+ 		//-- helpers
+-		void _createFromDesc( const IMaterial::Desc &amp; rDesc );
++		void _createFromDesc( const IMaterial::Desc &amp; rDesc, NxScene* pScene );
+ 		inline NxMaterialIndex _getNxMatIndex() const
+ 		{ return mNxMatIndex; }
+ 	private:
+ 		NxMaterialIndex	mNxMatIndex;
++		NxScene* mpScene;
+ 	};
+ 
+ }
+
+Modified: trunk/yake/yake/plugins/physicsNX/yakePCH.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsNX/yakePCH.h	2005-09-21 21:04:05 UTC (rev 929)
++++ trunk/yake/yake/plugins/physicsNX/yakePCH.h	2005-09-23 20:41:06 UTC (rev 930)
+@@ -28,6 +28,7 @@
+ #define __INC_PCH_H__
+ 
+ #include &quot;NxPhysics.h&quot;
++#include &quot;NxExtensions.h&quot;
+ 
+ //YAKE:
+ 
+@@ -43,6 +44,7 @@
+ namespace yake {
+ namespace physics {
+ 	NxPhysicsSDK* getNxSDK();
++	NxExtensions* getNxExt();
+ }
+ }
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000000.html">[Yake-svn] r929 - trunk/yake/src/yapp/loader
+</A></li>
+	<LI>Next message: <A HREF="000002.html">[Yake-svn] r931 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#1">[ date ]</a>
+              <a href="thread.html#1">[ thread ]</a>
+              <a href="subject.html#1">[ subject ]</a>
+              <a href="author.html#1">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

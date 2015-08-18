@@ -1,0 +1,2607 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1085 - trunk/yake/scripts/yake
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1085%20-%20trunk/yake/scripts/yake&In-Reply-To=%3C200511022029.jA2KTGnp025519%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000154.html">
+   <LINK REL="Next"  HREF="000156.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1085 - trunk/yake/scripts/yake</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1085%20-%20trunk/yake/scripts/yake&In-Reply-To=%3C200511022029.jA2KTGnp025519%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1085 - trunk/yake/scripts/yake">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  2 21:29:16 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000154.html">[Yake-svn] r1084 - trunk/yake/scripts/yake
+</A></li>
+        <LI>Next message: <A HREF="000156.html">[Yake-svn] r1086 - trunk/yake/scripts/yapp/plugins
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#155">[ date ]</a>
+              <a href="thread.html#155">[ thread ]</a>
+              <a href="subject.html#155">[ subject ]</a>
+              <a href="author.html#155">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-02 21:29:03 +0100 (Wed, 02 Nov 2005)
+New Revision: 1085
+
+Removed:
+   trunk/yake/scripts/yake/audio.vcproj
+   trunk/yake/scripts/yake/base.vcproj
+   trunk/yake/scripts/yake/data.vcproj
+   trunk/yake/scripts/yake/graphics.vcproj
+   trunk/yake/scripts/yake/input.vcproj
+   trunk/yake/scripts/yake/physics.vcproj
+   trunk/yake/scripts/yake/reflection.vcproj
+   trunk/yake/scripts/yake/scripting.vcproj
+   trunk/yake/scripts/yake/thread.vcproj
+   trunk/yake/scripts/yake/yake.sln
+   trunk/yake/scripts/yake/yake.suo
+Log:
+restructured script/build files
+
+Deleted: trunk/yake/scripts/yake/audio.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/audio.vcproj	2005-11-02 20:28:23 UTC (rev 1084)
++++ trunk/yake/scripts/yake/audio.vcproj	2005-11-02 20:29:03 UTC (rev 1085)
+@@ -1,167 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
+-&lt;VisualStudioProject
+-	ProjectType=&quot;Visual C++&quot;
+-	Version=&quot;7.10&quot;
+-	Name=&quot;audio&quot;
+-	ProjectGUID=&quot;{42BB6F78-B04C-4968-AA5E-271DC45BEFBB}&quot;
+-	Keyword=&quot;Win32Proj&quot;&gt;
+-	&lt;Platforms&gt;
+-		&lt;Platform
+-			Name=&quot;Win32&quot;/&gt;
+-	&lt;/Platforms&gt;
+-	&lt;Configurations&gt;
+-		&lt;Configuration
+-			Name=&quot;Debug|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/debug&quot;
+-			IntermediateDirectory=&quot;../../common/obj/debug/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;..;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKE_AUDIO_EXPORTS&quot;
+-				MinimalRebuild=&quot;TRUE&quot;
+-				BasicRuntimeChecks=&quot;3&quot;
+-				RuntimeLibrary=&quot;3&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/audio/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;4&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/debug;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;TRUE&quot;
+-				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+-				SubSystem=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/debug/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-		&lt;Configuration
+-			Name=&quot;Release|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/release&quot;
+-			IntermediateDirectory=&quot;../../common/obj/release/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_AUDIO_EXPORTS&quot;
+-				RuntimeLibrary=&quot;2&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/audio/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;3&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/release;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;FALSE&quot;
+-				SubSystem=&quot;2&quot;
+-				OptimizeReferences=&quot;2&quot;
+-				EnableCOMDATFolding=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/release/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-	&lt;/Configurations&gt;
+-	&lt;References&gt;
+-	&lt;/References&gt;
+-	&lt;Files&gt;
+-		&lt;Filter
+-			Name=&quot;src&quot;
+-			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
+-			UniqueIdentifier=&quot;{53406A45-02C4-4502-8D8B-7C04D2450811}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\audio\yakeAudio.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\audio\yakePCH.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;inc&quot;
+-			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
+-			UniqueIdentifier=&quot;{F387AC84-EF4F-4c41-A93B-D89C6431B297}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\audio\yakeAudible.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\audio\yakeAudio.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\audio\yakeAudioPrerequisites.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\audio\yakeAudioSystem.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\audio\yakePCH.h&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-	&lt;/Files&gt;
+-	&lt;Globals&gt;
+-	&lt;/Globals&gt;
+-&lt;/VisualStudioProject&gt;
+
+Deleted: trunk/yake/scripts/yake/base.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/base.vcproj	2005-11-02 20:28:23 UTC (rev 1084)
++++ trunk/yake/scripts/yake/base.vcproj	2005-11-02 20:29:03 UTC (rev 1085)
+@@ -1,610 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
+-&lt;VisualStudioProject
+-	ProjectType=&quot;Visual C++&quot;
+-	Version=&quot;7.10&quot;
+-	Name=&quot;base&quot;
+-	ProjectGUID=&quot;{D29771DD-715F-452B-B71C-911BACF5956D}&quot;
+-	RootNamespace=&quot;base&quot;
+-	Keyword=&quot;Win32Proj&quot;&gt;
+-	&lt;Platforms&gt;
+-		&lt;Platform
+-			Name=&quot;Win32&quot;/&gt;
+-	&lt;/Platforms&gt;
+-	&lt;Configurations&gt;
+-		&lt;Configuration
+-			Name=&quot;Debug|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/debug&quot;
+-			IntermediateDirectory=&quot;../../common/obj/debug/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_CONSOLE;DLL_BUILD;YAKE_BASE_EXPORTS&quot;
+-				MinimalRebuild=&quot;TRUE&quot;
+-				BasicRuntimeChecks=&quot;3&quot;
+-				RuntimeLibrary=&quot;3&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/base/yakePCH.h&quot;
+-				PrecompiledHeaderFile=&quot;$(IntDir)/$(TargetName).pch&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;4&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;winmm.lib&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				AdditionalLibraryDirectories=&quot;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;TRUE&quot;
+-				ImportLibrary=&quot;../../common/lib/debug/$(ProjectName).lib&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-		&lt;Configuration
+-			Name=&quot;Release|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/release&quot;
+-			IntermediateDirectory=&quot;../../common/obj/release/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE;DLL_BUILD;YAKE_BASE_EXPORTS&quot;
+-				RuntimeLibrary=&quot;2&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/base/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;3&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;winmm.lib&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;FALSE&quot;
+-				SubSystem=&quot;1&quot;
+-				OptimizeReferences=&quot;2&quot;
+-				EnableCOMDATFolding=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/release/$(ProjectName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-	&lt;/Configurations&gt;
+-	&lt;References&gt;
+-	&lt;/References&gt;
+-	&lt;Files&gt;
+-		&lt;Filter
+-			Name=&quot;src&quot;
+-			Filter=&quot;&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeCriticalSection.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeDataChunk.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeDebugLogAppender.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeDebugOutputStream.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;
+-					ExcludedFromBuild=&quot;TRUE&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;
+-					ExcludedFromBuild=&quot;TRUE&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeException.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeInputStream.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeLibrary.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeLock.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeLog.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeMimeTypeManager.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeMovable.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeOutputStream.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeParamHolder.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakePCH.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeString.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeUniqueId.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeUniqueName.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;Filter
+-				Name=&quot;templates&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\base\templates\yakeSingleton.cpp&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\base\templates\yakeSmartAssert.cpp&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-			&lt;Filter
+-				Name=&quot;native&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;Filter
+-					Name=&quot;win32&quot;
+-					Filter=&quot;&quot;&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\src\yake\base\native\win32\yakeApplication.cpp&quot;&gt;
+-					&lt;/File&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\src\yake\base\native\win32\yakeConfig.cpp&quot;&gt;
+-					&lt;/File&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\src\yake\base\native\win32\yakeCriticalSection.cpp&quot;&gt;
+-						&lt;FileConfiguration
+-							Name=&quot;Debug|Win32&quot;&gt;
+-							&lt;Tool
+-								Name=&quot;VCCLCompilerTool&quot;
+-								ObjectFile=&quot;$(IntDir)/$(InputName)1.obj&quot;/&gt;
+-						&lt;/FileConfiguration&gt;
+-						&lt;FileConfiguration
+-							Name=&quot;Release|Win32&quot;&gt;
+-							&lt;Tool
+-								Name=&quot;VCCLCompilerTool&quot;
+-								ObjectFile=&quot;$(IntDir)/$(InputName)1.obj&quot;/&gt;
+-						&lt;/FileConfiguration&gt;
+-					&lt;/File&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\src\yake\base\native\win32\yakeDebug.cpp&quot;&gt;
+-					&lt;/File&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\src\yake\base\native\win32\yakeLibrary.cpp&quot;&gt;
+-						&lt;FileConfiguration
+-							Name=&quot;Debug|Win32&quot;&gt;
+-							&lt;Tool
+-								Name=&quot;VCCLCompilerTool&quot;
+-								ObjectFile=&quot;$(IntDir)/$(InputName)1.obj&quot;/&gt;
+-						&lt;/FileConfiguration&gt;
+-						&lt;FileConfiguration
+-							Name=&quot;Release|Win32&quot;&gt;
+-							&lt;Tool
+-								Name=&quot;VCCLCompilerTool&quot;
+-								ObjectFile=&quot;$(IntDir)/$(InputName)1.obj&quot;/&gt;
+-						&lt;/FileConfiguration&gt;
+-					&lt;/File&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\src\yake\base\native\win32\yakeProcessor.cpp&quot;&gt;
+-					&lt;/File&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\src\yake\base\native\win32\yakeTime.cpp&quot;&gt;
+-					&lt;/File&gt;
+-				&lt;/Filter&gt;
+-			&lt;/Filter&gt;
+-			&lt;Filter
+-				Name=&quot;math&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\base\math\yakeMath.cpp&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\base\math\yakeMatrix3.cpp&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\base\math\yakeMatrix4.cpp&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\base\math\yakeQuaternion.cpp&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\base\math\yakeRand.cpp&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\base\math\yakeRay.cpp&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\base\math\yakeSimpleSpline.cpp&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\base\math\yakeVector3.cpp&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;inc&quot;
+-			Filter=&quot;&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yake.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeByteSwapInputStreamDecorator.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeByteSwapOutputStreamDecorator.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeCommandInterface.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeConfigFile.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeCriticalSection.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeDataChunk.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeDebugLogAppender.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeDebugOutputStream.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeException.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeInputStream.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeInputStreamDecorator.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeLibrary.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeLock.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeLog.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeMimeTypeManager.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeMovable.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeOutputStream.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeOutputStreamDecorator.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeParamHolder.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakePCH.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakePlatform.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakePlugin.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakePrerequisites.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeProcessor.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeResource.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeString.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeTimer.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeUniqueId.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeUniqueName.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\base\yakeVersion.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;Filter
+-				Name=&quot;templates&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeAlgorithms.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeAlgorithms.inl&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeAssociator.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeDeque.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeFastMap.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeFunctor.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeManager.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeManager.inl&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeNiftyContainer.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakePointer.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeProperties.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeRegistry.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeSignals.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeSingleton.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeSmartAssert.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeThreads.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeVariant.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\templates\yakeVector.h&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-			&lt;Filter
+-				Name=&quot;native&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\native\yakeNative.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;Filter
+-					Name=&quot;win32&quot;
+-					Filter=&quot;&quot;&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\yake\base\native\win32\win32.rc&quot;&gt;
+-					&lt;/File&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\yake\base\native\win32\yakeConfig.h&quot;&gt;
+-					&lt;/File&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\yake\base\native\win32\yakeProcessor.h&quot;&gt;
+-					&lt;/File&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\yake\base\native\win32\yakeResource.h&quot;&gt;
+-					&lt;/File&gt;
+-					&lt;File
+-						RelativePath=&quot;..\..\yake\base\native\win32\yakeUndefine.h&quot;&gt;
+-					&lt;/File&gt;
+-				&lt;/Filter&gt;
+-			&lt;/Filter&gt;
+-			&lt;Filter
+-				Name=&quot;math&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeAsmMath.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeColor.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeColor.inl&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeGeometry.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeInterpolator.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeMath.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeMatrix3.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeMatrix4.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeMersenneTwister.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakePlane.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeQuaternion.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeRand.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeRay.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeSimpleSpline.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeVector3.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\math\yakeVector4.h&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-			&lt;Filter
+-				Name=&quot;prerequisites&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\prerequisites\yakePrerequisitesGCC.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\prerequisites\yakePrerequisitesVC.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\prerequisites\yakePrerequisitesVC71Types.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\prerequisites\yakePrerequisitesVC71Warnings.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\prerequisites\yakePrerequisitesVC8Types.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\prerequisites\yakePrerequisitesVC8Warnings.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\prerequisites\yakeStringGCC.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\prerequisites\yakeStringHashFun.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\prerequisites\yakeStringVC71.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\prerequisites\yakeStringVC8.h&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-			&lt;Filter
+-				Name=&quot;mpl&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeAbstractFactory.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeAlgorithms.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeBuildArguments.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeBuildIteration.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeCast.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeCast.inl&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeEmptyType.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeFunctions.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeInheritLinear.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeInheritMultiple.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeLambda.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeSelect.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeSequences.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeStaticAssert.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\base\mpl\yakeTraits.h&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-		&lt;/Filter&gt;
+-	&lt;/Files&gt;
+-	&lt;Globals&gt;
+-	&lt;/Globals&gt;
+-&lt;/VisualStudioProject&gt;
+
+Deleted: trunk/yake/scripts/yake/data.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/data.vcproj	2005-11-02 20:28:23 UTC (rev 1084)
++++ trunk/yake/scripts/yake/data.vcproj	2005-11-02 20:29:03 UTC (rev 1085)
+@@ -1,234 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
+-&lt;VisualStudioProject
+-	ProjectType=&quot;Visual C++&quot;
+-	Version=&quot;7.10&quot;
+-	Name=&quot;data&quot;
+-	ProjectGUID=&quot;{77A59B89-C2B3-429C-8317-ADE0D046CC3B}&quot;
+-	Keyword=&quot;Win32Proj&quot;&gt;
+-	&lt;Platforms&gt;
+-		&lt;Platform
+-			Name=&quot;Win32&quot;/&gt;
+-	&lt;/Platforms&gt;
+-	&lt;Configurations&gt;
+-		&lt;Configuration
+-			Name=&quot;Debug|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/debug&quot;
+-			IntermediateDirectory=&quot;../../common/obj/debug/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/;..dependencies/tinyxml&quot;
+-				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKE_DATA_EXPORTS&quot;
+-				MinimalRebuild=&quot;TRUE&quot;
+-				BasicRuntimeChecks=&quot;3&quot;
+-				RuntimeLibrary=&quot;3&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/data/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;4&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/debug;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;TRUE&quot;
+-				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+-				SubSystem=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/debug/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-		&lt;Configuration
+-			Name=&quot;Release|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/release&quot;
+-			IntermediateDirectory=&quot;../../common/obj/release/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/;..dependencies/tinyxml&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_DATA_EXPORTS&quot;
+-				RuntimeLibrary=&quot;2&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/data/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;3&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/release;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;FALSE&quot;
+-				SubSystem=&quot;1&quot;
+-				OptimizeReferences=&quot;2&quot;
+-				EnableCOMDATFolding=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/release/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-	&lt;/Configurations&gt;
+-	&lt;References&gt;
+-	&lt;/References&gt;
+-	&lt;Files&gt;
+-		&lt;Filter
+-			Name=&quot;src&quot;
+-			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
+-			UniqueIdentifier=&quot;{0B368FC7-9275-479a-8709-6C8621E33A2A}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\data\yakePCH.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\data\yakeXMLSerializer.cpp&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;inc&quot;
+-			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
+-			UniqueIdentifier=&quot;{B3DA2BAE-591A-4742-938B-2137884158DC}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\data\yakeData.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\data\yakeDataPrerequisites.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\data\yakeDataSerializer.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\data\yakePCH.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\data\yakeStreamSerializer.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\data\yakeXMLSerializer.h&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;TiXml&quot;
+-			Filter=&quot;&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\dependencies\tinyxml\tinystr.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;0&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;0&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\dependencies\tinyxml\tinyxml.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;0&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;0&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\dependencies\tinyxml\tinyxmlerror.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;0&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;0&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\dependencies\tinyxml\tinyxmlparser.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;0&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;0&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-	&lt;/Files&gt;
+-	&lt;Globals&gt;
+-	&lt;/Globals&gt;
+-&lt;/VisualStudioProject&gt;
+
+Deleted: trunk/yake/scripts/yake/graphics.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/graphics.vcproj	2005-11-02 20:28:23 UTC (rev 1084)
++++ trunk/yake/scripts/yake/graphics.vcproj	2005-11-02 20:29:03 UTC (rev 1085)
+@@ -1,173 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
+-&lt;VisualStudioProject
+-	ProjectType=&quot;Visual C++&quot;
+-	Version=&quot;7.10&quot;
+-	Name=&quot;graphics&quot;
+-	ProjectGUID=&quot;{ECC8FA24-93AC-4659-8EBD-26B6F418AC64}&quot;
+-	Keyword=&quot;Win32Proj&quot;&gt;
+-	&lt;Platforms&gt;
+-		&lt;Platform
+-			Name=&quot;Win32&quot;/&gt;
+-	&lt;/Platforms&gt;
+-	&lt;Configurations&gt;
+-		&lt;Configuration
+-			Name=&quot;Debug|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/debug&quot;
+-			IntermediateDirectory=&quot;../../common/obj/debug/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKE_GRAPHICSINTERFACE_EXPORTS&quot;
+-				MinimalRebuild=&quot;TRUE&quot;
+-				BasicRuntimeChecks=&quot;3&quot;
+-				RuntimeLibrary=&quot;3&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/graphics/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;4&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/debug;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;TRUE&quot;
+-				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+-				SubSystem=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/debug/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-		&lt;Configuration
+-			Name=&quot;Release|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/release&quot;
+-			IntermediateDirectory=&quot;../../common/obj/release/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_GRAPHICSINTERFACE_EXPORTS&quot;
+-				RuntimeLibrary=&quot;2&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/graphics/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;3&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/release;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;FALSE&quot;
+-				SubSystem=&quot;1&quot;
+-				OptimizeReferences=&quot;2&quot;
+-				EnableCOMDATFolding=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/release/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-	&lt;/Configurations&gt;
+-	&lt;References&gt;
+-	&lt;/References&gt;
+-	&lt;Files&gt;
+-		&lt;Filter
+-			Name=&quot;src&quot;
+-			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
+-			UniqueIdentifier=&quot;{4FC737F1-C7A5-4376-A066-2A32D752A2FF}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\graphics\yakeGraphicsSystem.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\graphics\yakePCH.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;inc&quot;
+-			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
+-			UniqueIdentifier=&quot;{93995380-89BD-4b04-88EB-625FBE52EBFB}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\graphics\yakeEntity.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\graphics\yakeGeometryAccess.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\graphics\yakeGraphicalWorld.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\graphics\yakeGraphics.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\graphics\yakeGraphicsEnvironment.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\graphics\yakeGraphicsSystem.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\graphics\yakePCH.h&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-	&lt;/Files&gt;
+-	&lt;Globals&gt;
+-	&lt;/Globals&gt;
+-&lt;/VisualStudioProject&gt;
+
+Deleted: trunk/yake/scripts/yake/input.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/input.vcproj	2005-11-02 20:28:23 UTC (rev 1084)
++++ trunk/yake/scripts/yake/input.vcproj	2005-11-02 20:29:03 UTC (rev 1085)
+@@ -1,180 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
+-&lt;VisualStudioProject
+-	ProjectType=&quot;Visual C++&quot;
+-	Version=&quot;7.10&quot;
+-	Name=&quot;input&quot;
+-	ProjectGUID=&quot;{1AF3930A-4E72-4455-AFD0-6B78684105CD}&quot;
+-	Keyword=&quot;Win32Proj&quot;&gt;
+-	&lt;Platforms&gt;
+-		&lt;Platform
+-			Name=&quot;Win32&quot;/&gt;
+-	&lt;/Platforms&gt;
+-	&lt;Configurations&gt;
+-		&lt;Configuration
+-			Name=&quot;Debug|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/debug&quot;
+-			IntermediateDirectory=&quot;../../common/obj/debug/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;..;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKE_INPUT_EXPORTS&quot;
+-				MinimalRebuild=&quot;TRUE&quot;
+-				BasicRuntimeChecks=&quot;3&quot;
+-				RuntimeLibrary=&quot;3&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/input/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;4&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/debug;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;TRUE&quot;
+-				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+-				SubSystem=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/debug/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-		&lt;Configuration
+-			Name=&quot;Release|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/release&quot;
+-			IntermediateDirectory=&quot;../../common/obj/release/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_INPUT_EXPORTS&quot;
+-				RuntimeLibrary=&quot;2&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/input/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;3&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/release;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;FALSE&quot;
+-				SubSystem=&quot;2&quot;
+-				OptimizeReferences=&quot;2&quot;
+-				EnableCOMDATFolding=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/release/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-	&lt;/Configurations&gt;
+-	&lt;References&gt;
+-	&lt;/References&gt;
+-	&lt;Files&gt;
+-		&lt;Filter
+-			Name=&quot;src&quot;
+-			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
+-			UniqueIdentifier=&quot;{B7CF984F-083F-4966-B9BD-0EB43436EE6A}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\input\yakeActionMap.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\input\yakeInput.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\input\yakeInputEventGenerator.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\input\yakeInputSystem.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\input\yakePCH.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;inc&quot;
+-			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
+-			UniqueIdentifier=&quot;{34D25D1F-9250-4a61-9B3D-61887B545317}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\input\yakeActionMap.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\input\yakeInput.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\input\yakeInputEventGenerator.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\input\yakeInputSystem.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\input\yakePCH.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\input\yakePrerequisites.h&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-	&lt;/Files&gt;
+-	&lt;Globals&gt;
+-	&lt;/Globals&gt;
+-&lt;/VisualStudioProject&gt;
+
+Deleted: trunk/yake/scripts/yake/physics.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/physics.vcproj	2005-11-02 20:28:23 UTC (rev 1084)
++++ trunk/yake/scripts/yake/physics.vcproj	2005-11-02 20:29:03 UTC (rev 1085)
+@@ -1,209 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
+-&lt;VisualStudioProject
+-	ProjectType=&quot;Visual C++&quot;
+-	Version=&quot;7.10&quot;
+-	Name=&quot;physics&quot;
+-	ProjectGUID=&quot;{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}&quot;
+-	Keyword=&quot;Win32Proj&quot;&gt;
+-	&lt;Platforms&gt;
+-		&lt;Platform
+-			Name=&quot;Win32&quot;/&gt;
+-	&lt;/Platforms&gt;
+-	&lt;Configurations&gt;
+-		&lt;Configuration
+-			Name=&quot;Debug|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/debug&quot;
+-			IntermediateDirectory=&quot;../../common/obj/debug/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;..;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKE_PHYSICS_EXPORTS&quot;
+-				MinimalRebuild=&quot;TRUE&quot;
+-				BasicRuntimeChecks=&quot;3&quot;
+-				RuntimeLibrary=&quot;3&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/physics/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;4&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/debug;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;TRUE&quot;
+-				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+-				SubSystem=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/debug/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-		&lt;Configuration
+-			Name=&quot;Release|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/release&quot;
+-			IntermediateDirectory=&quot;../../common/obj/release/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_PHYSICS_EXPORTS&quot;
+-				RuntimeLibrary=&quot;2&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/physics/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;3&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/release;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;FALSE&quot;
+-				SubSystem=&quot;2&quot;
+-				OptimizeReferences=&quot;2&quot;
+-				EnableCOMDATFolding=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/release/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-	&lt;/Configurations&gt;
+-	&lt;References&gt;
+-	&lt;/References&gt;
+-	&lt;Files&gt;
+-		&lt;Filter
+-			Name=&quot;src&quot;
+-			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
+-			UniqueIdentifier=&quot;{D98C3EC0-57EF-43b5-9AA8-19A456D4679B}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\physics\yakePCH.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\physics\yakePhysicsAffectors.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\physics\yakePhysicsAffectorZone.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\physics\yakePhysicsSystem.cpp&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;inc&quot;
+-			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
+-			UniqueIdentifier=&quot;{931F508C-E413-4f0f-8658-E107F95EA8B8}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakeAffectorZone.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePCH.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysics.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsActor.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsAffectors.h&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;
+-					ExcludedFromBuild=&quot;TRUE&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCustomBuildTool&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsAvatar.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsBody.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsBodyGroup.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsJoint.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsMaterial.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsMotors.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsPrerequisites.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsShape.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsSystem.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\physics\yakePhysicsWorld.h&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-	&lt;/Files&gt;
+-	&lt;Globals&gt;
+-	&lt;/Globals&gt;
+-&lt;/VisualStudioProject&gt;
+
+Deleted: trunk/yake/scripts/yake/reflection.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/reflection.vcproj	2005-11-02 20:28:23 UTC (rev 1084)
++++ trunk/yake/scripts/yake/reflection.vcproj	2005-11-02 20:29:03 UTC (rev 1085)
+@@ -1,263 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
+-&lt;VisualStudioProject
+-	ProjectType=&quot;Visual C++&quot;
+-	Version=&quot;7.10&quot;
+-	Name=&quot;reflection&quot;
+-	ProjectGUID=&quot;{215FEC33-87C9-47E1-80EF-2FC735508B57}&quot;
+-	RootNamespace=&quot;reflection&quot;
+-	SccProjectName=&quot;&quot;
+-	SccLocalPath=&quot;&quot;&gt;
+-	&lt;Platforms&gt;
+-		&lt;Platform
+-			Name=&quot;Win32&quot;/&gt;
+-	&lt;/Platforms&gt;
+-	&lt;Configurations&gt;
+-		&lt;Configuration
+-			Name=&quot;Debug|Win32&quot;
+-			OutputDirectory=&quot;../../common/lib/debug&quot;
+-			IntermediateDirectory=&quot;../../common/obj/debug/$(ProjectName)&quot;
+-			ConfigurationType=&quot;4&quot;
+-			UseOfMFC=&quot;0&quot;
+-			ATLMinimizesCRunTimeLibraryUsage=&quot;FALSE&quot;
+-			CharacterSet=&quot;0&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;../..;../../yake/reflection;../../dependencies/tnl/tnl;..\..\dependencies\boost;..\..\dependencies\lua\include;..\..\dependencies\luabind&quot;
+-				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_CONSOLE&quot;
+-				BasicRuntimeChecks=&quot;3&quot;
+-				RuntimeLibrary=&quot;3&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;0&quot;
+-				PrecompiledHeaderFile=&quot;&quot;
+-				AssemblerListingLocation=&quot;$(IntDir)/&quot;
+-				ObjectFile=&quot;$(IntDir)/&quot;
+-				ProgramDataBaseFileName=&quot;$(IntDir)/&quot;
+-				WarningLevel=&quot;3&quot;
+-				SuppressStartupBanner=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;4&quot;
+-				CompileAs=&quot;2&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLibrarianTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;
+-				TypeLibraryName=&quot;.\Debug/agm_reflection.tlb&quot;
+-				HeaderFileName=&quot;&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;
+-				PreprocessorDefinitions=&quot;_DEBUG&quot;
+-				Culture=&quot;1032&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-		&lt;Configuration
+-			Name=&quot;Release|Win32&quot;
+-			OutputDirectory=&quot;../../common/lib/release&quot;
+-			IntermediateDirectory=&quot;../../common/obj/release/$(ProjectName)&quot;
+-			ConfigurationType=&quot;4&quot;
+-			UseOfMFC=&quot;0&quot;
+-			ATLMinimizesCRunTimeLibraryUsage=&quot;FALSE&quot;
+-			CharacterSet=&quot;0&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;2&quot;
+-				InlineFunctionExpansion=&quot;1&quot;
+-				AdditionalIncludeDirectories=&quot;../..;../../yake/reflection;../../dependencies/tnl/tnl;..\..\dependencies\boost;..\..\dependencies\lua\include;..\..\dependencies\luabind&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE&quot;
+-				StringPooling=&quot;TRUE&quot;
+-				RuntimeLibrary=&quot;2&quot;
+-				EnableFunctionLevelLinking=&quot;TRUE&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;0&quot;
+-				PrecompiledHeaderFile=&quot;&quot;
+-				AssemblerListingLocation=&quot;$(IntDir)/&quot;
+-				ObjectFile=&quot;$(IntDir)/&quot;
+-				ProgramDataBaseFileName=&quot;$(IntDir)/&quot;
+-				WarningLevel=&quot;3&quot;
+-				SuppressStartupBanner=&quot;TRUE&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLibrarianTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;
+-				TypeLibraryName=&quot;.\Release/agm_reflection.tlb&quot;
+-				HeaderFileName=&quot;&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;
+-				PreprocessorDefinitions=&quot;NDEBUG&quot;
+-				Culture=&quot;1032&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-	&lt;/Configurations&gt;
+-	&lt;References&gt;
+-	&lt;/References&gt;
+-	&lt;Files&gt;
+-		&lt;Filter
+-			Name=&quot;inc&quot;
+-			Filter=&quot;&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\bind.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\callable.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\class.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\classregistry.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\config.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\event.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\events.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\exception.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\field.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\method.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\object.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\property.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\reflection.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\registered.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\static_init.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\staticfield.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\staticmethod.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\reflection\utility.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;Filter
+-				Name=&quot;bind_lua&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\reflection\bind_lua\any_convertors.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\reflection\bind_lua\bind_lua.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\reflection\bind_lua\bind_to_lua.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\reflection\bind_lua\do_string.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\reflection\bind_lua\lua_handler_to_cpp.h&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\reflection\bind_lua\luabind_class_registration.h&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-			&lt;Filter
+-				Name=&quot;bind_network&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\reflection\bind_network\bind_network.h&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-			&lt;Filter
+-				Name=&quot;bind_serialization&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\yake\reflection\bind_serialization\bind_serialization.h&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;src&quot;
+-			Filter=&quot;&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\reflection\reflection.cpp&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;Filter
+-				Name=&quot;bind_lua&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\reflection\bind_lua\bind_lua.cpp&quot;&gt;
+-				&lt;/File&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\reflection\bind_lua\lua_handler_to_cpp.cpp&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-			&lt;Filter
+-				Name=&quot;yake&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\reflection\events.cpp&quot;&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-			&lt;Filter
+-				Name=&quot;bind_network&quot;
+-				Filter=&quot;&quot;&gt;
+-				&lt;File
+-					RelativePath=&quot;..\..\src\yake\reflection\bind_network\bind_network.cpp&quot;&gt;
+-					&lt;FileConfiguration
+-						Name=&quot;Debug|Win32&quot;
+-						ExcludedFromBuild=&quot;TRUE&quot;&gt;
+-						&lt;Tool
+-							Name=&quot;VCCLCompilerTool&quot;/&gt;
+-					&lt;/FileConfiguration&gt;
+-					&lt;FileConfiguration
+-						Name=&quot;Release|Win32&quot;
+-						ExcludedFromBuild=&quot;TRUE&quot;&gt;
+-						&lt;Tool
+-							Name=&quot;VCCLCompilerTool&quot;/&gt;
+-					&lt;/FileConfiguration&gt;
+-				&lt;/File&gt;
+-			&lt;/Filter&gt;
+-		&lt;/Filter&gt;
+-	&lt;/Files&gt;
+-	&lt;Globals&gt;
+-	&lt;/Globals&gt;
+-&lt;/VisualStudioProject&gt;
+
+Deleted: trunk/yake/scripts/yake/scripting.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/scripting.vcproj	2005-11-02 20:28:23 UTC (rev 1084)
++++ trunk/yake/scripts/yake/scripting.vcproj	2005-11-02 20:29:03 UTC (rev 1085)
+@@ -1,127 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
+-&lt;VisualStudioProject
+-	ProjectType=&quot;Visual C++&quot;
+-	Version=&quot;7.10&quot;
+-	Name=&quot;scripting&quot;
+-	ProjectGUID=&quot;{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}&quot;
+-	RootNamespace=&quot;scripting&quot;
+-	Keyword=&quot;Win32Proj&quot;&gt;
+-	&lt;Platforms&gt;
+-		&lt;Platform
+-			Name=&quot;Win32&quot;/&gt;
+-	&lt;/Platforms&gt;
+-	&lt;Configurations&gt;
+-		&lt;Configuration
+-			Name=&quot;Debug|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/debug&quot;
+-			IntermediateDirectory=&quot;../../common/obj/debug/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;..;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_WINDOWS;_USRDLL;_DEBUG;YAKE_SCRIPTING_EXPORTS&quot;
+-				MinimalRebuild=&quot;TRUE&quot;
+-				BasicRuntimeChecks=&quot;3&quot;
+-				RuntimeLibrary=&quot;3&quot;
+-				UsePrecompiledHeader=&quot;0&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;4&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/debug;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;TRUE&quot;
+-				ImportLibrary=&quot;../../common/lib/debug/$(TargetName).lib&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-		&lt;Configuration
+-			Name=&quot;Release|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/release&quot;
+-			IntermediateDirectory=&quot;../../common/obj/release/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;..;../../;../../dependencies/boost/;../../dependencies/ttl/&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_SCRIPTING_EXPORTS&quot;
+-				RuntimeLibrary=&quot;2&quot;
+-				UsePrecompiledHeader=&quot;0&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;3&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/release;../../dependencies/lib&quot;
+-				ImportLibrary=&quot;../../common/lib/release/$(TargetName).lib&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-	&lt;/Configurations&gt;
+-	&lt;References&gt;
+-	&lt;/References&gt;
+-	&lt;Files&gt;
+-		&lt;Filter
+-			Name=&quot;src&quot;
+-			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
+-			UniqueIdentifier=&quot;{4FC737F1-C7A5-4376-A066-2A32D752A2FF}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\scripting\yakeScriptingSystem.cpp&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;inc&quot;
+-			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
+-			UniqueIdentifier=&quot;{93995380-89BD-4b04-88EB-625FBE52EBFB}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\scripting\yakeScriptingSystem.h&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-	&lt;/Files&gt;
+-	&lt;Globals&gt;
+-	&lt;/Globals&gt;
+-&lt;/VisualStudioProject&gt;
+
+Deleted: trunk/yake/scripts/yake/thread.vcproj
+===================================================================
+--- trunk/yake/scripts/yake/thread.vcproj	2005-11-02 20:28:23 UTC (rev 1084)
++++ trunk/yake/scripts/yake/thread.vcproj	2005-11-02 20:29:03 UTC (rev 1085)
+@@ -1,169 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
+-&lt;VisualStudioProject
+-	ProjectType=&quot;Visual C++&quot;
+-	Version=&quot;7.10&quot;
+-	Name=&quot;thread&quot;
+-	ProjectGUID=&quot;{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}&quot;
+-	Keyword=&quot;Win32Proj&quot;&gt;
+-	&lt;Platforms&gt;
+-		&lt;Platform
+-			Name=&quot;Win32&quot;/&gt;
+-	&lt;/Platforms&gt;
+-	&lt;Configurations&gt;
+-		&lt;Configuration
+-			Name=&quot;Debug|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/debug&quot;
+-			IntermediateDirectory=&quot;../../common/obj/debug/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				Optimization=&quot;0&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/;../../dependencies/ZThread/include&quot;
+-				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKE_THREAD_EXPORTS&quot;
+-				MinimalRebuild=&quot;TRUE&quot;
+-				BasicRuntimeChecks=&quot;3&quot;
+-				RuntimeLibrary=&quot;3&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/thread/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;4&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;zthreadd.lib&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/debug;../../dependencies/ZThread/lib;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;TRUE&quot;
+-				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+-				SubSystem=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/debug/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-		&lt;Configuration
+-			Name=&quot;Release|Win32&quot;
+-			OutputDirectory=&quot;../../common/bin/release&quot;
+-			IntermediateDirectory=&quot;../../common/obj/release/$(ProjectName)&quot;
+-			ConfigurationType=&quot;2&quot;
+-			CharacterSet=&quot;2&quot;&gt;
+-			&lt;Tool
+-				Name=&quot;VCCLCompilerTool&quot;
+-				AdditionalIncludeDirectories=&quot;../../;../../dependencies/boost/;../../dependencies/ttl/;../../dependencies/ZThread/include&quot;
+-				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_THREAD_EXPORTS&quot;
+-				RuntimeLibrary=&quot;2&quot;
+-				RuntimeTypeInfo=&quot;TRUE&quot;
+-				UsePrecompiledHeader=&quot;3&quot;
+-				PrecompiledHeaderThrough=&quot;yake/thread/yakePCH.h&quot;
+-				WarningLevel=&quot;3&quot;
+-				Detect64BitPortabilityProblems=&quot;TRUE&quot;
+-				DebugInformationFormat=&quot;3&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCCustomBuildTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;zthread.lib&quot;
+-				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+-				LinkIncremental=&quot;1&quot;
+-				AdditionalLibraryDirectories=&quot;../../common/lib/release;../../dependencies/ZThread/lib;../../dependencies/lib&quot;
+-				GenerateDebugInformation=&quot;FALSE&quot;
+-				SubSystem=&quot;1&quot;
+-				OptimizeReferences=&quot;2&quot;
+-				EnableCOMDATFolding=&quot;2&quot;
+-				ImportLibrary=&quot;../../common/lib/release/$(TargetName).lib&quot;
+-				TargetMachine=&quot;1&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCMIDLTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPostBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreBuildEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCPreLinkEventTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCResourceCompilerTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebServiceProxyGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCXMLDataGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCWebDeploymentTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCManagedWrapperGeneratorTool&quot;/&gt;
+-			&lt;Tool
+-				Name=&quot;VCAuxiliaryManagedWrapperGeneratorTool&quot;/&gt;
+-		&lt;/Configuration&gt;
+-	&lt;/Configurations&gt;
+-	&lt;References&gt;
+-	&lt;/References&gt;
+-	&lt;Files&gt;
+-		&lt;Filter
+-			Name=&quot;src&quot;
+-			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
+-			UniqueIdentifier=&quot;{DCD91041-C7E2-405a-83F9-2F97CCD208C5}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\thread\yakePCH.cpp&quot;&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-						UsePrecompiledHeader=&quot;1&quot;/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\src\yake\thread\yakeThread.cpp&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-		&lt;Filter
+-			Name=&quot;inc&quot;
+-			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
+-			UniqueIdentifier=&quot;{B3DA2BAE-591A-4742-938B-2137884158DC}&quot;&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\thread\yakePCH.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\thread\yakeThread.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\thread\yakeThreadPrerequisites.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\thread\ZThreadMutexForwarder.h&quot;&gt;
+-			&lt;/File&gt;
+-			&lt;File
+-				RelativePath=&quot;..\..\yake\thread\ZThreadThreadForwarder.h&quot;&gt;
+-			&lt;/File&gt;
+-		&lt;/Filter&gt;
+-	&lt;/Files&gt;
+-	&lt;Globals&gt;
+-	&lt;/Globals&gt;
+-&lt;/VisualStudioProject&gt;
+
+Deleted: trunk/yake/scripts/yake/yake.sln
+===================================================================
+--- trunk/yake/scripts/yake/yake.sln	2005-11-02 20:28:23 UTC (rev 1084)
++++ trunk/yake/scripts/yake/yake.sln	2005-11-02 20:29:03 UTC (rev 1085)
+@@ -1,331 +0,0 @@
+-Microsoft Visual Studio Solution File, Format Version 8.00
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;base&quot;, &quot;base.vcproj&quot;, &quot;{D29771DD-715F-452B-B71C-911BACF5956D}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;graphics&quot;, &quot;graphics.vcproj&quot;, &quot;{ECC8FA24-93AC-4659-8EBD-26B6F418AC64}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;graphicsOGRE&quot;, &quot;plugins\graphics\graphicsOgre.vcproj&quot;, &quot;{A2C2A0B2-2EB0-4254-891D-FE93466809CF}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;registryPluginConcrete&quot;, &quot;samples\base\registryPluginConcrete.vcproj&quot;, &quot;{F6E2B937-448D-4ADE-9A8F-7DDF0CB38865}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866} = {F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;registryPluginInterface&quot;, &quot;samples\base\registryPluginInterface.vcproj&quot;, &quot;{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesAbstractFactory&quot;, &quot;samples\base\samplesAbstractFactory.vcproj&quot;, &quot;{0CA5015D-D3E7-4B2B-B903-75788097E065}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesContainer&quot;, &quot;samples\base\samplesContainer.vcproj&quot;, &quot;{7E0CC2D4-0DDE-419A-81DE-EE0739673432}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesDebug&quot;, &quot;samples\base\samplesDebug.vcproj&quot;, &quot;{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesRegistry&quot;, &quot;samples\base\samplesRegistry.vcproj&quot;, &quot;{0CA5014D-D3E7-4B2B-B993-75788097E065}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesRegistryPlugin&quot;, &quot;samples\base\samplesRegistryPlugin.vcproj&quot;, &quot;{6876FBCB-B5AD-493E-ADE4-F81441BC4EF2}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866} = {F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesRegistryPluginManual&quot;, &quot;samples\base\samplesRegistryPluginManual.vcproj&quot;, &quot;{6876FBCB-B5AD-494E-ADE4-F81441BC4EF9}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866} = {F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesGraphicsDemo&quot;, &quot;samples\graphics\samplesGraphicsDemo.vcproj&quot;, &quot;{723A2F36-A3DC-40E5-A7B0-0629219B04DE}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD} = {1AF3930A-4E72-4455-AFD0-6B78684105CD}
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;physics&quot;, &quot;physics.vcproj&quot;, &quot;{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;physicsODE&quot;, &quot;plugins\physics\physicsODE.vcproj&quot;, &quot;{2F5124AA-56BD-4909-811A-E79901978C86}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;input&quot;, &quot;input.vcproj&quot;, &quot;{1AF3930A-4E72-4455-AFD0-6B78684105CD}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;inputOGRE&quot;, &quot;plugins\input\inputOgre.vcproj&quot;, &quot;{A1A2FE19-7B7E-42F1-808B-8FA5B6AA697E}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD} = {1AF3930A-4E72-4455-AFD0-6B78684105CD}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;scripting&quot;, &quot;scripting.vcproj&quot;, &quot;{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;scriptingLua&quot;, &quot;plugins\scripting\scriptingLua.vcproj&quot;, &quot;{41CEA11B-9678-43E5-B2F4-754944D7B461}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesScriptingLua&quot;, &quot;samples\scripting\samplesScriptingLua.vcproj&quot;, &quot;{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD} = {1AF3930A-4E72-4455-AFD0-6B78684105CD}
+-		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+-		{CA63F621-0912-4551-B51A-7BD18F491181} = {CA63F621-0912-4551-B51A-7BD18F491181}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;data&quot;, &quot;data.vcproj&quot;, &quot;{77A59B89-C2B3-429C-8317-ADE0D046CC3B}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesDataMisc&quot;, &quot;samples\data\samplesDataMisc.vcproj&quot;, &quot;{22EFD734-D8C5-47D6-8461-C37E02A9F0B6}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;scriptingBindingsLua&quot;, &quot;plugins\scripting\scriptingLuaBindings.vcproj&quot;, &quot;{CA63F621-0912-4551-B51A-7BD18F491181}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;audio&quot;, &quot;audio.vcproj&quot;, &quot;{42BB6F78-B04C-4968-AA5E-271DC45BEFBB}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;audioOpenAL&quot;, &quot;plugins\audio\audioOpenAL.vcproj&quot;, &quot;{66DC2F33-EF4C-46A0-9955-6A60F75D8279}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;physicsNX&quot;, &quot;plugins\physics\physicsNX.vcproj&quot;, &quot;{5749946B-081D-4A80-8119-2BE84F571E81}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesPhysicsDemo&quot;, &quot;samples\physics\samplesPhysicsDemo.vcproj&quot;, &quot;{3DA99679-404B-44C7-9267-C97D066F3D96}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD} = {1AF3930A-4E72-4455-AFD0-6B78684105CD}
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;reflection&quot;, &quot;reflection.vcproj&quot;, &quot;{215FEC33-87C9-47E1-80EF-2FC735508B57}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;thread&quot;, &quot;thread.vcproj&quot;, &quot;{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplesThread1&quot;, &quot;samples\thread\samplesThread1.vcproj&quot;, &quot;{2E9B8C5F-AC44-478B-AE7F-8C6DC3EA3654}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{AA46155A-CCE2-4B9F-BBA2-84E827CF6222} = {AA46155A-CCE2-4B9F-BBA2-84E827CF6222}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samples_application&quot;, &quot;samples\application\samples_application.vcproj&quot;, &quot;{44C8B2A3-281A-4910-A737-7EA1F6F43E35}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;graphicsBindingsLua&quot;, &quot;plugins\scripting\graphicsLuaBindings.vcproj&quot;, &quot;{CA63F621-0912-4551-B51A-7BD18F491181}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;baseBindingsLua&quot;, &quot;plugins\scripting\baseLuaBindings.vcproj&quot;, &quot;{3867E9A4-41F3-4969-B0A8-40757BCB6C29}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Global
+-	GlobalSection(SolutionConfiguration) = preSolution
+-		Debug = Debug
+-		Release = Release
+-	EndGlobalSection
+-	GlobalSection(ProjectConfiguration) = postSolution
+-		{D29771DD-715F-452B-B71C-911BACF5956D}.Debug.ActiveCfg = Debug|Win32
+-		{D29771DD-715F-452B-B71C-911BACF5956D}.Debug.Build.0 = Debug|Win32
+-		{D29771DD-715F-452B-B71C-911BACF5956D}.Release.ActiveCfg = Release|Win32
+-		{D29771DD-715F-452B-B71C-911BACF5956D}.Release.Build.0 = Release|Win32
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64}.Debug.ActiveCfg = Debug|Win32
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64}.Debug.Build.0 = Debug|Win32
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64}.Release.ActiveCfg = Release|Win32
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64}.Release.Build.0 = Release|Win32
+-		{A2C2A0B2-2EB0-4254-891D-FE93466809CF}.Debug.ActiveCfg = Debug|Win32
+-		{A2C2A0B2-2EB0-4254-891D-FE93466809CF}.Debug.Build.0 = Debug|Win32
+-		{A2C2A0B2-2EB0-4254-891D-FE93466809CF}.Release.ActiveCfg = Release|Win32
+-		{A2C2A0B2-2EB0-4254-891D-FE93466809CF}.Release.Build.0 = Release|Win32
+-		{F6E2B937-448D-4ADE-9A8F-7DDF0CB38865}.Debug.ActiveCfg = Debug|Win32
+-		{F6E2B937-448D-4ADE-9A8F-7DDF0CB38865}.Debug.Build.0 = Debug|Win32
+-		{F6E2B937-448D-4ADE-9A8F-7DDF0CB38865}.Release.ActiveCfg = Release|Win32
+-		{F6E2B937-448D-4ADE-9A8F-7DDF0CB38865}.Release.Build.0 = Release|Win32
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}.Debug.ActiveCfg = Debug|Win32
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}.Debug.Build.0 = Debug|Win32
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}.Release.ActiveCfg = Release|Win32
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}.Release.Build.0 = Release|Win32
+-		{0CA5015D-D3E7-4B2B-B903-75788097E065}.Debug.ActiveCfg = Debug|Win32
+-		{0CA5015D-D3E7-4B2B-B903-75788097E065}.Debug.Build.0 = Debug|Win32
+-		{0CA5015D-D3E7-4B2B-B903-75788097E065}.Release.ActiveCfg = Release|Win32
+-		{0CA5015D-D3E7-4B2B-B903-75788097E065}.Release.Build.0 = Release|Win32
+-		{7E0CC2D4-0DDE-419A-81DE-EE0739673432}.Debug.ActiveCfg = Debug|Win32
+-		{7E0CC2D4-0DDE-419A-81DE-EE0739673432}.Debug.Build.0 = Debug|Win32
+-		{7E0CC2D4-0DDE-419A-81DE-EE0739673432}.Release.ActiveCfg = Release|Win32
+-		{7E0CC2D4-0DDE-419A-81DE-EE0739673432}.Release.Build.0 = Release|Win32
+-		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Debug.ActiveCfg = Debug|Win32
+-		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Debug.Build.0 = Debug|Win32
+-		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Release.ActiveCfg = Release|Win32
+-		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Release.Build.0 = Release|Win32
+-		{0CA5014D-D3E7-4B2B-B993-75788097E065}.Debug.ActiveCfg = Debug|Win32
+-		{0CA5014D-D3E7-4B2B-B993-75788097E065}.Debug.Build.0 = Debug|Win32
+-		{0CA5014D-D3E7-4B2B-B993-75788097E065}.Release.ActiveCfg = Release|Win32
+-		{0CA5014D-D3E7-4B2B-B993-75788097E065}.Release.Build.0 = Release|Win32
+-		{6876FBCB-B5AD-493E-ADE4-F81441BC4EF2}.Debug.ActiveCfg = Debug|Win32
+-		{6876FBCB-B5AD-493E-ADE4-F81441BC4EF2}.Debug.Build.0 = Debug|Win32
+-		{6876FBCB-B5AD-493E-ADE4-F81441BC4EF2}.Release.ActiveCfg = Release|Win32
+-		{6876FBCB-B5AD-493E-ADE4-F81441BC4EF2}.Release.Build.0 = Release|Win32
+-		{6876FBCB-B5AD-494E-ADE4-F81441BC4EF9}.Debug.ActiveCfg = Debug|Win32
+-		{6876FBCB-B5AD-494E-ADE4-F81441BC4EF9}.Debug.Build.0 = Debug|Win32
+-		{6876FBCB-B5AD-494E-ADE4-F81441BC4EF9}.Release.ActiveCfg = Release|Win32
+-		{6876FBCB-B5AD-494E-ADE4-F81441BC4EF9}.Release.Build.0 = Release|Win32
+-		{723A2F36-A3DC-40E5-A7B0-0629219B04DE}.Debug.ActiveCfg = Debug|Win32
+-		{723A2F36-A3DC-40E5-A7B0-0629219B04DE}.Debug.Build.0 = Debug|Win32
+-		{723A2F36-A3DC-40E5-A7B0-0629219B04DE}.Release.ActiveCfg = Release|Win32
+-		{723A2F36-A3DC-40E5-A7B0-0629219B04DE}.Release.Build.0 = Release|Win32
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}.Debug.ActiveCfg = Debug|Win32
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}.Debug.Build.0 = Debug|Win32
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}.Release.ActiveCfg = Release|Win32
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}.Release.Build.0 = Release|Win32
+-		{2F5124AA-56BD-4909-811A-E79901978C86}.Debug.ActiveCfg = Debug|Win32
+-		{2F5124AA-56BD-4909-811A-E79901978C86}.Debug.Build.0 = Debug|Win32
+-		{2F5124AA-56BD-4909-811A-E79901978C86}.Release.ActiveCfg = Release|Win32
+-		{2F5124AA-56BD-4909-811A-E79901978C86}.Release.Build.0 = Release|Win32
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD}.Debug.ActiveCfg = Debug|Win32
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD}.Debug.Build.0 = Debug|Win32
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD}.Release.ActiveCfg = Release|Win32
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD}.Release.Build.0 = Release|Win32
+-		{A1A2FE19-7B7E-42F1-808B-8FA5B6AA697E}.Debug.ActiveCfg = Debug|Win32
+-		{A1A2FE19-7B7E-42F1-808B-8FA5B6AA697E}.Debug.Build.0 = Debug|Win32
+-		{A1A2FE19-7B7E-42F1-808B-8FA5B6AA697E}.Release.ActiveCfg = Release|Win32
+-		{A1A2FE19-7B7E-42F1-808B-8FA5B6AA697E}.Release.Build.0 = Release|Win32
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}.Debug.ActiveCfg = Debug|Win32
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}.Debug.Build.0 = Debug|Win32
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}.Release.ActiveCfg = Release|Win32
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}.Release.Build.0 = Release|Win32
+-		{41CEA11B-9678-43E5-B2F4-754944D7B461}.Debug.ActiveCfg = Debug|Win32
+-		{41CEA11B-9678-43E5-B2F4-754944D7B461}.Debug.Build.0 = Debug|Win32
+-		{41CEA11B-9678-43E5-B2F4-754944D7B461}.Release.ActiveCfg = Release|Win32
+-		{41CEA11B-9678-43E5-B2F4-754944D7B461}.Release.Build.0 = Release|Win32
+-		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Debug.ActiveCfg = Debug|Win32
+-		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Debug.Build.0 = Debug|Win32
+-		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Release.ActiveCfg = Release|Win32
+-		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Release.Build.0 = Release|Win32
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B}.Debug.ActiveCfg = Debug|Win32
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B}.Debug.Build.0 = Debug|Win32
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B}.Release.ActiveCfg = Release|Win32
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B}.Release.Build.0 = Release|Win32
+-		{22EFD734-D8C5-47D6-8461-C37E02A9F0B6}.Debug.ActiveCfg = Debug|Win32
+-		{22EFD734-D8C5-47D6-8461-C37E02A9F0B6}.Debug.Build.0 = Debug|Win32
+-		{22EFD734-D8C5-47D6-8461-C37E02A9F0B6}.Release.ActiveCfg = Release|Win32
+-		{22EFD734-D8C5-47D6-8461-C37E02A9F0B6}.Release.Build.0 = Release|Win32
+-		{CA63F621-0912-4551-B51A-7BD18F491181}.Debug.ActiveCfg = Debug|Win32
+-		{CA63F621-0912-4551-B51A-7BD18F491181}.Debug.Build.0 = Debug|Win32
+-		{CA63F621-0912-4551-B51A-7BD18F491181}.Release.ActiveCfg = Release|Win32
+-		{CA63F621-0912-4551-B51A-7BD18F491181}.Release.Build.0 = Release|Win32
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB}.Debug.ActiveCfg = Debug|Win32
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB}.Debug.Build.0 = Debug|Win32
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB}.Release.ActiveCfg = Release|Win32
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB}.Release.Build.0 = Release|Win32
+-		{66DC2F33-EF4C-46A0-9955-6A60F75D8279}.Debug.ActiveCfg = Debug|Win32
+-		{66DC2F33-EF4C-46A0-9955-6A60F75D8279}.Debug.Build.0 = Debug|Win32
+-		{66DC2F33-EF4C-46A0-9955-6A60F75D8279}.Release.ActiveCfg = Release|Win32
+-		{66DC2F33-EF4C-46A0-9955-6A60F75D8279}.Release.Build.0 = Release|Win32
+-		{5749946B-081D-4A80-8119-2BE84F571E81}.Debug.ActiveCfg = Debug|Win32
+-		{5749946B-081D-4A80-8119-2BE84F571E81}.Debug.Build.0 = Debug|Win32
+-		{5749946B-081D-4A80-8119-2BE84F571E81}.Release.ActiveCfg = Release|Win32
+-		{5749946B-081D-4A80-8119-2BE84F571E81}.Release.Build.0 = Release|Win32
+-		{3DA99679-404B-44C7-9267-C97D066F3D96}.Debug.ActiveCfg = Debug|Win32
+-		{3DA99679-404B-44C7-9267-C97D066F3D96}.Debug.Build.0 = Debug|Win32
+-		{3DA99679-404B-44C7-9267-C97D066F3D96}.Release.ActiveCfg = Release|Win32
+-		{3DA99679-404B-44C7-9267-C97D066F3D96}.Release.Build.0 = Release|Win32
+-		{215FEC33-87C9-47E1-80EF-2FC735508B57}.Debug.ActiveCfg = Debug|Win32
+-		{215FEC33-87C9-47E1-80EF-2FC735508B57}.Debug.Build.0 = Debug|Win32
+-		{215FEC33-87C9-47E1-80EF-2FC735508B57}.Release.ActiveCfg = Release|Win32
+-		{215FEC33-87C9-47E1-80EF-2FC735508B57}.Release.Build.0 = Release|Win32
+-		{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}.Debug.ActiveCfg = Debug|Win32
+-		{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}.Debug.Build.0 = Debug|Win32
+-		{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}.Release.ActiveCfg = Release|Win32
+-		{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}.Release.Build.0 = Release|Win32
+-		{2E9B8C5F-AC44-478B-AE7F-8C6DC3EA3654}.Debug.ActiveCfg = Debug|Win32
+-		{2E9B8C5F-AC44-478B-AE7F-8C6DC3EA3654}.Debug.Build.0 = Debug|Win32
+-		{2E9B8C5F-AC44-478B-AE7F-8C6DC3EA3654}.Release.ActiveCfg = Release|Win32
+-		{2E9B8C5F-AC44-478B-AE7F-8C6DC3EA3654}.Release.Build.0 = Release|Win32
+-		{44C8B2A3-281A-4910-A737-7EA1F6F43E35}.Debug.ActiveCfg = Debug|Win32
+-		{44C8B2A3-281A-4910-A737-7EA1F6F43E35}.Debug.Build.0 = Debug|Win32
+-		{44C8B2A3-281A-4910-A737-7EA1F6F43E35}.Release.ActiveCfg = Release|Win32
+-		{44C8B2A3-281A-4910-A737-7EA1F6F43E35}.Release.Build.0 = Release|Win32
+-		{CA63F621-0912-4551-B51A-7BD18F491181}.Debug.ActiveCfg = Debug|Win32
+-		{CA63F621-0912-4551-B51A-7BD18F491181}.Debug.Build.0 = Debug|Win32
+-		{CA63F621-0912-4551-B51A-7BD18F491181}.Release.ActiveCfg = Release|Win32
+-		{CA63F621-0912-4551-B51A-7BD18F491181}.Release.Build.0 = Release|Win32
+-		{3867E9A4-41F3-4969-B0A8-40757BCB6C29}.Debug.ActiveCfg = Debug|Win32
+-		{3867E9A4-41F3-4969-B0A8-40757BCB6C29}.Debug.Build.0 = Debug|Win32
+-		{3867E9A4-41F3-4969-B0A8-40757BCB6C29}.Release.ActiveCfg = Release|Win32
+-		{3867E9A4-41F3-4969-B0A8-40757BCB6C29}.Release.Build.0 = Release|Win32
+-	EndGlobalSection
+-	GlobalSection(ExtensibilityGlobals) = postSolution
+-	EndGlobalSection
+-	GlobalSection(ExtensibilityAddIns) = postSolution
+-	EndGlobalSection
+-EndGlobal
+
+Deleted: trunk/yake/scripts/yake/yake.suo
+===================================================================
+(Binary files differ)
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000154.html">[Yake-svn] r1084 - trunk/yake/scripts/yake
+</A></li>
+	<LI>Next message: <A HREF="000156.html">[Yake-svn] r1086 - trunk/yake/scripts/yapp/plugins
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#155">[ date ]</a>
+              <a href="thread.html#155">[ thread ]</a>
+              <a href="subject.html#155">[ subject ]</a>
+              <a href="author.html#155">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

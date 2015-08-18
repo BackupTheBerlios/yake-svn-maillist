@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1138 - trunk/yake/yapp/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1138%20-%20trunk/yake/yapp/model&In-Reply-To=%3C200511100019.jAA0JxQh012788%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000207.html">
+   <LINK REL="Next"  HREF="000208.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1138 - trunk/yake/yapp/model</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1138%20-%20trunk/yake/yapp/model&In-Reply-To=%3C200511100019.jAA0JxQh012788%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1138 - trunk/yake/yapp/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov 10 01:19:59 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000207.html">[Yake-svn] r1137 - trunk/yake/yapp/model
+</A></li>
+        <LI>Next message: <A HREF="000208.html">[Yake-svn] r1139 - trunk/yake/yapp/msg
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#209">[ date ]</a>
+              <a href="thread.html#209">[ thread ]</a>
+              <a href="subject.html#209">[ subject ]</a>
+              <a href="author.html#209">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-10 01:19:51 +0100 (Thu, 10 Nov 2005)
+New Revision: 1138
+
+Added:
+   trunk/yake/yapp/model/yakePhysicalDataImporter.h
+Log:
+patch 1350326 by mj
+
+Added: trunk/yake/yapp/model/yakePhysicalDataImporter.h
+===================================================================
+--- trunk/yake/yapp/model/yakePhysicalDataImporter.h	2005-11-10 00:19:16 UTC (rev 1137)
++++ trunk/yake/yapp/model/yakePhysicalDataImporter.h	2005-11-10 00:19:51 UTC (rev 1138)
+@@ -0,0 +1,119 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++
++#ifndef YAPP_MODEL_PHYSICAL_DATA_IMPORTER_H
++#define YAPP_MODEL_PHYSICAL_DATA_IMPORTER_H
++
++#include &lt;yapp/base/yappPrerequisites.h&gt;
++#include &lt;yapp/model/yakeModel.h&gt;
++#include &lt;yapp/loader/yakeXODEParser.h&gt;
++#include &lt;yake/physics/yakePhysics.h&gt;
++
++namespace yake {
++namespace model {
++
++    /** Class implements XODEParser's listener. Creates physical objects and places
++     * them in model::Physical object.
++     */
++    
++    using namespace yake::data::parser::xode;
++    using namespace yake::physics;
++    
++    class XODEListener
++    {
++
++	public:
++	    XODEListener( Physical&amp; owner, physics::IWorld* physWorld ) : owner_( owner ), physicalWorld_( physWorld )
++	    {}
++
++	    virtual ~XODEListener() {}		
++
++	    void processBody( const XODEParser::BodyDesc&amp; desc );
++	    void processGeom( const XODEParser::GeomDesc&amp; desc );
++	    void processMass( const XODEParser::MassDesc&amp; desc );
++	    void processJoint( const XODEParser::JointDesc&amp; desc );
++	    void processMaterial( const XODEParser::MaterialDesc&amp; desc );
++	    void postprocess();
++
++	private:
++
++	    struct ActorInfo
++	    {
++		IActor*	actor_;
++		String	parentName_;
++	    };
++	    
++	    struct GeomInfo
++	    {
++		IShape*	shape_;
++		String	parentName_;
++	    };
++
++	    struct MassInfo
++	    {
++		IBody::MassDesc	mass_;
++		String	parentName_;
++	    };
++
++	    struct JointInfo
++	    {
++		IJoint*	    joint_;
++		String	    parentName_;
++	    };
++
++	    struct MaterialInfo
++	    {
++		IMaterial*  material_;
++		String	    parentName_;
++	    };
++
++	    typedef AssocVector&lt; String, ActorInfo &gt; ActorMap;
++	    typedef AssocVector&lt; String, GeomInfo &gt; GeomMap;
++	    typedef AssocVector&lt; String, MassInfo &gt; MassMap;
++	    typedef AssocVector&lt; String, JointInfo &gt; JointMap;
++	    typedef AssocVector&lt; String, MaterialInfo &gt; MaterialMap;
++	    typedef Vector&lt; XODEParser::JointDesc &gt; JointDescVector;
++
++	    JointDescVector jointDescriptions_;
++
++	    ActorMap	actors_;
++	    GeomMap	geoms_;
++	    MassMap	masses_;
++	    JointMap	joints_;
++	    MaterialMap materials_;
++
++	    physics::IWorld*	physicalWorld_;
++
++	    Physical&amp;		owner_;
++    };
++
++
++} // model
++} // yake
++
++#endif 
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000207.html">[Yake-svn] r1137 - trunk/yake/yapp/model
+</A></li>
+	<LI>Next message: <A HREF="000208.html">[Yake-svn] r1139 - trunk/yake/yapp/msg
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#209">[ date ]</a>
+              <a href="thread.html#209">[ thread ]</a>
+              <a href="subject.html#209">[ subject ]</a>
+              <a href="author.html#209">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

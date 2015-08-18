@@ -1,0 +1,235 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1327 - trunk/yake/src/yake/samples/base/registry
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1327%20-%20trunk/yake/src/yake/samples/base/registry&In-Reply-To=%3C200606091701.k59H119A009505%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000396.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1327 - trunk/yake/src/yake/samples/base/registry</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1327%20-%20trunk/yake/src/yake/samples/base/registry&In-Reply-To=%3C200606091701.k59H119A009505%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1327 - trunk/yake/src/yake/samples/base/registry">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Jun  9 19:01:01 CEST 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000396.html">[Yake-svn] r1328 - in trunk/yake: scripts/msvc8 scripts/msvc8/plugins/graphics scripts/msvc8/samples/model src/yake src/yake/loader src/yake/model src/yake/plugins/graphicsOgre src/yake/samples src/yake/samples/model src/yake/samples/model/dotScene yake yake/base yake/base/templates yake/graphics yake/loader yake/model yake/physics yake/plugins/graphicsOgre yake/plugins/physicsODE yake/samples yake/samples/model yake/samples/model/dotScene yake/samples/net/common yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#395">[ date ]</a>
+              <a href="thread.html#395">[ thread ]</a>
+              <a href="subject.html#395">[ subject ]</a>
+              <a href="author.html#395">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-09 19:00:57 +0200 (Fri, 09 Jun 2006)
+New Revision: 1327
+
+Modified:
+   trunk/yake/src/yake/samples/base/registry/yakeUnitTest.cpp
+Log:
+cleanup
+
+Modified: trunk/yake/src/yake/samples/base/registry/yakeUnitTest.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/base/registry/yakeUnitTest.cpp	2006-04-25 20:12:43 UTC (rev 1326)
++++ trunk/yake/src/yake/samples/base/registry/yakeUnitTest.cpp	2006-06-09 17:00:57 UTC (rev 1327)
+@@ -1,110 +1,89 @@
+-//****************************************************************************
+-//**
+-//**    UNITTEST.CPP
+-//**    Unit test
+-//**
+-//****************************************************************************
+-
+-//============================================================================
+-//    IMPLEMENTATION HEADERS
+-//============================================================================
+ // Yake
+ #include &lt;yake/base/yake.h&gt;
+ #include &lt;yake/base/templates/yakeRegistry.h&gt;
+ 
+-//============================================================================
+-//    INTERFACE STRUCTURES / UTILITY CLASSES
+-//============================================================================
+-using namespace yake::base;
+-using namespace yake::base::templates;
++using namespace yake;
++using namespace yake::templates;
+ 
+-namespace yake
+-{
+-namespace testsuite
+-{
++namespace yake {
++namespace testsuite {
+ 	
+-struct INetworkDriver
+-{
+-	// Destructor.
+-	virtual ~INetworkDriver() {}
++	struct INetworkDriver
++	{
++		YAKE_DECLARE_REGISTRY_0( INetworkDriver, String )
+ 
+-	// Resolve host.
+-	virtual const String resolveHost() const = 0;
++		// Destructor.
++		virtual ~INetworkDriver() {}
+ 
+-YAKE_DECLARE_REGISTRY_0( INetworkDriver, String )
+-};
++		// Resolve host.
++		virtual const String resolveHost() const = 0;
++	};
+ 
+-YAKE_IMPLEMENT_REGISTRY( INetworkDriver )
++	YAKE_IMPLEMENT_REGISTRY( INetworkDriver )
+ 
+ 
+-namespace win32
+-{
++namespace win32 {
+ 
+-class NetworkDriver : public INetworkDriver
+-{		
+-YAKE_DECLARE_CLASS( yake::testsuite::win32::NetworkDriver )
+-// Class
+-public:
+-	// Destructor.
+-	virtual ~NetworkDriver() {}
++	class NetworkDriver : public INetworkDriver
++	{		
++	public:
++		YAKE_DECLARE_CONCRETE( NetworkDriver, &quot;win32&quot; )
+ 
+-// Methods
+-public:
+-	// Resolve host.
+-	const String resolveHost() const
+-	{
+-		return String( &quot;Hello, its me - the win32 implementation :)&quot; );
+-	}
++		virtual ~NetworkDriver() {}
+ 
+-YAKE_DECLARE_CONCRETE( NetworkDriver, &quot;win32&quot; )
+-};
++		virtual const String resolveHost() const
++		{
++			return String( &quot;Hello, its me - the win32 implementation :)&quot; );
++		}
++	};
+ 
+-YAKE_REGISTER_CONCRETE( NetworkDriver )
++	YAKE_REGISTER_CONCRETE( NetworkDriver )
+ 
+-}
+-namespace Linux
+-{
++} // namespace win32
+ 
+-class NetworkDriver : public INetworkDriver
+-{
++namespace Linux {
+ 
+-YAKE_DECLARE_CLASS( yake::testsuite::linux::NetworkDriver )
+-// Class
+-public:
+-	// Destructor.
+-	virtual ~NetworkDriver() {}
+-
+-// Methods
+-public:
+-	// Resolve host.
+-	const String resolveHost() const
++	class NetworkDriver : public INetworkDriver
+ 	{
+-		return String( &quot;Hello, its me - the Linux implementation ;)&quot; );
+-	}
++	public:
++		YAKE_DECLARE_CONCRETE( NetworkDriver, &quot;linux&quot; )
+ 
+-YAKE_DECLARE_CONCRETE( NetworkDriver, &quot;linux&quot; )
+-};
++		virtual ~NetworkDriver() {}
+ 
+-YAKE_REGISTER_CONCRETE( NetworkDriver )
+ 
+-} // linux
++		virtual const String resolveHost() const
++		{
++			return String( &quot;Hello, its me - the Linux implementation ;)&quot; );
++		}
++	};
+ 
+-} // testsuite
+-} // yake
++	YAKE_REGISTER_CONCRETE( NetworkDriver )
+ 
++} // namespace linux
++
++} // namespace testsuite
++} // namespace yake
++
+ //============================================================================
+ //    IMPLEMENTATION FUNCTIONS
+ //============================================================================
+ int main()
+ {
+ 	using namespace yake;
+-	using namespace yake::base;
+ 	using namespace yake::testsuite;
+ 
++	// Create a 'default' driver. (Can be 'Win32' or 'linux', whatever is registered first (or at all)).
+ 	SharedPtr&lt; INetworkDriver &gt; pNetDriver = create_default&lt; INetworkDriver &gt;();
+-
+ 	std::cout &lt;&lt; pNetDriver-&gt;resolveHost();
+ 
++	// Explicitely create the 'Win32' driver.
++	SharedPtr&lt; INetworkDriver &gt; pWin32NetDriver = create&lt; INetworkDriver &gt;(&quot;win32&quot;);
++	std::cout &lt;&lt; pWin32NetDriver-&gt;resolveHost();
++
++	// Explicitely create the 'Linux' driver.
++	SharedPtr&lt; INetworkDriver &gt; pLinuxNetDriver = create&lt; INetworkDriver &gt;(&quot;linux&quot;);
++	std::cout &lt;&lt; pLinuxNetDriver-&gt;resolveHost();
++
+ 	// Wait for a keystroke (in debug builds only).
+ #if defined( YAKE_DEBUG_BUILD )
+ 	std::cout &lt;&lt; std::endl &lt;&lt; &quot;Waiting for you...&quot;;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000396.html">[Yake-svn] r1328 - in trunk/yake: scripts/msvc8 scripts/msvc8/plugins/graphics scripts/msvc8/samples/model src/yake src/yake/loader src/yake/model src/yake/plugins/graphicsOgre src/yake/samples src/yake/samples/model src/yake/samples/model/dotScene yake yake/base yake/base/templates yake/graphics yake/loader yake/model yake/physics yake/plugins/graphicsOgre yake/plugins/physicsODE yake/samples yake/samples/model yake/samples/model/dotScene yake/samples/net/common yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#395">[ date ]</a>
+              <a href="thread.html#395">[ thread ]</a>
+              <a href="subject.html#395">[ subject ]</a>
+              <a href="author.html#395">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

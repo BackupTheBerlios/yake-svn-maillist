@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1205 - trunk/yake/yake/plugins/graphicsOgre
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-February/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1205%20-%20trunk/yake/yake/plugins/graphicsOgre&In-Reply-To=%3C200602121606.k1CG64CB026539%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000274.html">
+   <LINK REL="Next"  HREF="000276.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1205 - trunk/yake/yake/plugins/graphicsOgre</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1205%20-%20trunk/yake/yake/plugins/graphicsOgre&In-Reply-To=%3C200602121606.k1CG64CB026539%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1205 - trunk/yake/yake/plugins/graphicsOgre">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Feb 12 17:06:04 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000274.html">[Yake-svn] r1204 - trunk/yake/yake/graphics
+</A></li>
+        <LI>Next message: <A HREF="000276.html">[Yake-svn] r1206 - trunk/yake/src/yake/net/detail
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#275">[ date ]</a>
+              <a href="thread.html#275">[ thread ]</a>
+              <a href="subject.html#275">[ subject ]</a>
+              <a href="author.html#275">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-02-12 17:06:01 +0100 (Sun, 12 Feb 2006)
+New Revision: 1205
+
+Modified:
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h
+   trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h
+Log:
+added support for post-processing externally loaded ogre objects.
+added support for OSM.
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h	2006-02-12 16:05:34 UTC (rev 1204)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h	2006-02-12 16:06:01 UTC (rev 1205)
+@@ -37,6 +37,7 @@
+ 		OgreCamera( const OgreCamera &amp; );
+ 	public:
+ 		OgreCamera( Ogre::SceneManager * sceneMgr );
++		OgreCamera( Ogre::Camera*, Ogre::SceneManager * sceneMgr );
+ 		virtual ~OgreCamera();
+ 
+ 		// Movable
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h	2006-02-12 16:05:34 UTC (rev 1204)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h	2006-02-12 16:06:01 UTC (rev 1205)
+@@ -38,6 +38,7 @@
+ 		OgreEntity( const OgreEntity&amp; );
+ 	public:
+ 		OgreEntity( ::Ogre::SceneManager* sceneMgr, const String&amp; mesh );
++		OgreEntity( ::Ogre::Entity* ent, ::Ogre::SceneManager* sceneMgr );
+ 		virtual ~OgreEntity();
+ 
+ 		virtual ISkeleton* getSkeleton() const;
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h	2006-02-12 16:05:34 UTC (rev 1204)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h	2006-02-12 16:06:01 UTC (rev 1205)
+@@ -35,6 +35,7 @@
+ 	{
+ 	public:
+ 		OgreLight( Ogre::SceneManager* sceneMgr );
++		OgreLight( Ogre::Light*, Ogre::SceneManager* sceneMgr );
+ 		virtual ~OgreLight();
+ 
+ 		virtual void setType( const LightType type );
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h	2006-02-12 16:05:34 UTC (rev 1204)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h	2006-02-12 16:06:01 UTC (rev 1205)
+@@ -37,6 +37,8 @@
+ 	{
+ 	public:
+ 		OgreNode( GraphicalWorld&amp; owningWorld, Ogre::SceneManager * sceneMgr, const String&amp; name = &quot;&quot; );
++		//For wrapping existing OGRE scene nodes (e.g. created by OSM loader):
++		OgreNode( Ogre::SceneNode * node, GraphicalWorld&amp; owningWorld, Ogre::SceneManager * sceneMgr );
+ 		virtual ~OgreNode();
+ 
+ 		virtual void setPosition( const Vector3 &amp; position );
+@@ -82,15 +84,15 @@
+ 		OgreNode* _getParent() const;
+ 	protected:
+ 		typedef SceneNodePtrList NodeList;
+-		NodeList			mChildren;
+-		EntityPtrList		mEntities;
+-		LightPtrList		mLights;
+-		CameraPtrList		mCameras;
++		NodeList					mChildren;
++		EntityPtrList			mEntities;
++		LightPtrList			mLights;
++		CameraPtrList			mCameras;
+ 		ParticleSystemPtrList	mParticleSystems;
+ 
+-		Ogre::SceneNode* 	mSceneNode;
++		Ogre::SceneNode* 		mSceneNode;
+ 		Ogre::SceneManager*	mSceneMgr;
+-		OgreNode*			mParentNode;
++		OgreNode*				mParentNode;
+ 		GraphicalWorld&amp;		mWorld;
+ 	};
+ 
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h	2006-02-12 16:05:34 UTC (rev 1204)
++++ trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h	2006-02-12 16:06:01 UTC (rev 1205)
+@@ -69,6 +69,8 @@
+ 		/** Render a single frame. */
+ 		void render( real timeElapsed );
+ 
++		virtual bool load(const String&amp; type, const String&amp; file);
++
+ 		virtual void setSkyBox( const String&amp; name );
+ 
+ 		virtual ISceneNode* createSceneNode( const String&amp; tag = &quot;&quot; );
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000274.html">[Yake-svn] r1204 - trunk/yake/yake/graphics
+</A></li>
+	<LI>Next message: <A HREF="000276.html">[Yake-svn] r1206 - trunk/yake/src/yake/net/detail
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#275">[ date ]</a>
+              <a href="thread.html#275">[ thread ]</a>
+              <a href="subject.html#275">[ subject ]</a>
+              <a href="author.html#275">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

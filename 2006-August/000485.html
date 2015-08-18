@@ -1,0 +1,1479 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1417 - trunk/yake
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1417%20-%20trunk/yake&In-Reply-To=%3C200608022210.k72MALeT006874%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000484.html">
+   <LINK REL="Next"  HREF="000486.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1417 - trunk/yake</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1417%20-%20trunk/yake&In-Reply-To=%3C200608022210.k72MALeT006874%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1417 - trunk/yake">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Thu Aug  3 00:10:21 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000484.html">[Yake-svn] r1416 - trunk/yake
+</A></li>
+        <LI>Next message: <A HREF="000486.html">[Yake-svn] r1418 - trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#485">[ date ]</a>
+              <a href="thread.html#485">[ thread ]</a>
+              <a href="subject.html#485">[ subject ]</a>
+              <a href="author.html#485">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-08-03 00:10:13 +0200 (Thu, 03 Aug 2006)
+New Revision: 1417
+
+Removed:
+   trunk/yake/AUTHORS
+   trunk/yake/BUILD
+   trunk/yake/COPYING
+   trunk/yake/COPYING.LIB
+   trunk/yake/INSTALL
+   trunk/yake/LICENSE
+   trunk/yake/README
+   trunk/yake/SConstruct
+   trunk/yake/autogen.sh
+   trunk/yake/build.py
+   trunk/yake/buildspec.xml
+   trunk/yake/dependencies/
+   trunk/yake/documentation/
+   trunk/yake/scripts/
+   trunk/yake/src/
+   trunk/yake/yake/
+   trunk/yake/yapp/
+Log:
+repository moved
+
+Deleted: trunk/yake/AUTHORS
+===================================================================
+--- trunk/yake/AUTHORS	2006-08-02 22:09:02 UTC (rev 1416)
++++ trunk/yake/AUTHORS	2006-08-02 22:10:13 UTC (rev 1417)
+@@ -1,51 +0,0 @@
+-AUTHORS
+-=======
+-
+-YAKE Team 
+----------
+-Stephan Kaiser      (psyclonist/codeandroid)
+-Erik Nijkamp        (meta)
+-
+-Feature Contributors
+---------------------
+-The following list includes developers who have contributed features to YAKE:
+-
+-Contributor                             Subject Areas 
+------------                             --------------------------------------
+-Nikita Buida (mj)                     : Linux port, SCons, various enhancements
+-                                        and fixes and samples, rewrite of physicsODE
+-Salvatore Iovene (_jones)             : Linux port
+-? (Poldi)                             : Linux port
+-Jan Eickmann (jeickmann)			  : Fixes
+-Joel Croteau (TV4fun)                 : physics component enhancements, various fixes
+-
+-If we've forgotten you in the above list, please contact us!
+-
+------
+-
+-YAKE
+-Copyright (c) The YAKE Team.
+-
+------
+-
+-You can license YAKE under non-LGPL conditions.
+-Contact <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-
+------
+-
+-This file is part of YAKE.
+-
+-YAKE is free software; you can redistribute it and/or modify
+-it under the terms of the GNU Lesser General Public License as published by
+-the Free Software Foundation; either version 2, or (at your option)
+-any later version.
+-
+-YAKE is distributed in the hope that it will be useful,
+-but WITHOUT ANY WARRANTY; without even the implied warranty of
+-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-GNU General Public License for more details.
+-
+-You should have received a copy of the GNU Lesser General Public License
+-along with YAKE; see the file COPYING and COPYING.LIB.  If not, write to
+-the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+-Boston, MA 02111-1307, USA.
+
+Deleted: trunk/yake/BUILD
+===================================================================
+--- trunk/yake/BUILD	2006-08-02 22:09:02 UTC (rev 1416)
++++ trunk/yake/BUILD	2006-08-02 22:10:13 UTC (rev 1417)
+@@ -1,135 +0,0 @@
+-
+-This file is part of Yake. Copyright (c) by the Yake Team and the contributors.
+-
+-This document contains build instructions for different platforms:
+-
+-CONTENTS
+---------
+-
+-0. Prologue
+-1. BUILD INSTRUCTIONS FOR YAKE ON PC/WINDOWS
+-2. BUILD INSTRUCTIONS FOR YAKE ON PC/LINUX
+-
+-0. Prologue
+------------
+-
+-The YAKE Documentation and User Wiki may contain more detailed instructions or
+-additional information.
+-
+-You can find it here: <A HREF="http://www.yake.org/wiki">http://www.yake.org/wiki</A> .
+-
+-
+-1. BUILD INSTRUCTIONS FOR YAKE ON PC/WINDOWS
+---------------------------------------------
+-
+-Last modified: 21/06/2006 by Stephan Kaiser (psy)
+-
+-Please refer to the manual for detailed instructions.
+-
+-1.1 Building with Microsoft Visual C++ 2003/2005 (7.1/8.0)
+-----------------------------------------------------------
+-
+-In essence, opening the workspace for Yake and starting
+-a complete 'Build' is what you want to do.
+-
+-You can find the workspaces for MSVC 2003 (7.1) and MSVC 2005 (8.0)
+-respectively here:
+-
+-/yake/scripts/msvc71/yake.sln
+-/yake/scripts/msvc8/yake.sln
+-
+-For stable releases of Yake for both compilers prebuilt
+-dependencies packages are available.
+-
+-If you don't have or don't want to use the dependencies package
+-then you have to compile these yourself as needed, of course.
+-
+-See the file /yake/dependencies/DEPENDENCIES for more information.
+-
+-1.2 Building with Code::Blocks
+-------------------------------
+-
+-The Code Blocks project files can be found in this directory:
+-
+-/yake/scripts/cb/
+-
+-
+-2. BUILD INSTRUCTIONS FOR YAKE ON PC/LINUX
+-------------------------------------------
+-
+-Last modified: 30/9/2005 by Stephan Kaiser (psy)
+-Last modified: 22/9/2004 by Nikita Buida (mj)
+-
+-This instruction applies to SVN (Subversion) version of Yake.
+-
+-If you encounter problems and need the very latest instructions, please
+-visit www.yake.org and search the forums and the wiki. You will most likely
+-find the solution there.
+-
+-Assuming that you are in yake root directory.
+-
+-#. Copy all files except SVN related ones to yake root dir from ./scripts/linux.
+-#. Set up ./dependencies dir.
+-Its structure should look like this:
+-/dependencies
+-	|
+-	|
+-	/luabind
+-	|
+-	/OGRE
+-	|
+-	/tinyxml
+-	|
+-	/ttl
+-
+-All that dirs are in Yake dependencies package.
+-Note: you DON'T really need that ./dependencies dir in Linux. With latest fixes you can just 
+-install all that libraries on your Linux system as usual. You should edit OgreString.h in 
+-dependencies dir as it is described in Yake forums to avoid string redefinition ( 
+-just comment out Ogre's definitions of additional operators ).
+-
+-Next, you have 2 options for building Yake.
+-Way 1. SCons [RECOMMENDED]
+-Install SCons build system. Just 'emerge scons' if you are on Gentoo like me, or go to www.scons.org or search for
+-package for your distro.
+-
+-Then go to yake root dir and run:
+-# scons
+-
+-That will build everything. After that as root:
+-# scons install
+-
+-That installs libraries. 
+-Update dynamic loader cache (as root):
+-# ldconfig
+-
+-Now you will find all demos in common/bin directory ;)
+-
+-ATTENTION! This is my preferred way to build Yake. It is best supported by me from now on ( 10/2005 ).
+-
+-Way 2. KDevelop/automake
+-#. Execute autogen.sh script - it will create various missing scripts needed for automake &amp; friends.
+-
+-Now there are two ways of building Yake: automated-command-line and IDE-wise ;)
+-If you want command line build then do as usual:
+-	./configure
+-	make
+-	make install
+-
+-Else, KDevelop'ers could do:
+-#. Run KDevelop and open project file from yake root dir.
+-#. Run automake and friends from KDevelop Build menu.
+-#. Run configure from Build menu. 
+-
+-#. You can start building libraries now.
+-You can just build the whole project. 
+-
+-# Install all built libraries (with root rights). They are all installed in /usr/local/lib by default
+-
+-# In Project settings change run options. There are absolute paths to the program to run. You should change that
+-according to your configuration.
+-
+-# From now on you're able to run the demos.
+-You will need to set up working dir for demo, e.g. create config files and have Ogre's media.
+-
+-
+
+Deleted: trunk/yake/COPYING
+===================================================================
+--- trunk/yake/COPYING	2006-08-02 22:09:02 UTC (rev 1416)
++++ trunk/yake/COPYING	2006-08-02 22:10:13 UTC (rev 1417)
+@@ -1,340 +0,0 @@
+-		    GNU GENERAL PUBLIC LICENSE
+-		       Version 2, June 1991
+-
+- Copyright (C) 1989, 1991 Free Software Foundation, Inc.
+-                       59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+- Everyone is permitted to copy and distribute verbatim copies
+- of this license document, but changing it is not allowed.
+-
+-			    Preamble
+-
+-  The licenses for most software are designed to take away your
+-freedom to share and change it.  By contrast, the GNU General Public
+-License is intended to guarantee your freedom to share and change free
+-software--to make sure the software is free for all its users.  This
+-General Public License applies to most of the Free Software
+-Foundation's software and to any other program whose authors commit to
+-using it.  (Some other Free Software Foundation software is covered by
+-the GNU Library General Public License instead.)  You can apply it to
+-your programs, too.
+-
+-  When we speak of free software, we are referring to freedom, not
+-price.  Our General Public Licenses are designed to make sure that you
+-have the freedom to distribute copies of free software (and charge for
+-this service if you wish), that you receive source code or can get it
+-if you want it, that you can change the software or use pieces of it
+-in new free programs; and that you know you can do these things.
+-
+-  To protect your rights, we need to make restrictions that forbid
+-anyone to deny you these rights or to ask you to surrender the rights.
+-These restrictions translate to certain responsibilities for you if you
+-distribute copies of the software, or if you modify it.
+-
+-  For example, if you distribute copies of such a program, whether
+-gratis or for a fee, you must give the recipients all the rights that
+-you have.  You must make sure that they, too, receive or can get the
+-source code.  And you must show them these terms so they know their
+-rights.
+-
+-  We protect your rights with two steps: (1) copyright the software, and
+-(2) offer you this license which gives you legal permission to copy,
+-distribute and/or modify the software.
+-
+-  Also, for each author's protection and ours, we want to make certain
+-that everyone understands that there is no warranty for this free
+-software.  If the software is modified by someone else and passed on, we
+-want its recipients to know that what they have is not the original, so
+-that any problems introduced by others will not reflect on the original
+-authors' reputations.
+-
+-  Finally, any free program is threatened constantly by software
+-patents.  We wish to avoid the danger that redistributors of a free
+-program will individually obtain patent licenses, in effect making the
+-program proprietary.  To prevent this, we have made it clear that any
+-patent must be licensed for everyone's free use or not licensed at all.
+-
+-  The precise terms and conditions for copying, distribution and
+-modification follow.
+-
+-		    GNU GENERAL PUBLIC LICENSE
+-   TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+-
+-  0. This License applies to any program or other work which contains
+-a notice placed by the copyright holder saying it may be distributed
+-under the terms of this General Public License.  The &quot;Program&quot;, below,
+-refers to any such program or work, and a &quot;work based on the Program&quot;
+-means either the Program or any derivative work under copyright law:
+-that is to say, a work containing the Program or a portion of it,
+-either verbatim or with modifications and/or translated into another
+-language.  (Hereinafter, translation is included without limitation in
+-the term &quot;modification&quot;.)  Each licensee is addressed as &quot;you&quot;.
+-
+-Activities other than copying, distribution and modification are not
+-covered by this License; they are outside its scope.  The act of
+-running the Program is not restricted, and the output from the Program
+-is covered only if its contents constitute a work based on the
+-Program (independent of having been made by running the Program).
+-Whether that is true depends on what the Program does.
+-
+-  1. You may copy and distribute verbatim copies of the Program's
+-source code as you receive it, in any medium, provided that you
+-conspicuously and appropriately publish on each copy an appropriate
+-copyright notice and disclaimer of warranty; keep intact all the
+-notices that refer to this License and to the absence of any warranty;
+-and give any other recipients of the Program a copy of this License
+-along with the Program.
+-
+-You may charge a fee for the physical act of transferring a copy, and
+-you may at your option offer warranty protection in exchange for a fee.
+-
+-  2. You may modify your copy or copies of the Program or any portion
+-of it, thus forming a work based on the Program, and copy and
+-distribute such modifications or work under the terms of Section 1
+-above, provided that you also meet all of these conditions:
+-
+-    a) You must cause the modified files to carry prominent notices
+-    stating that you changed the files and the date of any change.
+-
+-    b) You must cause any work that you distribute or publish, that in
+-    whole or in part contains or is derived from the Program or any
+-    part thereof, to be licensed as a whole at no charge to all third
+-    parties under the terms of this License.
+-
+-    c) If the modified program normally reads commands interactively
+-    when run, you must cause it, when started running for such
+-    interactive use in the most ordinary way, to print or display an
+-    announcement including an appropriate copyright notice and a
+-    notice that there is no warranty (or else, saying that you provide
+-    a warranty) and that users may redistribute the program under
+-    these conditions, and telling the user how to view a copy of this
+-    License.  (Exception: if the Program itself is interactive but
+-    does not normally print such an announcement, your work based on
+-    the Program is not required to print an announcement.)
+-
+-These requirements apply to the modified work as a whole.  If
+-identifiable sections of that work are not derived from the Program,
+-and can be reasonably considered independent and separate works in
+-themselves, then this License, and its terms, do not apply to those
+-sections when you distribute them as separate works.  But when you
+-distribute the same sections as part of a whole which is a work based
+-on the Program, the distribution of the whole must be on the terms of
+-this License, whose permissions for other licensees extend to the
+-entire whole, and thus to each and every part regardless of who wrote it.
+-
+-Thus, it is not the intent of this section to claim rights or contest
+-your rights to work written entirely by you; rather, the intent is to
+-exercise the right to control the distribution of derivative or
+-collective works based on the Program.
+-
+-In addition, mere aggregation of another work not based on the Program
+-with the Program (or with a work based on the Program) on a volume of
+-a storage or distribution medium does not bring the other work under
+-the scope of this License.
+-
+-  3. You may copy and distribute the Program (or a work based on it,
+-under Section 2) in object code or executable form under the terms of
+-Sections 1 and 2 above provided that you also do one of the following:
+-
+-    a) Accompany it with the complete corresponding machine-readable
+-    source code, which must be distributed under the terms of Sections
+-    1 and 2 above on a medium customarily used for software interchange; or,
+-
+-    b) Accompany it with a written offer, valid for at least three
+-    years, to give any third party, for a charge no more than your
+-    cost of physically performing source distribution, a complete
+-    machine-readable copy of the corresponding source code, to be
+-    distributed under the terms of Sections 1 and 2 above on a medium
+-    customarily used for software interchange; or,
+-
+-    c) Accompany it with the information you received as to the offer
+-    to distribute corresponding source code.  (This alternative is
+-    allowed only for noncommercial distribution and only if you
+-    received the program in object code or executable form with such
+-    an offer, in accord with Subsection b above.)
+-
+-The source code for a work means the preferred form of the work for
+-making modifications to it.  For an executable work, complete source
+-code means all the source code for all modules it contains, plus any
+-associated interface definition files, plus the scripts used to
+-control compilation and installation of the executable.  However, as a
+-special exception, the source code distributed need not include
+-anything that is normally distributed (in either source or binary
+-form) with the major components (compiler, kernel, and so on) of the
+-operating system on which the executable runs, unless that component
+-itself accompanies the executable.
+-
+-If distribution of executable or object code is made by offering
+-access to copy from a designated place, then offering equivalent
+-access to copy the source code from the same place counts as
+-distribution of the source code, even though third parties are not
+-compelled to copy the source along with the object code.
+-
+-  4. You may not copy, modify, sublicense, or distribute the Program
+-except as expressly provided under this License.  Any attempt
+-otherwise to copy, modify, sublicense or distribute the Program is
+-void, and will automatically terminate your rights under this License.
+-However, parties who have received copies, or rights, from you under
+-this License will not have their licenses terminated so long as such
+-parties remain in full compliance.
+-
+-  5. You are not required to accept this License, since you have not
+-signed it.  However, nothing else grants you permission to modify or
+-distribute the Program or its derivative works.  These actions are
+-prohibited by law if you do not accept this License.  Therefore, by
+-modifying or distributing the Program (or any work based on the
+-Program), you indicate your acceptance of this License to do so, and
+-all its terms and conditions for copying, distributing or modifying
+-the Program or works based on it.
+-
+-  6. Each time you redistribute the Program (or any work based on the
+-Program), the recipient automatically receives a license from the
+-original licensor to copy, distribute or modify the Program subject to
+-these terms and conditions.  You may not impose any further
+-restrictions on the recipients' exercise of the rights granted herein.
+-You are not responsible for enforcing compliance by third parties to
+-this License.
+-
+-  7. If, as a consequence of a court judgment or allegation of patent
+-infringement or for any other reason (not limited to patent issues),
+-conditions are imposed on you (whether by court order, agreement or
+-otherwise) that contradict the conditions of this License, they do not
+-excuse you from the conditions of this License.  If you cannot
+-distribute so as to satisfy simultaneously your obligations under this
+-License and any other pertinent obligations, then as a consequence you
+-may not distribute the Program at all.  For example, if a patent
+-license would not permit royalty-free redistribution of the Program by
+-all those who receive copies directly or indirectly through you, then
+-the only way you could satisfy both it and this License would be to
+-refrain entirely from distribution of the Program.
+-
+-If any portion of this section is held invalid or unenforceable under
+-any particular circumstance, the balance of the section is intended to
+-apply and the section as a whole is intended to apply in other
+-circumstances.
+-
+-It is not the purpose of this section to induce you to infringe any
+-patents or other property right claims or to contest validity of any
+-such claims; this section has the sole purpose of protecting the
+-integrity of the free software distribution system, which is
+-implemented by public license practices.  Many people have made
+-generous contributions to the wide range of software distributed
+-through that system in reliance on consistent application of that
+-system; it is up to the author/donor to decide if he or she is willing
+-to distribute software through any other system and a licensee cannot
+-impose that choice.
+-
+-This section is intended to make thoroughly clear what is believed to
+-be a consequence of the rest of this License.
+-
+-  8. If the distribution and/or use of the Program is restricted in
+-certain countries either by patents or by copyrighted interfaces, the
+-original copyright holder who places the Program under this License
+-may add an explicit geographical distribution limitation excluding
+-those countries, so that distribution is permitted only in or among
+-countries not thus excluded.  In such case, this License incorporates
+-the limitation as if written in the body of this License.
+-
+-  9. The Free Software Foundation may publish revised and/or new versions
+-of the General Public License from time to time.  Such new versions will
+-be similar in spirit to the present version, but may differ in detail to
+-address new problems or concerns.
+-
+-Each version is given a distinguishing version number.  If the Program
+-specifies a version number of this License which applies to it and &quot;any
+-later version&quot;, you have the option of following the terms and conditions
+-either of that version or of any later version published by the Free
+-Software Foundation.  If the Program does not specify a version number of
+-this License, you may choose any version ever published by the Free Software
+-Foundation.
+-
+-  10. If you wish to incorporate parts of the Program into other free
+-programs whose distribution conditions are different, write to the author
+-to ask for permission.  For software which is copyrighted by the Free
+-Software Foundation, write to the Free Software Foundation; we sometimes
+-make exceptions for this.  Our decision will be guided by the two goals
+-of preserving the free status of all derivatives of our free software and
+-of promoting the sharing and reuse of software generally.
+-
+-			    NO WARRANTY
+-
+-  11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+-FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
+-OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+-PROVIDE THE PROGRAM &quot;AS IS&quot; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+-OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS
+-TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE
+-PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
+-REPAIR OR CORRECTION.
+-
+-  12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+-REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+-INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING
+-OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED
+-TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY
+-YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
+-PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
+-POSSIBILITY OF SUCH DAMAGES.
+-
+-		     END OF TERMS AND CONDITIONS
+-
+-	    How to Apply These Terms to Your New Programs
+-
+-  If you develop a new program, and you want it to be of the greatest
+-possible use to the public, the best way to achieve this is to make it
+-free software which everyone can redistribute and change under these terms.
+-
+-  To do so, attach the following notices to the program.  It is safest
+-to attach them to the start of each source file to most effectively
+-convey the exclusion of warranty; and each file should have at least
+-the &quot;copyright&quot; line and a pointer to where the full notice is found.
+-
+-    &lt;one line to give the program's name and a brief idea of what it does.&gt;
+-    Copyright (C) &lt;year&gt;  &lt;name of author&gt;
+-
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
+-
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
+-
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-
+-
+-Also add information on how to contact you by electronic and paper mail.
+-
+-If the program is interactive, make it output a short notice like this
+-when it starts in an interactive mode:
+-
+-    Gnomovision version 69, Copyright (C) year name of author
+-    Gnomovision comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+-    This is free software, and you are welcome to redistribute it
+-    under certain conditions; type `show c' for details.
+-
+-The hypothetical commands `show w' and `show c' should show the appropriate
+-parts of the General Public License.  Of course, the commands you use may
+-be called something other than `show w' and `show c'; they could even be
+-mouse-clicks or menu items--whatever suits your program.
+-
+-You should also get your employer (if you work as a programmer) or your
+-school, if any, to sign a &quot;copyright disclaimer&quot; for the program, if
+-necessary.  Here is a sample; alter the names:
+-
+-  Yoyodyne, Inc., hereby disclaims all copyright interest in the program
+-  `Gnomovision' (which makes passes at compilers) written by James Hacker.
+-
+-  &lt;signature of Ty Coon&gt;, 1 April 1989
+-  Ty Coon, President of Vice
+-
+-This General Public License does not permit incorporating your program into
+-proprietary programs.  If your program is a subroutine library, you may
+-consider it more useful to permit linking proprietary applications with the
+-library.  If this is what you want to do, use the GNU Library General
+-Public License instead of this License.
+
+Deleted: trunk/yake/COPYING.LIB
+===================================================================
+(Binary files differ)
+
+Deleted: trunk/yake/INSTALL
+===================================================================
+--- trunk/yake/INSTALL	2006-08-02 22:09:02 UTC (rev 1416)
++++ trunk/yake/INSTALL	2006-08-02 22:10:13 UTC (rev 1417)
+@@ -1,10 +0,0 @@
+-Basic Installation &amp; Building
+-=============================
+-
+-For build instructions see BUILD.
+-
+-If you encounter problems visit:
+-  the forums at <A HREF="http://www.yake.org/forum">http://www.yake.org/forum</A>
+-  the wiki at <A HREF="http://www.yake.org/wiki">http://www.yake.org/wiki</A>
+-  report/track bugs at <A HREF="http://www.yake.org/mantis">http://www.yake.org/mantis</A>
+-
+
+Deleted: trunk/yake/LICENSE
+===================================================================
+--- trunk/yake/LICENSE	2006-08-02 22:09:02 UTC (rev 1416)
++++ trunk/yake/LICENSE	2006-08-02 22:10:13 UTC (rev 1417)
+@@ -1,27 +0,0 @@
+-
+-   YAKE
+-   Copyright &#169; 2004 The YAKE Team, Stephan Kaiser
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-
+-   ------------------------------------------------------------------------------------
+-
+-   YAKE is multi-licensed under the LGPL and custom license models.
+-
+-   If you are interested in a license model other than the LGPL contact the Yake Team
+-   via E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-
+-   ------------------------------------------------------------------------------------
+-
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+
+Deleted: trunk/yake/README
+===================================================================
+--- trunk/yake/README	2006-08-02 22:09:02 UTC (rev 1416)
++++ trunk/yake/README	2006-08-02 22:10:13 UTC (rev 1417)
+@@ -1,14 +0,0 @@
+-
+-	YAKE
+-	
+-	Yake is at least partly still BETA code.
+-
+-	Use it in your applications AT YOUR OWN RISK.
+-	We are NOT LIABLE IN ANY WAY for ANY DAMAGES
+-	resulting from the USE OF YAKE.
+-	
+-	You know the drill :)
+-	
+-	Besides that, have fun!
+-	
+-	The Yake Team
+
+Deleted: trunk/yake/SConstruct
+===================================================================
+--- trunk/yake/SConstruct	2006-08-02 22:09:02 UTC (rev 1416)
++++ trunk/yake/SConstruct	2006-08-02 22:10:13 UTC (rev 1417)
+@@ -1,138 +0,0 @@
+-print &quot;&quot;&quot; 
+-	  #################################################
+-	  #						  #
+-	  # 	SCons build system.........		  #
+-	  #						  #
+-	  #	Project Yake @ www.yake.org		  #
+-	  #						  #
+-	  ################################################# 
+-	&quot;&quot;&quot;
+-
+-title = &quot;Builder for Yake&quot;
+-last_modified = &quot;on 01/11/2005 by Nikita Buida (mj)&quot;
+-
+-
+-print title
+-print 'This file was last modified ', last_modified
+-
+-Help( &quot;&quot;&quot;
+-	Usage.
+-		Issue 
+-			% scons
+-		shell command. That will build all targets 
+-		defined in buildspec.xml
+-		
+-		To install libraries to LibInstallDir (see buildspec.xml) type
+-			# scons install
+-		as root.
+-		
+-		That's it. Enjoy. Find some bugs, improve program, send a patch ;)
+-	
+-&quot;&quot;&quot; )
+-
+-import build
+-
+-import os
+-import os.path
+-import sys
+-import glob
+-
+-cc_flags = '-DGCC_3_1 -DEXT_HASH -DYAKE_DEBUG -DYAKE_DEBUG_BUILD'
+-
+-# optimization flags
+-optimization_flags = ' -O3 '
+-
+-# debug flag. -g[Level]
+-debug_flags = ' -g '
+-
+-# if you want to profile with GNU gprof
+-profiler_flags = ' -pg '
+-
+-# if you want to test code coverage with GNU gcov
+-code_coverage_flags = ' -fprofile-arcs -ftest-coverage '
+-
+-
+-lib_includes = build.commonIncludes
+-build_dir = build.commonPaths['ObjectDir']
+-bin_build_dir = build.commonPaths['ProgramInstallDir']
+-lib_dir = build.commonPaths['LibDir']
+-lib_install_dir = build.commonPaths['LibInstallDir']
+-
+-print 'Common object dir is:', build.commonPaths['ObjectDir']
+-print 'Build dir is', build_dir
+-
+-BuildDir( build_dir, '.', duplicate = 0 )
+-
+-env = Environment( CCFLAGS = cc_flags )
+-
+-#######################################################
+-# utility functions
+-#######################################################
+-def CollectSources( path ):
+-	sources = glob.glob( path + '/' + '*.cpp' )
+-	sources_build = []
+-	for src_name in sources:
+-		sources_build.append( build_dir + '/' + src_name )
+-	return sources_build 
+-
+-def BuildLibrary( name, path, link_to ):
+-	&quot;&quot;&quot; Builds shared library  &quot;&quot;&quot;
+-
+-	lib_sources_build = CollectSources( path )
+-	lib_name = build_dir + '/' + name
+-	return env.SharedLibrary( lib_name, lib_sources_build, CPPPATH = lib_includes, LIBS = link_to, LIBPATH = lib_dir )
+-
+-def BuildProgram( name, path, link_to ):
+-	bin_src = CollectSources( path )
+-	bin_name = bin_build_dir + '/' + name
+-	return env.Program( bin_name, bin_src, CPPPATH = lib_includes, LIBS = link_to, LIBPATH = lib_dir )
+-
+-######################################################
+-
+-#Library add handling
+-libadds = {}
+-
+-def processLibadds( ent_libadd ):
+-	result = []
+-	for la in ent_libadd:
+-		if libadds.has_key( la ):
+-			result = result + libadds[ la ]
+-		else:
+-			result.append( la )
+-	return result
+-			
+-
+-# if command line target is specified
+-if len( COMMAND_LINE_TARGETS ) &lt;&gt; 0 and 'install' not in COMMAND_LINE_TARGETS:
+-    print 'COMMAND_LINE_TARGETS: ', map(str, COMMAND_LINE_TARGETS)
+-    object_name = str( COMMAND_LINE_TARGETS[0] )
+-    object = env.Object( build_dir + '/' + object_name, CPPPATH = lib_includes )
+-    env.Alias( object_name, object ) 
+-else:
+-    # else continue with normal build or install
+-    #Collection of libraries to install
+-    yakeLibs = []
+-
+-
+-    #reading shared libs
+-    for name, buildentity in build.sharedLibs.iteritems():
+-    	libadd = processLibadds( buildentity.libadd )
+-	ent_name = str(name)
+-	yakeLibs.append( BuildLibrary( ent_name, str(buildentity.src), libadd ))
+-	libadds[ ent_name ] = libadd + [ ent_name ]
+-
+-    #reading programs libs
+-    for name, buildentity in build.programs.iteritems():
+-	
+-	if not build.quiet:
+-	    print name, buildentity, buildentity.src, buildentity.libadd
+-	
+-	libadd = processLibadds( buildentity.libadd )
+-	ent_name = str(name)
+-	BuildProgram( ent_name, str(buildentity.src), libadd )
+-
+-    #handle install
+-    env.Install( lib_install_dir, yakeLibs )
+-    env.Alias( 'install', lib_install_dir )
+-
+-
+
+Deleted: trunk/yake/autogen.sh
+===================================================================
+--- trunk/yake/autogen.sh	2006-08-02 22:09:02 UTC (rev 1416)
++++ trunk/yake/autogen.sh	2006-08-02 22:10:13 UTC (rev 1417)
+@@ -1,8 +0,0 @@
+-#!/bin/bash
+-
+-libtoolize --force --copy
+-aclocal
+-autoheader
+-automake -a
+-autoconf
+-
+
+Deleted: trunk/yake/build.py
+===================================================================
+--- trunk/yake/build.py	2006-08-02 22:09:02 UTC (rev 1416)
++++ trunk/yake/build.py	2006-08-02 22:10:13 UTC (rev 1417)
+@@ -1,206 +0,0 @@
+-#!/usr/bin/python
+-
+-# global variable controlling verboseness
+-quiet = True
+-
+-# Dictionary with common paths
+-commonPaths = { 'ObjectDir':'obj' }
+-
+-commonIncludes = []
+-
+-# Utility lists of strings are stored here
+-listsSet = {}
+-
+-# Dictionary containing all shared libs BuildEntities
+-sharedLibs = {}
+-programs = {}
+-
+-def setCommonLibInstallDir( dir ):
+-    if not quiet:
+-	print 'Setting common lib install dir to', dir
+-	
+-    commonPaths['LibInstallDir'] = str(dir)
+-
+-
+-def setCommonProgramInstallDir( dir ):
+-    if not quiet:
+-	print 'Setting common program install dir to', dir
+-
+-    commonPaths['ProgramInstallDir'] = str(dir)
+-
+-
+-def setCommonObjectDir( dir ):
+-    if not quiet:
+-	print 'Setting common object dir to', dir
+-
+-    commonPaths['ObjectDir'] = str(dir)
+-
+-def setCommonLibDir( dir ):
+-    if not quiet:
+-	print 'Setting common lib dir to', dir
+-
+-    commonPaths['LibDir'] = str(dir)
+-
+-class BuildEntity:
+-	&quot;&quot;&quot; Class representing build entity (program, lib, shared lib)&quot;&quot;&quot;
+-	src = ''
+-	libadd = []
+-	
+-	def __init__( self ):
+-		self.src = ''
+-		self.libadd = []	
+-
+-
+-def readAllTextElemsToList( src_node, tagName ):
+-	val_list = []
+-	elems = src_node.getElementsByTagName( tagName )
+-	for idx in range( elems.length ):
+-		val = elems.item( idx ).firstChild.nodeValue
+-		val_list.append( str(val) )
+-		if not quiet:
+-		    print val
+-	return val_list
+-
+-def readListsFromElement( src_elem ):
+-	&quot;&quot;&quot; Reads all lists defined as &lt;List&gt;...&lt;/List&gt; into listsSet storage  &quot;&quot;&quot;
+-	if not quiet:
+-	    print 'Reading lists...'
+-
+-	lists = src_elem.getElementsByTagName( 'List' )
+-	for idx in range( lists.length ):
+-		lst = lists.item( idx )
+-		lst_name = lst.attributes.item(0).nodeValue #only one name
+-		
+-		if not quiet:
+-		    print 'Adding list', lst_name
+-		
+-		items = readAllTextElemsToList( lst, 'item' )
+-		listsSet[ lst_name ] = items
+-
+-
+-def readProgramInstructions( src_element ):
+-	&quot;&quot;&quot; Reads program build instructions &quot;&quot;&quot;
+-
+-
+-def readSharedLibsInstructions( src_element ):
+-    &quot;&quot;&quot; Reads shared libs build instructions &quot;&quot;&quot;
+-	
+-    if not quiet:
+-	print 'Reading shared libs build instructions...'
+-
+-    so_libs = src_element.getElementsByTagName( 'BuildSharedLibrary' )
+-    for idx in range( so_libs.length ):
+-		so_lib = so_libs.item( idx )
+-		lib_name = ''
+-		lib_src = ''
+-		for at_idx in range( so_lib.attributes.length ):
+-			attr = so_lib.attributes.item( at_idx )
+-			if attr.name == 'name':
+-				lib_name = attr.nodeValue
+-				if not quiet:
+-				    print 'Library:', lib_name
+-			elif attr.name == 'src':	
+-				lib_src = attr.nodeValue
+-				if not quiet:
+-				    print 'Library src:', lib_src
+-
+-		libadds = []
+-		
+-		libadds_spec = readAllTextElemsToList( so_lib, 'libadd' )
+-
+-		for la in libadds_spec:
+-			if listsSet.has_key( la ):
+-			    if not quiet:
+-				print 'Loading libadd from list', la, 'it is:', listsSet[ la ]
+-			    libadds = libadds + listsSet[ la ] 
+-			else: 
+-			    libadds.append( la )
+-
+-
+-		lib = BuildEntity()
+-		lib.src = lib_src
+-		lib.libadd = libadds
+-		#adding to dictionary
+-		sharedLibs[ lib_name ] = lib		  
+-		
+-
+-def readProgramInstructions( src_element ):
+-	&quot;&quot;&quot; Reads program build instructions &quot;&quot;&quot;
+-	
+-	if not quiet:
+-	    print 'Reading program build instructions...'
+-
+-	so_libs = src_element.getElementsByTagName( 'BuildProgram' )
+-	for idx in range( so_libs.length ):
+-		so_lib = so_libs.item( idx )
+-		lib_name = ''
+-		lib_src = ''
+-		for at_idx in range( so_lib.attributes.length ):
+-			attr = so_lib.attributes.item( at_idx )
+-			if attr.name == 'name':
+-				lib_name = attr.nodeValue
+-				if not quiet:
+-				    print 'Program:', lib_name
+-			elif attr.name == 'src':	
+-				lib_src = attr.nodeValue
+-				if not quiet:
+-				    print 'Program src:', lib_src
+-
+-		libadds = []
+-		
+-		libadds_spec = readAllTextElemsToList( so_lib, 'libadd' )
+-
+-		for la in libadds_spec:
+-			if listsSet.has_key( la ):
+-				if not quiet:
+-				    print 'Loading libadd from list', la, 'it is:', listsSet[ la ]
+-				libadds = libadds + listsSet[ la ] 
+-			else: 
+-				libadds.append( la )
+-
+-
+-		lib = BuildEntity()
+-		lib.src = lib_src
+-		lib.libadd = libadds
+-		#adding to dictionary
+-		programs[ lib_name ] = lib		  
+-		
+-
+-def readBuildInstructions( src_element ):
+-    if not quiet:
+-	print 'Reading build instructions...'
+-    
+-    readSharedLibsInstructions( src_element )
+-    readProgramInstructions( src_element )	
+-	
+-
+-
+-
+-# Actual parsing occurs here
+-import xml.dom.minidom
+-
+-dom = xml.dom.minidom.parse( 'buildspec.xml' )
+-
+-if not quiet:
+-    print 'Reading root element', dom.documentElement.tagName
+-
+-common = dom.documentElement.getElementsByTagName( 'Common' )[0] #assuming only one Common
+-
+-commonAttribs = common.attributes
+-
+-for at_index in range( commonAttribs.length ):
+-    at = commonAttribs.item( at_index )
+-
+-    if at.name == 'LibInstallDir':
+-		setCommonLibInstallDir( at.nodeValue )
+-    elif at.name == 'ProgramInstallDir':
+-		setCommonProgramInstallDir( at.nodeValue )
+-    elif at.name == 'ObjectDir':
+-		setCommonObjectDir( at.nodeValue )
+-    elif at.name == 'LibDir':
+-		setCommonLibDir( at.nodeValue )
+-
+-commonIncludes = readAllTextElemsToList( common, 'include' )
+-readListsFromElement( dom.documentElement )
+-readBuildInstructions( dom.documentElement )
+-
+
+Deleted: trunk/yake/buildspec.xml
+===================================================================
+--- trunk/yake/buildspec.xml	2006-08-02 22:09:02 UTC (rev 1416)
++++ trunk/yake/buildspec.xml	2006-08-02 22:10:13 UTC (rev 1417)
+@@ -1,400 +0,0 @@
+-&lt;BuildSpec&gt;
+-	&lt;Common	
+-		LibInstallDir=&quot;/usr/local/lib&quot;
+-		ProgramInstallDir=&quot;common/bin&quot; 	
+-		ObjectDir=&quot;build&quot;
+-		LibDir=&quot;build&quot;
+-	&gt;	
+-		
+-			&lt;include&gt;dependencies&lt;/include&gt;
+-			&lt;include&gt;.&lt;/include&gt;
+-			&lt;include&gt;dependencies/ttl&lt;/include&gt;
+-			&lt;include&gt;dependencies/OGRE&lt;/include&gt;
+-			&lt;include&gt;dependencies/PLSM&lt;/include&gt;
+-			&lt;include&gt;dependencies/ode/include&lt;/include&gt;
+-			&lt;include&gt;dependencies/luabind&lt;/include&gt;
+-			&lt;include&gt;/usr/local/include/CEGUI&lt;/include&gt;
+-	&lt;/Common&gt;
+-
+-	&lt;!-- One can define lists of strings to be used later  --&gt;
+-	&lt;List name=&quot;dynamic_loader&quot; &gt;
+-		&lt;item&gt;dl&lt;/item&gt;
+-	&lt;/List&gt;
+-
+-	&lt;BuildSharedLibrary 
+-		name=&quot;yakeNative&quot;
+-		src=&quot;src/yake/base/native/Linux&quot; 
+-	&gt;	
+-		&lt;libadd&gt;dynamic_loader&lt;/libadd&gt; 
+-	
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;!-- YAKE core libraries... --&gt;
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeTemplates&quot;
+-		src=&quot;src/yake/base/templates&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeNative&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeMath&quot;
+-		src=&quot;src/yake/base/math&quot;
+-	/&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeBase&quot;
+-		src=&quot;src/yake/base&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeNative&lt;/libadd&gt;
+-		&lt;libadd&gt;yakeTemplates&lt;/libadd&gt;
+-		&lt;libadd&gt;yakeMath&lt;/libadd&gt;
+-		&lt;libadd&gt;boost_signals&lt;/libadd&gt;
+-
+-	&lt;/BuildSharedLibrary&gt;	
+-
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeAudio&quot;
+-		src=&quot;src/yake/audio&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;depTinyXML&quot;
+-		src=&quot;dependencies/tinyxml&quot;
+-	&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeData&quot;
+-		src=&quot;src/yake/data&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-		&lt;libadd&gt;depTinyXML&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeGraphics&quot;
+-		src=&quot;src/yake/graphics&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeInput&quot;
+-		src=&quot;src/yake/input&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakePhysics&quot;
+-		src=&quot;src/yake/physics&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-        &lt;BuildSharedLibrary
+-                name=&quot;yakeScripting&quot;
+-                src=&quot;src/yake/scripting&quot;
+-        &gt;
+-                &lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-        &lt;/BuildSharedLibrary&gt;
+-
+-        &lt;BuildSharedLibrary
+-                name=&quot;yakeThread&quot;
+-                src=&quot;src/yake/thread&quot;
+-        &gt;
+-                &lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-		&lt;libadd&gt;ZThread&lt;/libadd&gt;
+-        &lt;/BuildSharedLibrary&gt;
+-
+-        &lt;BuildSharedLibrary
+-                name=&quot;yakeObject&quot;
+-                src=&quot;src/yake/object&quot;
+-        &gt;
+-                &lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-        &lt;/BuildSharedLibrary&gt;
+-
+-&lt;!--
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeRx&quot;
+-		src=&quot;src/yake/rx&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+---&gt;
+-&lt;!--
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeaudioOpenAL&quot;
+-		src=&quot;src/yake/plugins/audioOpenAL&quot;
+-	&gt;
+-		&lt;libadd&gt;openalpp&lt;/libadd&gt;
+-		&lt;libadd&gt;yakeAudio&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+---&gt;
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakegraphicsOgre&quot;
+-		src=&quot;src/yake/plugins/graphicsOgre&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeGraphics&lt;/libadd&gt;
+-		&lt;libadd&gt;OgreMain&lt;/libadd&gt;	
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeinputOgre&quot;
+-		src=&quot;src/yake/plugins/inputOgre&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeInput&lt;/libadd&gt;
+-		&lt;libadd&gt;OgreMain&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakephysicsODE&quot;
+-		src=&quot;src/yake/plugins/physicsODE&quot;
+-	&gt;
+-		&lt;libadd&gt;yakePhysics&lt;/libadd&gt;
+-		&lt;libadd&gt;ode&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakescriptingLua&quot;
+-		src=&quot;src/yake/plugins/scriptingLua&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-		&lt;libadd&gt;luabind&lt;/libadd&gt;
+-		&lt;libadd&gt;lualib&lt;/libadd&gt;
+-		&lt;libadd&gt;lua&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;!-- TODO Rename this thing? --&gt; 
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakescriptingBindingsLua&quot;
+-		src=&quot;src/yake/plugins/scriptingLuaBindings&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-		&lt;libadd&gt;luabind&lt;/libadd&gt;
+-		&lt;libadd&gt;lualib&lt;/libadd&gt;
+-		&lt;libadd&gt;lua&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakegraphicsLuaBindings&quot;
+-		src=&quot;src/yake/plugins/graphicsLuaBindings&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-		&lt;libadd&gt;luabind&lt;/libadd&gt;
+-		&lt;libadd&gt;lualib&lt;/libadd&gt;
+-		&lt;libadd&gt;lua&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakebaseLuaBindings&quot;
+-		src=&quot;src/yake/plugins/baseLuaBindings&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-		&lt;libadd&gt;luabind&lt;/libadd&gt;
+-		&lt;libadd&gt;lualib&lt;/libadd&gt;
+-		&lt;libadd&gt;lua&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-&lt;!--
+-	*********************************************
+-	*  YAPP                                     *
+-	*********************************************
+---&gt;
+-	&lt;BuildSharedLibrary
+-		name=&quot;yappEvents&quot;
+-		src=&quot;src/yapp/base/event&quot;
+-	/&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yappBase&quot;
+-		src=&quot;src/yapp/base&quot;
+-	&gt;
+-		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
+-		&lt;libadd&gt;yappEvents&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-       &lt;BuildSharedLibrary
+-                name=&quot;yappLoader&quot;
+-                src=&quot;src/yapp/loader&quot;
+-        &gt;
+-                &lt;libadd&gt;yappBase&lt;/libadd&gt;
+-        &lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yappModel&quot;	
+-		src=&quot;src/yapp/model&quot;
+-	&gt;
+-		&lt;libadd&gt;yappBase&lt;/libadd&gt;
+-		&lt;libadd&gt;yappLoader&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yappMsg&quot;	
+-		src=&quot;src/yapp/msg&quot;
+-	&gt;
+-		&lt;libadd&gt;yappBase&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;!--&lt;BuildSharedLibrary
+-		name=&quot;yappEnt&quot;	
+-		src=&quot;src/yapp/ent&quot;
+-	&gt;
+-		&lt;libadd&gt;yappBase&lt;/libadd&gt;
+-		&lt;libadd&gt;yappMsg&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;--&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yappVehicle&quot;	
+-		src=&quot;src/yapp/vehicle&quot;
+-	&gt;
+-		&lt;libadd&gt;yappBase&lt;/libadd&gt;
+-		&lt;libadd&gt;yakephysicsODE&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yappraf&quot;	
+-		src=&quot;src/yapp/raf&quot;
+-	&gt;
+-		&lt;libadd&gt;yappBase&lt;/libadd&gt;
+-		&lt;libadd&gt;yakeCEGUIOgreAdapter&lt;/libadd&gt;
+-		&lt;libadd&gt;CEGUIOgreRenderer&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	
+-	&lt;BuildSharedLibrary
+-		name=&quot;yakeCEGUIOgreAdapter&quot;
+-		src=&quot;src/yapp/plugins/ceguiOgreRendererAdapter&quot;
+-	&gt;
+-		&lt;libadd&gt;CEGUIBase&lt;/libadd&gt;
+-		&lt;libadd&gt;OgreMain&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;!--&lt;BuildSharedLibrary
+-		name=&quot;yappEntLua&quot;
+-		src=&quot;src/yapp/plugins/entLua&quot;
+-	&gt;
+-		&lt;libadd&gt;yappEnt&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;--&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yappmodelLuaBindings&quot;
+-		src=&quot;src/yapp/plugins/modelLuaBindings&quot;
+-	&gt;
+-		&lt;!--libadd&gt;yappEnt&lt;/libadd--&gt;
+-		&lt;libadd&gt;luabind&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;
+-
+-	&lt;BuildSharedLibrary
+-		name=&quot;yappTerrainPhysicsManager&quot;
+-		src=&quot;src/yapp/plugins/terrainPhysMgr&quot;
+-	&gt;
+-		&lt;libadd&gt;PagingLandscape&lt;/libadd&gt;
+-	&lt;/BuildSharedLibrary&gt;	
+-
+-&lt;!-- SAMPLES --&gt;
+-
+-	&lt;List name=&quot;common_libs&quot;&gt;
+-		&lt;item&gt;yakeBase&lt;/item&gt;
+-		&lt;item&gt;yakeAudio&lt;/item&gt;
+-		&lt;item&gt;yakeGraphics&lt;/item&gt;
+-		&lt;item&gt;yakeInput&lt;/item&gt;
+-		&lt;item&gt;yakePhysics&lt;/item&gt;
+-		&lt;item&gt;yakeData&lt;/item&gt;
+-		&lt;item&gt;yakeScripting&lt;/item&gt;
+-	&lt;/List&gt;
+-
+-	&lt;BuildProgram
+-		name=&quot;DemoDebug&quot;
+-		src=&quot;src/yake/samples/base/debug&quot;
+-	&gt;
+-		&lt;libadd&gt;common_libs&lt;/libadd&gt;
+-	&lt;/BuildProgram&gt;
+-
+-	&lt;BuildProgram
+-		name=&quot;GraphicsDemo&quot;
+-		src=&quot;src/yake/samples/graphics/demo&quot;
+-	&gt;
+-		&lt;libadd&gt;common_libs&lt;/libadd&gt;
+-	&lt;/BuildProgram&gt;
+-
+-	&lt;BuildProgram
+-		name=&quot;DotSceneGraphicsDemo&quot;
+-		src=&quot;src/yapp/samples/graphics/dotScene&quot;
+-	&gt;
+-		&lt;libadd&gt;common_libs&lt;/libadd&gt;
+-		&lt;libadd&gt;yappModel&lt;/libadd&gt;
+-	&lt;/BuildProgram&gt;
+-
+-	&lt;BuildProgram 
+-		name=&quot;XODELoaderDemo&quot;
+-		src=&quot;src/yapp/samples/model/XODE&quot;
+-	&gt;
+-		&lt;libadd&gt;common_libs&lt;/libadd&gt;
+-		&lt;libadd&gt;yappModel&lt;/libadd&gt;
+-		&lt;libadd&gt;yappLoader&lt;/libadd&gt;
+-	&lt;/BuildProgram&gt;
+-
+-	&lt;BuildProgram 
+-		name=&quot;dotLinkLoaderDemo&quot;
+-		src=&quot;src/yapp/samples/model/dotLink&quot;
+-	&gt;
+-		&lt;libadd&gt;common_libs&lt;/libadd&gt;
+-		&lt;libadd&gt;yappModel&lt;/libadd&gt;
+-		&lt;libadd&gt;yappLoader&lt;/libadd&gt;
+-	&lt;/BuildProgram&gt;
+-
+-	&lt;BuildProgram
+-		name=&quot;VehicleDemo&quot;
+-		src=&quot;src/yapp/samples/base/vehicle&quot;
+-	&gt;
+-		&lt;libadd&gt;common_libs&lt;/libadd&gt;	
+-		&lt;libadd&gt;yappModel&lt;/libadd&gt;	
+-		&lt;libadd&gt;yappVehicle&lt;/libadd&gt;	
+-		&lt;libadd&gt;yappraf&lt;/libadd&gt;
+-	&lt;/BuildProgram&gt;
+-
+-	&lt;!--
+-	&lt;BuildProgram
+-		name=&quot;TerrainDemo&quot;
+-		src=&quot;src/yapp/samples/ode_terrain_demo&quot;
+-	&gt;
+-		&lt;libadd&gt;common_libs&lt;/libadd&gt;	
+-		&lt;libadd&gt;yappModel&lt;/libadd&gt;	
+-		&lt;libadd&gt;yappStatemachine&lt;/libadd&gt;	
+-		&lt;libadd&gt;yappVehicle&lt;/libadd&gt;	
+-		&lt;libadd&gt;yappraf&lt;/libadd&gt;
+-		&lt;libadd&gt;PagingLandscape&lt;/libadd&gt;
+-		&lt;libadd&gt;yappTerrainPhysicsManager&lt;/libadd&gt;
+-		&lt;libadd&gt;dl&lt;/libadd&gt;
+-	&lt;/BuildProgram&gt;	
+-	--&gt;
+-
+-	&lt;BuildProgram
+-		name=&quot;consoleDemo&quot;
+-		src=&quot;src/yapp/samples/gui/console&quot;
+-	&gt;
+-		&lt;libadd&gt;common_libs&lt;/libadd&gt;
+-		&lt;libadd&gt;yakeCEGUIOgreAdapter&lt;/libadd&gt;
+-		&lt;libadd&gt;lua&lt;/libadd&gt;
+-		&lt;libadd&gt;lualib&lt;/libadd&gt;
+-		&lt;libadd&gt;luabind&lt;/libadd&gt;
+-		&lt;libadd&gt;CEGUIOgreRenderer&lt;/libadd&gt;
+-	&lt;/BuildProgram&gt;
+-	&lt;!--&lt;BuildProgram 
+-		name=&quot;cmdrmayhem&quot;
+-		src=&quot;src/yapp/samples/misc/cmdrmayhem&quot;
+-	&gt;
+-		&lt;libadd&gt;common_libs&lt;/libadd&gt;
+-		&lt;libadd&gt;yappModel&lt;/libadd&gt;	
+-		&lt;libadd&gt;yappVehicle&lt;/libadd&gt;
+-		&lt;libadd&gt;yappraf&lt;/libadd&gt;
+-	&lt;/BuildProgram&gt;
+-	--&gt;
+-
+-&lt;/BuildSpec&gt;
+-
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000484.html">[Yake-svn] r1416 - trunk/yake
+</A></li>
+	<LI>Next message: <A HREF="000486.html">[Yake-svn] r1418 - trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#485">[ date ]</a>
+              <a href="thread.html#485">[ thread ]</a>
+              <a href="subject.html#485">[ subject ]</a>
+              <a href="author.html#485">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

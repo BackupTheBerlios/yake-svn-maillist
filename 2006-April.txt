@@ -1,0 +1,3641 @@
+From codeandroid at berlios.de  Thu Apr 13 20:47:55 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Thu, 13 Apr 2006 20:47:55 +0200
+Subject: [Yake-svn] r1316 - in trunk/yake/common/media: . scripts
+Message-ID: <200604131847.k3DIltmV029331@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-13 20:47:52 +0200 (Thu, 13 Apr 2006)
+New Revision: 1316
+
+Added:
+   trunk/yake/common/media/scripts/
+   trunk/yake/common/media/scripts/o_fsm_test.lua
+Log:
+initial version
+
+Added: trunk/yake/common/media/scripts/o_fsm_test.lua
+===================================================================
+--- trunk/yake/common/media/scripts/o_fsm_test.lua	2006-03-20 22:26:26 UTC (rev 1315)
++++ trunk/yake/common/media/scripts/o_fsm_test.lua	2006-04-13 18:47:52 UTC (rev 1316)
+@@ -0,0 +1,51 @@
++print("> Starting object script...");
++event = {
++	on_spawn = function()
++		print("  script event.on_spawn")
++		--ent:postCmd("go to","jack's bar")
++		--OR: ev:postCmd(ent,"go to","jack's bar")
++		--ent:postCmd("die")
++	end,
++	on_tick = function()
++		print("  script event.on_tick")
++	end,
++	on_die = function()
++		print("  script event.on_die")
++	end,
++	-- various:
++	onArrived = function() --triggered as a result of "go to"
++	end
++}
++fsm = {
++	main = {
++		states = {
++			awakening,
++			alive,
++			dead
++		},
++		transitions = {
++			{awakening,"spawn",alive},
++			{alive,"die",dead}
++		}
++	}
++}
++state = {
++	alive = {
++		on_enter = function()
++			print("  script state.alive.on_enter")
++		end,
++		on_tick = function()
++			print("  script state.alive.on_tick")
++		end,
++		on_exit = function()
++			print("  script state.alive.on_exit")
++		end
++	}
++}
++print("> Object script up.");
++
++function main()
++	print("main() calling charGoTo()")
++	charGoTo("blah")
++	print("main() resuming from charGoTo()")
++end
+
+
+
+From codeandroid at berlios.de  Sun Apr 23 19:54:59 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 23 Apr 2006 19:54:59 +0200
+Subject: [Yake-svn] r1317 - in trunk/yake: dependencies scripts/msvc8 src/yake/audio src/yake/base src/yake/base/math src/yake/base/native/Linux src/yake/base/native/win32 src/yake/data src/yake/ent src/yake/input src/yake/net src/yake/net/detail src/yake/samples/physics/demo yake/base yake/base/math yake/base/native yake/base/native/win32 yake/base/templates yake/data yake/ent yake/msg yake/net yake/net/detail yake/object yake/physics yake/plugins/graphicsOgre yake/samples/common yake/statemachine
+Message-ID: <200604231754.k3NHsxHx029757@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-23 19:54:49 +0200 (Sun, 23 Apr 2006)
+New Revision: 1317
+
+Modified:
+   trunk/yake/dependencies/DEPENDENCIES
+   trunk/yake/scripts/msvc8/base.vcproj
+   trunk/yake/scripts/msvc8/net.vcproj
+   trunk/yake/src/yake/audio/yakePCH.cpp
+   trunk/yake/src/yake/base/math/yakeSimpleSpline.cpp
+   trunk/yake/src/yake/base/native/Linux/yakeTime.cpp
+   trunk/yake/src/yake/base/native/win32/yakeCriticalSection.cpp
+   trunk/yake/src/yake/base/native/win32/yakeDebug.cpp
+   trunk/yake/src/yake/base/native/win32/yakeLibrary.cpp
+   trunk/yake/src/yake/base/native/win32/yakeProcessor.cpp
+   trunk/yake/src/yake/base/native/win32/yakeTime.cpp
+   trunk/yake/src/yake/base/yakeDataChunk.cpp
+   trunk/yake/src/yake/base/yakeLog.cpp
+   trunk/yake/src/yake/data/yakeXMLSerializer.cpp
+   trunk/yake/src/yake/ent/object.cpp
+   trunk/yake/src/yake/ent/object_listener.cpp
+   trunk/yake/src/yake/ent/object_mgr.cpp
+   trunk/yake/src/yake/ent/object_mgr_listener.cpp
+   trunk/yake/src/yake/ent/vm_holder.cpp
+   trunk/yake/src/yake/input/yakeActionMap.cpp
+   trunk/yake/src/yake/net/detail/netCommon.cpp
+   trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp
+   trunk/yake/src/yake/net/detail/netEventConnection.cpp
+   trunk/yake/src/yake/net/detail/netInternal.cpp
+   trunk/yake/src/yake/net/net.cpp
+   trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+   trunk/yake/yake/base/math/yakeGeometry.h
+   trunk/yake/yake/base/native/win32/yakeUndefine.h
+   trunk/yake/yake/base/native/yakeNative.h
+   trunk/yake/yake/base/templates/yakeSmartAssert.h
+   trunk/yake/yake/base/yakeProcessor.h
+   trunk/yake/yake/data/yakeDataSerializer.h
+   trunk/yake/yake/ent/object_mgr.h
+   trunk/yake/yake/msg/listener_mgr.h
+   trunk/yake/yake/net/detail/netEventConnection.h
+   trunk/yake/yake/net/detail/netInternal.h
+   trunk/yake/yake/net/netBitstream.inl
+   trunk/yake/yake/net/netBitstreamAdapters.h
+   trunk/yake/yake/net/netCommon.h
+   trunk/yake/yake/net/netEvent.h
+   trunk/yake/yake/net/netPacket.h
+   trunk/yake/yake/net/netPrerequisites.h
+   trunk/yake/yake/net/netTypes.h
+   trunk/yake/yake/net/pch.h
+   trunk/yake/yake/object/ObjectManager.h
+   trunk/yake/yake/physics/yakeAffectorZone.h
+   trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsSystem.h
+   trunk/yake/yake/samples/common/init_gui.h
+   trunk/yake/yake/statemachine/fsm_core.h
+Log:
+various fixes (compatibility, cleanup, standard compliance and more)
+
+Modified: trunk/yake/dependencies/DEPENDENCIES
+===================================================================
+--- trunk/yake/dependencies/DEPENDENCIES	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/dependencies/DEPENDENCIES	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -13,3 +13,4 @@
+ OpenThreads/
+ tinyxml/
+ ttl/
++zThread
+
+Modified: trunk/yake/scripts/msvc8/base.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/base.vcproj	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/scripts/msvc8/base.vcproj	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -198,26 +198,6 @@
+ 				>
+ 			</File>
+ 			<File
+-				RelativePath="..\..\src\yake\base\yakeDebugOutputStream.cpp"
+-				>
+-				<FileConfiguration
+-					Name="Debug|Win32"
+-					ExcludedFromBuild="true"
+-					>
+-					<Tool
+-						Name="VCCLCompilerTool"
+-					/>
+-				</FileConfiguration>
+-				<FileConfiguration
+-					Name="Release|Win32"
+-					ExcludedFromBuild="true"
+-					>
+-					<Tool
+-						Name="VCCLCompilerTool"
+-					/>
+-				</FileConfiguration>
+-			</File>
+-			<File
+ 				RelativePath="..\..\src\yake\base\yakeException.cpp"
+ 				>
+ 			</File>
+
+Modified: trunk/yake/scripts/msvc8/net.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/net.vcproj	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/scripts/msvc8/net.vcproj	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -64,7 +64,7 @@
+ 			/>
+ 			<Tool
+ 				Name="VCLinkerTool"
+-				AdditionalDependencies="ws2_32.lib winmm.lib"
++				AdditionalDependencies="ws2_32.lib winmm.lib base.lib"
+ 				OutputFile="$(OutDir)/$(ProjectName).dll"
+ 				LinkIncremental="2"
+ 				AdditionalLibraryDirectories="../../common/lib/debug;../../dependencies/lib"
+@@ -145,7 +145,7 @@
+ 			/>
+ 			<Tool
+ 				Name="VCLinkerTool"
+-				AdditionalDependencies="ws2_32.lib winmm.lib"
++				AdditionalDependencies="ws2_32.lib winmm.lib base.lib"
+ 				OutputFile="$(OutDir)/$(ProjectName).dll"
+ 				LinkIncremental="1"
+ 				AdditionalLibraryDirectories="../../common/lib/release;../../dependencies/lib"
+
+Modified: trunk/yake/src/yake/audio/yakePCH.cpp
+===================================================================
+--- trunk/yake/src/yake/audio/yakePCH.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/audio/yakePCH.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -24,4 +24,4 @@
+    source code distribution.
+    ------------------------------------------------------------------------------------
+ */
+-#include <yake/audio/yakePCH.h>
+\ No newline at end of file
++#include <yake/audio/yakePCH.h>
+
+Modified: trunk/yake/src/yake/base/math/yakeSimpleSpline.cpp
+===================================================================
+--- trunk/yake/src/yake/base/math/yakeSimpleSpline.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/math/yakeSimpleSpline.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -75,11 +75,11 @@
+         // change where this is not the case
+         // TODO: base on arclength?
+ 
+-        
++
+         // Work out which segment this is in
+         real fSeg = t * mPoints.size();
+         unsigned int segIdx = (unsigned int)fSeg;
+-        // Apportion t 
++        // Apportion t
+         t = fSeg - segIdx;
+ 
+         return interpolate(segIdx, t);
+@@ -89,8 +89,7 @@
+     Vector3 SimpleSpline::interpolate(unsigned int fromIndex, real t)
+     {
+         // Bounds check
+-        assert (fromIndex >= 0 && fromIndex < mPoints.size() &&
+-            "fromIndex out of bounds");
++        assert ( fromIndex < mPoints.size() && "fromIndex out of bounds");
+ 
+         if ((fromIndex + 1) == mPoints.size())
+         {
+@@ -151,7 +150,7 @@
+     void SimpleSpline::recalcTangents(void)
+     {
+         // Catmull-Rom approach
+-        // 
++        //
+         // tangent[i] = 0.5 * (point[i+1] - point[i-1])
+         //
+         // Assume endpoint tangents are parallel with line with neighbour
+@@ -212,7 +211,7 @@
+             {
+                 mTangents[i] = 0.5 * (mPoints[i+1] - mPoints[i-1]);
+             }
+-            
++
+         }
+ 
+ 
+
+Modified: trunk/yake/src/yake/base/native/Linux/yakeTime.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/Linux/yakeTime.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/Linux/yakeTime.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -70,7 +70,7 @@
+ 		
+ 		gettimeofday( &t_now, 0 );
+ 		
+-		return static_cast< float >( 
++		return static_cast< real >( 
+ 			( t_now.tv_sec - TimerInit_g.mStart.tv_sec ) * 1000 + 
+ 			( t_now.tv_usec - TimerInit_g.mStart.tv_usec ) / 1000 ) / 1000;
+ 	}
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeCriticalSection.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeCriticalSection.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/win32/yakeCriticalSection.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -39,7 +39,7 @@
+ namespace native
+ {
+ 
+-YAKE_BASE_NATIVE_API CriticalSectionHandle criticalSection_Create()
++CriticalSectionHandle criticalSection_Create()
+ {
+   CRITICAL_SECTION* criticalSectionImpl = new CRITICAL_SECTION;
+   InitializeCriticalSection( criticalSectionImpl );
+@@ -47,19 +47,19 @@
+   return ( CriticalSectionHandle )criticalSectionImpl;
+ }
+ 
+-YAKE_BASE_NATIVE_API void criticalSection_Enter( CriticalSectionHandle criticalSection )
++void criticalSection_Enter( CriticalSectionHandle criticalSection )
+ {
+   CRITICAL_SECTION* criticalSectionImpl = ( CRITICAL_SECTION* )criticalSection;
+   EnterCriticalSection( criticalSectionImpl );
+ }
+ 
+-YAKE_BASE_NATIVE_API void criticalSection_Leave( CriticalSectionHandle criticalSection )
++void criticalSection_Leave( CriticalSectionHandle criticalSection )
+ {
+   CRITICAL_SECTION* criticalSectionImpl = ( CRITICAL_SECTION* )criticalSection;
+   LeaveCriticalSection( criticalSectionImpl );
+ }
+ 
+-YAKE_BASE_NATIVE_API void criticalSection_Delete( CriticalSectionHandle criticalSection )
++void criticalSection_Delete( CriticalSectionHandle criticalSection )
+ {
+   CRITICAL_SECTION* criticalSectionImpl = ( CRITICAL_SECTION* )criticalSection;
+   DeleteCriticalSection( criticalSectionImpl );
+@@ -67,4 +67,4 @@
+ }
+ 
+ } // native
+-} // yake
+\ No newline at end of file
++} // yake
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeDebug.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeDebug.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/win32/yakeDebug.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -82,7 +82,7 @@
+ 		SetWindowPos( hDlg,
+ 			0,
+ 			( GetDeviceCaps( GetDC( 0 ), HORZRES ) - ( rc.right - rc.left ) ) / 2,
+-			( GetDeviceCaps( GetDC( 0 ), VERTRES ) - ( rc.bottom - rc.top ) ) / 2, 
++			( GetDeviceCaps( GetDC( 0 ), VERTRES ) - ( rc.bottom - rc.top ) ) / 2,
+ 			0,
+ 			0,
+ 			SWP_NOSIZE | SWP_NOZORDER );
+@@ -107,7 +107,7 @@
+ 	return FALSE;
+ }
+ 
+-YAKE_BASE_NATIVE_API bool debug_AssertFailed( const char* pszMessage, const char* pszCondition, const char* pszFile, int nLine, bool& rbIgnoreAlways )
++bool debug_AssertFailed( const char* pszMessage, const char* pszCondition, const char* pszFile, int nLine, bool& rbIgnoreAlways )
+ {
+ 	g_pszMessage		= pszMessage;
+ 	g_pszCondition	= pszCondition;
+@@ -153,7 +153,7 @@
+     static bool consoleApp_;
+ } logConsole_g;
+ 
+-YAKE_BASE_NATIVE_API void debug_Log( const char * what, DebugLog::Severity eSeverity, const char * source )
++void debug_Log( const char * what, DebugLog::Severity eSeverity, const char * source )
+ {
+ 	static char szBuffer[ 1024 ];
+ 
+@@ -161,7 +161,7 @@
+     ( eSeverity == DebugLog::WARNINGS ? FOREGROUND_GREEN | FOREGROUND_RED : FOREGROUND_RED ) );
+ 	wColor |= FOREGROUND_INTENSITY;
+ 
+-	if( *source != NULL )
++	if( *source )
+ 		sprintf( szBuffer, "%s: %s", source, what );
+ 	else
+ 		sprintf( szBuffer, "%s", what );
+@@ -170,7 +170,7 @@
+ 	logConsole_g.Print( "\n", FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
+ }
+ 
+-YAKE_BASE_NATIVE_API void debug_Print( const char * string )
++void debug_Print( const char * string )
+ {
+   logConsole_g.Print( string, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
+ }
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeLibrary.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeLibrary.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/win32/yakeLibrary.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -45,28 +45,28 @@
+ namespace native
+ {
+ 
+-YAKE_BASE_NATIVE_API LibraryHandle library_Load(const char * filename)
++LibraryHandle library_Load(const char * filename)
+ {
+ 	YAKE_ASSERT(filename).debug("Invalid filename.");
+ 	// load library
+ 	LibraryHandle handle = (LibraryHandle)::LoadLibraryA(filename);
+ 
+ 	// todo: http://yake.org/forum/viewtopic.php?t=340
+-	if (!handle) 
++	if (!handle)
+ 		YAKE_EXCEPT("Couldn't load library " + String(filename) + ".");
+ 	return handle;
+ }
+ 
+-YAKE_BASE_NATIVE_API void * library_GetSymbol(LibraryHandle library, const char * function)
++void * library_GetSymbol(LibraryHandle library, const char * function)
+ {
+ 	YAKE_ASSERT(library).debug("Invalid library handle.");
+ 	YAKE_ASSERT(function).debug("Invalid library function.");
+ 	// get the procedure's address
+-	void * address = ::GetProcAddress((HMODULE) library, function);
++	void * address = (void *)(::GetProcAddress((HMODULE) library, function));
+ 	return address;
+ }
+ 
+-YAKE_BASE_NATIVE_API void library_Free(LibraryHandle library)
++void library_Free(LibraryHandle library)
+ {
+ 	YAKE_ASSERT(library).debug("Invalid library handle.");
+ 	// free library
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeProcessor.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeProcessor.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/win32/yakeProcessor.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -45,7 +45,7 @@
+ {
+ /*
+ // todo
+-YAKE_BASE_NATIVE_API void Processor_RetrieveInfo( std::wstring& name, float& frequency, Processor::Info& info )
++void Processor_RetrieveInfo( std::wstring& name, float& frequency, Processor::Info& info )
+ {
+ #define CACHE_COPY( Dest, Src ) Dest.isPresent = Src.bPresent; Dest.size = Widen( Src.strSize ); Dest.numAssociativeWays = Src.uiAssociativeWays; Dest.lineSize = Src.uiLineSize; Dest.isSectored = Src.bSectored;
+ #define TLB_COPY( Dest, Src )   Dest.isPresent = Src.bPresent; Dest.pageSize = Widen( Src.strPageSize ); Dest.numAssociativeWays = Src.uiAssociativeWays; Dest.numEntries = Src.uiEntries;
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeTime.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeTime.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/win32/yakeTime.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -53,7 +53,7 @@
+ public:
+ 	// Public member for a gain of speed.
+ 	Win32::LARGE_INTEGER mTimerFrequency;
+-	float mStart;
++	real mStart;
+ 
+ 	// Constructor.
+ 	TimerInit()
+@@ -61,37 +61,37 @@
+ 		if( !Win32::QueryPerformanceFrequency( &mTimerFrequency ) )
+ 		{
+ 			mTimerFrequency.QuadPart = 0;
+-			mStart = float( Win32::timeGetTime() ) / 1000.0f;
++			mStart = real( Win32::timeGetTime() ) / 1000.0f;
+ 		}
+ 		else
+ 		{
+ 			Win32::LARGE_INTEGER largeCount;
+ 			Win32::QueryPerformanceCounter( &largeCount );
+ 
+-			long double count = long double( largeCount.QuadPart );
+-			long double frequency = long double( mTimerFrequency.QuadPart );
++			double count = double( largeCount.QuadPart );
++			double frequency = double( mTimerFrequency.QuadPart );
+ 
+-			mStart = float( count / frequency );
++			mStart = real( count / frequency );
+ 		}
+ 	}
+ } TimerInit_g;
+ 
+ 
+-float YAKE_BASE_NATIVE_API getTime()
++real getTime()
+ {
+ 	// No performance timer available.
+ 	if( TimerInit_g.mTimerFrequency.QuadPart == 0 )
+-		return float( Win32::timeGetTime() ) / 1000.0f - TimerInit_g.mStart;
++		return real( Win32::timeGetTime() ) / 1000.0f - TimerInit_g.mStart;
+ 
+ 	Win32::LARGE_INTEGER largeCount;
+ 	Win32::QueryPerformanceCounter( &largeCount );
+ 
+-	long double count = long double( largeCount.QuadPart );
+-	long double frequency = long double( TimerInit_g.mTimerFrequency.QuadPart );
++	double count = double( largeCount.QuadPart );
++	double frequency = double( TimerInit_g.mTimerFrequency.QuadPart );
+ 
+-	return float( count / frequency ) - TimerInit_g.mStart;
++	return real( count / frequency ) - TimerInit_g.mStart;
+ }
+ 
+ 
+ } // native
+-} // yake
+\ No newline at end of file
++} // yake
+
+Modified: trunk/yake/src/yake/base/yakeDataChunk.cpp
+===================================================================
+--- trunk/yake/src/yake/base/yakeDataChunk.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/yakeDataChunk.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -52,7 +52,11 @@
+ 		}
+ 		mSize = size;
+ 		if (mSize > 0)
++		{
+ 			mData = new uint8[ mSize ];
++			if (pData)
++                memcpy(mData,pData,size);
++		}
+ 		return mSize;
+ 	}
+ 
+@@ -100,7 +104,7 @@
+ 		}
+ 		else
+ 		{
+-			if (mSize-pos < 0)
++			if (pos > mSize)
+ 				mPos = 0;
+ 			else
+ 				mPos = mSize-pos;
+
+Modified: trunk/yake/src/yake/base/yakeLog.cpp
+===================================================================
+--- trunk/yake/src/yake/base/yakeLog.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/yakeLog.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright  2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+
+Modified: trunk/yake/src/yake/data/yakeXMLSerializer.cpp
+===================================================================
+--- trunk/yake/src/yake/data/yakeXMLSerializer.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/data/yakeXMLSerializer.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -37,28 +37,28 @@
+ 	{
+ 		parse( pElem );
+ 	}
+-	
++
+ 	XmlNode::~XmlNode()
+ 	{
+ 		mNodes.clear();
+ 	}
+-	
++
+ 	const NodeList& XmlNode::getNodes() const
+ 	{
+ 		return mNodes;
+ 	}
+-	
++
+ 	const INode::AttributeMap& XmlNode::getAttributes() const
+ 	{
+ 		return mAttributes;
+ 	}
+-	
++
+ 	void XmlNode::addNode( SharedPtr<INode> pNode )
+ 	{
+ 		if (pNode)
+ 			mNodes.push_back( pNode );
+ 	}
+-	
++
+ 	String XmlNode::getName() const
+ 	{
+ 		YAKE_ASSERT( mElem );
+@@ -96,52 +96,53 @@
+ 		const char* val = mElem->Attribute( rName.c_str() );
+ 		return val ? String( val ) : String("");
+ 	}
+-	
++
+ 	SharedPtr<INode> XmlNode::getNodeByName( String const& rName ) const
+ 	{
+ 		for ( NodeList::const_iterator it = mNodes.begin(); it != mNodes.end(); ++it )
+ 		{
+ 			data::dom::INode::ValueType value = (*it)->getName();
+-			
++
+ 			if ( varGet<String>( value ) == rName )
+ 				return ( *it );
+ 		}
+-		
++
+ 		return SharedPtr<INode>();
+ 	}
+-	
++
+ 	SharedPtr<INode> XmlNode::getNodeById( String const& rId ) const
+ 	{
+ 		// still NYI?
++		YAKE_ASSERT( 0==1 );
+ 		return SharedPtr<INode>();
+ 	}
+-	
++
+ 	void XmlNode::parse( TiXmlElement* pElem )
+ 	{
+ 		YAKE_ASSERT( pElem );
+-		
+-		for ( TiXmlAttribute* pAttr = mElem->FirstAttribute(); 
+-			pAttr != 0; 
++
++		for ( TiXmlAttribute* pAttr = pElem->FirstAttribute();
++			pAttr != 0;
+ 			pAttr = pAttr->Next() )
+ 		{
+ 			mAttributes.insert( std::make_pair( pAttr->Name(), String( pAttr->Value() ) ) );
+ 		}
+ 	}
+ 
+-	XmlSerializer::XmlSerializer() : mXmlDoc(0), mRootNode(), mRootElem(0)
++	XmlSerializer::XmlSerializer() : mRootNode(), mRootElem(0), mXmlDoc(0)
+ 	{
+ 	}
+-	
++
+ 	XmlSerializer::~XmlSerializer()
+ 	{
+ 		reset();
+ 	}
+-	
++
+ 	SharedPtr<INode> XmlSerializer::getDocumentNode() const
+ 	{
+ 		return mRootNode;
+ 	}
+-	
++
+ 	void XmlSerializer::parse( String const& rFile, bool fireSignals )
+ 	{
+ 		if ( mXmlDoc )
+@@ -163,15 +164,15 @@
+ 		// recursively traverse xml tree and fire events as needed
+ 		parseNode( mRootNode );
+ 	}
+-	
++
+ 	void XmlSerializer::reset()
+ 	{
+ 		YAKE_SAFE_DELETE( mXmlDoc );
+-		
++
+ 		mRootElem = 0;
+ 		mRootNode.reset();
+ 	}
+-	
++
+ 	void XmlSerializer::parseNode( SharedPtr<XmlNode> pNode )
+ 	{
+ 		YAKE_ASSERT( pNode );
+@@ -188,8 +189,8 @@
+ 			mNewNodeSignal( pNode );
+ 
+ 			// iterate over node's attributes & fire signals
+-			for ( TiXmlAttribute* pAttr = pNodeElem->FirstAttribute(); 
+-				pAttr != 0; 
++			for ( TiXmlAttribute* pAttr = pNodeElem->FirstAttribute();
++				pAttr != 0;
+ 				pAttr = pAttr->Next() )
+ 			{
+ 				// fire "new attribute"
+@@ -200,7 +201,7 @@
+ 		// iterate over child xml elements, creating new nodes as we go
+ 		// and recursively parsing them.
+ 		for ( TiXmlElement* pElem = pNodeElem->FirstChildElement();
+-			pElem != 0; 
++			pElem != 0;
+ 			pElem = pElem->NextSiblingElement() )
+ 		{
+ 			SharedPtr<XmlNode> pNewNode( new XmlNode( pElem ) );
+
+Modified: trunk/yake/src/yake/ent/object.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/ent/object.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -45,7 +45,16 @@
+ 
+ 	void Entity::processFsmEvent(const fsm_event_type& evt)
+ 	{
+-		m_.processEventCb(evt,boost::bind(&Entity::onEnter,this,_1,_2),boost::bind(&Entity::onExit,this,_1,_2));
++	    // On MSVC8 the following line of code works but fails miserable with GCC 3.4.2 (MinGW).
++	    // That's why we use the approach below.
++		//m_.processEventCb(evt,boost::bind(&Entity::onEnter,this,_1,_2),boost::bind(&Entity::onExit,this,_1,_2));
++
++		typedef boost::function<void(const object_fsm&, const object_fsm::state_type& state)> fn_t;
++		const fn_t fnEnter = boost::bind(&Entity::onEnter,boost::ref(this),_1,_2);
++		const fn_t fnExit = boost::bind(&Entity::onExit,boost::ref(this),_1,_2);
++
++		m_.processEventCb(std::string(evt), fnEnter, fnExit);
++
+ 		listeners_fsmEventHandled(*this,m_,evt);
+ 	}
+ 	void Entity::addFsmState(const fsm_state_type& state)
+@@ -92,4 +101,4 @@
+ 	}
+ 
+ }
+-}
+\ No newline at end of file
++}
+
+Modified: trunk/yake/src/yake/ent/object_listener.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_listener.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/ent/object_listener.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -31,4 +31,4 @@
+ namespace ent {
+ 
+ }
+-}
+\ No newline at end of file
++}
+
+Modified: trunk/yake/src/yake/ent/object_mgr.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_mgr.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/ent/object_mgr.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -99,4 +99,4 @@
+ 	}
+ 
+ }
+-}
+\ No newline at end of file
++}
+
+Modified: trunk/yake/src/yake/ent/object_mgr_listener.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_mgr_listener.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/ent/object_mgr_listener.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -31,4 +31,4 @@
+ namespace ent {
+ 
+ }
+-}
+\ No newline at end of file
++}
+
+Modified: trunk/yake/src/yake/ent/vm_holder.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/vm_holder.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/ent/vm_holder.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -95,4 +95,4 @@
+ 	}
+ 
+ }
+-}
+\ No newline at end of file
++}
+
+Modified: trunk/yake/src/yake/input/yakeActionMap.cpp
+===================================================================
+--- trunk/yake/src/yake/input/yakeActionMap.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/input/yakeActionMap.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -278,7 +278,6 @@
+ 		if (!in.is_open())
+ 			return false;
+ 
+-		int e = 0;
+ 		do {
+ 			String line;
+ 			std::getline(in,line);
+@@ -313,7 +312,7 @@
+ 			if (StringUtil::startsWith(inputSpec, "key_", true ))
+ 			{
+ 				const KeyboardActionMode kam = (mode == "pressed") ? KAM_PRESSED :
+-				((mode == "continuous") ? KAM_CONTINUOUS : 
++				((mode == "continuous") ? KAM_CONTINUOUS :
+ 				((mode == "released") ? KAM_RELEASED :
+ 				((mode == "pressed_released") ? KAM_PRESSED_AND_RELEASED :
+ 					KAM_PRESSED
+@@ -399,13 +398,13 @@
+ 
+ 	//-----------------------------------------------------
+ 	void KeyboardActionCondition::setKey( const KeyCode key )
+-	{ 
++	{
+ 		mKey = key;
+ 	}
+ 
+ 	//-----------------------------------------------------
+ 	void KeyboardActionCondition::setMode( KeyboardActionMode mode )
+-	{ 
++	{
+ 		mMode = mode;
+ 	}
+ 
+
+Modified: trunk/yake/src/yake/net/detail/netCommon.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netCommon.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/net/detail/netCommon.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -1,6 +1,7 @@
+ #include <yake/net/pch.h>
+ #include <sstream>
+ #include <yake/net/net.h>
++#include <yake/base/native/yakeNative.h>
+ 
+ // Modify the following defines if you have to target a platform prior to the ones specified below.
+ // Refer to MSDN for the latest info on corresponding values for different platforms.
+@@ -8,9 +9,9 @@
+ #define WINVER 0x0501		// Change this to the appropriate value to target other versions of Windows.
+ #endif
+ 
+-#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
++#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.
+ #define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
+-#endif						
++#endif
+ 
+ #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows 98 or later.
+ #define _WIN32_WINDOWS 0x0410 // Change this to the appropriate value to target Windows Me or later.
+@@ -31,11 +32,11 @@
+ 	//-------------------------------------------------------------------------
+ 
+ 	CallbackConnection::CallbackConnection(const CallbackHandle h, const DisconnectFn& fn) :
+-		handle_(h), disconnectFn_(fn)
++		disconnectFn_(fn), handle_(h)
+ 	{
+ 	}
+-		CallbackConnection::CallbackConnection(const CallbackConnection& other) :
+-		handle_(other.handle_), disconnectFn_(other.disconnectFn_)
++	CallbackConnection::CallbackConnection(const CallbackConnection& other) :
++		disconnectFn_(other.disconnectFn_), handle_(other.handle_)
+ 	{
+ 	}
+ 	CallbackConnection& CallbackConnection::operator=(const CallbackConnection& rhs)
+@@ -124,7 +125,7 @@
+ 			ss << "location: " << file << ":" << line << "\n";
+ 		msg_ = ss.str();
+ 	}
+-	const char* Exception::what() const
++	const char* Exception::what() const throw()
+ 	{
+ 		return msg_.c_str();
+ 	}
+@@ -132,7 +133,7 @@
+ 	//-------------------------------------------------------------------------
+ 	// SendOptions
+ 	//-------------------------------------------------------------------------
+-	SendOptions::SendOptions() : 
++	SendOptions::SendOptions() :
+ 		peerId(0xffffffff),
+ 		reliability(R_RELIABLE),
+ 		ordering(O_ORDERED),
+@@ -180,53 +181,16 @@
+ 	//-------------------------------------------------------------------------
+ 	// NativeTimer & Timer
+ 	//-------------------------------------------------------------------------
+-	namespace detail {
+-		class NativeTimer
+-		{
+-		public:
+-			NativeTimer()
+-			{
+-				mCurrent = getTime();
+-				mLast = mCurrent;
+-			}
+-			~NativeTimer()  {}
+-
+-			void tick()
+-			{
+-				mLast = mCurrent;
+-				mCurrent = getTime();
+-			}
+-
+-			double getDiff()
+-			{
+-				return mCurrent - mLast;
+-			}
+-
+-			double getTime()
+-			{
+-				QueryPerformanceFrequency( (LARGE_INTEGER*)&freq );
+-				QueryPerformanceCounter( (LARGE_INTEGER*)&time );
+-				return (double)(time) / (double)freq;
+-			}
+-
+-		private:
+-			__int64  time;
+-			__int64  freq;
+-			double	mLast;
+-			double	mCurrent;
+-		};
+-	} // namespace detail
+-	Timer::Timer() : timer_( new detail::NativeTimer() ), start_(0.), paused_(false), time_(0.)
++	Timer::Timer() : start_(0.), time_(0.), paused_(false)
+ 	{
++		start_ = ::yake::native::getTime();
+ 	}
+ 	Timer::~Timer()
+ 	{
+-		if (timer_)
+-			delete timer_;
+ 	}
+ 	void Timer::start()
+ 	{
+-		start_ = timer_->getTime();
++		start_ = ::yake::native::getTime();
+ 		time_ = 0.;
+ 		paused_ = false;
+ 	}
+@@ -240,7 +204,7 @@
+ 	}
+ 	void Timer::resume()
+ 	{
+-		const double dt = timer_->getTime() - time_;
++		const double dt = ::yake::native::getTime() - time_;
+ 		start_ += dt;
+ 		paused_ = false;
+ 	}
+@@ -252,7 +216,7 @@
+ 	double Timer::getTime() const
+ 	{
+ 		if (!paused_)
+-			time_ = (timer_->getTime() - start_);
++			time_ = (::yake::native::getTime() - start_);
+ 		return time_;
+ 	}
+ 
+
+Modified: trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -272,8 +272,6 @@
+ 						peerId = (reinterpret_cast<Client*>(event.peer->data))->id;
+ 					}
+ 
+-					//Note: The callbacks can take over ownership/destruction of the packet!
+-					bool bPacketDeleted = false;
+ 					fireCallback_PacketReceived(peerId,event.packet->data,event.packet->dataLength,event.channelID);
+ 				}
+ 				{
+@@ -337,7 +335,7 @@
+ 		}
+ 		{
+ 			boost::mutex::scoped_lock enetLock(getEnetMtx());
+-			ENetPacket* packet = enet_packet_create( 
++			ENetPacket* packet = enet_packet_create(
+ 														dataPtr, dataSize,
+ 														(rel == R_RELIABLE) ? ENET_PACKET_FLAG_RELIABLE : 0 );
+ 			// send
+@@ -358,7 +356,7 @@
+ 		}
+ 		{
+ 			boost::mutex::scoped_lock enetLock(getEnetMtx());
+-			ENetPacket* packet = enet_packet_create( 
++			ENetPacket* packet = enet_packet_create(
+ 														dataPtr, dataSize,
+ 														(rel == R_RELIABLE) ? ENET_PACKET_FLAG_RELIABLE : 0 );
+ 			enet_host_broadcast( m_host, channel, packet );
+
+Modified: trunk/yake/src/yake/net/detail/netEventConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -27,7 +27,7 @@
+ 	}
+ namespace impl {
+ 
+-	EventConnection::EventConnection() : conn_(0), dir_(NetEvent::DIR_ANY), maxErrors_(0), manualPolling_(false), started_(false)
++	EventConnection::EventConnection() : conn_(0), dir_(NetEvent::DIR_ANY), manualPolling_(false), started_(false), maxErrors_(0)
+ 	{
+ 	}
+ 	EventConnection::~EventConnection()
+
+Modified: trunk/yake/src/yake/net/detail/netInternal.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netInternal.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/net/detail/netInternal.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -9,12 +9,14 @@
+ 	UpdateThread* UpdateThread::instance_ = 0;
+ 	bool UpdateThread::create()
+ 	{
++		NET_ASSERT( !instance_ );
+ 		if (!instance_)
+ 			instance_ = new UpdateThread();
+ 		return (instance_ != 0);
+ 	}
+ 	void UpdateThread::destroy()
+ 	{
++		NET_ASSERT( instance_ );
+ 		if (instance_)
+ 		{
+ 			instance_->requestQuit();
+
+Modified: trunk/yake/src/yake/net/net.cpp
+===================================================================
+--- trunk/yake/src/yake/net/net.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/net/net.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -3,6 +3,8 @@
+ #include <yake/net/net.h>
+ #include <yake/net/detail/netInternal.h>
+ 
++#if YAKE_PLATFORM == PLATFORM_WIN32
++
+ #ifdef _MANAGED
+ #pragma managed(push, off)
+ #endif
+@@ -27,6 +29,8 @@
+ #pragma managed(pop)
+ #endif
+ 
++#endif // PLATFORM_WIN32
++
+ namespace net {
+ 
+ 	bool initialize()
+
+Modified: trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+ #include <yake/graphics/yakeGraphicsSystem.h>
+ #include <yake/physics/yakePhysics.h>
+ 
+-#define USE_SECOND_PHYSICS_PLUGIN
++//#define USE_SECOND_PHYSICS_PLUGIN
+ 
+ using namespace yake;
+ using namespace yake::math;
+
+Modified: trunk/yake/yake/base/math/yakeGeometry.h
+===================================================================
+--- trunk/yake/yake/base/math/yakeGeometry.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/base/math/yakeGeometry.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -70,10 +70,15 @@
+ 
+ 		Point3	min,max;
+ 
+-		bool Rectangle::intersects(const Rectangle & rect) const
++		bool Rectangle::intersects(const Rectangle & rhs) const
+ 		{
+-			//fixme
+-			YAKE_ASSERT( 1==0 );
++		    if (contains(rhs.min))
++                return true;
++            if (contains(rhs.max))
++                return true;
++            if ((min <= rhs.min && max >= rhs.max) ||
++                (min >= rhs.min && max <= rhs.max))
++                return true;
+ 			return false;
+ 		}
+ 
+
+Modified: trunk/yake/yake/base/native/win32/yakeUndefine.h
+===================================================================
+--- trunk/yake/yake/base/native/win32/yakeUndefine.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/base/native/win32/yakeUndefine.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -31,4 +31,4 @@
+ #undef CreateWindow
+ #undef CreateWindowEx
+ 
+-#endif // YAKE_CORE_NATIVE_WIN32_UNDEFINE_H
+\ No newline at end of file
++#endif // YAKE_CORE_NATIVE_WIN32_UNDEFINE_H
+
+Modified: trunk/yake/yake/base/native/yakeNative.h
+===================================================================
+--- trunk/yake/yake/base/native/yakeNative.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/base/native/yakeNative.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -28,59 +28,50 @@
+ #define YAKE_BASE_NATIVE_NATIVE_H
+ 
+ //============================================================================
+-//    IMPLEMENTATION HEADERS
+-//============================================================================
++#include <yake/base/yakePrerequisites.h>
+ #include <yake/base/yakeProcessor.h>
+ 
+-#if defined( YAKE_BASE_EXPORTS )
+-#	define YAKE_BASE_NATIVE_API DLLEXPORT
+-#else
+-#	define YAKE_BASE_NATIVE_API DLLIMPORT
+-#endif
+-
+ //============================================================================
+-//    INTERFACE STRUCTURES / UTILITY CLASSES
+-//============================================================================
+ namespace yake
+ {
+ namespace native
+ {
+ 
+-// Library Interface.
+-typedef const void * LibraryHandle;
+-YAKE_BASE_NATIVE_API LibraryHandle library_Load(const char * filemame);
+-YAKE_BASE_NATIVE_API void * library_GetSymbol(LibraryHandle, const char * function);
+-YAKE_BASE_NATIVE_API void library_Free(LibraryHandle);
++	// Library Interface.
++	typedef const void * LibraryHandle;
++	YAKE_BASE_API LibraryHandle library_Load(const char * filemame);
++	YAKE_BASE_API void * library_GetSymbol(LibraryHandle, const char * function);
++	YAKE_BASE_API void library_Free(LibraryHandle);
+ 
+-// Debugging Interface.
+-struct DebugLog
+-{
+-	enum Severity
++	// Debugging Interface.
++	struct DebugLog
+ 	{
+-		INFORMATIONS,
+-		WARNINGS,
+-		ERRORS
++		enum Severity
++		{
++			INFORMATIONS,
++			WARNINGS,
++			ERRORS
++		};
+ 	};
+-};
+-YAKE_BASE_NATIVE_API bool debug_AssertFailed( const char* pszMessage, const char* pszCondition, const char* pszFile, int nLine, bool& rbIgnoreAlways );
+-YAKE_BASE_NATIVE_API void debug_Log( const char* what, DebugLog::Severity, const char* source );
+-YAKE_BASE_NATIVE_API void debug_Print( const char* string );
++	YAKE_BASE_API bool debug_AssertFailed( const char* pszMessage, const char* pszCondition, const char* pszFile, int nLine, bool& rbIgnoreAlways );
++	YAKE_BASE_API void debug_Log( const char* what, DebugLog::Severity, const char* source );
++	YAKE_BASE_API void debug_Print( const char* string );
+ 
+-// Critical Section Interface.
+-typedef const void* CriticalSectionHandle;
+-YAKE_BASE_NATIVE_API CriticalSectionHandle criticalSection_Create();
+-YAKE_BASE_NATIVE_API void criticalSection_Enter( CriticalSectionHandle );
+-YAKE_BASE_NATIVE_API void criticalSection_Leave( CriticalSectionHandle );
+-YAKE_BASE_NATIVE_API void criticalSection_Delete( CriticalSectionHandle );
++	// Critical Section Interface.
++	typedef const void* CriticalSectionHandle;
++	YAKE_BASE_API CriticalSectionHandle criticalSection_Create();
++	YAKE_BASE_API void criticalSection_Enter( CriticalSectionHandle );
++	YAKE_BASE_API void criticalSection_Leave( CriticalSectionHandle );
++	YAKE_BASE_API void criticalSection_Delete( CriticalSectionHandle );
+ 
+-// Processor Information Interface.
+-YAKE_BASE_NATIVE_API void processor_RetrieveInfo( std::wstring& name, float& frequency, Processor::Info& );
++	// Processor Information Interface.
++	YAKE_BASE_API void processor_RetrieveInfo( std::wstring& name, float& frequency, Processor::Info& );
+ 
+-// Timing Interface.
+-YAKE_BASE_NATIVE_API float getTime();
++	// Timing Interface.
++	YAKE_BASE_API real getTime();
+ 
+-// Application Information Interface.
+-YAKE_BASE_NATIVE_API const char* getApplicationDir();
++	// Application Information Interface.
++	YAKE_BASE_API const char* getApplicationDir();
+ 
+ } // native
+ } // yake
+
+Modified: trunk/yake/yake/base/templates/yakeSmartAssert.h
+===================================================================
+--- trunk/yake/yake/base/templates/yakeSmartAssert.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/base/templates/yakeSmartAssert.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -41,11 +41,11 @@
+ //============================================================================
+ //    INTERFACE STRUCTURES / UTILITY CLASSES
+ //============================================================================
+-namespace yake 
++namespace yake
+ {
+ namespace base
+ {
+-namespace assert 
++namespace assert
+ {
+ 
+ /** NOT USED. Has to be redone for proper assertion handler registration.
+@@ -104,7 +104,7 @@
+ 	Acknowledgement: After following a different approach for a similar thing
+ 	I went for an implementation based on this article:
+ 	http://www.cuj.com/documents/s=8464/cujcexp0308alexandr/cujcexp0308alexandr.html
+-		
++
+ 	Usage:
+ 
+ 	The assertion macro can be used like this:
+@@ -128,7 +128,7 @@
+ 		\code YAKE_ASSERT( a==b )(a)(b).msg("hola").msg("compadres");\endcode
+ 
+ 	The following assertion levels exist:
+-		
++
+ 		warning -> warning()
+ 		debug -> debug()
+ 		error -> error()
+@@ -136,6 +136,9 @@
+ */
+ struct YAKE_BASE_API SmartAssert
+ {
++public:
++	SmartAssert& YAKE_ASSERT_A;
++	SmartAssert& YAKE_ASSERT_B;
+ private:
+ 	SmartAssertContext	mCtx;
+ 
+@@ -145,9 +148,6 @@
+ 	SmartAssert( const char * strExpr ) : YAKE_ASSERT_A(*this), YAKE_ASSERT_B(*this), mCtx(strExpr) {}
+ 	~SmartAssert();
+ 
+-	SmartAssert& YAKE_ASSERT_A;
+-	SmartAssert& YAKE_ASSERT_B;
+-
+ 	template< class type >
+ 	SmartAssert & printValue( const type & value, const char * msg )
+ 	{
+
+Modified: trunk/yake/yake/base/yakeProcessor.h
+===================================================================
+--- trunk/yake/yake/base/yakeProcessor.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/base/yakeProcessor.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -32,9 +32,7 @@
+ //    IMPLEMENTATION HEADERS
+ //============================================================================
+ // Standard headers
+-#ifndef YAKE_BASE_PREREQUISITES_H
+-#	include <yake/base/yakePrerequisites.h>
+-#endif
++#include <yake/base/yakePrerequisites.h>
+ // Yake
+ #include <yake/base/yakeString.h>
+ #include <yake/base/templates/yakeSingleton.h>
+
+Modified: trunk/yake/yake/data/yakeDataSerializer.h
+===================================================================
+--- trunk/yake/yake/data/yakeDataSerializer.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/data/yakeDataSerializer.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright  2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -118,6 +118,7 @@
+ 	class YAKE_DATA_API ISerializer
+ 	{
+ 	public:
++        virtual ~ISerializer() {}
+ 		virtual String getName() const = 0;
+ 		virtual Version getVersion() const = 0;
+ 
+@@ -145,7 +146,7 @@
+ 	protected:
+ 		typedef Signal1< void( SharedPtr<INode> ) >		NewNodeSignal;
+ 		typedef Signal1< void( String const& ) >		NewAttributeSignal;
+-		
++
+ 		NewNodeSignal						mNewNodeSignal;
+ 		NewAttributeSignal					mNewAttributeSignal;
+ 
+
+Modified: trunk/yake/yake/ent/object_mgr.h
+===================================================================
+--- trunk/yake/yake/ent/object_mgr.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/ent/object_mgr.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -57,32 +57,32 @@
+ 			@see msg::makeListener
+ 			@see broadcastMessage
+ 		*/
+-		void postMessage(msg::detail::message_base*, const msg::Source source = msg::kNullSource);
++		void postMessage(msg::detail::message_base*, const msg::Source source = msg::kNoSource);
+ 
+ 		/** Post a global message which is broadcasted to every object!
+ 			@see msg::makeMessage
+ 			@see msg::makeListener
+ 		*/
+-		void broadcastMessage(msg::detail::message_base*, const msg::Source source = msg::kNullSource);
++		void broadcastMessage(msg::detail::message_base*, const msg::Source source = msg::kNoSource);
+ 
+ 		/** Post message to a specific object.
+ 			@see msg::makeMessage
+ 			@see msg::makeListener
+ 		*/
+-		void postMessage(Object*, msg::detail::message_base*, const msg::Source source = msg::kNullSource);
++		void postMessage(Object*, msg::detail::message_base*, const msg::Source source = msg::kNoSource);
+ 
+ 		/** Post message to a specific object.
+ 			@see msg::makeMessage
+ 			@see msg::makeListener
+ 		*/
+-		void postMessage(ObjectId, msg::detail::message_base*, const msg::Source source = msg::kNullSource);
++		void postMessage(ObjectId, msg::detail::message_base*, const msg::Source source = msg::kNoSource);
+ 
+ 		/** Post message to objects in a STL(-like) container with object pointers.
+ 			@see msg::makeMessage
+ 			@see msg::makeListener
+ 		*/
+ 		template<typename T_container>
+-		void postMessage(const T_container& objCtr, msg::detail::message_base* msg, const msg::Source source = msg::kNullSource)
++		void postMessage(const T_container& objCtr, msg::detail::message_base* msg, const msg::Source source = msg::kNoSource)
+ 		{
+ 			ConstVectorIterator<T_container> it(objCtr);
+ 			while (it.hasMoreElements())
+
+Modified: trunk/yake/yake/msg/listener_mgr.h
+===================================================================
+--- trunk/yake/yake/msg/listener_mgr.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/msg/listener_mgr.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -77,15 +77,15 @@
+ 		void disconnect();
+ 
+ 		bool empty() const
+-		{ 
+-			return (listener_ != 0); 
++		{
++			return (listener_ != 0);
+ 		}
+ 		detail::listener_base* listener() const
+ 		{
+ 			return listener_;
+ 		}
+ 		source_type source() const
+-		{ 
++		{
+ 			return source_;
+ 		}
+ 		target_type target() const
+@@ -238,8 +238,8 @@
+ 				return isProcessing_;
+ 			}
+ 		private:
+-			typedef MSG_NAMESPACE::detail::listener_list listener_list;
+-			typedef MSG_NAMESPACE::detail::listener_map listener_map;
++			//typedef MSG_NAMESPACE::detail::listener_list listener_list;
++			//typedef MSG_NAMESPACE::detail::listener_map listener_map;
+ 			typedef AssocVector<target_type,listener_map> target_map;
+ 			typedef AssocVector<source_type,target_map> source_map;
+ 			source_map		sources_;
+
+Modified: trunk/yake/yake/net/detail/netEventConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEventConnection.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/detail/netEventConnection.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -51,14 +51,14 @@
+ 		EventIdVector				allowedEventIds_;
+ 		mutable boost::mutex		allowedEventIdsMtx_;
+ 
++		IPacketConnection*		conn_;
+ 		event_direction			dir_;
+-		IPacketConnection*		conn_;
+ 
+ 		struct EvtQItem
+ 		{
+ 			PeerId					peerId_;
++			NetEvent*				evt_;
+ 			ChannelId				channel_;
+-			NetEvent*				evt_;
+ 			DestroyEventFn			fnDestroy_;
+ 			EvtQItem(const PeerId peerId, NetEvent* evt, const ChannelId channel, const DestroyEventFn fnDestroy) :
+ 				peerId_(peerId), evt_(evt), channel_(channel), fnDestroy_(fnDestroy)
+@@ -82,7 +82,7 @@
+ 
+ 		struct statistics_t
+ 		{
+-			statistics_t() : 
++			statistics_t() :
+ 				numInvalidPackets(0),
+ 				numInvalidEvents(0),
+ 				numInvalidEventIds(0),
+
+Modified: trunk/yake/yake/net/detail/netInternal.h
+===================================================================
+--- trunk/yake/yake/net/detail/netInternal.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/detail/netInternal.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -76,17 +76,17 @@
+ 	/** @todo move this into general purpose lib/header
+ 	*/
+ 	template<typename ctr_type>
+-		bool contains(const ctr_type& ctr, typename const ctr_type::value_type& value)
++		bool contains(const ctr_type& ctr, const typename ctr_type::value_type& value)
+ 	{
+ 		return (ctr.end() != std::find(ctr.begin(), ctr.end(), value));
+ 	}
+ 	template<typename kt, typename vt, typename at>
+-		bool contains(const std::map<kt,vt,at>& ctr, typename const std::map<kt,vt,at>::key_type& key)
++		bool contains(const std::map<kt,vt,at>& ctr, const typename std::map<kt,vt,at>::key_type& key)
+ 	{
+ 		return (ctr.end() != ctr.find(key));
+ 	}
+ 	template<typename map_type>
+-		bool map_contains(const map_type& ctr, typename const map_type::key_type& key)
++		bool map_contains(const map_type& ctr, const typename map_type::key_type& key)
+ 	{
+ 		return (ctr.end() != ctr.find(key));
+ 	}
+
+Modified: trunk/yake/yake/net/netBitstream.inl
+===================================================================
+--- trunk/yake/yake/net/netBitstream.inl	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netBitstream.inl	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -28,7 +28,7 @@
+ 		mDestroyDataStream = other.mDestroyDataStream;
+ 	}
+ 	template<class DataStreamType>
+-	ibstream_base<DataStreamType>::ibstream_base( DataStreamType* pds = 0 ) : mSource(pds), mBitPos(8), mTotalBits(0), mTotalBytes(0), mDestroyDataStream(false)
++	ibstream_base<DataStreamType>::ibstream_base( DataStreamType* pds /*= 0*/ ) : mSource(pds), mBitPos(8), mTotalBits(0), mTotalBytes(0), mDestroyDataStream(false)
+ 	{
+ 		mBuf.set(0);
+ 	}
+@@ -71,8 +71,8 @@
+ 			numBits = 8;
+ 
+ 		std::bitset<8> d(0);
+-		//for (uint8 i = numBits-1; i != 0xff; i--) 
+-		for (uint8 i = 0; i < numBits; ++i) 
++		//for (uint8 i = numBits-1; i != 0xff; i--)
++		for (uint8 i = 0; i < numBits; ++i)
+ 		{
+ 			bool b;
+ 			read(b);
+@@ -202,7 +202,7 @@
+ 		return *this;
+ 	}
+ 	template<class DataStreamType>
+-	obstream_base<DataStreamType>::obstream_base( DataStreamType* pds = 0 ) : mStream(pds), mBitPos(0), mTotalBits(0), mTotalBytes(0), mNumBitsForNextStreamOperations(8), mDestroyDataStream(false)
++	obstream_base<DataStreamType>::obstream_base( DataStreamType* pds /*= 0*/ ) : mStream(pds), mBitPos(0), mTotalBits(0), mTotalBytes(0), mNumBitsForNextStreamOperations(8), mDestroyDataStream(false)
+ 	{
+ 		mBuf.set(0);
+ 	}
+@@ -321,4 +321,4 @@
+ 
+ } // namespace net
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/netBitstreamAdapters.h
+===================================================================
+--- trunk/yake/yake/net/netBitstreamAdapters.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netBitstreamAdapters.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -27,7 +27,7 @@
+ 		bitstream_source_stlcontainer();
+ 	public:
+ 		typedef ctr_type container_type;
+-		bitstream_source_stlcontainer(const container_type& ctr) : ctr_(ctr), currPos(ctr.begin()), itEnd(ctr.end())
++		bitstream_source_stlcontainer(const container_type& ctr) : currPos(ctr.begin()), itEnd(ctr.end()), ctr_(ctr)
+ 		{}
+ 		bool hasMoreData() const
+ 		{
+@@ -53,8 +53,8 @@
+ 	private:
+ 		bitstream_source_voidptr();
+ 	public:
+-		bitstream_source_voidptr(const void* data, const size_t len) : 
+-			data_(0), curr_(0), end_(0)
++		bitstream_source_voidptr(const void* data, const size_t len) :
++			data_(0), end_(0), curr_(0)
+ 		{
+ 			data_ = reinterpret_cast<const uint8*>(data);
+ 			end_ = data_ + len;
+
+Modified: trunk/yake/yake/net/netCommon.h
+===================================================================
+--- trunk/yake/yake/net/netCommon.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netCommon.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -61,14 +61,12 @@
+ 	struct NET_API Exception : public std::exception
+ 	{
+ 		Exception(const std::string& msg, const char* file = 0, const int line = 0);
+-		virtual const char* what() const;
++		virtual ~Exception() throw() {}
++		virtual const char* what() const throw();
+ 	private:
+ 		std::string	msg_;
+ 	};
+ 
+-	namespace detail {
+-		class NativeTimer;
+-	}
+ 	class NET_API Timer
+ 	{
+ 	public:
+@@ -81,7 +79,6 @@
+ 		void reset();
+ 		double getTime() const;
+ 	private:
+-		detail::NativeTimer*	timer_;
+ 		double					start_;
+ 		mutable double			time_;
+ 		bool					paused_;
+@@ -89,4 +86,4 @@
+ 
+ } // namespace net
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/netEvent.h
+===================================================================
+--- trunk/yake/yake/net/netEvent.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netEvent.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -93,7 +93,7 @@
+ 			ResourceManager<T>*	owner_;
+ 		};
+ 		handle create()
+-		{ 
++		{
+ 			return handle(this,onCreate());
+ 		}
+ 		void destroy(const handle& h)
+@@ -176,4 +176,4 @@
+ 
+ } // namespace net
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/netPacket.h
+===================================================================
+--- trunk/yake/yake/net/netPacket.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netPacket.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -81,4 +81,4 @@
+ 
+ } // namespace net
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/netPrerequisites.h
+===================================================================
+--- trunk/yake/yake/net/netPrerequisites.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netPrerequisites.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -5,20 +5,20 @@
+ 
+ #ifdef YAKE_NET_EXPORTS
+ #	ifdef NET_DLL
+-#		define NET_API __declspec(dllexport)
++#		define NET_API DLLEXPORT
+ #	else
+ #		define NET_API
+ #	endif
+ #else
+ #	ifdef NET_DLL
+-#		define NET_API __declspec(dllimport)
++#		define NET_API DLLIMPORT
+ #	else
+ #		define NET_API
+ #	endif
+ #	if defined( _DEBUG )
+-#		pragma comment(lib,"net_d.lib")
++#		pragma comment(lib,"yake_net-vc80-d.lib")
+ #	else
+-#		pragma comment(lib,"net.lib")
++#		pragma comment(lib,"yake_net-vc80.lib")
+ #	endif
+ #endif
+ 
+@@ -30,7 +30,7 @@
+ #include "netTypes.h"
+ 
+ #define NET_ASSERT(X) \
+-	assert(X)
++	YAKE_ASSERT(X)
+ 
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/netTypes.h
+===================================================================
+--- trunk/yake/yake/net/netTypes.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netTypes.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -12,4 +12,4 @@
+ 
+ } // namespace net
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/pch.h
+===================================================================
+--- trunk/yake/yake/net/pch.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/pch.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,5 +2,6 @@
+ #define YAKE_NET_PCH_H
+ #pragma once
+ 
++#include <yake/base/yake.h>
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/object/ObjectManager.h
+===================================================================
+--- trunk/yake/yake/object/ObjectManager.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/object/ObjectManager.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -52,7 +52,7 @@
+ 		typedef std::map<ClassId,ClassId> ClassIdMap;
+ 
+ 		ObjectManager();
+-		~ObjectManager();
++		virtual ~ObjectManager();
+ 
+ 		// class registration
+ 		void setClassIdGenerationRange(const ClassId min, const ClassId max);
+
+Modified: trunk/yake/yake/physics/yakeAffectorZone.h
+===================================================================
+--- trunk/yake/yake/physics/yakeAffectorZone.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/physics/yakeAffectorZone.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright ? 2004 The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -105,6 +105,7 @@
+ 		BodyGroup				mAffectedBodies;
+ 	public:
+ 		AffectorZone();
++		virtual ~AffectorZone() {}
+ 		void addAffector( SharedPtr<IBodyAffector>& pAffector );
+ 
+ 		void setEnabled( bool enabled );
+@@ -123,7 +124,7 @@
+ 	{
+ 	public:
+ 		AffectorZoneManager( SharedPtr<physics::IWorld>& pWorld );
+-		~AffectorZoneManager();
++		virtual ~AffectorZoneManager();
+ 
+ 		void addAffectorZone( SharedPtr<AffectorZone> & pSpace );
+ 
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsSystem.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsSystem.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsSystem.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -40,7 +40,7 @@
+ #endif
+ 
+ #if YAKE_PLATFORM == PLATFORM_WIN32
+-#	define YAKE_USE_OSM
++//#	define YAKE_USE_OSM
+ #	pragma message("Compiling graphicsOGRE with OSM support.")
+ #else
+ #	pragma message("Compiling graphicsOGRE without OSM support.")
+
+Modified: trunk/yake/yake/samples/common/init_gui.h
+===================================================================
+--- trunk/yake/yake/samples/common/init_gui.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/samples/common/init_gui.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -10,11 +10,11 @@
+ // local
+ #include "initialization.h"
+ 
+-namespace yake 
++namespace yake
+ {
+-namespace samples 
++namespace samples
+ {
+-namespace common 
++namespace common
+ {
+ 
+ // todo: del
+@@ -22,7 +22,7 @@
+ struct create_help <yake::graphics::IGraphicsSystem>
+ {
+ 	static boost::shared_ptr<yake::graphics::IGraphicsSystem> create()
+-	{ return yake::base::templates::create_default<yake::graphics::IGraphicsSystem>(); }
++	{ return yake::templates::create_default<yake::graphics::IGraphicsSystem>(); }
+ };
+ 
+ using namespace yake::base;
+@@ -44,9 +44,9 @@
+ 	//struct graphics_system : return_type_info<graphics_system> {};
+ 	struct gui_system : return_type_info<gui_system>	{};
+ 
+-	struct gui_renderer_adapter 
+-	{ 
+-		typedef std::pair<base::type_info, base::type_info> identifier; 
++	struct gui_renderer_adapter
++	{
++		typedef std::pair<base::type_info, base::type_info> identifier;
+ 	};
+ 
+ 	template <class System>
+
+Modified: trunk/yake/yake/statemachine/fsm_core.h
+===================================================================
+--- trunk/yake/yake/statemachine/fsm_core.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/statemachine/fsm_core.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit http://www.yake.org 
++   For the latest information visit http://www.yake.org
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -135,8 +135,8 @@
+ 		// construction
+ #if defined(FSM_USE_NULL_STATE)
+ 		/** Constructs a machine. Sets the current state to the state type's null state. */
+-		machine() : 
+-			curr_(get_null_state<state_type>()) 
++		machine() :
++			curr_(get_null_state<state_type>())
+ #else
+ 		/** Constructs a machine. */
+ 		machine()
+@@ -181,7 +181,7 @@
+ 		{
+ 			out << "machine<>::dump()\n";
+ 			out << "  current = '" << curr_ << "'\n";
+-			for (state_map::const_iterator it = states_.begin(); it != states_.end(); ++it)
++			for (typename state_map::const_iterator it = states_.begin(); it != states_.end(); ++it)
+ 			{
+ 				out << "  state '" << it->first << "'\n";
+ 				const event_state_map& evt2state = it->second.offgoing_transitions;
+
+
+
+From codeandroid at berlios.de  Tue Apr 25 22:05:25 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Tue, 25 Apr 2006 22:05:25 +0200
+Subject: [Yake-svn] r1318 - trunk/yake/src/yake/plugins/physicsODE
+Message-ID: <200604252005.k3PK5PoR031821@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-25 22:05:09 +0200 (Tue, 25 Apr 2006)
+New Revision: 1318
+
+Modified:
+   trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+Log:
+fixed casts
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2006-04-23 17:54:49 UTC (rev 1317)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2006-04-25 20:05:09 UTC (rev 1318)
+@@ -105,18 +105,18 @@
+ 		if ( !pMaterial )
+ 			pMaterial = this->getCreator()->getMaterial( "default" );
+ 
+-		OdeMaterial* pOdeMaterial = pMaterial ? checked_cast<OdeMaterial*>( pMaterial ) : 0;
++		OdeMaterial* pOdeMaterial = pMaterial ? dynamic_cast<OdeMaterial*>( pMaterial ) : 0;
+ 		YAKE_ASSERT( pOdeMaterial );
+ 
+ 		OdeGeom* result = 0;
+ 
+-		if ( const IShape::SphereDesc* pSphereDesc = checked_cast<const IShape::SphereDesc*>( pShapeDesc ) )
++		if ( const IShape::SphereDesc* pSphereDesc = dynamic_cast<const IShape::SphereDesc*>( pShapeDesc ) )
+ 		{
+ 			OdeSphere* pSphere = new OdeSphere( mOdeWorld->_getOdeSpace(), this, pSphereDesc->radius );
+ 
+ 			result = createTransformGeom( pSphere, rShapeDesc.position, rShapeDesc.orientation );
+ 		}
+-		else if ( const IShape::BoxDesc* pBoxDesc = checked_cast<const IShape::BoxDesc*>( pShapeDesc ) )
++		else if ( const IShape::BoxDesc* pBoxDesc = dynamic_cast<const IShape::BoxDesc*>( pShapeDesc ) )
+ 		{
+ 			OdeBox* pBox = new OdeBox( mOdeWorld->_getOdeSpace(), 
+ 				this,
+@@ -125,7 +125,7 @@
+ 				pBoxDesc->dimensions.z  );
+ 			result = createTransformGeom( pBox, rShapeDesc.position, rShapeDesc.orientation );
+ 		}
+-		else if ( const IShape::PlaneDesc* pPlaneDesc = checked_cast<const IShape::PlaneDesc*>( pShapeDesc ) )
++		else if ( const IShape::PlaneDesc* pPlaneDesc = dynamic_cast<const IShape::PlaneDesc*>( pShapeDesc ) )
+ 		{
+ 			/// We are not making transform geom here.
+ 			/// Calculating absolute coordinates instead...
+@@ -142,7 +142,7 @@
+ 				d );
+ 			result = pPlane;
+ 		}
+-		else if ( const IShape::CapsuleDesc* pCapsuleDesc = checked_cast<const IShape::CapsuleDesc*>( pShapeDesc ) )
++		else if ( const IShape::CapsuleDesc* pCapsuleDesc = dynamic_cast<const IShape::CapsuleDesc*>( pShapeDesc ) )
+ 		{
+ 			OdeCCylinder* pCapsule = new OdeCCylinder( mOdeWorld->_getOdeSpace(), 
+ 				this,
+@@ -150,7 +150,7 @@
+ 				pCapsuleDesc->height  );
+ 			result = createTransformGeom( pCapsule, rShapeDesc.position, rShapeDesc.orientation );
+ 		}
+-		else if ( const IShape::TriMeshDesc* pTriMeshDesc = checked_cast<const IShape::TriMeshDesc*>( pShapeDesc ) )
++		else if ( const IShape::TriMeshDesc* pTriMeshDesc = dynamic_cast<const IShape::TriMeshDesc*>( pShapeDesc ) )
+ 		{
+ 			TriangleMeshId id = pTriMeshDesc->trimeshId_;
+ 			if (id == kTriangleMeshIdNone)
+@@ -197,7 +197,7 @@
+ 	//-----------------------------------------------------
+ 	void OdeActor::destroyShape( IShape* pShape )
+ 	{
+-		OdeGeom* pGeom = checked_cast<OdeGeom*>( pShape );
++		OdeGeom* pGeom = dynamic_cast<OdeGeom*>( pShape );
+ 		ShapeList::iterator victim = std::find( mShapes.begin(), mShapes.end(), pGeom );
+ 		mShapes.erase( victim );
+ 	}
+@@ -378,7 +378,7 @@
+ 	//-----------------------------------------------------
+ 	IShape* OdeActor::createShape( const IShape::Desc& rShapeDesc, real massOrDensity, IBody::quantityType type )
+ 	{
+-		if ( mBody && checked_cast<const IShape::PlaneDesc*>( &rShapeDesc ) )
++		if ( mBody && dynamic_cast<const IShape::PlaneDesc*>( &rShapeDesc ) )
+ 			YAKE_ASSERT( false ).error( "Attempted to attach immovable plane shape to movable actor!" );
+ 
+ 		OdeGeom* pShape = createShapeFromDesc( rShapeDesc );
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2006-04-23 17:54:49 UTC (rev 1317)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2006-04-25 20:05:09 UTC (rev 1318)
+@@ -96,14 +96,14 @@
+ 		void parseMassDesc( const IBody::MassDesc& desc, dMass* mass )
+ 		{
+ 			if ( const IBody::SphereMassDesc* sphereMassDesc =
+-				checked_cast<const IBody::SphereMassDesc*>( &desc ) )
++				dynamic_cast<const IBody::SphereMassDesc*>( &desc ) )
+ 			{
+ 				if ( sphereMassDesc->qType == IBody::QT_DENSITY )
+ 					dMassSetSphere( mass, sphereMassDesc->quantity, sphereMassDesc->radius );
+ 				else
+ 					dMassSetSphereTotal( mass, sphereMassDesc->quantity, sphereMassDesc->radius );
+ 			}
+-			else if ( const IBody::BoxMassDesc* boxMassDesc = checked_cast<const IBody::BoxMassDesc*>( &desc ) )
++			else if ( const IBody::BoxMassDesc* boxMassDesc = dynamic_cast<const IBody::BoxMassDesc*>( &desc ) )
+ 			{
+ 				if ( boxMassDesc->qType == IBody::QT_DENSITY )
+ 					dMassSetBox( mass, boxMassDesc->quantity, 
+@@ -113,7 +113,7 @@
+ 						boxMassDesc->sizeX, boxMassDesc->sizeY, boxMassDesc->sizeZ );
+ 			}
+ 			else if ( const IBody::CapsuleMassDesc* capsuleMassDesc = 
+-				checked_cast<const IBody::CapsuleMassDesc*>( &desc ) )
++				dynamic_cast<const IBody::CapsuleMassDesc*>( &desc ) )
+ 			{
+ 				if ( capsuleMassDesc->qType == IBody::QT_DENSITY )
+ 					dMassSetCappedCylinder( mass,
+@@ -129,7 +129,7 @@
+ 					    capsuleMassDesc->length );
+ 			}
+ 			else if ( const IBody::CylinderMassDesc* cylMassDesc = 
+-				checked_cast<const IBody::CylinderMassDesc*>( &desc ) )
++				dynamic_cast<const IBody::CylinderMassDesc*>( &desc ) )
+ 			{
+ 				if ( cylMassDesc->qType == IBody::QT_DENSITY )
+ 					dMassSetCylinder( mass,
+@@ -145,7 +145,7 @@
+ 						cylMassDesc->length );
+ 			}
+ 			else if ( const IBody::MassDesc* massDesc = 
+-				checked_cast<const IBody::MassDesc*>( &desc ) )
++				dynamic_cast<const IBody::MassDesc*>( &desc ) )
+ 			{
+ 			    // creating unit sphere
+ 			    dMassSetSphereTotal( mass, massDesc->quantity, 1 );
+@@ -163,16 +163,16 @@
+ 		{
+ 			const IShape::Desc* pShapeDesc = &( rShapeDesc );
+ 			
+-			if ( const IShape::SphereDesc* pSphereDesc = checked_cast<const IShape::SphereDesc*>( pShapeDesc ) )
++			if ( const IShape::SphereDesc* pSphereDesc = dynamic_cast<const IShape::SphereDesc*>( pShapeDesc ) )
+ 			{
+ 				this->addMass( IBody::SphereMassDesc( pSphereDesc->radius, massOrDensity, pSphereDesc->position, qType ) );
+ 			}
+-			else if ( const IShape::BoxDesc* pBoxDesc = checked_cast<const IShape::BoxDesc*>( pShapeDesc ) )
++			else if ( const IShape::BoxDesc* pBoxDesc = dynamic_cast<const IShape::BoxDesc*>( pShapeDesc ) )
+ 			{
+ 				this->addMass( IBody::BoxMassDesc( pBoxDesc->dimensions.x, pBoxDesc->dimensions.y, pBoxDesc->dimensions.z, massOrDensity,
+ 					pBoxDesc->position, qType ) );
+ 			}
+-			else if ( const IShape::CapsuleDesc* pCapsuleDesc = checked_cast<const IShape::CapsuleDesc*>( pShapeDesc ) )
++			else if ( const IShape::CapsuleDesc* pCapsuleDesc = dynamic_cast<const IShape::CapsuleDesc*>( pShapeDesc ) )
+ 			{
+ 				this->addMass( IBody::CapsuleMassDesc( pCapsuleDesc->radius, pCapsuleDesc->height, massOrDensity, pCapsuleDesc->position, qType ) );
+ 			}
+
+
+
+From codeandroid at berlios.de  Tue Apr 25 22:06:06 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Tue, 25 Apr 2006 22:06:06 +0200
+Subject: [Yake-svn] r1319 - in trunk/yake/src/yake/samples: audio/demo1 net/roserver physics/demo
+Message-ID: <200604252006.k3PK66eM000296@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-25 22:06:03 +0200 (Tue, 25 Apr 2006)
+New Revision: 1319
+
+Modified:
+   trunk/yake/src/yake/samples/audio/demo1/demo.cpp
+   trunk/yake/src/yake/samples/net/roserver/demo.cpp
+   trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+Log:
+fixed demos
+
+Modified: trunk/yake/src/yake/samples/audio/demo1/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/audio/demo1/demo.cpp	2006-04-25 20:05:09 UTC (rev 1318)
++++ trunk/yake/src/yake/samples/audio/demo1/demo.cpp	2006-04-25 20:06:03 UTC (rev 1319)
+@@ -7,7 +7,7 @@
+ 	// loading & starting plugin
+ 	using namespace yake;
+ 	SharedPtr<base::Library> pLib( new base::Library( "audioOpenAL" ) );
+-	SharedPtr<audio::IAudioSystem> pAudio = create_default<audio::IAudioSystem>();
++	SharedPtr<audio::IAudioSystem> pAudio = templates::create_default<audio::IAudioSystem>();
+ 
+ 	// create world
+ 	SharedPtr<audio::IWorld> pWorld;
+
+Modified: trunk/yake/src/yake/samples/net/roserver/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/roserver/demo.cpp	2006-04-25 20:05:09 UTC (rev 1318)
++++ trunk/yake/src/yake/samples/net/roserver/demo.cpp	2006-04-25 20:06:03 UTC (rev 1319)
+@@ -4,7 +4,7 @@
+ #include <yake/samples/net/roserver/ROServer.h>
+ 
+ #include <yake/object/yakeObjects.h>
+-#include <yapp/ent/yakeEnt.h>
++#include <yake/ent/ent.h>
+ 
+ int main(int argc, char* argv[])
+ {
+
+Modified: trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2006-04-25 20:05:09 UTC (rev 1318)
++++ trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2006-04-25 20:06:03 UTC (rev 1319)
+@@ -233,6 +233,7 @@
+ 
+ 	mPWorld1 = mPhysics1->createWorld();
+ 	YAKE_ASSERT( mPWorld1 ).debug("Cannot create world 1.");
++	mPWorld1->setGlobalGravity( Vector3(0,-9.81,0) );
+ 
+ 	// physics 2
+ #ifdef USE_SECOND_PHYSICS_PLUGIN
+@@ -244,6 +245,7 @@
+ 
+ 	mPWorld2 = mPhysics2->createWorld();
+ 	YAKE_ASSERT( mPWorld2 ).debug("Cannot create world 2.");
++	mPWorld2->setGlobalGravity( Vector3(0,-9.81,0) );
+ #endif
+ 	// graphics
+ 
+@@ -361,6 +363,10 @@
+ 	// create a simple static environment - world 1
+ 	IActorPtr pStaticWorldActor1 = mPWorld1->createActor(ACTOR_STATIC);
+ 	YAKE_ASSERT( pStaticWorldActor1 );
++
++#if 1
++	pStaticWorldActor1->createShape( IShape::PlaneDesc( Vector3(0,1,0), 0 ) );
++#else
+ 	/*
+ 	  3-2
+ 	  |/|
+@@ -381,6 +387,8 @@
+ 	YAKE_ASSERT( kTriangleMeshIdNone != groundMeshId );
+ 
+ 	IShape* pStaticWorldShape1 = pStaticWorldActor1->createShape( IShape::TriMeshDesc( groundMeshId ) );
++
++#endif
+ 	YAKE_ASSERT( pStaticWorldActor1->getShapes().size() == 1 )(pStaticWorldActor1->getShapes().size()).warning("no world shape!");
+ 
+ #ifdef USE_SECOND_PHYSICS_PLUGIN
+
+
+
+From codeandroid at berlios.de  Tue Apr 25 22:07:27 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Tue, 25 Apr 2006 22:07:27 +0200
+Subject: [Yake-svn] r1320 - in trunk/yake/src/yapp/samples: graphics/scripted misc/car misc/scripted
+Message-ID: <200604252007.k3PK7RQi001655@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-25 22:06:51 +0200 (Tue, 25 Apr 2006)
+New Revision: 1320
+
+Modified:
+   trunk/yake/src/yapp/samples/graphics/scripted/yakeScriptedGraphicsDemo.cpp
+   trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp
+   trunk/yake/src/yapp/samples/misc/scripted/yakeDemo.cpp
+Log:
+fixed demos
+
+Modified: trunk/yake/src/yapp/samples/graphics/scripted/yakeScriptedGraphicsDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/graphics/scripted/yakeScriptedGraphicsDemo.cpp	2006-04-25 20:06:03 UTC (rev 1319)
++++ trunk/yake/src/yapp/samples/graphics/scripted/yakeScriptedGraphicsDemo.cpp	2006-04-25 20:06:51 UTC (rev 1320)
+@@ -229,11 +229,11 @@
+ 			doScripting();
+ 			
+ 		// main loop
+-			real lastTime = base::native::getTime();
++			real lastTime = native::getTime();
+ 			while (!shutdownRequested())
+ 			{
+ 			// timing
+-				real time = base::native::getTime();
++				real time = native::getTime();
+ 				real timeElapsed = time - lastTime;
+ 				lastTime = time;
+ 
+
+Modified: trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp	2006-04-25 20:06:03 UTC (rev 1319)
++++ trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp	2006-04-25 20:06:51 UTC (rev 1320)
+@@ -117,6 +117,13 @@
+ 			mGround->addPhysical( pP );
+ 		}
+ 
++		// create vehicle container (e.g. for graphical objects and links)
++		mComplex = new model::complex::Model();
++		model::Graphical* pG = new model::Graphical();
++		mComplex->addGraphical( SharedPtr<model::Graphical>(pG) );
++		model::Physical* pP = new model::Physical();
++		mComplex->addPhysical( SharedPtr<model::Physical>(pP) );
++
+ 		// materials @todo read from .physics:
+ 		getPhysicalWorld()->createMaterial( physics::IMaterial::Desc( 0.01f, 0.01f, 0.01f ), "chassis" );
+ 		getPhysicalWorld()->createMaterial( physics::IMaterial::Desc( 0.01f, 0.2f, 0.01f ), "chassisTop" );
+@@ -133,15 +140,10 @@
+ 		// e.g.: vehicle::VehicleTemplate* tpl = pVS->getTemplate("delorean");
+ 
+ 		// instantiate
+-		mVehicle = pVS->create("delorean", *getPhysicalWorld() );
++		mVehicle = pVS->create("delorean", *getPhysicalWorld(), *pP );
+ 
+ 		//mVehicle->enableDebugGeometry( *getGraphicalWorld() );
+ 
+-		// create container (e.g. for graphical objects and links)
+-		mComplex = new model::complex::Model();
+-		model::Graphical* pG = new model::Graphical();
+-		mComplex->addGraphical( SharedPtr<model::Graphical>(pG) );
+-
+ 		// create visuals
+ 		// - ship body
+ 		graphics::ISceneNode* pSN = getGraphicalWorld()->createSceneNode("root");
+@@ -212,7 +214,7 @@
+ 		while (itEngine.hasMoreElements())
+ 		{
+ 			vehicle::IEngine* pEngine = itEngine.getNext();
+-			pEngine->setThrottle( pEngine->getThrottle() - timeElapsed * 1.7 );
++			pEngine->setInputSignal( pEngine->getInputSignal() - timeElapsed * 1.7 );
+ 		}
+ 
+ 		real steering0 = 0;
+@@ -223,7 +225,7 @@
+ 		{
+ 			const input::ActionId activeId = itAction.getNext();
+ 			if (activeId == input::ACTIONID_FORWARD)
+-				mVehicle->getEngineInterface("main")->setThrottle(1.);
++				mVehicle->getEngineInterface("main")->setInputSignal(1.);
+ 			else if (activeId == ACTIONID_BRAKE)
+ 				braking0 = 1.;
+ 			else if (activeId == input::ACTIONID_LEFT)
+
+Modified: trunk/yake/src/yapp/samples/misc/scripted/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/misc/scripted/yakeDemo.cpp	2006-04-25 20:06:03 UTC (rev 1319)
++++ trunk/yake/src/yapp/samples/misc/scripted/yakeDemo.cpp	2006-04-25 20:06:51 UTC (rev 1320)
+@@ -1,9 +1,9 @@
+ #include <yapp/samples/misc/scripted/yakePCH.h>
+ #include <yapp/model/yakeGraphical.h>
+-#include <yapp/plugins/entLua/yakeEntLua.h>
++#include <yake/plugins/entLua/entLua.h>
+ 
+ using namespace yake;
+-using namespace yake::base::templates;
++using namespace yake::templates;
+ using namespace yake::math;
+ using namespace yake::graphics;
+ using namespace yake::data;
+@@ -63,7 +63,7 @@
+ 		mScene->fromDotScene( mSceneFilename, mGWorld.get() );
+ 	}
+ 
+-	void initSim(ent::Simulation& theSim)
++	void initSim(ent::ObjectManager& theSim)
+ 	{
+ 		//@fixme: static initialization !?
+ 		ent::Entity::init();
+@@ -131,11 +131,11 @@
+ 		initSim(theSim);
+ 
+ 		// main loop
+-		real lastTime = base::native::getTime();
++		real lastTime = native::getTime();
+ 		while (!shutdownRequested())
+ 		{
+ 			// timing
+-			real time = base::native::getTime();
++			real time = native::getTime();
+ 			real timeElapsed = time - lastTime;//timer->getSeconds();
+ 			lastTime = time;
+ 
+
+
+
+From codeandroid at berlios.de  Tue Apr 25 22:07:54 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Tue, 25 Apr 2006 22:07:54 +0200
+Subject: [Yake-svn] r1321 - in trunk/yake/yake: ent msg
+Message-ID: <200604252007.k3PK7s6N002330@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-25 22:07:47 +0200 (Tue, 25 Apr 2006)
+New Revision: 1321
+
+Modified:
+   trunk/yake/yake/ent/object_mgr.h
+   trunk/yake/yake/msg/prerequisites.h
+Log:
+class specific options
+
+Modified: trunk/yake/yake/ent/object_mgr.h
+===================================================================
+--- trunk/yake/yake/ent/object_mgr.h	2006-04-25 20:06:51 UTC (rev 1320)
++++ trunk/yake/yake/ent/object_mgr.h	2006-04-25 20:07:47 UTC (rev 1321)
+@@ -47,9 +47,14 @@
+ 		void tick();
+ 
+ 		template<typename T>
+-		inline RegistrationResult registerClass(const std::string& name)
++		inline RegistrationResult registerClass(const std::string& name, const StringMap& options = MakeStringMap() )
+ 		{
+-			return objMgr_.registerClass(name,&T::create,&T::destroy);
++			RegistrationResult ret = objMgr_.registerClass(name,&T::create,&T::destroy);
++			if (ret.first == object::RC_OK)
++			{
++				objClsOptions_[ name ] = options;
++			}
++			return ret;
+ 		}
+ 
+ 		/** Post a global message. This message is *not* broadcasted to every object!
+@@ -100,6 +105,9 @@
+ 
+ 		typedef object::ObjectManager<Object> obj_mgr_type;
+ 		obj_mgr_type							objMgr_;
++
++		typedef AssocVector<std::string,StringMap> class_option_map;
++		class_option_map						objClsOptions_;
+ 	};
+ 
+ } // namespace ent
+
+Modified: trunk/yake/yake/msg/prerequisites.h
+===================================================================
+--- trunk/yake/yake/msg/prerequisites.h	2006-04-25 20:06:51 UTC (rev 1320)
++++ trunk/yake/yake/msg/prerequisites.h	2006-04-25 20:07:47 UTC (rev 1321)
+@@ -27,6 +27,10 @@
+ #ifndef YAKE_MSG_PREREQUISITES_H
+ #define YAKE_MSG_PREREQUISITES_H
+ 
++#include <yake/base/yakePrerequisites.h>
++#include <yake/base/templates/yakeFastMap.h>
++#include <yake/base/templates/yakeSmartAssert.h>
++
+ #define MSG_NAMESPACE ::yake::msg
+ #define MSG_NAMESPACE_BEGIN namespace yake { namespace msg {
+ #define MSG_NAMESPACE_END }}
+
+
+
+From codeandroid at berlios.de  Tue Apr 25 22:08:59 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Tue, 25 Apr 2006 22:08:59 +0200
+Subject: [Yake-svn] r1322 - trunk/yake/yake/base
+Message-ID: <200604252008.k3PK8xCn004132@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-25 22:08:22 +0200 (Tue, 25 Apr 2006)
+New Revision: 1322
+
+Modified:
+   trunk/yake/yake/base/yakeString.h
+Log:
+added StringMap and MakeStringMap
+
+Modified: trunk/yake/yake/base/yakeString.h
+===================================================================
+--- trunk/yake/yake/base/yakeString.h	2006-04-25 20:07:47 UTC (rev 1321)
++++ trunk/yake/yake/base/yakeString.h	2006-04-25 20:08:22 UTC (rev 1322)
+@@ -35,6 +35,7 @@
+ #	include <yake/base/yakePrerequisites.h>
+ #endif
+ #include <yake/base/templates/yakeVector.h>
++#include <yake/base/templates/yakeFastMap.h>
+ 
+ //============================================================================
+ //    INTERFACE STRUCTURES / UTILITY CLASSES
+@@ -127,6 +128,22 @@
+ 		StringPairVector m_stringPairs;
+ 	};
+ 
++	typedef AssocVector<String,String> StringMap;
++	struct YAKE_BASE_API MakeStringMap
++	{
++		MakeStringMap & operator<<(const StringPair& stringPair)
++		{
++			m_map.insert( stringPair ); 
++			return *this; 
++		}
++		operator StringMap()
++		{ 
++			return m_map; 
++		}
++	private:
++		StringMap m_map;
++	};
++
+ #undef YAKE_BASE_STRING
+ 
+ } // yake
+
+
+
+From codeandroid at berlios.de  Tue Apr 25 22:09:34 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Tue, 25 Apr 2006 22:09:34 +0200
+Subject: [Yake-svn] r1323 - in trunk/yake/yake: net samples/net/roserver
+Message-ID: <200604252009.k3PK9Yxl005494@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-25 22:09:28 +0200 (Tue, 25 Apr 2006)
+New Revision: 1323
+
+Modified:
+   trunk/yake/yake/net/netCommon.h
+   trunk/yake/yake/net/netPrerequisites.h
+   trunk/yake/yake/samples/net/roserver/pch.h
+Log:
+added includes
+
+Modified: trunk/yake/yake/net/netCommon.h
+===================================================================
+--- trunk/yake/yake/net/netCommon.h	2006-04-25 20:08:22 UTC (rev 1322)
++++ trunk/yake/yake/net/netCommon.h	2006-04-25 20:09:28 UTC (rev 1323)
+@@ -1,6 +1,8 @@
+ #ifndef NET_COMMON_H
+ #define NET_COMMON_H
+ 
++#include <yake/net/netPrerequisites.h>
++
+ namespace net {
+ 
+ 	typedef uint8 ChannelId;
+
+Modified: trunk/yake/yake/net/netPrerequisites.h
+===================================================================
+--- trunk/yake/yake/net/netPrerequisites.h	2006-04-25 20:08:22 UTC (rev 1322)
++++ trunk/yake/yake/net/netPrerequisites.h	2006-04-25 20:09:28 UTC (rev 1323)
+@@ -1,6 +1,8 @@
+ #ifndef NET_PREREQUISITES_H
+ #define NET_PREREQUISITES_H
+ 
++#include <yake/base/yakePrerequisites.h>
++
+ #define NET_DLL
+ 
+ #ifdef YAKE_NET_EXPORTS
+
+Modified: trunk/yake/yake/samples/net/roserver/pch.h
+===================================================================
+--- trunk/yake/yake/samples/net/roserver/pch.h	2006-04-25 20:08:22 UTC (rev 1322)
++++ trunk/yake/yake/samples/net/roserver/pch.h	2006-04-25 20:09:28 UTC (rev 1323)
+@@ -7,5 +7,6 @@
+ #include <vector>
+ #include <deque>
+ #include <boost/thread/mutex.hpp>
++#include <yake/base/yake.h>
+ 
+ #endif
+
+
+
+From codeandroid at berlios.de  Tue Apr 25 22:10:01 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Tue, 25 Apr 2006 22:10:01 +0200
+Subject: [Yake-svn] r1324 - trunk/yake/yapp/samples/misc/cmdrmayhem
+Message-ID: <200604252010.k3PKA1XD006426@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-25 22:09:58 +0200 (Tue, 25 Apr 2006)
+New Revision: 1324
+
+Modified:
+   trunk/yake/yapp/samples/misc/cmdrmayhem/yakePCH.h
+Log:
+fixed include after refactoring
+
+Modified: trunk/yake/yapp/samples/misc/cmdrmayhem/yakePCH.h
+===================================================================
+--- trunk/yake/yapp/samples/misc/cmdrmayhem/yakePCH.h	2006-04-25 20:09:28 UTC (rev 1323)
++++ trunk/yake/yapp/samples/misc/cmdrmayhem/yakePCH.h	2006-04-25 20:09:58 UTC (rev 1324)
+@@ -7,4 +7,4 @@
+ #include <yake/base/yake.h>
+ #include <yake/scripting/yakeScriptingSystem.h>
+ #include <yapp/base/yapp.h>
+-#include <yapp/ent/yakeEnt.h>
++#include <yake/ent/yakeEnt.h>
+
+
+
+From codeandroid at berlios.de  Tue Apr 25 22:10:35 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Tue, 25 Apr 2006 22:10:35 +0200
+Subject: [Yake-svn] r1325 - in trunk/yake/scripts/msvc8: . samples/misc samples/model samples/net
+Message-ID: <200604252010.k3PKAZ8j008953@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-25 22:10:34 +0200 (Tue, 25 Apr 2006)
+New Revision: 1325
+
+Modified:
+   trunk/yake/scripts/msvc8/net.vcproj
+   trunk/yake/scripts/msvc8/samples/misc/sampleScriptedGraphics.vcproj
+   trunk/yake/scripts/msvc8/samples/model/sampleXODE.vcproj
+   trunk/yake/scripts/msvc8/samples/net/sampleRoClient.vcproj
+   trunk/yake/scripts/msvc8/samples/net/sampleRoServer.vcproj
+Log:
+fixed a few settings
+
+Modified: trunk/yake/scripts/msvc8/net.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/net.vcproj	2006-04-25 20:09:58 UTC (rev 1324)
++++ trunk/yake/scripts/msvc8/net.vcproj	2006-04-25 20:10:34 UTC (rev 1325)
+@@ -65,13 +65,13 @@
+ 			<Tool
+ 				Name="VCLinkerTool"
+ 				AdditionalDependencies="ws2_32.lib winmm.lib base.lib"
+-				OutputFile="$(OutDir)/$(ProjectName).dll"
++				OutputFile="$(OutDir)/yake_$(ProjectName)-vc80-d.dll"
+ 				LinkIncremental="2"
+ 				AdditionalLibraryDirectories="../../common/lib/debug;../../dependencies/lib"
+ 				GenerateDebugInformation="true"
+ 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
+ 				SubSystem="2"
+-				ImportLibrary="../../common/lib/debug/$(TargetName)_d.lib"
++				ImportLibrary="../../common/lib/$(TargetName).lib"
+ 				TargetMachine="1"
+ 			/>
+ 			<Tool
+@@ -146,7 +146,7 @@
+ 			<Tool
+ 				Name="VCLinkerTool"
+ 				AdditionalDependencies="ws2_32.lib winmm.lib base.lib"
+-				OutputFile="$(OutDir)/$(ProjectName).dll"
++				OutputFile="$(OutDir)/yake_$(ProjectName)-vc80.dll"
+ 				LinkIncremental="1"
+ 				AdditionalLibraryDirectories="../../common/lib/release;../../dependencies/lib"
+ 				GenerateDebugInformation="false"
+
+Modified: trunk/yake/scripts/msvc8/samples/misc/sampleScriptedGraphics.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/misc/sampleScriptedGraphics.vcproj	2006-04-25 20:09:58 UTC (rev 1324)
++++ trunk/yake/scripts/msvc8/samples/misc/sampleScriptedGraphics.vcproj	2006-04-25 20:10:34 UTC (rev 1325)
+@@ -63,7 +63,7 @@
+ 			/>
+ 			<Tool
+ 				Name="VCLinkerTool"
+-				AdditionalDependencies="base.lib input.lib data.lib graphics.lib yapp.lib audio.lib physics.lib scripting.lib"
++				AdditionalDependencies="base.lib input.lib data.lib graphics.lib yapp.lib audio.lib physics.lib scripting.lib scriptingLua.lib luabindd.lib luad.lib"
+ 				OutputFile="$(OutDir)/$(ProjectName).exe"
+ 				LinkIncremental="2"
+ 				AdditionalLibraryDirectories="../../../../common/lib/debug;../../../../dependencies/luabind/lib;../../../../dependencies/lua/lib;../../../../dependencies/lib"
+@@ -143,7 +143,7 @@
+ 			/>
+ 			<Tool
+ 				Name="VCLinkerTool"
+-				AdditionalDependencies="base.lib input.lib data.lib graphics.lib yapp.lib audio.lib physics.lib scripting.lib"
++				AdditionalDependencies="base.lib input.lib data.lib graphics.lib yapp.lib audio.lib physics.lib scripting.lib scriptingLua.lib lua.lib luabind.lib"
+ 				OutputFile="$(OutDir)/$(ProjectName).exe"
+ 				LinkIncremental="1"
+ 				AdditionalLibraryDirectories="../../../../common/lib/release;../../../../dependencies/luabind/lib;../../../../dependencies/lua/lib;../../../../dependencies/lib"
+
+Modified: trunk/yake/scripts/msvc8/samples/model/sampleXODE.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/model/sampleXODE.vcproj	2006-04-25 20:09:58 UTC (rev 1324)
++++ trunk/yake/scripts/msvc8/samples/model/sampleXODE.vcproj	2006-04-25 20:10:34 UTC (rev 1325)
+@@ -63,7 +63,7 @@
+ 			/>
+ 			<Tool
+ 				Name="VCLinkerTool"
+-				AdditionalDependencies="base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.kib"
++				AdditionalDependencies="base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib"
+ 				OutputFile="$(OutDir)/$(ProjectName).exe"
+ 				LinkIncremental="2"
+ 				AdditionalLibraryDirectories="../../../../common/lib/debug;../../../../dependencies/lib"
+@@ -142,7 +142,7 @@
+ 			/>
+ 			<Tool
+ 				Name="VCLinkerTool"
+-				AdditionalDependencies="base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.kib"
++				AdditionalDependencies="base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib"
+ 				OutputFile="$(OutDir)/$(ProjectName).exe"
+ 				LinkIncremental="1"
+ 				AdditionalLibraryDirectories="../../../../common/lib/release;../../../../dependencies/lib"
+
+Modified: trunk/yake/scripts/msvc8/samples/net/sampleRoClient.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/net/sampleRoClient.vcproj	2006-04-25 20:09:58 UTC (rev 1324)
++++ trunk/yake/scripts/msvc8/samples/net/sampleRoClient.vcproj	2006-04-25 20:10:34 UTC (rev 1325)
+@@ -67,7 +67,7 @@
+ 				AdditionalDependencies="base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib"
+ 				OutputFile="$(OutDir)/$(ProjectName).exe"
+ 				LinkIncremental="2"
+-				AdditionalLibraryDirectories="../../../../common/lib/debug;../../../../dependencies/lib"
++				AdditionalLibraryDirectories="../../../../common/lib;../../../../common/lib/debug;../../../../dependencies/lib"
+ 				GenerateDebugInformation="true"
+ 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
+ 				SubSystem="1"
+@@ -147,7 +147,7 @@
+ 				AdditionalDependencies="base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib"
+ 				OutputFile="$(OutDir)/$(ProjectName).exe"
+ 				LinkIncremental="1"
+-				AdditionalLibraryDirectories="../../../../common/lib/release;../../../../dependencies/lib"
++				AdditionalLibraryDirectories="../../../../common/lib;../../../../common/lib/release;../../../../dependencies/lib"
+ 				GenerateDebugInformation="false"
+ 				SubSystem="1"
+ 				OptimizeReferences="2"
+
+Modified: trunk/yake/scripts/msvc8/samples/net/sampleRoServer.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/net/sampleRoServer.vcproj	2006-04-25 20:09:58 UTC (rev 1324)
++++ trunk/yake/scripts/msvc8/samples/net/sampleRoServer.vcproj	2006-04-25 20:10:34 UTC (rev 1325)
+@@ -67,7 +67,7 @@
+ 				AdditionalDependencies="base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib"
+ 				OutputFile="$(OutDir)/$(ProjectName).exe"
+ 				LinkIncremental="2"
+-				AdditionalLibraryDirectories="../../../../common/lib/debug;../../../../dependencies/lib"
++				AdditionalLibraryDirectories="../../../../common/lib;../../../../common/lib/debug;../../../../dependencies/lib"
+ 				GenerateDebugInformation="true"
+ 				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
+ 				SubSystem="1"
+@@ -147,7 +147,7 @@
+ 				AdditionalDependencies="base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib"
+ 				OutputFile="$(OutDir)/$(ProjectName).exe"
+ 				LinkIncremental="1"
+-				AdditionalLibraryDirectories="../../../../common/lib/release;../../../../dependencies/lib"
++				AdditionalLibraryDirectories="../../../../common/lib;../../../../common/lib/release;../../../../dependencies/lib"
+ 				GenerateDebugInformation="false"
+ 				SubSystem="1"
+ 				OptimizeReferences="2"
+
+
+
+From codeandroid at berlios.de  Tue Apr 25 22:12:46 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Tue, 25 Apr 2006 22:12:46 +0200
+Subject: [Yake-svn] r1326 - in trunk/yake/scripts: . cb
+Message-ID: <200604252012.k3PKCjep014561@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-04-25 22:12:43 +0200 (Tue, 25 Apr 2006)
+New Revision: 1326
+
+Added:
+   trunk/yake/scripts/cb/
+   trunk/yake/scripts/cb/audio.cbp
+   trunk/yake/scripts/cb/base.cbp
+   trunk/yake/scripts/cb/data.cbp
+   trunk/yake/scripts/cb/ent.cbp
+   trunk/yake/scripts/cb/generic.cbp
+   trunk/yake/scripts/cb/graphics.cbp
+   trunk/yake/scripts/cb/input.cbp
+   trunk/yake/scripts/cb/net.cbp
+   trunk/yake/scripts/cb/physics.cbp
+   trunk/yake/scripts/cb/raf.cbp
+   trunk/yake/scripts/cb/scripting.cbp
+   trunk/yake/scripts/cb/vehicle.cbp
+Log:
+initial revision
+
+Added: trunk/yake/scripts/cb/audio.cbp
+===================================================================
+--- trunk/yake/scripts/cb/audio.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/audio.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,43 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::audio"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_audio-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\mgw\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++					<Add directory="..\.."/>
++					<Add directory="..\..\dependencies\boost"/>
++					<Add directory="..\..\dependencies\ttl"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DBUILD_DLL,YAKE_AUDIO_EXPORTS"/>
++		</Compiler>
++		<Unit filename="..\..\src\yake\audio\yakeAudio.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/base.cbp
+===================================================================
+--- trunk/yake/scripts/cb/base.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/base.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,234 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::base"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_base-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\mgw\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\dependencies\lib\libboost_signals-mgw34-mt-d.lib"/>
++				</Linker>
++			</Target>
++			<Target title="release">
++				<Option output="..\..\common\lib\yake_base-mgw342.dll"/>
++				<Option working_dir="..\..\common\bin\release"/>
++				<Option object_output="..\..\common\obj\mgw\release"/>
++				<Option deps_output="..\..\common\dep\mgw\release"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Linker>
++					<Add library="..\..\dependencies\lib\libboost_signals-mgw34-mt.lib"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-DBUILD_DLL,DLL,WIN32,_CONSOLE,YAKE_BASE_EXPORTS"/>
++			<Add directory="D:\dev\yake.trunk\yake\dependencies\boost"/>
++			<Add directory="D:\dev\yake.trunk\yake\dependencies\ttl"/>
++			<Add directory="D:\dev\yake.trunk\yake"/>
++		</Compiler>
++		<Linker>
++			<Add library="libgdi32.a"/>
++			<Add library="libwinmm.a"/>
++			<Add directory="D:\dev\yake.trunk\yake\dependencies\lib"/>
++		</Linker>
++		<Unit filename="..\..\src\yake\base\math\yakeMath.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\math\yakeMatrix3.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\math\yakeMatrix4.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\math\yakeQuaternion.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\math\yakeRand.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\math\yakeRay.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\math\yakeSimpleSpline.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\math\yakeVector3.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\Linux\yakeApplication.cpp">
++			<Option compilerVar="CPP"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\Linux\yakeCriticalSection.cpp">
++			<Option compilerVar="CPP"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\Linux\yakeDebug.cpp">
++			<Option compilerVar="CPP"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\Linux\yakeLibrary.cpp">
++			<Option compilerVar="CPP"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\Linux\yakeTime.cpp">
++			<Option compilerVar="CPP"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\win32\yakeApplication.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\win32\yakeConfig.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\win32\yakeCriticalSection.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\win32\yakeDebug.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\win32\yakeLibrary.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\win32\yakeProcessor.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\native\win32\yakeTime.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\templates\yakeSingleton.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\templates\yakeSmartAssert.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeCriticalSection.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeDataChunk.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeDebugLogAppender.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeException.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeInputStream.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeLibrary.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeLock.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeLog.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeMimeTypeManager.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeMovable.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeOutputStream.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakePCH.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeParamHolder.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeString.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeUniqueId.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\base\yakeUniqueName.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++			<Option target="release"/>
++		</Unit>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/data.cbp
+===================================================================
+--- trunk/yake/scripts/cb/data.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/data.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,75 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::data"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_data-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\mgw\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DDLL,BUILD_DLL,WIN32,_CONSOLE,YAKE_DATA_EXPORTS"/>
++			<Add directory="..\.."/>
++			<Add directory="..\..\dependencies\boost"/>
++			<Add directory="..\..\dependencies\ttl"/>
++		</Compiler>
++		<Unit filename="..\..\dependencies\tinyxml\tinystr.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\tinyxml\tinystr.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\tinyxml\tinyxml.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\tinyxml\tinyxml.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\tinyxml\tinyxmlerror.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\tinyxml\tinyxmlparser.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\data\yakePCH.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\data\yakeXMLSerializer.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/ent.cbp
+===================================================================
+--- trunk/yake/scripts/cb/ent.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/ent.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,71 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::ent"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_ent-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\mgw\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++					<Add directory="..\.."/>
++					<Add directory="..\..\dependencies\boost"/>
++					<Add directory="..\..\dependencies\ttl"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DBUILD_DLL,YAKE_ENT_EXPORTS"/>
++		</Compiler>
++		<Unit filename="..\..\src\yake\ent\component.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\ent\component_holder.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\ent\object.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\ent\object_listener.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\ent\object_mgr.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\ent\object_mgr_listener.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\ent\pch.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\ent\vm_holder.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/generic.cbp
+===================================================================
+--- trunk/yake/scripts/cb/generic.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/generic.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,39 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::input"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_input-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\mgw\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++					<Add directory="..\.."/>
++					<Add directory="..\..\dependencies\boost"/>
++					<Add directory="..\..\dependencies\ttl"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DBUILD_DLL,YAKE_INPUT_EXPORTS"/>
++		</Compiler>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/graphics.cbp
+===================================================================
+--- trunk/yake/scripts/cb/graphics.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/graphics.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,43 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::graphics"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_graphics-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\mgw\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++					<Add directory="..\.."/>
++					<Add directory="..\..\dependencies\boost"/>
++					<Add directory="..\..\dependencies\ttl"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DBUILD_DLL,YAKE_GRAPHICS_EXPORTS"/>
++		</Compiler>
++		<Unit filename="..\..\src\yake\graphics\yakeGraphicsSystem.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/input.cbp
+===================================================================
+--- trunk/yake/scripts/cb/input.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/input.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,55 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::input"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_input-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\mgw\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++					<Add directory="..\.."/>
++					<Add directory="..\..\dependencies\boost"/>
++					<Add directory="..\..\dependencies\ttl"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DBUILD_DLL,YAKE_INPUT_EXPORTS"/>
++		</Compiler>
++		<Unit filename="..\..\src\yake\input\yakeActionMap.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\input\yakeInput.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\input\yakeInputEventGenerator.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\input\yakeInputSystem.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/net.cbp
+===================================================================
+--- trunk/yake/scripts/cb/net.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/net.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,155 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::net"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_net-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\mgw\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++					<Add directory="..\.."/>
++					<Add directory="..\..\dependencies\boost"/>
++					<Add directory="..\..\dependencies\ttl"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++					<Add library="..\..\dependencies\lib\libboost_thread-mgw34-mt-d.lib"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DBUILD_DLL,YAKE_NET_EXPORTS"/>
++			<Add directory="..\..\dependencies\enet\include"/>
++		</Compiler>
++		<Linker>
++			<Add library="libwsock32.a"/>
++			<Add library="libws2_32.a"/>
++			<Add library="libwinmm.a"/>
++			<Add directory="..\..\dependencies\lib"/>
++		</Linker>
++		<Unit filename="..\..\dependencies\enet\callbacks.c">
++			<Option compilerVar="CC"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\host.c">
++			<Option compilerVar="CC"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\include\enet\callbacks.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\include\enet\enet.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\include\enet\list.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\include\enet\protocol.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\include\enet\time.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\include\enet\types.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\include\enet\unix.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\include\enet\utility.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\include\enet\win32.h">
++			<Option compilerVar=""/>
++			<Option compile="0"/>
++			<Option link="0"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\list.c">
++			<Option compilerVar="CC"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\packet.c">
++			<Option compilerVar="CC"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\peer.c">
++			<Option compilerVar="CC"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\protocol.c">
++			<Option compilerVar="CC"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\unix.c">
++			<Option compilerVar="CC"/>
++		</Unit>
++		<Unit filename="..\..\dependencies\enet\win32.c">
++			<Option compilerVar="CC"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\net\detail\netCommon.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\net\detail\netEnetClientPacketConnection.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\net\detail\netEnetServerPacketConnection.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\net\detail\netEventConnection.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\net\detail\netInternal.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\net\net.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/physics.cbp
+===================================================================
+--- trunk/yake/scripts/cb/physics.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/physics.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,51 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::physics"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_physics-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\mgw\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++					<Add directory="..\.."/>
++					<Add directory="..\..\dependencies\boost"/>
++					<Add directory="..\..\dependencies\ttl"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DBUILD_DLL,YAKE_PHYSICS_EXPORTS"/>
++		</Compiler>
++		<Unit filename="..\..\src\yake\physics\yakePhysicsAffectorZone.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\physics\yakePhysicsAffectors.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yake\physics\yakePhysicsSystem.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/raf.cbp
+===================================================================
+--- trunk/yake/scripts/cb/raf.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/raf.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,62 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::raf"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_raf-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\mgw\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++					<Add directory="..\.."/>
++					<Add directory="..\..\dependencies\boost"/>
++					<Add directory="..\..\dependencies\ttl"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++					<Add library="..\..\common\lib\libyake_input-mgw342-d.a"/>
++					<Add library="..\..\common\lib\libyake_audio-mgw342-d.a"/>
++					<Add library="..\..\common\lib\libyake_scripting-mgw342-d.a"/>
++					<Add library="..\..\common\lib\libyake_graphics-mgw342-d.a"/>
++					<Add library="..\..\common\lib\libyake_physics-mgw342-d.a"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DBUILD_DLL,YAKE_RAF_EXPORTS"/>
++			<Add directory="..\..\dependencies\cegui_mk2"/>
++			<Add directory="..\..\dependencies\cegui_mk2\CEGUI"/>
++		</Compiler>
++		<Unit filename="..\..\src\yapp\raf\yakeApplication.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yapp\raf\yakeApplicationState.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yapp\raf\yakeRaf.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++		<Unit filename="..\..\src\yapp\raf\yakeRtApplicationState.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/scripting.cbp
+===================================================================
+--- trunk/yake/scripts/cb/scripting.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/scripting.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,43 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::scripting"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_scripting-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\mgw\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++					<Add directory="..\.."/>
++					<Add directory="..\..\dependencies\boost"/>
++					<Add directory="..\..\dependencies\ttl"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DBUILD_DLL,YAKE_SCRIPTING_EXPORTS"/>
++		</Compiler>
++		<Unit filename="..\..\src\yake\scripting\yakeScriptingSystem.cpp">
++			<Option compilerVar="CPP"/>
++			<Option target="debug"/>
++		</Unit>
++	</Project>
++</CodeBlocks_project_file>
+
+Added: trunk/yake/scripts/cb/vehicle.cbp
+===================================================================
+--- trunk/yake/scripts/cb/vehicle.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/vehicle.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,39 @@
++<?xml version="1.0"?>
++<!DOCTYPE CodeBlocks_project_file>
++<CodeBlocks_project_file>
++	<FileVersion major="1" minor="1"/>
++	<Project>
++		<Option title="yake::vehicle"/>
++		<Option makefile="Makefile"/>
++		<Option makefile_is_custom="0"/>
++		<Option compiler="0"/>
++		<Build>
++			<Target title="debug">
++				<Option output="..\..\common\lib\yake_vehicle-mgw342-d.dll"/>
++				<Option working_dir="..\..\common\bin\mgw\debug"/>
++				<Option object_output="..\..\common\obj\mgw\debug"/>
++				<Option deps_output="..\..\common\dep\debug"/>
++				<Option type="3"/>
++				<Option compiler="0"/>
++				<Option createStaticLib="1"/>
++				<Compiler>
++					<Add option="-W"/>
++					<Add option="-Wall"/>
++					<Add option="-g"/>
++					<Add option="-D_DEBUG"/>
++					<Add directory="..\.."/>
++					<Add directory="..\..\dependencies\boost"/>
++					<Add directory="..\..\dependencies\ttl"/>
++				</Compiler>
++				<Linker>
++					<Add library="..\..\common\lib\libyake_base-mgw342-d.a"/>
++				</Linker>
++			</Target>
++		</Build>
++		<Compiler>
++			<Add option="-W"/>
++			<Add option="-Wall"/>
++			<Add option="-DBUILD_DLL,YAKE_VEHICLE_EXPORTS"/>
++		</Compiler>
++	</Project>
++</CodeBlocks_project_file>
+
+
+

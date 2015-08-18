@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1297 - trunk/yake/yake/msg
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1297%20-%20trunk/yake/yake/msg&In-Reply-To=%3C200603181711.k2IHBRrq022349%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000366.html">
+   <LINK REL="Next"  HREF="000368.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1297 - trunk/yake/yake/msg</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1297%20-%20trunk/yake/yake/msg&In-Reply-To=%3C200603181711.k2IHBRrq022349%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1297 - trunk/yake/yake/msg">codeandroid at berlios.de
+       </A><BR>
+    <I>Sat Mar 18 18:11:27 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000366.html">[Yake-svn] r1296 - trunk/yake/scripts/msvc8
+</A></li>
+        <LI>Next message: <A HREF="000368.html">[Yake-svn] r1298 - trunk/yake/src/yake/samples/msg/sampleMsg1
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#367">[ date ]</a>
+              <a href="thread.html#367">[ thread ]</a>
+              <a href="subject.html#367">[ subject ]</a>
+              <a href="author.html#367">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-18 18:11:27 +0100 (Sat, 18 Mar 2006)
+New Revision: 1297
+
+Modified:
+   trunk/yake/yake/msg/listener.h
+   trunk/yake/yake/msg/message.h
+   trunk/yake/yake/msg/router.h
+Log:
+added kNullSource
+
+Modified: trunk/yake/yake/msg/listener.h
+===================================================================
+--- trunk/yake/yake/msg/listener.h	2006-03-17 20:33:06 UTC (rev 1296)
++++ trunk/yake/yake/msg/listener.h	2006-03-18 17:11:27 UTC (rev 1297)
+@@ -40,6 +40,7 @@
+ 			listener_base&amp; operator = (const listener_base&amp;);
+ 		public:
+ 			listener_base(const std::string&amp; msgTypeName) : msgTypeName_(msgTypeName) {}
++			virtual ~listener_base() {}
+ 			void execute(const message_base&amp; msg)
+ 			{ doExecute(msg); }
+ 			const std::string&amp; msgTypeName() const
+
+Modified: trunk/yake/yake/msg/message.h
+===================================================================
+--- trunk/yake/yake/msg/message.h	2006-03-17 20:33:06 UTC (rev 1296)
++++ trunk/yake/yake/msg/message.h	2006-03-18 17:11:27 UTC (rev 1297)
+@@ -39,6 +39,8 @@
+ 	*/
+ 	typedef source_type Source;
+ 
++	const Source kNullSource = Source(0);
++
+ 	namespace detail {
+ 		/** Internal base class for messages providing the very basic interface.
+ 		*/
+@@ -49,7 +51,7 @@
+ 			message_base&amp; operator=(const message_base&amp;);
+ 		public:
+ 			template&lt;typename T&gt;
+-			message_base(const T&amp; value, source_type src = 0) : value_(value), msgTypeName_(typeid(T).name()), src_(src)
++			message_base(const T&amp; value, source_type src = kNullSource) : value_(value), msgTypeName_(typeid(T).name()), src_(src)
+ 			{}
+ 			const boost::any&amp; value() const
+ 			{ return value_; }
+@@ -73,7 +75,7 @@
+ 		/** Construct a message with value and optional source (0 by default).
+ 			
+ 		*/
+-		message(const T&amp; v, source_type src = 0) : detail::message_base(v,src)
++		message(const T&amp; v, source_type src = kNullSource) : detail::message_base(v,src)
+ 		{}
+ 		/** Construct a message with default value for type T and source 0. */
+ 		message() : detail::message_base(T())
+@@ -88,7 +90,7 @@
+ 	{
+ 		DefaultMessageAllocator&amp; instance();
+ 		template&lt;typename T&gt;
+-		static message&lt;T&gt;* create(const T&amp; v, source_type src = 0)
++		static message&lt;T&gt;* create(const T&amp; v, source_type src = kNullSource)
+ 		{
+ 			return new message&lt;T&gt;(v,src);
+ 		}
+@@ -103,7 +105,7 @@
+ 	/** Helper function to easily create messages.
+ 	*/
+ 	template&lt;typename T&gt;
+-	message&lt;T&gt;* makeMessage(const T&amp; v, source_type src = 0)
++	message&lt;T&gt;* makeMessage(const T&amp; v, source_type src = kNullSource)
+ 	{ 
+ 		return DefaultMessageAllocator::create&lt;T&gt;(v,src); 
+ 	}
+
+Modified: trunk/yake/yake/msg/router.h
+===================================================================
+--- trunk/yake/yake/msg/router.h	2006-03-17 20:33:06 UTC (rev 1296)
++++ trunk/yake/yake/msg/router.h	2006-03-18 17:11:27 UTC (rev 1297)
+@@ -65,7 +65,7 @@
+ 		router();
+ 
+ 		template&lt;typename T&gt;
+-		void postMessage(const T&amp; v, source_type source = 0)
++		void postMessage(const T&amp; v, source_type source = kNullSource)
+ 		{ this-&gt;post( MSG_NAMESPACE::makeMessage(v,source) ); }
+ 
+ 		/** Post a message. Processing is controlled by T_processor.
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000366.html">[Yake-svn] r1296 - trunk/yake/scripts/msvc8
+</A></li>
+	<LI>Next message: <A HREF="000368.html">[Yake-svn] r1298 - trunk/yake/src/yake/samples/msg/sampleMsg1
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#367">[ date ]</a>
+              <a href="thread.html#367">[ thread ]</a>
+              <a href="subject.html#367">[ subject ]</a>
+              <a href="author.html#367">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

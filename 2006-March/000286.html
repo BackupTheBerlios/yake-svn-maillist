@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1214 - in trunk/yake/src/yake/plugins: . entLua
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1214%20-%20in%20trunk/yake/src/yake/plugins%3A%20.%20entLua&In-Reply-To=%3C200603051831.k25IV3jj027375%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000285.html">
+   <LINK REL="Next"  HREF="000288.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1214 - in trunk/yake/src/yake/plugins: . entLua</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1214%20-%20in%20trunk/yake/src/yake/plugins%3A%20.%20entLua&In-Reply-To=%3C200603051831.k25IV3jj027375%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1214 - in trunk/yake/src/yake/plugins: . entLua">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar  5 19:31:03 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000285.html">[Yake-svn] r1213 - in trunk/yake/src/yake: . ent
+</A></li>
+        <LI>Next message: <A HREF="000288.html">[Yake-svn] r1215 - trunk/yake/src/yake/plugins/baseLuaBindings
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#286">[ date ]</a>
+              <a href="thread.html#286">[ thread ]</a>
+              <a href="subject.html#286">[ subject ]</a>
+              <a href="author.html#286">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-05 19:31:02 +0100 (Sun, 05 Mar 2006)
+New Revision: 1214
+
+Added:
+   trunk/yake/src/yake/plugins/entLua/
+   trunk/yake/src/yake/plugins/entLua/entLua.cpp
+Log:
+initial revision
+
+Added: trunk/yake/src/yake/plugins/entLua/entLua.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/entLua/entLua.cpp	2006-03-05 18:30:24 UTC (rev 1213)
++++ trunk/yake/src/yake/plugins/entLua/entLua.cpp	2006-03-05 18:31:02 UTC (rev 1214)
+@@ -0,0 +1,101 @@
++#include &quot;yake/base/yake.h&quot;
++#include &quot;yake/plugins/entLua/entLua.h&quot;
++#include &quot;yake/plugins/scriptingLua/ScriptingSystemLua.h&quot;
++
++#define LUABIND_NO_HEADERS_ONLY
++#include &lt;luabind/luabind.hpp&gt;
++
++namespace yake {
++namespace object {
++	namespace detail {
++		void executeOfTable_2(scripting::IVM&amp; vm, const std::string&amp; tbl1name, const std::string&amp; tbl2name, const std::string&amp; fn)
++		{
++			try {
++				scripting::LuaVM&amp; luaVM = static_cast&lt;scripting::LuaVM&amp;&gt;(vm);
++				lua_State* luaState = luaVM.getLuaState();
++				YAKE_ASSERT( luaState );
++
++				luabind::object tbl1 = luabind::globals(luaState)[tbl1name.c_str()];
++				if (luabind::type(tbl1) == LUA_TNIL)
++					//if (!tbl1)
++				{
++					std::cerr &lt;&lt; &quot;vm error: could not find table '&quot; &lt;&lt; tbl1name &lt;&lt; &quot;'.\n&quot;;
++					return;
++				}
++				assert( luabind::type(tbl1) == LUA_TTABLE );
++
++				luabind::object tbl2 = tbl1[tbl2name.c_str()];
++				if (luabind::type(tbl2) == LUA_TNIL)
++					//if (!tbl2)
++				{
++					std::cerr &lt;&lt; &quot;vm error: could not find table '&quot; &lt;&lt; tbl1name &lt;&lt; &quot;.&quot; &lt;&lt; tbl2name &lt;&lt; &quot;'.\n&quot;;
++					return;
++				}
++				assert( luabind::type(tbl2) == LUA_TTABLE );
++
++				luabind::object fnObj = tbl2[fn.c_str()];
++				assert( luabind::type(fnObj) == LUA_TFUNCTION );
++
++				fnObj();
++			}
++			catch (...)
++			{
++				YAKE_EXCEPT(&quot;executeOfTable_2(): Bad cast! VM is not a Lua VM!&quot;);
++			}
++		}
++	}
++
++	LuaFsmObjectListener::LuaFsmObjectListener(scripting::IScriptingSystem&amp; scriptingSystem) :
++		scriptingSystem_(scriptingSystem)
++	{
++		startScript_.reset( scriptingSystem_.createScriptFromFile(&quot;../o_test.lua&quot;) );
++		YAKE_ASSERT( startScript_.get() );
++	}
++	void LuaFsmObjectListener::onInit(Object&amp; obj)
++	{
++		//YAKE_ASSERT( obj.getFsmVM() );
++		obj.getFsmVM()-&gt;execute(&quot;print('initializing...')&quot;);
++		obj.getFsmVM()-&gt;execute( startScript_.get() );
++
++		//std::cout &lt;&lt; &quot;vm: exec start_main()\n&quot;;
++		//@todo make sure &quot;main()&quot; exists
++		//obj.getVM().execute(&quot;start_main()&quot;);
++
++		obj.getFsmVM()-&gt;execute(&quot;c = coroutine.create(main)\ncoroutine.resume(c,1)&quot;);
++	}
++	void LuaFsmObjectListener::onTick(Object&amp; obj)
++	{
++		obj.getFsmVM()-&gt;execute(&quot;event.on_tick()&quot;);
++		obj.getFsmVM()-&gt;execute(&quot;state.&quot; + obj.getCurrentFsmState() + &quot;.on_tick()&quot;);
++	}
++	void LuaFsmObjectListener::onFsmEventHandled(Object&amp; obj, const object_fsm&amp;, const object_fsm::event_type&amp; evt)
++	{
++		if (evt == &quot;spawn&quot;)
++			obj.getFsmVM()-&gt;execute(&quot;event.on_spawn()&quot;);
++		else if (evt == &quot;die&quot;)
++			obj.getFsmVM()-&gt;execute(&quot;event.on_die()&quot;);
++	}
++	void LuaFsmObjectListener::onFsmEnterState(Object&amp; obj,/*const std::string&amp; fsmName, */const object_fsm&amp;, const object_fsm::state_type&amp; state)
++	{
++		scripting::IVM* vm = obj.getFsmVM();
++		YAKE_ASSERT( vm );
++		detail::executeOfTable_2(*vm,&quot;state&quot;,state,&quot;on_enter&quot;);
++	}
++	void LuaFsmObjectListener::onFsmExitState(Object&amp; obj,/*const std::string&amp; fsmName, */const object_fsm&amp;, const object_fsm::state_type&amp; state)
++	{
++		scripting::IVM* vm = obj.getFsmVM();
++		YAKE_ASSERT( vm );
++		detail::executeOfTable_2(*vm,&quot;state&quot;,state,&quot;on_exit&quot;);
++	}
++	LuaObjectManagerListener::LuaObjectManagerListener(scripting::IScriptingSystem&amp; scriptingSystem) :
++		fsmListener_(scriptingSystem)
++	{
++	}
++	void LuaObjectManagerListener::onObjectCreated(Object* obj)
++	{
++		YAKE_ASSERT( obj );
++		obj-&gt;attachListener( &amp;fsmListener_, &quot;lua_listener&quot;, object_listener_mgr::kKeepOwnership );
++	}
++}
++} // namespace yake
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000285.html">[Yake-svn] r1213 - in trunk/yake/src/yake: . ent
+</A></li>
+	<LI>Next message: <A HREF="000288.html">[Yake-svn] r1215 - trunk/yake/src/yake/plugins/baseLuaBindings
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#286">[ date ]</a>
+              <a href="thread.html#286">[ thread ]</a>
+              <a href="subject.html#286">[ subject ]</a>
+              <a href="author.html#286">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

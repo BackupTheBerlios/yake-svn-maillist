@@ -1,0 +1,445 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1199 - in trunk/yake/yake/net: . detail
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-February/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1199%20-%20in%20trunk/yake/yake/net%3A%20.%20detail&In-Reply-To=%3C200602052253.k15Mr0c8029019%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000268.html">
+   <LINK REL="Next"  HREF="000270.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1199 - in trunk/yake/yake/net: . detail</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1199%20-%20in%20trunk/yake/yake/net%3A%20.%20detail&In-Reply-To=%3C200602052253.k15Mr0c8029019%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1199 - in trunk/yake/yake/net: . detail">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Feb  5 23:53:00 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000268.html">[Yake-svn] r1198 - trunk/yake/scripts/msvc8
+</A></li>
+        <LI>Next message: <A HREF="000270.html">[Yake-svn] r1200 - trunk/yake/yake/object
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#269">[ date ]</a>
+              <a href="thread.html#269">[ thread ]</a>
+              <a href="subject.html#269">[ subject ]</a>
+              <a href="author.html#269">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-02-05 23:52:59 +0100 (Sun, 05 Feb 2006)
+New Revision: 1199
+
+Modified:
+   trunk/yake/yake/net/detail/netEnetClientPacketConnection.h
+   trunk/yake/yake/net/detail/netEnetServerPacketConnection.h
+   trunk/yake/yake/net/detail/netEventConnection.h
+   trunk/yake/yake/net/netEvent.h
+   trunk/yake/yake/net/netPacket.h
+Log:
+interface improvements
+
+Modified: trunk/yake/yake/net/detail/netEnetClientPacketConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEnetClientPacketConnection.h	2006-02-05 10:01:46 UTC (rev 1198)
++++ trunk/yake/yake/net/detail/netEnetClientPacketConnection.h	2006-02-05 22:52:59 UTC (rev 1199)
+@@ -18,8 +18,17 @@
+ 		virtual void send(const PeerId, const void*, const size_t, const SendOptions&amp; opt = SendOptions());
+ 
+ 		virtual void addStartedCallback(const OnStartedFn&amp;);
+-		virtual void addPacketReceivedCallback( const OnPacketReceivedFn&amp;);
++		virtual CallbackConnection addPacketReceivedCallback( const OnPacketReceivedFn&amp;);
+ 		virtual void addTimeOutCallback(const OnTimeOutFn&amp;);
++
++		void disconnectPacketReceivedCallback(const CallbackHandle h)
++		{
++			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++			OnPacketReceivedFnList::iterator it = packetReceivedFnList_.find(h);
++			if (it == packetReceivedFnList_.end())
++				return;
++			packetReceivedFnList_.erase( it );
++		}
+ 	private:
+ 		void sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
+ 		void sendBroadcast(const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
+@@ -35,7 +44,7 @@
+ 		{
+ 			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
+ 			for (OnPacketReceivedFnList::const_iterator it = packetReceivedFnList_.begin(); it != packetReceivedFnList_.end(); ++it)
+-				(*it)(peerId,data,dataLen,channel);
++				(it-&gt;second)(peerId,data,dataLen,channel);
+ 		}
+ 		void fireCallback_TimeOut()
+ 		{
+@@ -44,12 +53,13 @@
+ 		}
+ 	private:
+ 		typedef std::deque&lt;OnStartedFn&gt; OnStartedFnList;
+-		typedef std::deque&lt;OnPacketReceivedFn&gt; OnPacketReceivedFnList;
++		typedef std::map&lt;CallbackHandle,OnPacketReceivedFn&gt; OnPacketReceivedFnList;
+ 		typedef std::deque&lt;OnTimeOutFn&gt; OnTimeOutFnList;
+ 		OnStartedFnList					startedFnList_;
+ 		OnPacketReceivedFnList			packetReceivedFnList_;
+-		boost::mutex					packetReceivedFnListMtx_;
++		boost::mutex						packetReceivedFnListMtx_;
+ 		OnTimeOutFnList					timeOutFnList_;
++		CallbackHandle						lastPacketReceivedCbHandle_;
+ 
+ 	private:
+ 		ENetAddress		m_address;
+
+Modified: trunk/yake/yake/net/detail/netEnetServerPacketConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEnetServerPacketConnection.h	2006-02-05 10:01:46 UTC (rev 1198)
++++ trunk/yake/yake/net/detail/netEnetServerPacketConnection.h	2006-02-05 22:52:59 UTC (rev 1199)
+@@ -24,7 +24,15 @@
+ 		virtual void addStartedCallback(const OnStartedFn&amp;);
+ 		virtual void addClientConnectedCallback(const OnClientConnectedFn&amp;);
+ 		virtual void addClientDisconnectedCallback(const OnClientDisconnectedFn&amp;);
+-		virtual void addPacketReceivedCallback( const OnPacketReceivedFn&amp;);
++		virtual CallbackConnection addPacketReceivedCallback( const OnPacketReceivedFn&amp;);
++
++		void disconnectPacketReceivedCallback(const CallbackHandle h)
++		{
++			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++			OnPacketReceivedFnList::iterator it = packetReceivedFnList_.find( h );
++			if (it != packetReceivedFnList_.end())
++				packetReceivedFnList_.erase( it );
++		}
+ 	private:
+ 		void sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
+ 		void sendBroadcast(const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
+@@ -52,18 +60,19 @@
+ 		{
+ 			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
+ 			for (OnPacketReceivedFnList::const_iterator it = packetReceivedFnList_.begin(); it != packetReceivedFnList_.end(); ++it)
+-				(*it)(peerId,data,dataLen,channel);
++				(it-&gt;second)(peerId,data,dataLen,channel);
+ 		}
+ 	private:
+ 		typedef std::deque&lt;OnStartedFn&gt; OnStartedFnList;
+ 		typedef std::deque&lt;OnClientConnectedFn&gt; OnClientConnectedFnList;
+ 		typedef std::deque&lt;OnClientDisconnectedFn&gt; OnClientDisconnectedFnList;
+-		typedef std::deque&lt;OnPacketReceivedFn&gt; OnPacketReceivedFnList;
++		typedef std::map&lt;CallbackHandle,OnPacketReceivedFn&gt; OnPacketReceivedFnList;
+ 		OnStartedFnList					startedFnList_;
+ 		OnClientConnectedFnList			clientConnectedFnList_;
+ 		OnClientDisconnectedFnList		clientDisconnectedFnList_;
+ 		OnPacketReceivedFnList			packetReceivedFnList_;
+-		boost::mutex					packetReceivedFnListMtx_;
++		CallbackHandle						lastPacketReceivedCbHandle_;
++		boost::mutex						packetReceivedFnListMtx_;
+ 
+ 	private:
+ 		enum State {
+
+Modified: trunk/yake/yake/net/detail/netEventConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEventConnection.h	2006-02-05 10:01:46 UTC (rev 1198)
++++ trunk/yake/yake/net/detail/netEventConnection.h	2006-02-05 22:52:59 UTC (rev 1199)
+@@ -15,6 +15,9 @@
+ 		virtual void setPacketConnection(IPacketConnection*,const NetEvent::Direction);
+ 		virtual void setMaxEventErrors(const size_t);
+ 
++		virtual bool start();
++		virtual void stop();
++
+ 		virtual void registerEvent(const NetEvent::id_type, const NetEvent::Direction,
+ 									const CreateEventFn&amp; fnCreate, const DestroyEventFn&amp; fnDestroy);
+ 		virtual void sendEvent(const NetEvent&amp;, const SendOptions&amp; opt = SendOptions());
+@@ -22,44 +25,61 @@
+ 		virtual void setAllowedIncomingEventIds(const std::vector&lt;NetEvent::id_type&gt;&amp;);
+ 
+ 		virtual void setProcessEventCallback(const EvtProcessEventFn&amp;);
+-		//virtual void removeProcessEventCallback(const EvtProcessEventFn&amp;);
+ 		virtual void setDisconnectCallback(const EvtDisconnectFn&amp;);
+-	private:
++
++		virtual void setPolling(const bool manualPolling = false);
++		virtual void poll();
++
+ 		void onReceivePacket(const PeerId, const void*, const size_t, const ChannelId);
+ 	private:
+-		//typedef std::deque&lt;EvtProcessEventFn&gt; EvtProcessEventFnList;
+-		//EvtProcessEventFnList	processEventFns_;
+-		EvtProcessEventFn processEventFn_;
+-		void fireCallbacks_ProcessEvent(const PeerId peerId, const NetEvent&amp; evt, const ChannelId channel)
+-		{
+-			if (!processEventFn_.empty())
+-				processEventFn_(peerId,evt,channel);
++		mutable EvtProcessEventFn	processEventFn_;
++		boost::mutex					processEventFnMtx_;
+ 
+-			//EvtProcessEventFnList fns = processEventFns_; // Use a copy as the original container may be modified during the callbacks!
+-			//for (EvtProcessEventFnList::const_iterator it = fns.begin(); it != fns.end(); ++it)
+-			//	(*it)(peerId,evt,channel);
+-		}
+-
+-	private:
+ 		typedef NetEvent::id_type event_id;
+ 		typedef NetEvent::Direction event_direction;
+ 
+ 		struct IdEntry
+ 		{
+ 			event_direction		dir;
+-			CreateEventFn		fnCreate;
+-			DestroyEventFn		fnDestroy;
++			CreateEventFn			fnCreate;
++			DestroyEventFn			fnDestroy;
+ 		};
+ 		typedef std::map&lt;event_id,IdEntry&gt; EventIdMap;
+-		EventIdMap				eventIds_;
++		EventIdMap					eventIds_;
+ 
+ 		typedef std::vector&lt;NetEvent::id_type&gt; EventIdVector;
+-		EventIdVector			allowedEventIds_;
+-		mutable boost::mutex	allowedEventIdsMtx_;
++		EventIdVector				allowedEventIds_;
++		mutable boost::mutex		allowedEventIdsMtx_;
+ 
+ 		event_direction			dir_;
+ 		IPacketConnection*		conn_;
+ 
++		struct EvtQItem
++		{
++			PeerId					peerId_;
++			ChannelId				channel_;
++			NetEvent*				evt_;
++			DestroyEventFn			fnDestroy_;
++			EvtQItem(const PeerId peerId, NetEvent* evt, const ChannelId channel, const DestroyEventFn fnDestroy) :
++				peerId_(peerId), evt_(evt), channel_(channel), fnDestroy_(fnDestroy)
++			{}
++			EvtQItem&amp; operator = (const EvtQItem&amp; rhs)
++			{
++				peerId_ = rhs.peerId_;
++				channel_= rhs.channel_;
++				evt_    = rhs.evt_;
++				fnDestroy_ = rhs.fnDestroy_;
++				return *this;
++			}
++		};
++		typedef std::deque&lt;EvtQItem&gt; EvtQ;
++		mutable EvtQ				evtQ_;
++		boost::mutex				evtQMtx_;
++		bool							manualPolling_;
++
++		mutable bool				started_;
++		boost::mutex				startedMtx_;
++
+ 		struct statistics_t
+ 		{
+ 			statistics_t() : 
+
+Modified: trunk/yake/yake/net/netEvent.h
+===================================================================
+--- trunk/yake/yake/net/netEvent.h	2006-02-05 10:01:46 UTC (rev 1198)
++++ trunk/yake/yake/net/netEvent.h	2006-02-05 22:52:59 UTC (rev 1199)
+@@ -38,10 +38,109 @@
+ 
+ 		virtual bool pack(obitstream&amp;) const = 0;
+ 		virtual bool unpack(ibitstream&amp;) = 0;
++
++		//NetEvent* clone();
++		//{
++		//	NetEvent* clone = doClone();
++		//	NET_ASSERT( clone );
++		//	if (clone)
++		//	{
++		//		clone-&gt;setId( id_ );
++		//		return clone;
++		//	}
++		//	return 0;
++		//}
++	protected:
++		//virtual NetEvent* doClone() = 0;
+ 	private:
+ 		id_type		id_;
+ 	};
+ 
++	/*
++	template&lt;typename T&gt;
++	class ResourceManager
++	{
++	public:
++		struct handle
++		{
++			friend class ResourceManager;
++			T* operator -&gt;()
++			{ return px_; }
++			T* operator -&gt;() const
++			{ return px_; }
++			bool empty() const
++			{ return (px_==0); }
++			void destroy()
++			{
++				owner_-&gt;destroy(this);
++				owner_ = 0;
++				px_ = 0;
++			}
++			handle&amp; operator=(const handle&amp; rhs)
++			{
++				owner_ = rhs.owner_;
++				px_ = rhs.px_;
++			}
++		protected:
++			~handle()
++			{}
++			handle(const handle&amp; other) : creator_(other.creator_), px_(other.px_)
++			{}
++			handle(ResourceManager&lt;T&gt;* owner, T* px) : owner_(owner), px_(px)
++			{}
++		private:
++			T*							px_;
++			ResourceManager&lt;T&gt;*	owner_;
++		};
++		handle create()
++		{ 
++			return handle(this,onCreate());
++		}
++		void destroy(const handle&amp; h)
++		{
++			onDestroy( h.px_ );
++
++			ptr_list::iterator it = std::find( objs_.begin(), objs_.end() );
++			if (it != objs_.end())
++				objs_.erase( it );
++		}
++		void destroyAll()
++		{
++			ptr_list::iterator itEnd = objs_.end();
++			for (ptr_list::iterator it = objs_.begin(); it != itEnd; ++it)
++				onDestroy( *it );
++			objs_.clear();
++		}
++	protected:
++		virtual void onDestroy(T*) = 0;
++		virtual T* onCreate() = 0;
++	private:
++		typedef std::deque&lt;T*&gt; ptr_list;
++		ptr_list		objs_;
++	};
++	typedef ResourceManager&lt;NetEvent&gt; NetEventManager;
++	typedef NetEventManager::handle NetEventHandle;
++	*/
++	class INetEventConnection;
++	namespace impl { class EventConnection; }
++	struct NET_API NetEventHandle
++	{
++		friend class INetEventConnection;
++		friend class impl::EventConnection;
++		NetEvent* operator -&gt;() const;
++		NetEvent&amp; operator *() const;
++		bool empty() const;
++		void destroy();
++		NetEventHandle&amp; operator=(const NetEventHandle&amp; rhs);
++	protected:
++		~NetEventHandle();
++		NetEventHandle(const NetEventHandle&amp; other);
++		NetEventHandle(impl::EventConnection* owner, NetEvent* px);
++	private:
++		NetEvent*					px_;
++		impl::EventConnection*	owner_;
++	};
++
+ 	class NET_API INetEventConnection
+ 	{
+ 	public:
+@@ -50,18 +149,26 @@
+ 		virtual void setPacketConnection(IPacketConnection*,const NetEvent::Direction) = 0;
+ 		virtual void setMaxEventErrors(const size_t) = 0;
+ 
++		virtual bool start() = 0;
++		virtual void stop() = 0;
++
+ 		typedef boost::function&lt;NetEvent*(const NetEvent::id_type)&gt; CreateEventFn;
+ 		typedef boost::function&lt;void(NetEvent*)&gt; DestroyEventFn;
+ 
++		/** NB fnCreate and fnDestroy have to be threadsafe when manual polling is used! */
+ 		virtual void registerEvent(const NetEvent::id_type, const NetEvent::Direction,
+ 									const CreateEventFn&amp; fnCreate, const DestroyEventFn&amp; fnDestroy) = 0;
+ 		virtual void sendEvent(const NetEvent&amp;, const SendOptions&amp; opt = SendOptions()) = 0;
+ 		virtual void sendEvent(const PeerId, const NetEvent&amp;, const SendOptions&amp; opt = SendOptions()) = 0;
+ 		virtual void setAllowedIncomingEventIds(const std::vector&lt;NetEvent::id_type&gt;&amp;) = 0;
+ 
++		virtual void setPolling(const bool manualPolling = false) = 0;
++		virtual void poll() = 0;
++
+ 		typedef boost::function&lt;void(const PeerId, const NetEvent&amp;, const ChannelId)&gt; EvtProcessEventFn;
+ 		typedef boost::function&lt;void(void)&gt; EvtDisconnectFn;
+ 
++		/** Pass 0 to disable. */
+ 		virtual void setProcessEventCallback(const EvtProcessEventFn&amp;) = 0;
+ 		virtual void setDisconnectCallback(const EvtDisconnectFn&amp;) = 0;
+ 	};
+
+Modified: trunk/yake/yake/net/netPacket.h
+===================================================================
+--- trunk/yake/yake/net/netPacket.h	2006-02-05 10:01:46 UTC (rev 1198)
++++ trunk/yake/yake/net/netPacket.h	2006-02-05 22:52:59 UTC (rev 1199)
+@@ -13,13 +13,31 @@
+ 		virtual void send(const PeerId, const void*, const size_t, const SendOptions&amp; opt = SendOptions()) = 0;
+ 	};
+ 
++#pragma warning(push)
++#pragma warning(disable: 4251) // class 'X' needs to have dll-interface to be used by clients of struct 'net::CallbackConnection'
++	typedef uint32 CallbackHandle;
++	struct NET_API CallbackConnection
++	{
++	public:
++		typedef boost::function&lt;void(const CallbackHandle)&gt; DisconnectFn;
++		CallbackConnection(const CallbackHandle h, const DisconnectFn&amp; fn);
++		CallbackConnection(const CallbackConnection&amp;);
++		CallbackConnection&amp; operator=(const CallbackConnection&amp;);
++		~CallbackConnection(); // does nothing!
++		void disconnect();
++	private:
++		DisconnectFn	disconnectFn_;
++		CallbackHandle	handle_;
++	};
++#pragma warning(pop)
++
+ 	class NET_API IPacketReceiver
+ 	{
+ 	public:
+ 		virtual ~IPacketReceiver() {}
+ 
+ 		typedef boost::function&lt;void(const PeerId, const void*, const size_t, const ChannelId)&gt; OnPacketReceivedFn;
+-		virtual void addPacketReceivedCallback( const OnPacketReceivedFn&amp;) = 0;
++		virtual CallbackConnection addPacketReceivedCallback( const OnPacketReceivedFn&amp;) = 0;
+ 	};
+ 
+ 	class NET_API IPacketConnection : public IPacketSender, public IPacketReceiver
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000268.html">[Yake-svn] r1198 - trunk/yake/scripts/msvc8
+</A></li>
+	<LI>Next message: <A HREF="000270.html">[Yake-svn] r1200 - trunk/yake/yake/object
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#269">[ date ]</a>
+              <a href="thread.html#269">[ thread ]</a>
+              <a href="subject.html#269">[ subject ]</a>
+              <a href="author.html#269">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

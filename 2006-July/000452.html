@@ -1,0 +1,174 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1384 - trunk/yake/scripts/msvc8
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1384%20-%20trunk/yake/scripts/msvc8&In-Reply-To=%3C200607052018.k65KIWhA031987%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000451.html">
+   <LINK REL="Next"  HREF="000453.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1384 - trunk/yake/scripts/msvc8</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1384%20-%20trunk/yake/scripts/msvc8&In-Reply-To=%3C200607052018.k65KIWhA031987%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1384 - trunk/yake/scripts/msvc8">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Jul  5 22:18:32 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000451.html">[Yake-svn] r1383 - in trunk/yake/yapp/samples: base misc/cmdrmayhem
+</A></li>
+        <LI>Next message: <A HREF="000453.html">[Yake-svn] r1385 - trunk/yake/src/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#452">[ date ]</a>
+              <a href="thread.html#452">[ thread ]</a>
+              <a href="subject.html#452">[ subject ]</a>
+              <a href="author.html#452">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-05 22:18:31 +0200 (Wed, 05 Jul 2006)
+New Revision: 1384
+
+Modified:
+   trunk/yake/scripts/msvc8/samples.sln
+   trunk/yake/scripts/msvc8/yake.sln
+Log:
+various fixes to get the samples (mostly) uptodate,
+deprecated a few samples
+
+Modified: trunk/yake/scripts/msvc8/samples.sln
+===================================================================
+--- trunk/yake/scripts/msvc8/samples.sln	2006-07-05 20:18:00 UTC (rev 1383)
++++ trunk/yake/scripts/msvc8/samples.sln	2006-07-05 20:18:31 UTC (rev 1384)
+@@ -19,12 +19,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleCmdrMayhem&quot;, &quot;samples\misc\sampleCmdrMayhem.vcproj&quot;, &quot;{1CE9D735-3119-4E08-B4A0-F4DAD35FC8D5}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleModelDotLink&quot;, &quot;samples\model\sampleDotLink.vcproj&quot;, &quot;{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}&quot;
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleModelSync1&quot;, &quot;samples\model\sampleSync1.vcproj&quot;, &quot;{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleModelXODE&quot;, &quot;samples\model\sampleXODE.vcproj&quot;, &quot;{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}&quot;
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleMsg1&quot;, &quot;samples\msg\sampleMsg1.vcproj&quot;, &quot;{452438E8-F03B-47B9-984B-2CF79D2F6734}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleRoClient&quot;, &quot;samples\net\sampleRoClient.vcproj&quot;, &quot;{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}&quot;
+@@ -39,8 +35,6 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleScriptingLua&quot;, &quot;samples\scripting\sampleScriptingLua.vcproj&quot;, &quot;{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleStateMachine&quot;, &quot;samples\state\sampleStateMachine.vcproj&quot;, &quot;{84F0FA89-EB3D-47D6-9C6E-628434AE2C70}&quot;
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleFsm1&quot;, &quot;samples\statemachine\sampleFsm1.vcproj&quot;, &quot;{F270D584-0E4B-4FF0-8EDB-4D098BE49D43}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleEvents&quot;, &quot;samples\base\sampleEvents.vcproj&quot;, &quot;{CD6F13A0-F399-411A-9766-0F8E02761D90}&quot;
+@@ -49,8 +43,6 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleNetPacket&quot;, &quot;samples\net\sampleNetPacket.vcproj&quot;, &quot;{5473599B-AB7B-4259-B052-4DDC68CBEA54}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleDotScene&quot;, &quot;samples\graphics\sampleDotScene.vcproj&quot;, &quot;{8E612AD0-68D1-445E-A31E-7CB1CCA18CA0}&quot;
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleModel1&quot;, &quot;samples\model\sampleModel1.vcproj&quot;, &quot;{920E5CA3-620C-43C3-986C-5A6F9397F6DA}&quot;
+ EndProject
+ Global
+@@ -95,18 +87,10 @@
+ 		{1CE9D735-3119-4E08-B4A0-F4DAD35FC8D5}.Debug|Win32.Build.0 = Debug|Win32
+ 		{1CE9D735-3119-4E08-B4A0-F4DAD35FC8D5}.Release|Win32.ActiveCfg = Release|Win32
+ 		{1CE9D735-3119-4E08-B4A0-F4DAD35FC8D5}.Release|Win32.Build.0 = Release|Win32
+-		{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}.Debug|Win32.Build.0 = Debug|Win32
+-		{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}.Release|Win32.ActiveCfg = Release|Win32
+-		{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}.Release|Win32.Build.0 = Release|Win32
+ 		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Debug|Win32.Build.0 = Debug|Win32
+ 		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Release|Win32.ActiveCfg = Release|Win32
+ 		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Release|Win32.Build.0 = Release|Win32
+-		{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}.Debug|Win32.Build.0 = Debug|Win32
+-		{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}.Release|Win32.ActiveCfg = Release|Win32
+-		{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}.Release|Win32.Build.0 = Release|Win32
+ 		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Debug|Win32.Build.0 = Debug|Win32
+ 		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Release|Win32.ActiveCfg = Release|Win32
+@@ -135,10 +119,6 @@
+ 		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Debug|Win32.Build.0 = Debug|Win32
+ 		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Release|Win32.ActiveCfg = Release|Win32
+ 		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Release|Win32.Build.0 = Release|Win32
+-		{84F0FA89-EB3D-47D6-9C6E-628434AE2C70}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{84F0FA89-EB3D-47D6-9C6E-628434AE2C70}.Debug|Win32.Build.0 = Debug|Win32
+-		{84F0FA89-EB3D-47D6-9C6E-628434AE2C70}.Release|Win32.ActiveCfg = Release|Win32
+-		{84F0FA89-EB3D-47D6-9C6E-628434AE2C70}.Release|Win32.Build.0 = Release|Win32
+ 		{F270D584-0E4B-4FF0-8EDB-4D098BE49D43}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{F270D584-0E4B-4FF0-8EDB-4D098BE49D43}.Debug|Win32.Build.0 = Debug|Win32
+ 		{F270D584-0E4B-4FF0-8EDB-4D098BE49D43}.Release|Win32.ActiveCfg = Release|Win32
+@@ -155,10 +135,6 @@
+ 		{5473599B-AB7B-4259-B052-4DDC68CBEA54}.Debug|Win32.Build.0 = Debug|Win32
+ 		{5473599B-AB7B-4259-B052-4DDC68CBEA54}.Release|Win32.ActiveCfg = Release|Win32
+ 		{5473599B-AB7B-4259-B052-4DDC68CBEA54}.Release|Win32.Build.0 = Release|Win32
+-		{8E612AD0-68D1-445E-A31E-7CB1CCA18CA0}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{8E612AD0-68D1-445E-A31E-7CB1CCA18CA0}.Debug|Win32.Build.0 = Debug|Win32
+-		{8E612AD0-68D1-445E-A31E-7CB1CCA18CA0}.Release|Win32.ActiveCfg = Release|Win32
+-		{8E612AD0-68D1-445E-A31E-7CB1CCA18CA0}.Release|Win32.Build.0 = Release|Win32
+ 		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Debug|Win32.Build.0 = Debug|Win32
+ 		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Release|Win32.ActiveCfg = Release|Win32
+
+Modified: trunk/yake/scripts/msvc8/yake.sln
+===================================================================
+--- trunk/yake/scripts/msvc8/yake.sln	2006-07-05 20:18:00 UTC (rev 1383)
++++ trunk/yake/scripts/msvc8/yake.sln	2006-07-05 20:18:31 UTC (rev 1384)
+@@ -130,8 +130,6 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;model&quot;, &quot;model.vcproj&quot;, &quot;{6BB1D3EF-8836-4D23-BE24-340D310D9913}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleModelDotScene&quot;, &quot;samples\model\sampleDotScene.vcproj&quot;, &quot;{920E5CA3-620C-43C3-986C-5A6F9397F6DA}&quot;
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;loader&quot;, &quot;loader.vcproj&quot;, &quot;{2E5A589E-41FE-4BE9-80A0-1F8570944486}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplePhysicsDemo&quot;, &quot;samples\physics\samplePhysicsDemo.vcproj&quot;, &quot;{3DA99679-404B-44C7-9267-C97D066F3D96}&quot;
+@@ -264,10 +262,6 @@
+ 		{6BB1D3EF-8836-4D23-BE24-340D310D9913}.Debug|Win32.Build.0 = Debug|Win32
+ 		{6BB1D3EF-8836-4D23-BE24-340D310D9913}.Release|Win32.ActiveCfg = Release|Win32
+ 		{6BB1D3EF-8836-4D23-BE24-340D310D9913}.Release|Win32.Build.0 = Release|Win32
+-		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Debug|Win32.Build.0 = Debug|Win32
+-		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Release|Win32.ActiveCfg = Release|Win32
+-		{920E5CA3-620C-43C3-986C-5A6F9397F6DA}.Release|Win32.Build.0 = Release|Win32
+ 		{2E5A589E-41FE-4BE9-80A0-1F8570944486}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{2E5A589E-41FE-4BE9-80A0-1F8570944486}.Debug|Win32.Build.0 = Debug|Win32
+ 		{2E5A589E-41FE-4BE9-80A0-1F8570944486}.Release|Win32.ActiveCfg = Release|Win32
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000451.html">[Yake-svn] r1383 - in trunk/yake/yapp/samples: base misc/cmdrmayhem
+</A></li>
+	<LI>Next message: <A HREF="000453.html">[Yake-svn] r1385 - trunk/yake/src/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#452">[ date ]</a>
+              <a href="thread.html#452">[ thread ]</a>
+              <a href="subject.html#452">[ subject ]</a>
+              <a href="author.html#452">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

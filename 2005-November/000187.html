@@ -1,0 +1,363 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1119 - in trunk/yake/yake: base base/templates input physics plugins/graphicsOgre plugins/physicsODE samples/common
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1119%20-%20in%20trunk/yake/yake%3A%20base%20base/templates%20input%20physics%20plugins/graphicsOgre%20plugins/physicsODE%20samples/common&In-Reply-To=%3C200511092046.jA9KkK31002403%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000186.html">
+   <LINK REL="Next"  HREF="000190.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1119 - in trunk/yake/yake: base base/templates input physics plugins/graphicsOgre plugins/physicsODE samples/common</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1119%20-%20in%20trunk/yake/yake%3A%20base%20base/templates%20input%20physics%20plugins/graphicsOgre%20plugins/physicsODE%20samples/common&In-Reply-To=%3C200511092046.jA9KkK31002403%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1119 - in trunk/yake/yake: base base/templates input physics plugins/graphicsOgre plugins/physicsODE samples/common">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  9 21:46:20 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000186.html">[Yake-svn] r1118 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+        <LI>Next message: <A HREF="000190.html">[Yake-svn] r1120 - in trunk/yake/src: yake/plugins/physicsODE yapp/base/event yapp/loader
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#187">[ date ]</a>
+              <a href="thread.html#187">[ thread ]</a>
+              <a href="subject.html#187">[ subject ]</a>
+              <a href="author.html#187">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-09 21:46:15 +0100 (Wed, 09 Nov 2005)
+New Revision: 1119
+
+Modified:
+   trunk/yake/yake/base/templates/yakeSignals.h
+   trunk/yake/yake/base/yake.h
+   trunk/yake/yake/input/yakePrerequisites.h
+   trunk/yake/yake/physics/yakePhysicsJoint.h
+   trunk/yake/yake/physics/yakePhysicsMaterial.h
+   trunk/yake/yake/physics/yakePhysicsPrerequisites.h
+   trunk/yake/yake/physics/yakePhysicsShape.h
+   trunk/yake/yake/physics/yakePhysicsWorld.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h
+   trunk/yake/yake/plugins/physicsODE/OdeMaterial.h
+   trunk/yake/yake/plugins/physicsODE/OdeShapes.h
+   trunk/yake/yake/plugins/physicsODE/OdeWorld.h
+   trunk/yake/yake/samples/common/yakeExampleApplication.h
+Log:
+patch 1350326 by mj (modified by psy)
+
+Modified: trunk/yake/yake/base/templates/yakeSignals.h
+===================================================================
+--- trunk/yake/yake/base/templates/yakeSignals.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/base/templates/yakeSignals.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -161,4 +161,12 @@
+ private: \
+ 	Sig ## NAME ## Type	mSig ## NAME;
+ 
++#define YAKE_MEMBERSIGNAL_PROT( ACCESS, SIGNATURE, NAME ) \
++ACCESS: \
++	typedef SignalX&lt;SIGNATURE&gt; Sig ## NAME ## Type; \
++	::yake::SignalConnection subscribeTo ## NAME ( const Sig ## NAME ## Type::slot_type&amp; slot ) \
++	{ return mSig ## NAME.connect(slot); } \
++protected: \
++	Sig ## NAME ## Type	mSig ## NAME;
++
+ #endif
+
+Modified: trunk/yake/yake/base/yake.h
+===================================================================
+--- trunk/yake/yake/base/yake.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/base/yake.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+
+Modified: trunk/yake/yake/input/yakePrerequisites.h
+===================================================================
+--- trunk/yake/yake/input/yakePrerequisites.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/input/yakePrerequisites.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -33,4 +33,5 @@
+ #	define YAKE_INPUT_API DLLIMPORT
+ #endif
+ 
+-#endif
+\ No newline at end of file
++#endif
++
+
+Modified: trunk/yake/yake/physics/yakePhysicsJoint.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsJoint.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/physics/yakePhysicsJoint.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -92,7 +92,9 @@
+ 				breakingForce( real(0) ),
+ 				breakingTorque( real(0) )
+ 			{
+-				YAKE_ASSERT( pFirst || pSecond ).warning(&quot;need at least one actor!&quot;);
++			    // we want to allow to create joint descriptions when actors are not yet created,
++			    // like on parsing stage...
++			    //	YAKE_ASSERT( pFirst || pSecond ).warning(&quot;need at least one actor!&quot;);
+ 			}
+ 
+ 			virtual ~DescBase() {}
+
+Modified: trunk/yake/yake/physics/yakePhysicsMaterial.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsMaterial.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/physics/yakePhysicsMaterial.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -42,7 +42,7 @@
+ 	public:
+ 		struct Desc
+ 		{
+-			Desc( real bounciness = 0.5,
++			Desc(
+ 					real softness = 0.2,
+ 					real friction = 0.1,
+ 					real restitution = 0.5, 
+@@ -52,13 +52,11 @@
+ 				mRestitution( restitution ),
+ 				mStaticFriction( staticFriction ),
+ 				mRollingFriction( rollingFriction ),
+-				mSoftness( softness ),
+-				mBounciness( bounciness )
++				mSoftness( softness )
+ 			{}
+ 			
+ 			virtual ~Desc() {}
+ 			
+-			real mBounciness;
+ 			real mSoftness;
+ 			real mFriction;
+ 			real mRestitution;
+@@ -68,7 +66,6 @@
+ 
+ 		virtual ~IMaterial() {}
+ 
+-		virtual void setBounciness(const real bounciness) = 0;
+ 		virtual void setSoftness(const real softness) = 0;
+ 		virtual void setRollingFriction(const real friction) = 0;
+ 		virtual void setRestitution(const real restitution) = 0;
+
+Modified: trunk/yake/yake/physics/yakePhysicsPrerequisites.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsPrerequisites.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/physics/yakePhysicsPrerequisites.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -66,7 +66,7 @@
+ 			}
+ 			void removeListener(ListenerType* pListener)
+ 			{
+-				ListenerPtrList::iterator itFind = std::find( mListeners.begin(), mListeners.end(), pListener );
++				typename ListenerPtrList::iterator itFind = std::find( mListeners.begin(), mListeners.end(), pListener );
+ 				if (itFind != mListeners.end())
+ 					mListeners.erase( itFind );
+ 			}
+@@ -123,12 +123,12 @@
+ 		TriangleMeshDesc()
+ 		{
+ 		}
+-		TriangleMeshDesc(	const VertexVector&amp; rVertices,
+-							const IndexVector&amp; rIndices ) :
++		TriangleMeshDesc( const VertexVector&amp; rVertices, const IndexVector&amp; rIndices ) :
+ 				vertices( rVertices ),
+ 				indices( rIndices )
+ 		{
+ 		}
++		
+ 		TriangleMeshDesc(	const VertexVector&amp; rVertices,
+ 							const IndexVector&amp; rIndices,
+ 							const NormalVector&amp; rNormals ) :
+@@ -137,6 +137,7 @@
+ 				normals( rNormals )
+ 		{
+ 		}
++		
+ 		VertexVector	vertices;
+ 		IndexVector		indices;
+ 		NormalVector	normals;
+@@ -145,3 +146,4 @@
+ }
+ 
+ #endif
++
+
+Modified: trunk/yake/yake/physics/yakePhysicsShape.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsShape.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/physics/yakePhysicsShape.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -146,21 +146,22 @@
+ 
+ 		struct TriMeshDesc : Desc
+ 		{
+-			TriMeshDesc(	const TriangleMeshId meshId_,
+-							// base class:
+-							const String&amp; material_ = &quot;&quot;,
+-							const Vector3&amp; rPosition = Vector3::kZero, 
+-							const Quaternion&amp; rOrientation = Quaternion::kIdentity
+-						 ) :
++		    TriMeshDesc(	const TriangleMeshDesc trimesh,
++			    // base class:
++			    const String&amp; material_ = &quot;&quot;,
++			    const Vector3&amp; rPosition = Vector3::kZero, 
++			    const Quaternion&amp; rOrientation = Quaternion::kIdentity
++			    ) :
+ 				Desc( ST_TRIANGLE_MESH, rPosition, rOrientation, material_ ),
+-				meshId( meshId_ )
+-			{}
+-			TriangleMeshId	meshId;
++				trimesh_( trimesh )
++		    {}
++		    TriangleMeshDesc trimesh_;	
+ 		};
+ 	public:
+ 		virtual ~IShape() {}
+ 
+ 		virtual ShapeType getType() const = 0;
++		virtual void setMaterial( IMaterial* pMaterial ) = 0;
+ 
+ 		//virtual Vector3 getDerivedPosition() const = 0;
+ 		//virtual Quaternion getDerivedOrientation() const = 0;
+@@ -170,6 +171,7 @@
+ 	};
+ 	YAKE_PHYSICS_COMMON_POINTERS( IShape );
+ 
++    }
+ }
+-}
+ #endif
++
+
+Modified: trunk/yake/yake/physics/yakePhysicsWorld.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsWorld.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/physics/yakePhysicsWorld.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -61,6 +61,7 @@
+ 			IActor::Desc desc(type);
+ 			return createActor( desc ); 
+ 		}
++
+ 		virtual IAvatarPtr createAvatar( const IAvatar::Desc&amp; rkAvatarDesc ) = 0;
+ 		virtual IMaterialPtr createMaterial( const IMaterial::Desc&amp; rkMatDesc, const String&amp; id = &quot;&quot; ) = 0;
+ 		virtual IMaterialPtr getMaterial( const String&amp; id ) const = 0;
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeMaterial.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeMaterial.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/plugins/physicsODE/OdeMaterial.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -36,9 +36,8 @@
+ 	class YAKE_PHYSICSODE_API OdeMaterial : public IMaterial
+ 	{
+ 	public:
+-		OdeMaterial(const physics::IMaterial::Desc&amp; desc, const String&amp; name);
+-		OdeMaterial(const String&amp; name);
+-		virtual void setBounciness(const real bounciness);
++		OdeMaterial( const physics::IMaterial::Desc&amp; desc, const String&amp; name );
++		OdeMaterial( const String&amp; name );
+ 		virtual void setSoftness(const real softness);
+ 		virtual void setRollingFriction( const real friction );
+ 		virtual void setRestitution( const real restitution );
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeShapes.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeShapes.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/plugins/physicsODE/OdeShapes.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -49,7 +49,7 @@
+ 			virtual dGeom* _getOdeGeomPtr();
+ 
+ 			OdeMaterial* getMaterial() const;
+-			void setMaterial( OdeMaterial* pMaterial );
++			virtual void setMaterial( IMaterial* pMaterial );
+ 
+ 			OdeActor* getOwner() const
+ 			{ return mOwner; }
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeWorld.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeWorld.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/plugins/physicsODE/OdeWorld.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -49,9 +49,9 @@
+ 			OdeWorld();
+ 			virtual ~OdeWorld();
+ 
+-			virtual IJointPtr createJoint( const IJoint::DescBase &amp; rkJointDesc );
+-			virtual IActorPtr createActor( const IActor::Desc&amp; rActorDesc = IActor::Desc(ACTOR_MOVABLE) );
+-			virtual IAvatarPtr createAvatar( const IAvatar::Desc &amp; rkAvatarDesc )
++			virtual IJointPtr createJoint( const IJoint::DescBase&amp; rkJointDesc );
++			virtual IActorPtr createActor( const IActor::Desc&amp; rActorDesc = IActor::Desc( ACTOR_MOVABLE ) );
++			virtual IAvatarPtr createAvatar( const IAvatar::Desc&amp; rkAvatarDesc )
+ 			{
+ 				YAKE_ASSERT( 0 ).warning(&quot;not supported.&quot;);
+ 				return IAvatarPtr();
+@@ -134,3 +134,4 @@
+ }
+ 
+ #endif
++
+
+Modified: trunk/yake/yake/samples/common/yakeExampleApplication.h
+===================================================================
+--- trunk/yake/yake/samples/common/yakeExampleApplication.h	2005-11-09 20:38:18 UTC (rev 1118)
++++ trunk/yake/yake/samples/common/yakeExampleApplication.h	2005-11-09 20:46:15 UTC (rev 1119)
+@@ -155,7 +155,7 @@
+ 			// physics
+ 			if (mLoadPhysicsSystem)
+ 			{
+-				SharedPtr&lt;base::Library&gt; pLib = loadLib(&quot;physicsNX&quot; );
++				SharedPtr&lt;base::Library&gt; pLib = loadLib(&quot;physicsODE&quot; );
+ 				YAKE_ASSERT( pLib ).debug(&quot;Cannot load graphics plugin.&quot;);
+ 
+ 				mPhysicsSystem = create_default&lt; physics::IPhysicsSystem &gt;();
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000186.html">[Yake-svn] r1118 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+	<LI>Next message: <A HREF="000190.html">[Yake-svn] r1120 - in trunk/yake/src: yake/plugins/physicsODE yapp/base/event yapp/loader
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#187">[ date ]</a>
+              <a href="thread.html#187">[ thread ]</a>
+              <a href="subject.html#187">[ subject ]</a>
+              <a href="author.html#187">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

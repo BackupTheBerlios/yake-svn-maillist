@@ -1,0 +1,359 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1136 - trunk/yake/yapp/loader
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1136%20-%20trunk/yake/yapp/loader&In-Reply-To=%3C200511100017.jAA0HQov011117%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000205.html">
+   <LINK REL="Next"  HREF="000207.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1136 - trunk/yake/yapp/loader</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1136%20-%20trunk/yake/yapp/loader&In-Reply-To=%3C200511100017.jAA0HQov011117%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1136 - trunk/yake/yapp/loader">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov 10 01:17:26 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000205.html">[Yake-svn] r1135 - trunk/yake/yapp/common
+</A></li>
+        <LI>Next message: <A HREF="000207.html">[Yake-svn] r1137 - trunk/yake/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#206">[ date ]</a>
+              <a href="thread.html#206">[ thread ]</a>
+              <a href="subject.html#206">[ subject ]</a>
+              <a href="author.html#206">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-10 01:17:06 +0100 (Thu, 10 Nov 2005)
+New Revision: 1136
+
+Modified:
+   trunk/yake/yapp/loader/yakeDotScene.h
+   trunk/yake/yapp/loader/yakeXODEParser.h
+Log:
+patch 1350326 by mj
+
+Modified: trunk/yake/yapp/loader/yakeDotScene.h
+===================================================================
+--- trunk/yake/yapp/loader/yakeDotScene.h	2005-11-10 00:15:24 UTC (rev 1135)
++++ trunk/yake/yapp/loader/yakeDotScene.h	2005-11-10 00:17:06 UTC (rev 1136)
+@@ -42,7 +42,6 @@
+ 	*/
+ 	class DotSceneParser
+ 	{
+-		YAKE_DECLARE_CLASS( DotSceneParser );
+ 	public:
+ 		
+ 		struct Desc
+@@ -120,7 +119,7 @@
+ 		typedef AssocVector&lt; String, CameraDesc &gt; CameraDescMap;
+ 		typedef AssocVector&lt; String, LightDesc &gt; LightDescMap;
+ 
+-		static String	ROOT_NODE_NAME;
++		static const String ROOT_NODE_NAME;
+ 		
+ 		virtual ~DotSceneParser() {}
+ 
+
+Modified: trunk/yake/yapp/loader/yakeXODEParser.h
+===================================================================
+--- trunk/yake/yapp/loader/yakeXODEParser.h	2005-11-10 00:15:24 UTC (rev 1135)
++++ trunk/yake/yapp/loader/yakeXODEParser.h	2005-11-10 00:17:06 UTC (rev 1136)
+@@ -28,6 +28,7 @@
+ #define YAKE_DATA_XODEPARSER_H
+ 
+ #include &lt;yake/data/yakeData.h&gt;
++#include &lt;yake/physics/yakePhysics.h&gt;
+ #include &lt;yapp/model/yakePhysical.h&gt;
+ 
+ namespace yake {
+@@ -36,14 +37,15 @@
+ namespace xode {
+ 
+ 	/** XODEParser base class providing default implementation for DOM parsing.
+-	* \todo read lights, environment, external references ..
+ 	*/
+ 	class YAPP_BASE_API XODEParser
+ 	{
+ 	public:
+ 		typedef SharedPtr&lt;dom::INode&gt; NodeSharedPtr;
++		typedef dom::NodeList::const_iterator NodeListIter;
++
+ 		
+-		XODEParser( model::Physical&amp; rBaseModel );
++		XODEParser();
+ 		virtual ~XODEParser() {}
+ 
+ 		String getName() const
+@@ -57,29 +59,28 @@
+ 			\param file 
+ 			\return 
+ 		*/
+-		virtual bool load( const NodeSharedPtr docNode,  physics::IWorld* pPWorld );
++		virtual bool load( const NodeSharedPtr docNode );
+ 
+ 		/** Prepare for next run of load/store.
+ 		*/
+ 		virtual void reset();
+-	
+-	protected:
++		
+ 		/// XODE &quot;transform&quot; node representation
+ 		struct Transform
+ 		{
+-			Vector3 	mPosition;
+-			Quaternion	mRotation;
+-			Vector3		mScale;
++			Vector3 	position_;
++			Quaternion	rotation_;
++			Vector3		scale_;
+ 			
+-			Transform() : mScale( Vector3::kUnitScale )
++			Transform() : scale_( Vector3::kUnitScale )
+ 			{
+ 			}
+ 			
+ 			bool isIdentity() const
+ 			{
+-				bool result = mScale == Vector3::kUnitScale;
+-				result &amp;= mPosition == Vector3::kZero;
+-				result &amp;= mRotation == Quaternion::kZero;
++				bool result = scale_ == Vector3::kUnitScale;
++				result &amp;= position_ == Vector3::kZero;
++				result &amp;= rotation_ == Quaternion::kZero;
+ 				
+ 				return result;
+ 			}
+@@ -88,29 +89,108 @@
+ 			{
+ 				Transform result;
+ 				
+-				Quaternion const&amp; rParRot = parentTransform.mRotation;
+-				Vector3 const&amp; rParPos = parentTransform.mPosition;
+-				Vector3 const&amp; rParScale = parentTransform.mScale;
++				Quaternion const&amp; rParRot = parentTransform.rotation_;
++				Vector3 const&amp; rParPos = parentTransform.position_;
++				Vector3 const&amp; rParScale = parentTransform.scale_;
+ 				
+-				result.mPosition = parentTransform.mPosition 
+-					+ rParRot*( mPosition*rParScale );
++				result.position_ = parentTransform.position_ 
++					+ rParRot*( position_*rParScale );
+ 					
+-				result.mRotation = rParRot*mRotation;
++				result.rotation_ = rParRot*rotation_;
+ 				
+-				result.mScale = mScale*rParScale;  
++				result.scale_ = scale_*rParScale;  
+ 				
+ 				return result;
+ 			}
+ 		};
++
++		// Event-spawning parser makes heavy use of these
++		struct Desc
++		{
++		  String	name_;
++		  String	parentName_;
++		  Transform	transform_;
++		};
++
++		struct BodyDesc : public Desc
++		{
++		};
++
++		struct GeomDesc : public Desc
++		{
++		    SharedPtr&lt;physics::IShape::Desc&gt; shape_;
++		};
++
++		struct MassDesc : public Desc // ??? is this needed??
++		{
++		  SharedPtr&lt;physics::IBody::MassDesc&gt; mass_;
++		};
++
++		struct JointDesc : public Desc
++		{
++		  String otherBody_;
++
++		  SharedPtr&lt;physics::IJoint::DescBase&gt; joint_;
++		};
++
++		struct MaterialDesc : public Desc // ?? no... not needed
++		{
++		  physics::IMaterial::Desc material_;
++		};
+ 		
++		typedef SignalX&lt; void( const BodyDesc&amp; ) &gt; BodySignal;
++		typedef SignalX&lt; void( const GeomDesc&amp; ) &gt; GeomSignal;
++		typedef SignalX&lt; void( const MassDesc&amp; ) &gt; MassSignal;
++		typedef SignalX&lt; void( const JointDesc&amp; ) &gt; JointSignal;
++		typedef SignalX&lt; void( const MaterialDesc&amp; ) &gt; MaterialSignal;
++		typedef SignalX&lt; void ( void ) &gt; EventSignal; // special event handler type
++	
++		SignalConnection subscribeToBodySignal( const BodySignal::slot_type&amp; slot )
++		{ return sigBody_.connect(slot); } 
++		SignalConnection subscribeToGeomSignal( const GeomSignal::slot_type&amp; slot )
++		{ return sigGeom_.connect(slot); } 
++		SignalConnection subscribeToMassSignal( const MassSignal::slot_type&amp; slot )
++		{ return sigMass_.connect(slot); } 
++		SignalConnection subscribeToJointSignal( const JointSignal::slot_type&amp; slot )
++		{ return sigJoint_.connect(slot); } 
++		SignalConnection subscribeToMaterialSignal( const MaterialSignal::slot_type&amp; slot )
++		{ return sigMaterial_.connect(slot); } 
++
++		SignalConnection subscribeToParseEndedSignal( const EventSignal::slot_type&amp; slot )
++		{ return sigParseEnded_.connect( slot ); } 
++
++		typedef AssocVector&lt; String, BodyDesc &gt; BodyDescMap;
++		typedef AssocVector&lt; String, GeomDesc &gt; GeomDescMap;
++		typedef AssocVector&lt; String, MassDesc &gt; MassDescMap;
++		typedef AssocVector&lt; String, JointDesc &gt; JointDescMap;
++		typedef AssocVector&lt; String, MaterialDesc &gt; MaterialDescMap;
++
++		const BodyDescMap&amp; getBodyDescriptions() { return bodyDescriptions_; }
++		const GeomDescMap&amp; getGeomDescriptions() { return geomDescriptions_; }
++		const MassDescMap&amp; getMassDescriptions() { return massDescriptions_; }
++		const JointDescMap&amp; getJointDescriptions() { return jointDescriptions_; }
++		const MaterialDescMap&amp; getMaterialDescriptions() { return materialDescriptions_; }
++		
++	protected:
++		BodySignal	sigBody_;
++		GeomSignal	sigGeom_;
++		MassSignal	sigMass_;
++		JointSignal	sigJoint_;
++		MaterialSignal	sigMaterial_;
++		EventSignal	sigParseEnded_;
++	
++		BodyDescMap bodyDescriptions_;
++		GeomDescMap geomDescriptions_;
++		MassDescMap massDescriptions_;
++		JointDescMap jointDescriptions_;
++		MaterialDescMap materialDescriptions_;
++		
+ 		/// Default implementations for common functions.
+-		
+-
+ 		virtual void readXODE( const NodeSharedPtr pNode );
+ 		virtual void readWorld( const NodeSharedPtr pWorldNode );
+-		virtual void readSpace( const NodeSharedPtr pSpaceNode );
+-		virtual void readBody( const NodeSharedPtr pBodyNode );
+-		virtual void readGeom( const NodeSharedPtr pGeomNode, physics::IActor* pParentObject = NULL, const Transform&amp; rParentTransform = Transform() );
++		virtual void readSpace( const NodeSharedPtr pSpaceNode, const String&amp; parent );
++		virtual void readBody( const NodeSharedPtr pBodyNode, const String&amp; parent );
++		virtual void readGeom( const NodeSharedPtr pGeomNode, const String&amp; parent , const Transform&amp; rParentTransform = Transform() );
+ 		virtual void readBox( const NodeSharedPtr pNode, real&amp; sX, real&amp; sY, real&amp; sZ );
+ 		virtual void readCappedCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length );
+ 		virtual void readCone( const NodeSharedPtr pNode, real&amp; radius, real&amp; length );
+@@ -130,59 +210,38 @@
+ 		virtual void readRotation( const NodeSharedPtr pRotNode, Quaternion&amp; rRot );
+ 		virtual void readScale( const NodeSharedPtr pScaleNode, Vector3&amp; rScale );  
+ 		virtual void readAxisAngleRot( const NodeSharedPtr pRotNode, Quaternion&amp; rRot );
+-		virtual void readMass( const NodeSharedPtr pMassNode, physics::IBody&amp; rBody, const Transform&amp; rParentTransform ); 
+-		virtual void readMassShape( const NodeSharedPtr pMShapeNode, physics::IBody&amp; rBody, const Transform&amp; rParentTransform ); 
+-		virtual void readMassAdjust( const NodeSharedPtr pMAdjustNode, physics::IBody&amp; rBody ); 
+-		virtual void readJoint( const NodeSharedPtr pJointNode, const String&amp; rBodyName, Transform&amp; rParentTransform );
++		virtual void readMass( const NodeSharedPtr pMassNode, const String&amp; parent , const Transform&amp; rParentTransform ); 
++		virtual void readMassShape( const NodeSharedPtr pMShapeNode, const String&amp; parent, const Transform&amp; rParentTransform ); 
++		virtual void readMassAdjust( const NodeSharedPtr pMAdjustNode, const String&amp; parent ); 
++		virtual void readJoint( const NodeSharedPtr pJointNode, const String&amp; parent , Transform&amp; rParentTransform );
+ 		
+-		virtual void readBall( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+-		virtual void readFixed( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+-		virtual void readHinge( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+-		virtual void readHinge2( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+-		virtual void readSlider( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+-		virtual void readUniversal( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readBall( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readFixed( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readHinge( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readHinge2( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readSlider( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readUniversal( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform );
+ 		
+ 		virtual void readAnchor( const NodeSharedPtr pAnchorNode, Vector3&amp; rAnchor, Transform&amp; rJointTransform );
+ 		virtual void readAxis( const NodeSharedPtr pAxisNode, Vector3&amp; rAxis, Transform&amp; rJointTransform );
+-		virtual String XODEParser::readMaterialExt( const NodeSharedPtr pNode );
+-		
+-// 		readGroup
+-// 		readJointgroup
+-// 		virtual void readMassStruct
+-		
+-		struct JointDescription
+-		{
+-			String					mBody1Name; /// name of 2nd body is inside joint def  node
+-			NodeSharedPtr	mJointDefNode;
+-			Transform				mParentTransform;
+-		};
+-	
+-		typedef Vector&lt;JointDescription&gt; JointDescriptions;
+-		JointDescriptions			mJointDescriptions;
+-		
+-		/// Joint creation is only possible at post-parse step
+-		void createJointsFromDescriptions(); 
+-		void createJoint( const JointDescription&amp; rDesc );
+-		
++		virtual void readMaterialExt( const NodeSharedPtr pNode, const String&amp; parent  );
++
+ 	private:
+-		NodeSharedPtr			mDocNode;
+-		physics::IWorld*					mPWorld;
+-		model::Physical&amp;					mBaseModel;
++		NodeSharedPtr		mDocNode;
+ 	};
+ 	
+ 	class YAPP_BASE_API XODEParserV1 : public XODEParser
+ 	{
+ 	public:
+-		XODEParserV1( model::Physical&amp; rBaseModel ):XODEParser( rBaseModel ) {}
+ 		virtual ~XODEParserV1() {}
+ 		
+ 		virtual Version getVersion() const
+ 		{ 
+-			return Version( 0, 1, 0 );
++			return Version( 0, 5, 0 );
+ 		}
+ 	};
+ 
+-} // dotscene
++} // xode
+ } // parser
+ } // data
+ } // yake
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000205.html">[Yake-svn] r1135 - trunk/yake/yapp/common
+</A></li>
+	<LI>Next message: <A HREF="000207.html">[Yake-svn] r1137 - trunk/yake/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#206">[ date ]</a>
+              <a href="thread.html#206">[ thread ]</a>
+              <a href="subject.html#206">[ subject ]</a>
+              <a href="author.html#206">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1259 - in trunk/yake/src/yake/samples: . msg msg/sampleMsg1
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1259%20-%20in%20trunk/yake/src/yake/samples%3A%20.%20msg%20msg/sampleMsg1&In-Reply-To=%3C200603122216.k2CMGS7P013000%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000328.html">
+   <LINK REL="Next"  HREF="000330.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1259 - in trunk/yake/src/yake/samples: . msg msg/sampleMsg1</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1259%20-%20in%20trunk/yake/src/yake/samples%3A%20.%20msg%20msg/sampleMsg1&In-Reply-To=%3C200603122216.k2CMGS7P013000%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1259 - in trunk/yake/src/yake/samples: . msg msg/sampleMsg1">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 12 23:16:28 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000328.html">[Yake-svn] r1258 - in trunk/yake/scripts/msvc8/samples: . ent
+</A></li>
+        <LI>Next message: <A HREF="000330.html">[Yake-svn] r1260 - in trunk/yake/yake: . msg
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#329">[ date ]</a>
+              <a href="thread.html#329">[ thread ]</a>
+              <a href="subject.html#329">[ subject ]</a>
+              <a href="author.html#329">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-12 23:16:28 +0100 (Sun, 12 Mar 2006)
+New Revision: 1259
+
+Added:
+   trunk/yake/src/yake/samples/msg/
+   trunk/yake/src/yake/samples/msg/sampleMsg1/
+   trunk/yake/src/yake/samples/msg/sampleMsg1/demo.cpp
+Log:
+initial revision
+
+Added: trunk/yake/src/yake/samples/msg/sampleMsg1/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/msg/sampleMsg1/demo.cpp	2006-03-12 22:06:19 UTC (rev 1258)
++++ trunk/yake/src/yake/samples/msg/sampleMsg1/demo.cpp	2006-03-12 22:16:28 UTC (rev 1259)
+@@ -0,0 +1,149 @@
++//#include &quot;yake/base/yakePrerequisites.h&quot;
++#include &quot;yake/base/yake.h&quot;
++#include &quot;yake/msg/yakeMessage.h&quot;
++
++using namespace yake;
++
++void app_handle_int(const int&amp; i)
++{
++	std::cout &lt;&lt; &quot;app_handle_int(&quot; &lt;&lt; i &lt;&lt; &quot;)\n&quot;;
++}
++
++struct MsgResize
++{
++	int width;
++	int height;
++	MsgResize(int w = 0, int h = 0) : width(w), height(h) {}
++};
++void app_handle_MsgResize1(const MsgResize&amp; msg)
++{
++	std::cout &lt;&lt; &quot;app_handle_MsgResize1(width=&quot; &lt;&lt; msg.width &lt;&lt; &quot;, height=&quot; &lt;&lt; msg.height &lt;&lt; &quot;)\n&quot;;
++}
++void app_handle_MsgResize2(const MsgResize&amp; msg)
++{
++	std::cout &lt;&lt; &quot;app_handle_MsgResize2(width=&quot; &lt;&lt; msg.width &lt;&lt; &quot;, height=&quot; &lt;&lt; msg.height &lt;&lt; &quot;)\n&quot;;
++}
++struct MsgQ2
++{
++	MsgQ2(msg::router&lt;msg::DoubleQueuedProcessor&gt;&amp; router) : router_(router)
++	{}
++	msg::router&lt;msg::DoubleQueuedProcessor&gt;&amp; router_;
++};
++void app_handle_q2(const MsgQ2&amp; msg)
++{
++	std::cout &lt;&lt; &quot;app_handle_q2()\n&quot;;
++	msg.router_.post(msg::makeMessage(444));
++}
++
++/*
++struct MsgResizeAllocator
++{
++	static msg::message&lt;MsgResize&gt;* create(const MsgResize&amp; v)
++	{
++		msg::message&lt;MsgResize&gt;* msg = pool_.construct();
++		msg-&gt;setValue(v);
++		return msg;
++	}
++	static void destroy(msg::message&lt;MsgResize&gt;* msg)
++	{
++		assert( pool_.is_from(msg) );
++		pool_.destroy( msg );
++	}
++private:
++	typedef boost::object_pool&lt;msg::message&lt;MsgResize&gt; &gt; pool_type;
++	static pool_type	pool_;
++};
++MsgResizeAllocator::pool_type MsgResizeAllocator::pool_;
++namespace msg {
++	template&lt;&gt;
++	message&lt;MsgResize&gt;* makeMessage(const MsgResize&amp; v)
++	{ 
++		std::cout &lt;&lt; &quot;makeMessage&lt;MsgResize&gt;()\n&quot;;
++		return MsgResizeAllocator::create(v); 
++	}
++	template&lt;&gt;
++	void destroyMessage(message&lt;MsgResize&gt;* msg)
++	{ 
++		std::cout &lt;&lt; &quot;destroyMessage&lt;MsgResize&gt;()\n&quot;;
++		return MsgResizeAllocator::destroy(msg); 
++	}
++} // namespace msg
++*/
++
++struct ObjectMessage
++{
++	ObjectMessage() {}
++
++	template&lt;typename A1&gt;
++	ObjectMessage(const std::string&amp; name1, const A1&amp; a1)
++	{
++		params_[ name1 ] = a1;
++	}
++
++	template&lt;typename A1, typename A2&gt;
++	ObjectMessage(const std::string&amp; name1, const A1&amp; a1, const std::string&amp; name2, const A2&amp; a2)
++	{
++		params_[ name1 ] = a1;
++		params_[ name2 ] = a2;
++	}
++
++	size_t size() const
++	{ return params_.size(); }
++
++private:
++	typedef std::map&lt;std::string,boost::any&gt; params_map;
++	params_map	params_;
++};
++
++int main(int argc, char* argv[])
++{
++	// Default/Immediate processing:
++	{
++		msg::router&lt;msg::ImmediateProcessor&gt; router;
++
++		// The following message will be lost as there's no handler registered yet!
++		router.post(msg::makeMessage(1234));
++
++		// register a few handlers
++		router &lt;&lt; msg::makeListener&lt;int&gt;(&amp;app_handle_int);
++		router &lt;&lt; msg::makeListener&lt;MsgResize&gt;(&amp;app_handle_MsgResize1);
++		router &lt;&lt; msg::makeListener&lt;MsgResize&gt;(&amp;app_handle_MsgResize2);
++
++		// post a few message to different handlers (depending on type)
++		router.post(msg::makeMessage(1234));
++		router.post(msg::makeMessage(123.12));
++		router.post(msg::makeMessage(MsgResize(20,30)));
++	}
++	//Q'd :
++	{
++		msg::router&lt;msg::SingleQueuedProcessor&gt; router;
++
++		// The following message will *not* be lost even though there's no handler registered yet!
++		router.post(msg::makeMessage(1234));
++
++		router &lt;&lt; msg::makeListener&lt;int&gt;(&amp;app_handle_int);
++
++		// The following call will trigger processing of the messages.
++		// NB It is not possible to post message while messages are processed! Use a DoubleQueuedProcessor router for that!
++		router.processMessages();
++	}
++
++	//Double-Q'd :
++	{
++		msg::router&lt;msg::DoubleQueuedProcessor&gt; router;
++
++		// add a few handlers/listeners
++		router &lt;&lt; msg::makeListener&lt;int&gt;(&amp;app_handle_int);
++		router &lt;&lt; msg::makeListener&lt;MsgQ2&gt;(&amp;app_handle_q2);
++
++		// Post a message - the message handler will post a message to the same router!
++		// router&lt;DoubleQueuedProcessor&gt; supports this behaviour!
++		router.post(msg::makeMessage(MsgQ2(router)));
++		router.processMessages(); // handles MsgQ2 message
++		router.processMessages(); // handles int message that the MsgQ2 handler posted
++
++		// @todo
++		router.postMessage(ObjectMessage(&quot;entity&quot;,0x00a0a0a0,&quot;name&quot;,std::string(&quot;freak&quot;)));
++	}
++}
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000328.html">[Yake-svn] r1258 - in trunk/yake/scripts/msvc8/samples: . ent
+</A></li>
+	<LI>Next message: <A HREF="000330.html">[Yake-svn] r1260 - in trunk/yake/yake: . msg
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#329">[ date ]</a>
+              <a href="thread.html#329">[ thread ]</a>
+              <a href="subject.html#329">[ subject ]</a>
+              <a href="author.html#329">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

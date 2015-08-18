@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1051 - trunk/yake/common/media/graphics.fx
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1051%20-%20trunk/yake/common/media/graphics.fx&In-Reply-To=%3C200511010116.jA11G6JD002422%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000123.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1051 - trunk/yake/common/media/graphics.fx</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1051%20-%20trunk/yake/common/media/graphics.fx&In-Reply-To=%3C200511010116.jA11G6JD002422%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1051 - trunk/yake/common/media/graphics.fx">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Nov  1 02:16:06 CET 2005</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000123.html">[Yake-svn] r1052 - trunk/yake/common/media/vehicles
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#122">[ date ]</a>
+              <a href="thread.html#122">[ thread ]</a>
+              <a href="subject.html#122">[ subject ]</a>
+              <a href="author.html#122">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-01 02:15:57 +0100 (Tue, 01 Nov 2005)
+New Revision: 1051
+
+Modified:
+   trunk/yake/common/media/graphics.fx/smoke.particle
+Log:
+added smoke effect for skidding wheels
+
+Modified: trunk/yake/common/media/graphics.fx/smoke.particle
+===================================================================
+--- trunk/yake/common/media/graphics.fx/smoke.particle	2005-10-29 22:28:09 UTC (rev 1050)
++++ trunk/yake/common/media/graphics.fx/smoke.particle	2005-11-01 01:15:57 UTC (rev 1051)
+@@ -1,5 +1,3 @@
+-// Example particle systems
+-
+ // smoke
+ Smoke
+ {
+@@ -40,3 +38,45 @@
+    	}
+ 
+ }
++// smoke 2
++SkidSmoke
++{
++    	material        	Smoke
++    	particle_width  	0.4
++    	particle_height 	0.4
++    	cull_each       	true
++    	quota           	50
++    	billboard_type  	point
++    
++    	// Area emitter
++    	emitter Point
++    	{
++			angle               		11
++        	emission_rate       		10
++        	time_to_live        		2
++        	direction           		0 1 0
++        	velocity_min        		0.2
++        	velocity_max        		1.2
++			colour_range_start  0.8 0.8 0.75 0.15
++			colour_range_end    0.85 0.85 0.75 0.15
++	}
++
++   	affector Rotator
++   	{
++        	rotation_range_start  		0
++        	rotation_range_end   	 	360
++        	rotation_speed_range_start  	-6
++        	rotation_speed_range_end    	20
++   	}
++
++	affector ColourFader
++	{
++		alpha -0.05
++	}
++
++   	affector Scaler
++   	{
++       	rate 	1.2
++   	}
++
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000123.html">[Yake-svn] r1052 - trunk/yake/common/media/vehicles
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#122">[ date ]</a>
+              <a href="thread.html#122">[ thread ]</a>
+              <a href="subject.html#122">[ subject ]</a>
+              <a href="author.html#122">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

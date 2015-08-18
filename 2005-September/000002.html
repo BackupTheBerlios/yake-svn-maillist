@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r931 - trunk/yake/yake/base/templates
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r931%20-%20trunk/yake/yake/base/templates&In-Reply-To=%3C200509232042.j8NKgQkp004747%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000001.html">
+   <LINK REL="Next"  HREF="000003.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r931 - trunk/yake/yake/base/templates</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r931%20-%20trunk/yake/yake/base/templates&In-Reply-To=%3C200509232042.j8NKgQkp004747%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r931 - trunk/yake/yake/base/templates">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 23 22:42:26 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000001.html">[Yake-svn] r930 - in trunk/yake: scripts/yake/plugins/physics src/yake/plugins/physicsNX yake/plugins/physicsNX
+</A></li>
+        <LI>Next message: <A HREF="000003.html">[Yake-svn] r932 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#2">[ date ]</a>
+              <a href="thread.html#2">[ thread ]</a>
+              <a href="subject.html#2">[ subject ]</a>
+              <a href="author.html#2">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-23 22:42:26 +0200 (Fri, 23 Sep 2005)
+New Revision: 931
+
+Modified:
+   trunk/yake/yake/base/templates/yakeSignals.h
+Log:
+fixed interface
+
+Modified: trunk/yake/yake/base/templates/yakeSignals.h
+===================================================================
+--- trunk/yake/yake/base/templates/yakeSignals.h	2005-09-23 20:41:06 UTC (rev 930)
++++ trunk/yake/yake/base/templates/yakeSignals.h	2005-09-23 20:42:26 UTC (rev 931)
+@@ -83,8 +83,10 @@
+ #	define Function1 boost::function1
+ #	define Function2 boost::function2
+ #	define Function3 boost::function3
++namespace yake {
+ 	typedef boost::signals::connection SignalConnection;
+ 	typedef boost::signals::scoped_connection ScopedSignalConnection;
++}
+ /*
+ #	define SIG boost
+ #	define FUNC boost
+@@ -125,12 +127,12 @@
+ #define YAKE_MEMBERSIGNAL_PUREINTERFACE( ACCESS, SIGNATURE, NAME ) \
+ ACCESS: \
+ 	typedef SignalX&lt;SIGNATURE&gt; Sig##NAME##Type; \
+-	virtual SignalConnection subscribeTo##NAME( const Sig##NAME##Type::slot_type&amp; slot ) = 0; \
++	virtual ::yake::SignalConnection subscribeTo##NAME( const Sig##NAME##Type::slot_type&amp; slot ) = 0; \
+ private:
+ 
+ #define YAKE_MEMBERSIGNAL_VIRTUALIMPL( ACCESS, SIGNATURE, NAME ) \
+ ACCESS: \
+-	virtual SignalConnection subscribeTo ## NAME (const Sig ## NAME ## Type::slot_type&amp; slot ) \
++	virtual ::yake::SignalConnection subscribeTo ## NAME (const Sig ## NAME ## Type::slot_type&amp; slot ) \
+ 	{ return mSig ## NAME.connect(slot); } \
+ private: \
+ 	Sig ## NAME ## Type	mSig ## NAME; \
+@@ -154,7 +156,7 @@
+ #define YAKE_MEMBERSIGNAL( ACCESS, SIGNATURE, NAME ) \
+ ACCESS: \
+ 	typedef SignalX&lt;SIGNATURE&gt; Sig ## NAME ## Type; \
+-	SignalConnection subscribeTo ## NAME ( const Sig ## NAME ## Type::slot_type&amp; slot ) \
++	::yake::SignalConnection subscribeTo ## NAME ( const Sig ## NAME ## Type::slot_type&amp; slot ) \
+ 	{ return mSig ## NAME.connect(slot); } \
+ private: \
+ 	Sig ## NAME ## Type	mSig ## NAME;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000001.html">[Yake-svn] r930 - in trunk/yake: scripts/yake/plugins/physics src/yake/plugins/physicsNX yake/plugins/physicsNX
+</A></li>
+	<LI>Next message: <A HREF="000003.html">[Yake-svn] r932 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#2">[ date ]</a>
+              <a href="thread.html#2">[ thread ]</a>
+              <a href="subject.html#2">[ subject ]</a>
+              <a href="author.html#2">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

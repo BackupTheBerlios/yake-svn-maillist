@@ -1,0 +1,1773 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1143 - trunk/yake/src/yapp/loader
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1143%20-%20trunk/yake/src/yapp/loader&In-Reply-To=%3C200511100027.jAA0RQps016211%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000212.html">
+   <LINK REL="Next"  HREF="000214.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1143 - trunk/yake/src/yapp/loader</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1143%20-%20trunk/yake/src/yapp/loader&In-Reply-To=%3C200511100027.jAA0RQps016211%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1143 - trunk/yake/src/yapp/loader">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov 10 01:27:26 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000212.html">[Yake-svn] r1142 - trunk/yake/yapp/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000214.html">[Yake-svn] r1144 - trunk/yake/src/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#213">[ date ]</a>
+              <a href="thread.html#213">[ thread ]</a>
+              <a href="subject.html#213">[ subject ]</a>
+              <a href="author.html#213">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-10 01:27:15 +0100 (Thu, 10 Nov 2005)
+New Revision: 1143
+
+Modified:
+   trunk/yake/src/yapp/loader/yakeXODEParser.cpp
+Log:
+patch 1350326 by mj (reformatted by psy)
+
+Modified: trunk/yake/src/yapp/loader/yakeXODEParser.cpp
+===================================================================
+--- trunk/yake/src/yapp/loader/yakeXODEParser.cpp	2005-11-10 00:24:16 UTC (rev 1142)
++++ trunk/yake/src/yapp/loader/yakeXODEParser.cpp	2005-11-10 00:27:15 UTC (rev 1143)
+@@ -1,28 +1,28 @@
+ /*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright  2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
++	 ------------------------------------------------------------------------------------
++	 This file is part of YAKE
++	 Copyright	2004 The YAKE Team
++	 For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++	 ------------------------------------------------------------------------------------
++	 This program is free software; you can redistribute it and/or modify it under
++	 the terms of the GNU Lesser General Public License as published by the Free Software
++	 Foundation; either version 2 of the License, or (at your option) any later
++	 version.
+  
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++	 This program is distributed in the hope that it will be useful, but WITHOUT
++	 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++	 FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+  
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
++	 You should have received a copy of the GNU Lesser General Public License along with
++	 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++	 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++	 <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++	 ------------------------------------------------------------------------------------
++	 If you are interested in another license model contact the Yake Team via
++	 E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++	 For more information see the LICENSE file in the root directory of the
++	 source code distribution.
++	 ------------------------------------------------------------------------------------
+ */
+ 
+ #include &lt;yapp/base/yappPCH.h&gt;
+@@ -37,143 +37,141 @@
+ {
+ namespace xode
+ {
+-	//------------------------------------------------------
+-	XODEParser::XODEParser( model::Physical&amp; rBaseModel ) : mBaseModel( rBaseModel )
+-	{}
+-	
+-	//------------------------------------------------------
+-	bool XODEParser::load(  const NodeSharedPtr docNode, physics::IWorld* pPWorld )
+-	{
+-		YAKE_LOG( &quot;load()&quot; );
+-	
++    using namespace physics;
++
++    //------------------------------------------------------
++    XODEParser::XODEParser() 
++    {}
++
++    //------------------------------------------------------
++    bool XODEParser::load( const NodeSharedPtr docNode )
++    {
++		YAKE_LOG( &quot;XODE: load()&quot; );
++
+ 		YAKE_ASSERT( docNode.get() );
+-		YAKE_ASSERT( pPWorld );
+-	
++
+ 		mDocNode = docNode;
+-		mPWorld = pPWorld;
+-	
+-		/// clearing out...
+-		mJointDescriptions.clear();
+-	
++
+ 		YAKE_LOG( &quot;*******************&quot; );
+ 		YAKE_LOG( &quot;* Parsing xode... *&quot; );
+ 		YAKE_LOG( &quot;*******************&quot; );
+-	
++
+ 		readXODE( mDocNode );
+-	
++
+ 		return true;
+-	}
+-	
+-	//------------------------------------------------------
+-	void XODEParser::readXODE( const NodeSharedPtr pNode )
+-	{
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readXODE( const NodeSharedPtr pNode )
++    {
+ 		YAKE_ASSERT( pNode );
+-	
++
+ 		const String name = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+-		YAKE_LOG( &quot;readXODE() [&quot; + name + &quot;]&quot; );
+-	
++		YAKE_LOG( &quot;XODE: parsing &quot; + name );
++
+ 		// Assuming single world in .xode
+ 		NodeSharedPtr pWorldNode = pNode-&gt;getNodeByName( &quot;world&quot; );
+ 		YAKE_ASSERT( pWorldNode );
+-	
+-		YAKE_LOG( &quot;xode: found world = &quot; + String( pWorldNode.get() ? &quot;yes!&quot; : &quot;no :(&quot; ) );
+-	
++
++		YAKE_LOG( &quot;XODE: finding world ... &quot; + String( pWorldNode.get() ? &quot;Yes!&quot; : &quot;No :(&quot; ) );
++
+ 		readWorld( pWorldNode );
+-	
+-		createJointsFromDescriptions();
++
++		// parse completed. Firing signal!
++		sigParseEnded_();
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readWorld( const NodeSharedPtr pWorldNode )
+ 	{
+-		YAKE_ASSERT( pWorldNode );
+-	
+ 		// Assuming single space in &lt;world&gt;
+ 		NodeSharedPtr pSpaceNode = pWorldNode-&gt;getNodeByName( &quot;space&quot; );
+ 		YAKE_ASSERT( pSpaceNode );
+-	
+-		YAKE_LOG( &quot;xode::world: found space = &quot; + String( pSpaceNode.get() ? &quot;yes!&quot; : &quot;no :(&quot; ) );
+-	
+-		readSpace( pSpaceNode );
++
++		YAKE_LOG( &quot;XODE: finding space... &quot; + String( pSpaceNode.get() ? &quot;Yes!&quot; : &quot;No :(&quot; ) );
++
++		readSpace( pSpaceNode, &quot;world&quot; );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::reset()
+ 	{
++		//TODO is this really needed?
+ 		mDocNode.reset();
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readSpace( const NodeSharedPtr pSpaceNode )
++	void XODEParser::readSpace( const NodeSharedPtr pSpaceNode, const String&amp; parent )
+ 	{
+-		YAKE_LOG( &quot;readSpace()&quot; );
+-	
++		YAKE_LOG( &quot;XODE: reading space ...&quot; );
++
+ 		const dom::NodeList&amp; nodes = pSpaceNode-&gt;getNodes();
+ 		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+ 			String nodeName =
+ 				yake::StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
++
+ 			if ( nodeName == &quot;body&quot; )
+ 			{
+-				readBody( *it );
++				readBody( *it, parent );
+ 			}
+ 			else if ( nodeName == &quot;geom&quot; )
+ 			{
+-				readGeom( *it );
++				readGeom( *it, parent );
+ 			}
+ 			else if ( nodeName == &quot;bodygroup&quot; )
+ 			{
+ 				//TODO bodygroup reading here
++				YAKE_LOG( &quot;XODE: Bodygroup is not yet implemented in parser&quot; ); 
+ 			}
+ 		}
+ 	}
+-	
++
+ 	/// Utility functor for use with std::find_if
+ 	//------------------------------------------------------
+ 	class NodeHunter : public std::unary_function&lt;XODEParser::NodeSharedPtr&amp;,bool&gt;
+ 	{
+ 	public:
+-		NodeHunter( String const&amp; rNodeName ):mNodeName( rNodeName )
++		NodeHunter( const String&amp; rNodeName ) : nodeName_( rNodeName )
+ 		{}
+-	
++
+ 		bool operator()( const XODEParser::NodeSharedPtr&amp; pNode )
+ 		{
+-			return pNode-&gt;getName() == mNodeName;
++			return pNode-&gt;getName() == nodeName_;
+ 		}
+-	
++
+ 	private:
+-		String mNodeName;
++		String nodeName_;
+ 	};
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readVector3( const NodeSharedPtr pVecNode, Vector3&amp; rVec )
+ 	{
+ 		real x = StringUtil::parseReal( pVecNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
+ 		real y = StringUtil::parseReal( pVecNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
+ 		real z = StringUtil::parseReal( pVecNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
+-	
++
+ 		rVec = Vector3( x, y, z );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readScale( const NodeSharedPtr pScaleNode, Vector3&amp; rScale )
+ 	{
+ 		readVector3( pScaleNode, rScale );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readPosition( const NodeSharedPtr pPosNode, Vector3&amp; rPos )
+ 	{
+ 		readVector3( pPosNode, rPos );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	/**
+-			*        Reads quaternion from pQuatNode to rQuat
+-			*        Ignores aformat attribute
+-			* @param pQuatNode
+-			* @param rQuat
++	* Reads quaternion from pQuatNode to rQuat
++	* Ignores aformat attribute
++	* @param pQuatNode
++	* @param rQuat
+ 	*/
+ 	void XODEParser::readQuaternion( const NodeSharedPtr pQuatNode, Quaternion&amp; rQuat )
+ 	{
+@@ -181,15 +179,15 @@
+ 		real y = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
+ 		real z = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
+ 		real w = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;w&quot; ) );
+-	
++
+ 		rQuat = Quaternion( w, x, y, z );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	/**
+-			*        Reads angle and axis x, y, z attributes and spawns quaternion with them in rRot
+-			* @param pRotNode
+-			* @param rRot
++	*	Reads angle and axis x, y, z attributes and spawns quaternion with them in rRot
++	* @param pRotNode
++	* @param rRot
+ 	*/
+ 	void XODEParser::readAxisAngleRot( const NodeSharedPtr pRotNode, Quaternion&amp; rRot )
+ 	{
+@@ -197,20 +195,20 @@
+ 		real y = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
+ 		real z = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
+ 		real angle = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;angle&quot; ) );
+-	
++
+ 		rRot.FromAngleAxis( angle, Vector3( x, y, z ) );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readRotation( const NodeSharedPtr pRotNode, Quaternion&amp; rRot )
+ 	{
+ 		const dom::NodeList&amp; nodes = pRotNode-&gt;getNodes();
+-	
++
+ 		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+ 			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
++
+ 			if ( nodeName == &quot;quaternion&quot; )
+ 			{
+ 				readQuaternion( *it, rRot );
+@@ -225,28 +223,28 @@
+ 			}
+ 		}
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readTransform( const NodeSharedPtr pTransformNode, Transform&amp; rTrans )
+ 	{
+ 		const dom::NodeList&amp; nodes = pTransformNode-&gt;getNodes();
+-	
++
+ 		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+ 			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
++
+ 			if ( nodeName == &quot;position&quot; )
+ 			{
+-				readPosition( *it, rTrans.mPosition );
++				readPosition( *it, rTrans.position_ );
+ 			}
+ 			else if ( nodeName == &quot;rotation&quot; )
+ 			{
+-				readRotation( *it, rTrans.mRotation );
++				readRotation( *it, rTrans.rotation_ );
+ 			}
+ 			else if ( nodeName == &quot;scale&quot; )
+ 			{
+-				readScale( *it, rTrans.mScale );
++				readScale( *it, rTrans.scale_ );
+ 			}
+ 			else if ( nodeName == &quot;matrix4f&quot; )
+ 			{
+@@ -254,168 +252,184 @@
+ 			}
+ 		}
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readMassShape( const NodeSharedPtr pMShapeNode,
+-											physics::IBody&amp; rBody,
+-											Transform const&amp; rParentTransform )
++	void XODEParser::readMassShape( const NodeSharedPtr pMShapeNode, const String&amp; parent,
++		const Transform&amp; rParentTransform )
+ 	{
+-	
++		real density = 0; //default ...
++
++		// if density is provided...
+ 		String strDensity = pMShapeNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;density&quot; );
+-		real density = StringUtil::parseReal( strDensity );
+-	
+-		YAKE_LOG( &quot;reading mass_shape with density = &quot; + strDensity + &quot; &quot; );
+-	
++		if ( !strDensity.empty() ) 
++		{
++			density = StringUtil::parseReal( strDensity );
++			YAKE_LOG( &quot;XODE: reading mass_shape with density = &quot; + strDensity + &quot; &quot; );
++		}
++
+ 		const dom::NodeList&amp; nodes = pMShapeNode-&gt;getNodes();
+-	
+-		typedef dom::NodeList::const_iterator NodeListIter;
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+-			String nodeName =
+-				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
+-			YAKE_LOG( &quot;reading mass_shape that is &quot; + nodeName + &quot; &quot; );
+-	
++			String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++			YAKE_LOG( &quot;XODE: reading mass_shape that is &quot; + nodeName + &quot; &quot; );
++
++			IBody::MassDesc* physicsMassDesc = NULL;
++
+ 			if ( nodeName == &quot;cylinder&quot; )
+ 			{
+ 				real radius, length;
+ 				readCylinder( *it, radius, length );
+-	
+-				physics::IBody::CylinderMassDesc desc( radius, length, density, rParentTransform.mPosition );
+-	
+-				rBody.addMass( desc );
++
++				physicsMassDesc = new IBody::CylinderMassDesc( radius, length, density,
++					rParentTransform.position_,
++					IBody::QT_DENSITY );
+ 			}
+ 			else if ( nodeName == &quot;sphere&quot; )
+ 			{
+-				real radius;
+-				readSphere( *it, radius );
+-	
+-				physics::IBody::SphereMassDesc desc( radius, density, rParentTransform.mPosition );
+-	
+-				rBody.addMass( desc );
++				real radius; readSphere( *it, radius );
++
++				physicsMassDesc = new IBody::SphereMassDesc(radius, density,
++					rParentTransform.position_,
++					IBody::QT_DENSITY );
+ 			}
+ 			else if ( nodeName == &quot;box&quot; )
+ 			{
+ 				real sX, sY, sZ;
+ 				readBox( *it, sX, sY, sZ );
+-	
+-				physics::IBody::BoxMassDesc desc( sX, sY, sZ, density, rParentTransform.mPosition );
+-	
+-				rBody.addMass( desc );
++
++				physicsMassDesc = new IBody::BoxMassDesc( sX, sY, sZ, density,
++					rParentTransform.position_,
++					IBody::QT_DENSITY );
+ 			}
+ 			else if ( nodeName == &quot;cappedCylinder&quot; )
+ 			{
+ 				real radius, length;
+ 				readCappedCylinder( *it, radius, length );
+-	
+-				physics::IBody::CapsuleMassDesc desc( radius, length, density, rParentTransform.mPosition );
+-	
+-				rBody.addMass( desc );
++
++				physicsMassDesc = new IBody::CapsuleMassDesc( radius, length, density,
++					rParentTransform.position_,
++					IBody::QT_DENSITY );
+ 			}
++
++			if ( physicsMassDesc != NULL )
++			{
++
++				MassDesc desc;
++				desc.mass_.reset( physicsMassDesc );
++				desc.parentName_ = parent;
++
++				// TODO set the other mass params!
++				// parent name, etc.
++				sigMass_( desc );
++				// TODO needed?? massDescriptions_[ name ] = desc;
++			}
+ 		}
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readMassAdjust( const NodeSharedPtr pMAdjustNode,
+-												physics::IBody&amp; rBody )
++	void XODEParser::readMassAdjust( const NodeSharedPtr pMAdjustNode, const String&amp; parent )
+ 	{
+ 		real total = StringUtil::parseReal( pMAdjustNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;total&quot; ) );
+-	
+-		rBody.setMass( total );
++
++		MassDesc desc;
++		desc.parentName_ = parent;
++		desc.mass_.reset( new IBody::MassDesc( total, Vector3::kZero, IBody::QT_MASS ) );
++
++		sigMass_( desc );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readMass( const NodeSharedPtr pMassNode, physics::IBody&amp; rBody, Transform const&amp; rParentTransform )
++	void XODEParser::readMass( const NodeSharedPtr pMassNode, const String&amp; parent, const Transform&amp; rParentTransform )
+ 	{
+ 		const dom::NodeList&amp; nodes = pMassNode-&gt;getNodes();
+-	
++
+ 		// Seek transform
+ 		Transform massTransform;
+-	
++
+ 		NodeHunter hunter( &quot;transform&quot; );
+-		typedef dom::NodeList::const_iterator NodeListIter;
+ 		NodeListIter iTrans =
+ 			std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
+-	
++
+ 		if ( iTrans != nodes.end() )
+ 		{
+ 			readTransform( *iTrans, massTransform );
+ 		}
+-	
++
+ 		if ( !rParentTransform.isIdentity() )
+ 		{
+ 			massTransform = massTransform.getDerivedTransform( rParentTransform );
+ 		}
+-	
++
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+ 			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
++
+ 			if ( nodeName == &quot;mass_shape&quot; )
+ 			{
+-				readMassShape( *it, rBody, massTransform );
++				readMassShape( *it, parent, massTransform );
+ 			}
+ 			else if ( nodeName == &quot;adjust&quot; )
+ 			{
+-				readMassAdjust( *it, rBody );
++				readMassAdjust( *it, parent );
+ 			}
+ 			else if ( nodeName == &quot;mass&quot; )
+ 			{
+-				readMass( *it, rBody, massTransform );
++				readMass( *it, parent, massTransform );
+ 			}
+ 		}
+-	
++
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readBody( const NodeSharedPtr pBodyNode )
++	void XODEParser::readBody( const NodeSharedPtr pBodyNode, const String&amp; parent )
+ 	{
+ 		const String name = pBodyNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+-		YAKE_LOG( &quot;readBody() [&quot; + name + &quot;]&quot; );
+-	
+-		physics::IActorPtr pDynActor = mPWorld-&gt;createActor( physics::ACTOR_DYNAMIC );
+-		YAKE_ASSERT( pDynActor != NULL ).error( &quot;Failed to create actor!&quot; );
+-	
+-		mBaseModel.addActor( physics::IActorPtr( pDynActor ), name );
+-	
++		YAKE_LOG( &quot;XODE: reading body &quot; + name );
++
++		// Setting up body description...
++		BodyDesc desc;
++		desc.name_ = name;
++		desc.parentName_ = parent;
++
+ 		const dom::NodeList&amp; nodes = pBodyNode-&gt;getNodes();
+-	
++
+ 		// Seek transform
+-		Transform bodyTransform;
+-	
+ 		NodeHunter hunter( &quot;transform&quot; );
+-		typedef dom::NodeList::const_iterator NodeListIter;
+ 		NodeListIter iTrans =
+ 			std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
+-	
++
++		Transform bodyTransform;
+ 		if ( iTrans != nodes.end() )
+ 		{
+-			YAKE_LOG( &quot;readBody() [&quot; + name + &quot;] : body has transform &quot; );
+-	
++			YAKE_LOG( &quot;XODE: body &quot; + name + &quot; has transform &quot; );
++
+ 			readTransform( *iTrans, bodyTransform );
++
++			if ( !bodyTransform.isIdentity() )
++			{
++				desc.transform_ = bodyTransform;
++			}
+ 		}
+-	
+-		if ( !bodyTransform.isIdentity() )
+-		{
+-			pDynActor-&gt;setPosition( bodyTransform.mPosition );
+-			pDynActor-&gt;setOrientation( bodyTransform.mRotation );
+-		}
+-	
++
++		// fire signal!
++		sigBody_( desc );
++		// TODO add to collection?
++
+ 		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+-			String nodeName =
+-				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
+-			YAKE_LOG( &quot; body [&quot; + name + &quot;] has node #&quot; + nodeName );
+-	
++			String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++			YAKE_LOG( &quot;XODE: body &quot; + name + &quot; has node #&quot; + nodeName );
++
+ 			if ( nodeName == &quot;geom&quot; )
+ 			{
+-				readGeom( *it, pDynActor, bodyTransform );
++				readGeom( *it, name, bodyTransform );
+ 			}
+ 			else if ( nodeName == &quot;mass&quot; )
+ 			{
+-				readMass( *it, pDynActor-&gt;getBody(), bodyTransform );
++				readMass( *it, name, bodyTransform );
+ 			}
+ 			else if ( nodeName == &quot;joint&quot; )
+ 			{
+@@ -423,302 +437,261 @@
+ 			}
+ 		}
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	/**
+-	*    Searches for &lt;ext name=&quot;material&quot;&gt; node, parses it, creates material and returns ptr to created material
+-	*    If no node, returns NULL
++	*	 Searches for &lt;ext name=&quot;material&quot;&gt; node, parses it, creates material and returns ptr to created material
++	* If no node, returns NULL
+ 	* @param pNode - node to search
+-	* @return ptr to newly created material or physics::WeakIMaterialPtr()
+ 	*/
+-	String XODEParser::readMaterialExt( const NodeSharedPtr pNode )
++	void XODEParser::readMaterialExt( const NodeSharedPtr pNode, const String&amp; parent )
+ 	{
+-		YAKE_LOG( &quot;Entered readMaterialExt...&quot; );
+-	
++		YAKE_LOG( &quot;XODE: entered readMaterialExt...&quot; );
++
+ 		const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
+-	
++
+ 		// Looking for ext
+ 		// TODO maybe we need some advanced searching here?
+ 		// like finding all ext nodes or finding &lt;ext name=&quot;material&quot;&gt;?
+ 		// For now finding ext would be enough
+ 		NodeHunter hunter( &quot;ext&quot; );
+-		typedef dom::NodeList::const_iterator NodeListIter;
+ 		NodeListIter iExt =
+ 			std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
+-	
+-		if ( iExt != nodes.end() )
++
++		if ( iExt == nodes.end() )
+ 		{
+-			YAKE_LOG( &quot;readMaterialExt() : found extension... processing... :) &quot; );
+-	
+-			if ( (*iExt)-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; ) == &quot;material&quot; )
+-			{
+-				YAKE_LOG( &quot;readMaterialExt() : found extension IS material! Parsing...&quot; );
+-				const dom::NodeList&amp; extNodes = (*iExt)-&gt;getNodes();
+-				//HACK assuming first node is &quot;params&quot;
+-				NodeSharedPtr pParamsNode = *extNodes.begin();
+-	
+-				// parsing
+-				physics::IMaterial::Desc desc;
+-	
+-				String strName = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+-				String strFriction = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;friction&quot; );
+-				String strRestitution = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;bouncecoeff&quot; );
+-				String strSoftness = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;soften&quot; );
+-	
+-				YAKE_LOG( &quot;Material name = '&quot; + (strName.empty() ? &quot;&lt;AUTO&gt;&quot; : strName) + &quot;'&quot; );
+-				YAKE_LOG( &quot;Read friction = &quot; + strFriction );
+-				YAKE_LOG( &quot;Read restitution = &quot; + strRestitution );
+-				YAKE_LOG( &quot;Read softness = &quot; + strSoftness );
+-	
+-				desc.mFriction = StringUtil::parseReal( strFriction );
+-				desc.mRestitution = StringUtil::parseReal( strRestitution );
+-				desc.mSoftness = StringUtil::parseReal( strSoftness );
+-	
++			YAKE_LOG( &quot;XODE: didn't find extension... &quot; );
++			return;
++		}
+ 
+-				if (!mPWorld-&gt;getMaterial(strName))
+-					mPWorld-&gt;createMaterial( desc, strName );
++		YAKE_LOG( &quot;XODE: found extension... processing... :) &quot; );
+ 
+-				return strName;
+-			}
+-			else
+-			{
+-				YAKE_LOG( &quot;readMaterialExt() : found extension was not material&quot; );
+-			}
+-		}
+-		else
++		if ( (*iExt)-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; ) != &quot;material&quot; )
+ 		{
+-			YAKE_LOG( &quot;readMaterialExt() : didn't find material... returning default one :) &quot; );
++			YAKE_LOG( &quot;XODE: extension is not material&quot; );
+ 		}
+-		return String(&quot;default&quot;);
++
++		YAKE_LOG( &quot;XODE: the extension IS material! Parsing...&quot; );
++
++		const dom::NodeList&amp; extNodes = (*iExt)-&gt;getNodes();
++		//HACK assuming first node is &quot;params&quot;
++		NodeSharedPtr pParamsNode = *extNodes.begin();
++
++		// parsing
++		IMaterial::Desc desc;
++
++		String strFriction = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;friction&quot; );
++		String strRestitution = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;bouncecoeff&quot; );
++		String strSoftness = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;soften&quot; );
++
++		YAKE_LOG( &quot;XODE: read friction = &quot; + strFriction );
++		YAKE_LOG( &quot;XODE: read restitution = &quot; + strRestitution );
++		YAKE_LOG( &quot;XODE: read softness = &quot; + strSoftness );
++
++		desc.mFriction = StringUtil::parseReal( strFriction );
++		desc.mRestitution = StringUtil::parseReal( strRestitution );
++		desc.mSoftness = StringUtil::parseReal( strSoftness );
++
++		//TODO fill in all other description params!
++		// parent name, etc
++		MaterialDesc matDesc;
++		matDesc.name_ = parent + &quot;material&quot;; // TODO make something totally yake::Unique here?
++		matDesc.material_ = desc;
++		matDesc.parentName_ = parent;
++
++		sigMaterial_( matDesc );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	/**
+-	*        Reads geom xode node and attaches ICollisionGeometry* to *pParentObject.
+-	*        If no parent object supplied then attaches geometry to mBaseModel directly.
+-	*        No folded bodies, geoms, spaces processed.
++	* Reads geom xode node
++	* No folded bodies, geoms, spaces processed.
+ 	* @param pGeomNode
+ 	* @param pParentObject
+ 	*/
+-	void XODEParser::readGeom( const NodeSharedPtr pGeomNode,
+-										physics::IActor* pParentObject,
+-										const Transform&amp; rParentTransform )
++	void XODEParser::readGeom(	const NodeSharedPtr pGeomNode, const String&amp; parent, const Transform&amp; rParentTransform )
+ 	{
+ 		const String name = pGeomNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+-		YAKE_LOG( &quot;readGeom() [&quot; + name + &quot;]&quot; );
+-	
+-		physics::IShape* pShape = NULL;
+-	
+-		if ( !pParentObject )
+-		{
+-			YAKE_LOG(&quot;XODE::readGeom() creating static actor...&quot;);
+-			// adding shape to new IStaticActor
+-			//physics::IStaticActor::Desc desc;
+-	
+-			physics::IActorPtr pStaticActor( mPWorld-&gt;createActor(physics::ACTOR_STATIC) );
+-			pParentObject = pStaticActor;
+-			mBaseModel.addActor( pStaticActor, name );
+-		}
+-	
++		YAKE_LOG( &quot;XODE: reading geom &quot; + name );
++
+ 		const dom::NodeList&amp; nodes = pGeomNode-&gt;getNodes();
+-	
++
+ 		// Looking for transform
+ 		NodeHunter hunter( &quot;transform&quot; );
+-		typedef dom::NodeList::const_iterator NodeListIter;
+ 		NodeListIter iTrans =
+ 			std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
+-	
++
+ 		Transform geomTransform;
+-	
++
+ 		if ( iTrans != nodes.end() )
+ 		{
+-			YAKE_LOG( &quot;readGeom() [&quot; + name + &quot;] : geom has transform &quot; );
+-	
++			YAKE_LOG( &quot;XODE: readGeom() [&quot; + name + &quot;] : geom has transform &quot; );
++
+ 			readTransform( *iTrans, geomTransform );
+ 		}
+-	
+-	
+-		///FIXME We don't need derived transform here as it is automaitcally handled by concrete plugin
+-		/*		if ( !rParentTransform.isIdentity() )
+-					{
+-					geomTransform = geomTransform.getDerivedTransform( rParentTransform );
+-		}*/
+-	
++
++		YAKE_LOG( &quot;XODE: scanning other geom properties...&quot; );
++
+ 		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+-			String nodeName =
+-				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
+-			YAKE_LOG( &quot; geom [&quot; + name + &quot;] has node #&quot; + nodeName );
+-	
++			String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++			YAKE_LOG( &quot;XODE: geom [&quot; + name + &quot;] has node #&quot; + nodeName );
++
++			IShape::Desc* shapeDesc = NULL;
++
+ 			if ( nodeName == &quot;box&quot; )
+ 			{
+ 				real sizeX, sizeY, sizeZ;
+ 				readBox( *it, sizeX, sizeY, sizeZ );
+-	
+-				sizeX *= rParentTransform.mScale.x;
+-				sizeY *= rParentTransform.mScale.y;
+-				sizeZ *= rParentTransform.mScale.z;
+-	
++
++				sizeX *= rParentTransform.scale_.x;
++				sizeY *= rParentTransform.scale_.y;
++				sizeZ *= rParentTransform.scale_.z;
++
+ 				String strSizeX; strSizeX &lt;&lt; sizeX;
+ 				String strSizeY; strSizeY &lt;&lt; sizeY;
+ 				String strSizeZ; strSizeZ &lt;&lt; sizeZ;
+-	
+-				YAKE_LOG( &quot; box with sizes: &quot; + strSizeX + &quot;, &quot; + strSizeY + &quot;, &quot; + strSizeZ );
+-	
+-				physics::IShape::BoxDesc desc(	Vector3( sizeX, sizeY, sizeZ ),
+-														readMaterialExt( *it ),
+-														geomTransform.mPosition,
+-														geomTransform.mRotation );
+-	
+-				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+-				if (pParentObject)
+-					pParentObject-&gt;createShape( desc );
++
++				YAKE_LOG( &quot;XODE: box with sizes: &quot; + strSizeX + &quot;, &quot; + strSizeY + &quot;, &quot; + strSizeZ );
++
++				shapeDesc = new IShape::BoxDesc( Vector3( sizeX, sizeY, sizeZ ), &quot;&quot;,
++					geomTransform.position_, geomTransform.rotation_ );
+ 			}
+ 			else if ( nodeName == &quot;cappedCylinder&quot; )
+ 			{
+ 				real radius, length;
+ 				readCappedCylinder( *it, radius, length );
+-	
+-				real scale = ( rParentTransform.mScale.x
+-									+ rParentTransform.mScale.y
+-									+ rParentTransform.mScale.z ) /3;
+-	
++
++				real scale = ( rParentTransform.scale_.x
++					+ rParentTransform.scale_.y
++					+ rParentTransform.scale_.z ) /3;
++
+ 				radius *= scale;
+ 				length *= scale;
+-	
+-				physics::IShape::CapsuleDesc desc(	length,
+-															radius,
+-															readMaterialExt( *it ),
+-															geomTransform.mPosition,
+-															geomTransform.mRotation );
+-	
+-				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+-				if (pParentObject)
+-					pParentObject-&gt;createShape( desc );
++
++				shapeDesc = new IShape::CapsuleDesc( length,
++					radius,
++					&quot;&quot;,
++					geomTransform.position_,
++					geomTransform.rotation_ );
+ 			}
+ 			else if ( nodeName == &quot;cone&quot; )
+ 			{
+ 				real radius, length;
+ 				readCone( *it, radius, length );
+-	
+-				real scale = ( rParentTransform.mScale.x
+-									+ rParentTransform.mScale.y
+-									+ rParentTransform.mScale.z ) /3;
+-	
++
++				real scale = ( rParentTransform.scale_.x
++					+ rParentTransform.scale_.y
++					+ rParentTransform.scale_.z ) /3;
++
+ 				radius *= scale;
+ 				length *= scale;
+-	
++
+ 				YAKE_ASSERT( false ).error( &quot;NOT implemented in Yake&quot; ); //TODO
+ 			}
+ 			else if ( nodeName == &quot;cylinder&quot; )
+ 			{
+ 				real radius, length;
+ 				readCylinder( *it, radius, length );
+-	
+-				real scale = ( rParentTransform.mScale.x
+-									+ rParentTransform.mScale.y
+-									+ rParentTransform.mScale.z ) /3;
+-	
++
++				real scale = ( rParentTransform.scale_.x
++					+ rParentTransform.scale_.y
++					+ rParentTransform.scale_.z ) /3;
++
+ 				radius *= scale;
+ 				length *= scale;
+-	
+-				physics::IShape::CapsuleDesc desc(	length,
+-															radius,
+-															readMaterialExt( *it ),
+-															geomTransform.mPosition,
+-															geomTransform.mRotation );
+-	
+-				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+-				if (pParentObject)
+-					pParentObject-&gt;createShape( desc );
++
++				shapeDesc = new IShape::CapsuleDesc( length,
++					radius,
++					&quot;&quot;,
++					geomTransform.position_,
++					geomTransform.rotation_ );
+ 			}
+ 			else if ( nodeName == &quot;plane&quot; )
+ 			{
+ 				real a, b, c, d;
+ 				readPlane( *it, a, b, c, d );
+-				physics::IShape::PlaneDesc desc(	Vector3( a, b, c ),
+-															d,
+-															readMaterialExt( *it ),
+-															geomTransform.mPosition,
+-															geomTransform.mRotation );
+-	
+-				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+-				if (pParentObject)
+-				{
+-					pParentObject-&gt;createShape( desc );
+-					YAKE_LOG( &quot;Creating plane shape...&quot; );
+-				}
++				shapeDesc = new IShape::PlaneDesc( Vector3( a, b, c ),
++					d,
++					&quot;&quot;,
++					geomTransform.position_,
++					geomTransform.rotation_ );
+ 			}
+ 			else if ( nodeName == &quot;ray&quot; )
+ 			{
+ 				real length;
+ 				readRay( *it, length );
+-	
+-				real scale = ( rParentTransform.mScale.x
+-									+ rParentTransform.mScale.y
+-									+ rParentTransform.mScale.z ) /3;
+-	
++
++				real scale = ( rParentTransform.scale_.x
++					+ rParentTransform.scale_.y
++					+ rParentTransform.scale_.z ) /3;
++
+ 				length *= scale;
+-	
++
+ 				YAKE_ASSERT( false ).error( &quot;NOT implemented in Yake&quot; ); //TODO
+ 			}
+ 			else if ( nodeName == &quot;sphere&quot; )
+ 			{
+ 				real radius;
+ 				readSphere( *it, radius );
+-	
+-				real scale = ( rParentTransform.mScale.x
+-									+ rParentTransform.mScale.y
+-									+ rParentTransform.mScale.z ) /3;
+-	
++
++				real scale = ( rParentTransform.scale_.x
++					+ rParentTransform.scale_.y
++					+ rParentTransform.scale_.z ) /3;
++
+ 				radius *= scale;
+-	
+-				physics::IShape::SphereDesc desc(
++
++				shapeDesc = new IShape::SphereDesc(
+ 					radius,
+-					readMaterialExt( *it ),
+-					geomTransform.mPosition,
+-					geomTransform.mRotation );
+-	
+-				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+-				if (pParentObject)
+-					pParentObject-&gt;createShape( desc );
++					&quot;&quot;,
++					geomTransform.position_,
++					geomTransform.rotation_ );
+ 			}
+ 			else if ( nodeName == &quot;trimesh&quot; )
+ 			{
+-				physics::TriangleMeshDesc::VertexVector vertices;
+-				physics::TriangleMeshDesc::IndexVector indices;
+-	
++				TriangleMeshDesc::VertexVector vertices;
++				TriangleMeshDesc::IndexVector indices;
++
+ 				readTrimesh( *it, vertices, indices );
+-	
+-				physics::TriangleMeshDesc::VertexVector scaledVertices;
+-	
+-				ConstVectorIterator&lt; physics::TriangleMeshDesc::VertexVector &gt; iV( vertices.begin(), vertices.end() );
+-	
++
++				TriangleMeshDesc::VertexVector scaledVertices;
++
++				ConstVectorIterator&lt; TriangleMeshDesc::VertexVector &gt; iV( vertices.begin(), vertices.end() );
++
+ 				while ( iV.hasMoreElements() )
+ 				{
+-					Vector3 const&amp; vertex = iV.getNext();
+-					scaledVertices.push_back( vertex * rParentTransform.mScale );
++					const Vector3&amp; vertex = iV.getNext();
++					scaledVertices.push_back( vertex * rParentTransform.scale_ );
+ 				}
+-	
+-				physics::TriangleMeshDesc dataDesc( vertices, indices );
+-	
+-				physics::TriangleMeshId meshId = mPWorld-&gt;createTriangleMesh( dataDesc );
+-	
+-				physics::IShape::TriMeshDesc desc(	meshId,
+-															readMaterialExt( *it ),
+-															geomTransform.mPosition,
+-															geomTransform.mRotation );
+-	
+-				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+-				if (pParentObject)
+-					pParentObject-&gt;createShape( desc );
++
++				TriangleMeshDesc dataDesc( vertices, indices );
++
++				shapeDesc = new IShape::TriMeshDesc( dataDesc, &quot;&quot;,
++					geomTransform.position_, geomTransform.rotation_ );
+ 			}
++
++			if ( shapeDesc != NULL )
++			{
++				//TODO fill in all other description params!
++				// parent name, etc
++				GeomDesc geomDesc;
++				geomDesc.name_ = name;
++				geomDesc.parentName_ = parent;
++				geomDesc.shape_.reset( shapeDesc );
++
++				sigGeom_( geomDesc );
++
++				// read material after geom definition was found.
++				// TODO is this a right place to read material?
++				// 
++				readMaterialExt( *it, name );
++			}
+ 		}
+-	
+-		YAKE_LOG( &quot;INFO: Leaving readGeom()&quot; );
++
++		YAKE_LOG( &quot;XODE: Leaving readGeom()&quot; );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readBox( const NodeSharedPtr pNode, real&amp; sizeX, real&amp; sizeY, real&amp; sizeZ )
+ 	{
+@@ -726,28 +699,28 @@
+ 		sizeY = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;sizey&quot; ) );
+ 		sizeZ = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;sizez&quot; ) );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readCappedCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length )
+ 	{
+ 		radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
+ 		length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readCone( const NodeSharedPtr pNode, real&amp; radius, real&amp; length )
+ 	{
+ 		radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
+ 		length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length )
+ 	{
+ 		radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
+ 		length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readPlane( const NodeSharedPtr pNode, real&amp; a, real&amp; b, real&amp; c, real&amp; d )
+ 	{
+@@ -756,34 +729,32 @@
+ 		c = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;c&quot; ) );
+ 		d = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;d&quot; ) );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readRay( const NodeSharedPtr pNode, real&amp; length )
+ 	{
+ 		length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readSphere( const NodeSharedPtr pNode, real&amp; radius )
+ 	{
+ 		radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readTrimesh( const NodeSharedPtr pMeshNode,
+-											physics::TriangleMeshDesc::VertexVector&amp; rVertices,
+-											physics::TriangleMeshDesc::IndexVector&amp; rIndices )
++		TriangleMeshDesc::VertexVector&amp; rVertices,
++		TriangleMeshDesc::IndexVector&amp; rIndices )
+ 	{
+ 		const dom::NodeList&amp; nodes = pMeshNode-&gt;getNodes();
+-	
+-		typedef dom::NodeList::const_iterator NodeListIter;
++
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
+ 		{
+-			String nodeName =
+-				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
+-			YAKE_LOG( &quot;   Reading &quot; + nodeName + &quot; now...&quot; );
+-	
++			String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++			YAKE_LOG( &quot;XODE: reading &quot; + nodeName + &quot; trimesh now...&quot; );
++
+ 			if ( nodeName == &quot;vertices&quot; )
+ 			{
+ 				readVertices( *it, rVertices );
+@@ -794,404 +765,362 @@
+ 			}
+ 		}
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readVertices( const NodeSharedPtr pNode,
+-											physics::TriangleMeshDesc::VertexVector&amp; rVertices )
++	void XODEParser::readVertices( const NodeSharedPtr pNode, TriangleMeshDesc::VertexVector&amp; rVertices )
+ 	{
+ 		const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
+-	
+-		typedef dom::NodeList::const_iterator NodeListIter;
++
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
+ 		{
+-			String nodeName =
+-				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
++			String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
+ 			if ( nodeName == &quot;v&quot; )
+ 			{
+ 				real x = StringUtil::parseReal( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;x&quot; ) );
+ 				real y = StringUtil::parseReal( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;y&quot; ) );
+ 				real z = StringUtil::parseReal( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;z&quot; ) );
+-	
++
+ 				rVertices.push_back( Vector3( x, y, z ) );
+ 			}
+ 		}
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readIndices( const NodeSharedPtr pNode,
+-											physics::TriangleMeshDesc::IndexVector&amp; rIndices )
++	void XODEParser::readIndices( const NodeSharedPtr pNode, TriangleMeshDesc::IndexVector&amp; rIndices )
+ 	{
+ 		const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
+-	
++
+ 		typedef int32 IndexT;
+-	
+-		typedef dom::NodeList::const_iterator NodeListIter;
++
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
+ 		{
+ 			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
++
+ 			if ( nodeName == &quot;t&quot; )
+ 			{
+ 				IndexT ia = StringUtil::parseInt( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;ia&quot; ) );
+ 				IndexT ib = StringUtil::parseInt( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;ib&quot; ) );
+ 				IndexT ic = StringUtil::parseInt( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;ic&quot; ) );
+-	
++
+ 				rIndices.push_back( ia );
+ 				rIndices.push_back( ib );
+ 				rIndices.push_back( ic );
+ 			}
+ 		}
+ 	}
+-	
+-	//------------------------------------------------------
+-	void XODEParser::readJoint(	const NodeSharedPtr pJointNode,
+-										const String&amp; rBodyName,
+-										Transform&amp; rParentTransform )
+-	{
+-		JointDescription desc;
+-	
+-		desc.mBody1Name = rBodyName;
+-		desc.mJointDefNode = pJointNode;
+-		desc.mParentTransform = rParentTransform;
+-	
+-		mJointDescriptions.push_back( desc );
+-	}
+-	
+-	//------------------------------------------------------
+-	void XODEParser::createJointsFromDescriptions()
+-	{
+-		YAKE_LOG( &quot;Creating joints from descriptions...&quot; );
+ 
+-		for( JointDescriptions::iterator j = mJointDescriptions.begin(); j != mJointDescriptions.end(); ++j )
+-			createJoint( *j );
+-	}
+-	
+ 	//------------------------------------------------------
+-	void XODEParser::createJoint( const JointDescription&amp; rDesc )
++	void XODEParser::readJoint( const NodeSharedPtr pJointNode,
++		const String&amp; parent,
++		Transform&amp; rParentTransform )
+ 	{
+-	
+-		const dom::NodeList&amp; nodes = rDesc.mJointDefNode-&gt;getNodes();
+-	
+-		String name = rDesc.mJointDefNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
++		JointDesc desc;
++		desc.parentName_ = parent;
++		desc.transform_ = rParentTransform;
+ 
+-		YAKE_LOG( &quot;Creating joint '&quot; + name + &quot;' ...&quot; );
+-	
+-		typedef dom::NodeList::const_iterator NodeListIter;
+-	
++		// reading joint... creating description.
++
++		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
++		String name = pJointNode-&gt;getName();
++
++		desc.name_ = name;
++
++		YAKE_LOG( &quot;XODE: reading joint '&quot; + name + &quot;' ...&quot; );
++
+ 		// Looking for link2
+ 		NodeHunter linkHunter( &quot;link2&quot; );
+ 		NodeListIter iLink =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), linkHunter );
+-	
++
+ 		YAKE_ASSERT( iLink != nodes.end() ).error( &quot;2nd body name is not present in joint definition!&quot; );
+-	
++
+ 		String body2Name = (*iLink)-&gt;getAttributeValueAs&lt;String&gt;( &quot;body&quot; );
+-		
+-		YAKE_LOG( &quot;The joint connects two actors:&quot; );
+-		YAKE_LOG( &quot; 1:&quot; + rDesc.mBody1Name );
+-		YAKE_LOG( &quot; 2:&quot; + body2Name );
+-	
++
++		desc.otherBody_ = body2Name;
++
++		YAKE_LOG( &quot;XODE: the joint connects two actors:&quot; );
++		YAKE_LOG( &quot;XODE: 1:&quot; + parent );
++		YAKE_LOG( &quot;XODE: 2:&quot; + body2Name );
++
+ 		// Looking for transform
+ 		NodeHunter hunter( &quot;transform&quot; );
+ 		NodeListIter iTrans =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
+-	
++
+ 		Transform jointTransform;
+-	
+ 		if ( iTrans != nodes.end() )
+ 		{
+-			YAKE_LOG( &quot;createJoint() [&quot; + name + &quot;] : joint has transform &quot; );
+-	
++			YAKE_LOG( &quot;XODE: joint has transform &quot; );
++
+ 			readTransform( *iTrans, jointTransform );
+ 		}
+-	
+-		if ( !rDesc.mParentTransform.isIdentity() )
++
++		if ( !rParentTransform.isIdentity() )
+ 		{
+-			jointTransform = jointTransform.getDerivedTransform( rDesc.mParentTransform );
++			jointTransform = jointTransform.getDerivedTransform( rParentTransform );
+ 		}
+-	
+-		physics::IActorPtr pDynActor1 = mBaseModel.getActorByName( rDesc.mBody1Name );
+-		physics::IActorPtr pDynActor2 = mBaseModel.getActorByName( body2Name );
+-	
+-		YAKE_ASSERT( pDynActor1 &amp;&amp; pDynActor2 ).error( &quot;You're trying to attach joint to non-existent actors! That's not possible ;) !&quot; );
+-	
++
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
+ 		{
+-			String nodeName =
+-				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-	
+-			YAKE_LOG( &quot;   Reading &quot; + nodeName + &quot; now...&quot; );
+-	
++			String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++			IJoint::DescBase* jointDesc = NULL;
++
++			YAKE_LOG( &quot;XODE: reading &quot; + nodeName + &quot; now...&quot; );
++
+ 			if ( nodeName == &quot;ball&quot; )
+ 			{
+-				readBall( *it, pDynActor1, pDynActor2, jointTransform );
++				jointDesc = readBall( *it, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;fixed&quot; )
+ 			{
+-				readFixed( *it, pDynActor1, pDynActor2, jointTransform );
++				jointDesc = readFixed( *it, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;hinge&quot; )
+ 			{
+-				readHinge( *it, pDynActor1, pDynActor2, jointTransform );
++				jointDesc = readHinge( *it, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;hinge2&quot; )
+ 			{
+-				readHinge2( *it, pDynActor1, pDynActor2, jointTransform );
++				jointDesc = readHinge2( *it, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;slider&quot; )
+ 			{
+-				readSlider( *it, pDynActor1, pDynActor2, jointTransform );
++				jointDesc = readSlider( *it, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;universal&quot; )
+ 			{
+-				readUniversal( *it, pDynActor1, pDynActor2, jointTransform );
++				jointDesc = readUniversal( *it, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;amotor&quot; )
+ 			{
+ 				YAKE_ASSERT( false ).error( &quot;amotor joint type is not supported!&quot; );
+ 			}
++
++			if ( jointDesc != NULL )
++			{
++				desc.joint_.reset( jointDesc );
++
++				sigJoint_( desc );
++			}
+ 		}
++
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readBall(	const NodeSharedPtr pJointNode,
+-										physics::IActor* pActor1,
+-										physics::IActor* pActor2,
+-										Transform&amp; rJointTransform )
++	IJoint::DescBase* XODEParser::readBall( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform )
+ 	{
+-		YAKE_LOG( &quot;Reading ball joint description...&quot; );
++		YAKE_LOG( &quot;XODE: reading ball joint description...&quot; );
+ 
+ 		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
+-	
++
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+-	
++
+ 		// Looking for anchor
+ 		NodeHunter anchorHunter( &quot;anchor&quot; );
+ 		NodeListIter iAnchor =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
+-	
++
+ 		YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for ball joint!&quot; );
+-	
++
+ 		Vector3 anchor;
+-	
++
+ 		readAnchor( *iAnchor, anchor, rJointTransform );
+-	
+-		physics::IJoint::DescBall desc( pActor1, pActor2, anchor );
+-	
+-		mPWorld-&gt;createJoint( desc );
+ 
+-		YAKE_LOG( &quot;Finished processing ball joint description.&quot; );
++		IJoint::DescBase* desc = new IJoint::DescBall( NULL, NULL, anchor );
++
++		YAKE_LOG( &quot;XODE: Finished processing ball joint description.&quot; );
++
++		return desc;
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readFixed(	const NodeSharedPtr pJointNode,
+-										physics::IActor* pActor1,
+-										physics::IActor* pActor2,
+-										Transform&amp; rJointTransform )
++	IJoint::DescBase* XODEParser::readFixed( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform )
+ 	{
+ 		YAKE_LOG( &quot;Reading fixed joint description...&quot; );
+ 
+-		physics::IJoint::DescFixed desc( pActor1, pActor2 );
+-	
+-		mPWorld-&gt;createJoint( desc );
++		IJoint::DescBase* desc = new IJoint::DescFixed( NULL, NULL );
+ 
+ 		YAKE_LOG( &quot;Finished processing fixed joint description.&quot; );
++
++		return desc;
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readHinge(	const NodeSharedPtr pJointNode,
+-										physics::IActor* pActor1,
+-										physics::IActor* pActor2,
+-										Transform&amp; rJointTransform )
++	IJoint::DescBase* XODEParser::readHinge( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform )
+ 	{
+ 		YAKE_LOG( &quot;Reading hinge joint description...&quot; );
+ 
+ 		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
+-	
+-		typedef dom::NodeList::const_iterator NodeListIter;
+-	
++
+ 		// Looking for anchor
+ 		NodeHunter anchorHunter( &quot;anchor&quot; );
+ 		NodeListIter iAnchor =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
+-	
++
+ 		YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for hinge joint!&quot; );
+-	
++
+ 		// Looking for axis
+ 		NodeHunter axisHunter( &quot;axis&quot; );
+ 		NodeListIter iAxis =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
+-	
++
+ 		YAKE_ASSERT( iAxis != nodes.end() ).error( &quot;Axis was not defined for hinge joint!&quot; );
+-	
++
+ 		Vector3 anchor;
+ 		Vector3 axis;
+-	
++
+ 		readAnchor( *iAnchor, anchor, rJointTransform );
+ 		readAxis( *iAxis, axis, rJointTransform );
+-	
+-		physics::IJoint::DescHinge desc( pActor1, pActor2, axis, anchor );
+-	
+-		mPWorld-&gt;createJoint( desc );
+ 
++		IJoint::DescBase* desc = new IJoint::DescHinge( NULL, NULL, axis, anchor );
++
+ 		YAKE_LOG( &quot;Finished processing hinge joint description.&quot; );
++
++		return desc;
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readHinge2(	const NodeSharedPtr pJointNode,
+-										physics::IActor* pActor1,
+-										physics::IActor* pActor2,
+-										Transform&amp; rJointTransform )
++	IJoint::DescBase* XODEParser::readHinge2( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform )
+ 	{
+ 		YAKE_LOG( &quot;Reading hinge2 joint description...&quot; );
+ 
+ 		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
+-	
+-		typedef dom::NodeList::const_iterator NodeListIter;
+-	
++
+ 		// Looking for anchor
+ 		NodeHunter anchorHunter( &quot;anchor&quot; );
+ 		NodeListIter iAnchor =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
+-	
++
+ 		YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for hinge2 joint!&quot; );
+-	
++
+ 		// Looking for axis
+ 		NodeHunter axisHunter( &quot;axis&quot; );
+ 		NodeListIter iAxis0 =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
+-	
++
+ 		YAKE_ASSERT( iAxis0 != nodes.end() ).error( &quot;Axis0 was not defined for hinge2 joint!&quot; );
+-	
++
+ 		NodeListIter iAxis1 =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( iAxis0 + 1, nodes.end(), axisHunter );
+-	
++
+ 		YAKE_ASSERT( iAxis1 != nodes.end() ).error( &quot;Axis1 was not defined for hinge2 joint!&quot; );
+-	
++
+ 		Vector3 anchor;
+ 		Vector3 axis0;
+ 		Vector3 axis1;
+-	
++
+ 		readAnchor( *iAnchor, anchor, rJointTransform );
+ 		readAxis( *iAxis0, axis0, rJointTransform );
+ 		readAxis( *iAxis1, axis1, rJointTransform );
+-	
+-		physics::IJoint::DescHinge2 desc( pActor1, pActor2, axis0, axis1, anchor );
+-	
+-		mPWorld-&gt;createJoint( desc );
+ 
+-		YAKE_LOG( &quot;Finished processing hinge2 joint description.&quot; );
++		IJoint::DescBase* desc = new IJoint::DescHinge2( NULL, NULL, axis0, axis1, anchor );
++
++		YAKE_LOG( &quot;XODE: finished processing hinge2 joint description.&quot; );
++
++		return desc;
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readSlider(	const NodeSharedPtr pJointNode,
+-										physics::IActor* pActor1,
+-										physics::IActor* pActor2,
+-										Transform&amp; rJointTransform )
++	IJoint::DescBase* XODEParser::readSlider( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform )
+ 	{
+-		YAKE_LOG( &quot;Reading slider joint description...&quot; );
++		YAKE_LOG( &quot;XODE: reading slider joint description...&quot; );
+ 
+ 		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
+-	
+-		typedef dom::NodeList::const_iterator NodeListIter;
+-	
++
+ 		// Looking for axis
+ 		NodeHunter axisHunter( &quot;axis&quot; );
+ 		NodeListIter iAxis =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
+-	
++
+ 		YAKE_ASSERT( iAxis != nodes.end() ).error( &quot;Axis was not defined for slider joint!&quot; );
+-	
++
+ 		Vector3 axis;
+-	
++
+ 		readAxis( *iAxis, axis, rJointTransform );
+-	
+-		physics::IJoint::DescSlider desc( pActor1, pActor2, axis );
+-	
+-		mPWorld-&gt;createJoint( desc );
+ 
+-		YAKE_LOG( &quot;Finished processing slider joint description.&quot; );
++		IJoint::DescBase* desc = new IJoint::DescSlider( NULL, NULL, axis );
++
++		YAKE_LOG( &quot;XODE: finished processing slider joint description.&quot; );
++
++		return desc;
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readUniversal(	const NodeSharedPtr pJointNode,
+-											physics::IActor* pActor1,
+-											physics::IActor* pActor2,
+-											Transform&amp; rJointTransform )
++	IJoint::DescBase* XODEParser::readUniversal( const NodeSharedPtr pJointNode, Transform&amp; rJointTransform )
+ 	{
+-		YAKE_LOG( &quot;Reading universal joint description...&quot; );
++		YAKE_LOG( &quot;XODE: reading universal joint description...&quot; );
+ 
+ 		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
+-	
+-		typedef dom::NodeList::const_iterator NodeListIter;
+-	
++
+ 		// Looking for anchor
+ 		NodeHunter anchorHunter( &quot;anchor&quot; );
+ 		NodeListIter iAnchor =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
+-	
++
+ 		YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for universal joint!&quot; );
+-	
++
+ 		// Looking for axis
+ 		NodeHunter axisHunter( &quot;axis&quot; );
+ 		NodeListIter iAxis0 =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
+-	
++
+ 		YAKE_ASSERT( iAxis0 != nodes.end() ).error( &quot;Axis0 was not defined for universal joint!&quot; );
+-	
++
+ 		NodeListIter iAxis1 =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( iAxis0 + 1, nodes.end(), axisHunter );
+-	
++
+ 		YAKE_ASSERT( iAxis1 != nodes.end() ).error( &quot;Axis1 was not defined for universal joint!&quot; );
+-	
++
+ 		Vector3 anchor;
+ 		Vector3 axis0;
+ 		Vector3 axis1;
+-	
++
+ 		readAnchor( *iAnchor, anchor, rJointTransform );
+ 		readAxis( *iAxis0, axis0, rJointTransform );
+ 		readAxis( *iAxis1, axis1, rJointTransform );
+-	
+-		physics::IJoint::DescUniversal desc( pActor1, pActor2, axis0, axis1, anchor );
+-	
+-		mPWorld-&gt;createJoint( desc );
+ 
+-		YAKE_LOG( &quot;Finished processing universal joint description.&quot; );
++		IJoint::DescBase* desc = new IJoint::DescUniversal( NULL, NULL, axis0, axis1, anchor );
++
++		YAKE_LOG( &quot;XODE: finished processing universal joint description.&quot; );
++
++		return desc;
+ 	}
+-	
++
+ 	//------------------------------------------------------
+-	void XODEParser::readAnchor(	const NodeSharedPtr pAnchorNode,
+-										Vector3&amp; rAnchor,
+-										Transform&amp; rJointTransform )
++	void XODEParser::readAnchor( const NodeSharedPtr pAnchorNode,
++		Vector3&amp; rAnchor,
++		Transform&amp; rJointTransform )
+ 	{
+-		YAKE_LOG( &quot;Reading anchor...&quot; );
++		YAKE_LOG( &quot;XODE: reading anchor...&quot; );
+ 
+ 		rAnchor.x = StringUtil::parseReal( pAnchorNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
+ 		rAnchor.y = StringUtil::parseReal( pAnchorNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
+ 		rAnchor.z = StringUtil::parseReal( pAnchorNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
+-	
+-		rAnchor = rJointTransform.mPosition + rJointTransform.mRotation*( rJointTransform.mScale*rAnchor );
++
++		rAnchor = rJointTransform.position_ + rJointTransform.rotation_*( rJointTransform.scale_*rAnchor );
+ 	}
+-	
++
+ 	//------------------------------------------------------
+ 	void XODEParser::readAxis(	const NodeSharedPtr pAxisNode,
+-										Vector3&amp; rAxis,
+-										Transform&amp; rJointTransform )
++		Vector3&amp; rAxis,
++		Transform&amp; rJointTransform )
+ 	{
+-		YAKE_LOG( &quot;Reading axis...&quot; );
++		YAKE_LOG( &quot;XODE: reading axis...&quot; );
+ 
+ 		rAxis.x = StringUtil::parseReal( pAxisNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
+ 		rAxis.y = StringUtil::parseReal( pAxisNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
+ 		rAxis.z = StringUtil::parseReal( pAxisNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
+-	
++
+ 		/// TODO What about all other axis params?
+-	
+-		rAxis = rJointTransform.mRotation*rAxis;
++
++		rAxis = rJointTransform.rotation_*rAxis;
+ 	}
+ 
+ } //xode
+ } //parser
+ } //data
+ } //yake
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000212.html">[Yake-svn] r1142 - trunk/yake/yapp/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000214.html">[Yake-svn] r1144 - trunk/yake/src/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#213">[ date ]</a>
+              <a href="thread.html#213">[ thread ]</a>
+              <a href="subject.html#213">[ subject ]</a>
+              <a href="author.html#213">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

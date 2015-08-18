@@ -1,0 +1,494 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1245 - in trunk/yake/scripts/msvc8: . samples/graphics
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1245%20-%20in%20trunk/yake/scripts/msvc8%3A%20.%20samples/graphics&In-Reply-To=%3C200603121903.k2CJ3gqv024722%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000314.html">
+   <LINK REL="Next"  HREF="000316.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1245 - in trunk/yake/scripts/msvc8: . samples/graphics</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1245%20-%20in%20trunk/yake/scripts/msvc8%3A%20.%20samples/graphics&In-Reply-To=%3C200603121903.k2CJ3gqv024722%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1245 - in trunk/yake/scripts/msvc8: . samples/graphics">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 12 20:03:42 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000314.html">[Yake-svn] r1244 - trunk/yake/yapp/msg
+</A></li>
+        <LI>Next message: <A HREF="000316.html">[Yake-svn] r1246 - trunk/yake/documentation/api
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#315">[ date ]</a>
+              <a href="thread.html#315">[ thread ]</a>
+              <a href="subject.html#315">[ subject ]</a>
+              <a href="author.html#315">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-12 20:02:38 +0100 (Sun, 12 Mar 2006)
+New Revision: 1245
+
+Modified:
+   trunk/yake/scripts/msvc8/samples/graphics/sampleGraphicsDemo.vcproj
+   trunk/yake/scripts/msvc8/yake.sln
+Log:
+removed samples (will have a seperate solution)
+
+Modified: trunk/yake/scripts/msvc8/samples/graphics/sampleGraphicsDemo.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/graphics/sampleGraphicsDemo.vcproj	2006-03-12 19:01:16 UTC (rev 1244)
++++ trunk/yake/scripts/msvc8/samples/graphics/sampleGraphicsDemo.vcproj	2006-03-12 19:02:38 UTC (rev 1245)
+@@ -63,7 +63,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib data.lib input.lib graphics.lib audio.lib physics.lib scripting.lib graphicsOgre.lib OgreMain_d.lib&quot;
++				AdditionalDependencies=&quot;base.lib data.lib input.lib graphics.lib audio.lib physics.lib scripting.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;2&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/$(ConfigurationName);../../../../dependencies/lib;../../../../dependencies/ogrenew/OgreMain/lib/debug&quot;
+
+Modified: trunk/yake/scripts/msvc8/yake.sln
+===================================================================
+--- trunk/yake/scripts/msvc8/yake.sln	2006-03-12 19:01:16 UTC (rev 1244)
++++ trunk/yake/scripts/msvc8/yake.sln	2006-03-12 19:02:38 UTC (rev 1245)
+@@ -1,5 +1,5 @@
+ Microsoft Visual Studio Solution File, Format Version 9.00
+-# Visual C++ Express 2005
++# Visual Studio 2005
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;base&quot;, &quot;base.vcproj&quot;, &quot;{D29771DD-715F-452B-B71C-911BACF5956D}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;graphics&quot;, &quot;graphics.vcproj&quot;, &quot;{ECC8FA24-93AC-4659-8EBD-26B6F418AC64}&quot;
+@@ -13,55 +13,6 @@
+ 		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+ 	EndProjectSection
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;registryPluginConcrete&quot;, &quot;samples\base\registryPluginConcrete.vcproj&quot;, &quot;{F6E2B937-448D-4ADE-9A8F-7DDF0CB38865}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866} = {F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;registryPluginInterface&quot;, &quot;samples\base\registryPluginInterface.vcproj&quot;, &quot;{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleContainer&quot;, &quot;samples\base\sampleContainer.vcproj&quot;, &quot;{7E0CC2D4-0DDE-419A-81DE-EE0739673432}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleDebug&quot;, &quot;samples\base\sampleDebug.vcproj&quot;, &quot;{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleRegistry&quot;, &quot;samples\base\sampleRegistry.vcproj&quot;, &quot;{0CA5014D-D3E7-4B2B-B993-75788097E065}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleRegistryPlugin&quot;, &quot;samples\base\sampleRegistryPlugin.vcproj&quot;, &quot;{6876FBCB-B5AD-493E-ADE4-F81441BC4EF2}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866} = {F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleRegistryPluginManual&quot;, &quot;samples\base\sampleRegistryPluginManual.vcproj&quot;, &quot;{6876FBCB-B5AD-494E-ADE4-F81441BC4EF9}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866} = {F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleGraphicsDemo&quot;, &quot;samples\graphics\sampleGraphicsDemo.vcproj&quot;, &quot;{723A2F36-A3DC-40E5-A7B0-0629219B04DE}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD} = {1AF3930A-4E72-4455-AFD0-6B78684105CD}
+-	EndProjectSection
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;physics&quot;, &quot;physics.vcproj&quot;, &quot;{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+ 		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+@@ -95,28 +46,11 @@
+ 		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+ 	EndProjectSection
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleScriptingLua&quot;, &quot;samples\scripting\sampleScriptingLua.vcproj&quot;, &quot;{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{CA63F621-0912-4551-B51A-7BD18F491181} = {CA63F621-0912-4551-B51A-7BD18F491181}
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+-		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD} = {1AF3930A-4E72-4455-AFD0-6B78684105CD}
+-	EndProjectSection
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;data&quot;, &quot;data.vcproj&quot;, &quot;{77A59B89-C2B3-429C-8317-ADE0D046CC3B}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+ 		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleDataMisc&quot;, &quot;samples\data\sampleDataMisc.vcproj&quot;, &quot;{22EFD734-D8C5-47D6-8461-C37E02A9F0B6}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+-	EndProjectSection
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;scriptingBindingsLua&quot;, &quot;plugins\scripting\scriptingLuaBindings.vcproj&quot;, &quot;{CA63F621-0912-4551-B51A-7BD18F491181}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+ 		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+@@ -138,33 +72,6 @@
+ 		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+ 	EndProjectSection
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;samplePhysicsDemo&quot;, &quot;samples\physics\samplePhysicsDemo.vcproj&quot;, &quot;{3DA99679-404B-44C7-9267-C97D066F3D96}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-		{2F5124AA-56BD-4909-811A-E79901978C86} = {2F5124AA-56BD-4909-811A-E79901978C86}
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+-		{1AF3930A-4E72-4455-AFD0-6B78684105CD} = {1AF3930A-4E72-4455-AFD0-6B78684105CD}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;reflection&quot;, &quot;reflection.vcproj&quot;, &quot;{215FEC33-87C9-47E1-80EF-2FC735508B57}&quot;
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;thread&quot;, &quot;thread.vcproj&quot;, &quot;{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}&quot;
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleThread1&quot;, &quot;samples\thread\sampleThread1.vcproj&quot;, &quot;{2E9B8C5F-AC44-478B-AE7F-8C6DC3EA3654}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-		{AA46155A-CCE2-4B9F-BBA2-84E827CF6222} = {AA46155A-CCE2-4B9F-BBA2-84E827CF6222}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sample_application&quot;, &quot;samples\application\sample_application.vcproj&quot;, &quot;{44C8B2A3-281A-4910-A737-7EA1F6F43E35}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-	EndProjectSection
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;graphicsBindingsLua&quot;, &quot;plugins\scripting\graphicsLuaBindings.vcproj&quot;, &quot;{2D5E8A7F-96DA-4CC5-BFC8-430916ACF18A}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+ 		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+@@ -203,88 +110,25 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;modelLua&quot;, &quot;plugins\model\modelLua.vcproj&quot;, &quot;{8150E623-2456-4152-AC96-D302B1CFF6E9}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleEvents&quot;, &quot;samples\base\sampleEvents.vcproj&quot;, &quot;{CD6F13A0-F399-411A-9766-0F8E02761D90}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{F1116FDF-65C1-4788-AC1F-F339279B937A} = {F1116FDF-65C1-4788-AC1F-F339279B937A}
+-		{7EB6A55E-D262-4C82-862C-33E831DDF04C} = {7EB6A55E-D262-4C82-862C-33E831DDF04C}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleVehicle&quot;, &quot;samples\base\sampleVehicle.vcproj&quot;, &quot;{B9A9E534-6EB6-4667-B91B-74B930636F5E}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65} = {EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleDotScene&quot;, &quot;samples\graphics\sampleDotScene.vcproj&quot;, &quot;{8E612AD0-68D1-445E-A31E-7CB1CCA18CA0}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{F1116FDF-65C1-4788-AC1F-F339279B937A} = {F1116FDF-65C1-4788-AC1F-F339279B937A}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleCar&quot;, &quot;samples\misc\sampleCar.vcproj&quot;, &quot;{EE77E955-42BD-47A4-BDC6-D92759F45D01}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65} = {EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleGuiConsole&quot;, &quot;samples\misc\sampleGuiConsole.vcproj&quot;, &quot;{6B6A5F65-AA92-4ABF-A95A-4AC302CB44E9}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{F1116FDF-65C1-4788-AC1F-F339279B937A} = {F1116FDF-65C1-4788-AC1F-F339279B937A}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleScripted&quot;, &quot;samples\misc\sampleScripted.vcproj&quot;, &quot;{6EA2B9BF-2FDA-4E31-BF17-C56709DFB4D4}&quot;
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleScriptedGraphics&quot;, &quot;samples\misc\sampleScriptedGraphics.vcproj&quot;, &quot;{B85C2435-267A-461C-AD9E-FE28EE7DCC12}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{F1116FDF-65C1-4788-AC1F-F339279B937A} = {F1116FDF-65C1-4788-AC1F-F339279B937A}
+-		{CA63F621-0912-4551-B51A-7BD18F491181} = {CA63F621-0912-4551-B51A-7BD18F491181}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleDotLink&quot;, &quot;samples\model\sampleDotLink.vcproj&quot;, &quot;{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{F1116FDF-65C1-4788-AC1F-F339279B937A} = {F1116FDF-65C1-4788-AC1F-F339279B937A}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleSync1&quot;, &quot;samples\model\sampleSync1.vcproj&quot;, &quot;{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}&quot;
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleXODE&quot;, &quot;samples\model\sampleXODE.vcproj&quot;, &quot;{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{F1116FDF-65C1-4788-AC1F-F339279B937A} = {F1116FDF-65C1-4788-AC1F-F339279B937A}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleRafDemo1&quot;, &quot;samples\raf\sampleRafDemo1.vcproj&quot;, &quot;{BAA11C61-DA21-4E6F-8B5C-16A062720F1C}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{6D6DD5E8-3B81-4C98-B460-B434DEE23EE2} = {6D6DD5E8-3B81-4C98-B460-B434DEE23EE2}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleRafMinimal&quot;, &quot;samples\raf\sampleRafMinimal.vcproj&quot;, &quot;{9B57BE31-B084-4AB4-AFEF-E45A0FFD220D}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{6D6DD5E8-3B81-4C98-B460-B434DEE23EE2} = {6D6DD5E8-3B81-4C98-B460-B434DEE23EE2}
+-	EndProjectSection
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleStateMachine&quot;, &quot;samples\state\sampleStateMachine.vcproj&quot;, &quot;{84F0FA89-EB3D-47D6-9C6E-628434AE2C70}&quot;
+-	ProjectSection(ProjectDependencies) = postProject
+-		{F1116FDF-65C1-4788-AC1F-F339279B937A} = {F1116FDF-65C1-4788-AC1F-F339279B937A}
+-	EndProjectSection
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;vehicle&quot;, &quot;vehicle.vcproj&quot;, &quot;{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+ 		{F1116FDF-65C1-4788-AC1F-F339279B937A} = {F1116FDF-65C1-4788-AC1F-F339279B937A}
+ 	EndProjectSection
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleCmdrMayhem&quot;, &quot;samples\misc\sampleCmdrMayhem.vcproj&quot;, &quot;{1CE9D735-3119-4E08-B4A0-F4DAD35FC8D5}&quot;
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;object&quot;, &quot;object.vcproj&quot;, &quot;{CD73E4D1-5832-4DC1-8E65-06052BBD6F49}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;net&quot;, &quot;net.vcproj&quot;, &quot;{90688422-B178-44F3-824A-C8CD6F3BD86F}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleRoServer&quot;, &quot;samples\net\sampleRoServer.vcproj&quot;, &quot;{547611C2-43E2-4678-B8E9-92CF69770C40}&quot;
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;ent2&quot;, &quot;ent2.vcproj&quot;, &quot;{08BC40D8-33D8-4677-993A-32599A93A460}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleRoClient&quot;, &quot;samples\net\sampleRoClient.vcproj&quot;, &quot;{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}&quot;
+-EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleAudio1&quot;, &quot;samples\audio\sampleAudio1.vcproj&quot;, &quot;{726DFDDE-71FA-403B-8F58-6DA9DF0EF297}&quot;
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleEntFsm&quot;, &quot;samples\ent\sampleEntFsm.vcproj&quot;, &quot;{E7B61D39-73E5-4C0E-97D4-1E6FFA12390C}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
++		{89182311-DB82-446B-AA9B-C70A3A0AF035} = {89182311-DB82-446B-AA9B-C70A3A0AF035}
++		{08BC40D8-33D8-4677-993A-32599A93A460} = {08BC40D8-33D8-4677-993A-32599A93A460}
+ 	EndProjectSection
+ EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;entLua2&quot;, &quot;plugins\ent\entLua2.vcproj&quot;, &quot;{89182311-DB82-446B-AA9B-C70A3A0AF035}&quot;
++EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+ 		Debug|Win32 = Debug|Win32
+@@ -303,38 +147,6 @@
+ 		{A2C2A0B2-2EB0-4254-891D-FE93466809CF}.Debug|Win32.Build.0 = Debug|Win32
+ 		{A2C2A0B2-2EB0-4254-891D-FE93466809CF}.Release|Win32.ActiveCfg = Release|Win32
+ 		{A2C2A0B2-2EB0-4254-891D-FE93466809CF}.Release|Win32.Build.0 = Release|Win32
+-		{F6E2B937-448D-4ADE-9A8F-7DDF0CB38865}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{F6E2B937-448D-4ADE-9A8F-7DDF0CB38865}.Debug|Win32.Build.0 = Debug|Win32
+-		{F6E2B937-448D-4ADE-9A8F-7DDF0CB38865}.Release|Win32.ActiveCfg = Release|Win32
+-		{F6E2B937-448D-4ADE-9A8F-7DDF0CB38865}.Release|Win32.Build.0 = Release|Win32
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}.Debug|Win32.Build.0 = Debug|Win32
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}.Release|Win32.ActiveCfg = Release|Win32
+-		{F6E2B937-449D-4ADE-9A8F-7DDF0CB38866}.Release|Win32.Build.0 = Release|Win32
+-		{7E0CC2D4-0DDE-419A-81DE-EE0739673432}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{7E0CC2D4-0DDE-419A-81DE-EE0739673432}.Debug|Win32.Build.0 = Debug|Win32
+-		{7E0CC2D4-0DDE-419A-81DE-EE0739673432}.Release|Win32.ActiveCfg = Release|Win32
+-		{7E0CC2D4-0DDE-419A-81DE-EE0739673432}.Release|Win32.Build.0 = Release|Win32
+-		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Debug|Win32.Build.0 = Debug|Win32
+-		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Release|Win32.ActiveCfg = Release|Win32
+-		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Release|Win32.Build.0 = Release|Win32
+-		{0CA5014D-D3E7-4B2B-B993-75788097E065}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{0CA5014D-D3E7-4B2B-B993-75788097E065}.Debug|Win32.Build.0 = Debug|Win32
+-		{0CA5014D-D3E7-4B2B-B993-75788097E065}.Release|Win32.ActiveCfg = Release|Win32
+-		{0CA5014D-D3E7-4B2B-B993-75788097E065}.Release|Win32.Build.0 = Release|Win32
+-		{6876FBCB-B5AD-493E-ADE4-F81441BC4EF2}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{6876FBCB-B5AD-493E-ADE4-F81441BC4EF2}.Debug|Win32.Build.0 = Debug|Win32
+-		{6876FBCB-B5AD-493E-ADE4-F81441BC4EF2}.Release|Win32.ActiveCfg = Release|Win32
+-		{6876FBCB-B5AD-493E-ADE4-F81441BC4EF2}.Release|Win32.Build.0 = Release|Win32
+-		{6876FBCB-B5AD-494E-ADE4-F81441BC4EF9}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{6876FBCB-B5AD-494E-ADE4-F81441BC4EF9}.Debug|Win32.Build.0 = Debug|Win32
+-		{6876FBCB-B5AD-494E-ADE4-F81441BC4EF9}.Release|Win32.ActiveCfg = Release|Win32
+-		{6876FBCB-B5AD-494E-ADE4-F81441BC4EF9}.Release|Win32.Build.0 = Release|Win32
+-		{723A2F36-A3DC-40E5-A7B0-0629219B04DE}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{723A2F36-A3DC-40E5-A7B0-0629219B04DE}.Debug|Win32.Build.0 = Debug|Win32
+-		{723A2F36-A3DC-40E5-A7B0-0629219B04DE}.Release|Win32.ActiveCfg = Release|Win32
+-		{723A2F36-A3DC-40E5-A7B0-0629219B04DE}.Release|Win32.Build.0 = Release|Win32
+ 		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}.Debug|Win32.Build.0 = Debug|Win32
+ 		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}.Release|Win32.ActiveCfg = Release|Win32
+@@ -359,18 +171,10 @@
+ 		{41CEA11B-9678-43E5-B2F4-754944D7B461}.Debug|Win32.Build.0 = Debug|Win32
+ 		{41CEA11B-9678-43E5-B2F4-754944D7B461}.Release|Win32.ActiveCfg = Release|Win32
+ 		{41CEA11B-9678-43E5-B2F4-754944D7B461}.Release|Win32.Build.0 = Release|Win32
+-		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Debug|Win32.Build.0 = Debug|Win32
+-		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Release|Win32.ActiveCfg = Release|Win32
+-		{26B28ECB-A1FD-4CC0-A5EE-6E4587BBB058}.Release|Win32.Build.0 = Release|Win32
+ 		{77A59B89-C2B3-429C-8317-ADE0D046CC3B}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{77A59B89-C2B3-429C-8317-ADE0D046CC3B}.Debug|Win32.Build.0 = Debug|Win32
+ 		{77A59B89-C2B3-429C-8317-ADE0D046CC3B}.Release|Win32.ActiveCfg = Release|Win32
+ 		{77A59B89-C2B3-429C-8317-ADE0D046CC3B}.Release|Win32.Build.0 = Release|Win32
+-		{22EFD734-D8C5-47D6-8461-C37E02A9F0B6}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{22EFD734-D8C5-47D6-8461-C37E02A9F0B6}.Debug|Win32.Build.0 = Debug|Win32
+-		{22EFD734-D8C5-47D6-8461-C37E02A9F0B6}.Release|Win32.ActiveCfg = Release|Win32
+-		{22EFD734-D8C5-47D6-8461-C37E02A9F0B6}.Release|Win32.Build.0 = Release|Win32
+ 		{CA63F621-0912-4551-B51A-7BD18F491181}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{CA63F621-0912-4551-B51A-7BD18F491181}.Debug|Win32.Build.0 = Debug|Win32
+ 		{CA63F621-0912-4551-B51A-7BD18F491181}.Release|Win32.ActiveCfg = Release|Win32
+@@ -387,26 +191,6 @@
+ 		{5749946B-081D-4A80-8119-2BE84F571E81}.Debug|Win32.Build.0 = Debug|Win32
+ 		{5749946B-081D-4A80-8119-2BE84F571E81}.Release|Win32.ActiveCfg = Release|Win32
+ 		{5749946B-081D-4A80-8119-2BE84F571E81}.Release|Win32.Build.0 = Release|Win32
+-		{3DA99679-404B-44C7-9267-C97D066F3D96}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{3DA99679-404B-44C7-9267-C97D066F3D96}.Debug|Win32.Build.0 = Debug|Win32
+-		{3DA99679-404B-44C7-9267-C97D066F3D96}.Release|Win32.ActiveCfg = Release|Win32
+-		{3DA99679-404B-44C7-9267-C97D066F3D96}.Release|Win32.Build.0 = Release|Win32
+-		{215FEC33-87C9-47E1-80EF-2FC735508B57}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{215FEC33-87C9-47E1-80EF-2FC735508B57}.Debug|Win32.Build.0 = Debug|Win32
+-		{215FEC33-87C9-47E1-80EF-2FC735508B57}.Release|Win32.ActiveCfg = Release|Win32
+-		{215FEC33-87C9-47E1-80EF-2FC735508B57}.Release|Win32.Build.0 = Release|Win32
+-		{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}.Debug|Win32.Build.0 = Debug|Win32
+-		{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}.Release|Win32.ActiveCfg = Release|Win32
+-		{AA46155A-CCE2-4B9F-BBA2-84E827CF6222}.Release|Win32.Build.0 = Release|Win32
+-		{2E9B8C5F-AC44-478B-AE7F-8C6DC3EA3654}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{2E9B8C5F-AC44-478B-AE7F-8C6DC3EA3654}.Debug|Win32.Build.0 = Debug|Win32
+-		{2E9B8C5F-AC44-478B-AE7F-8C6DC3EA3654}.Release|Win32.ActiveCfg = Release|Win32
+-		{2E9B8C5F-AC44-478B-AE7F-8C6DC3EA3654}.Release|Win32.Build.0 = Release|Win32
+-		{44C8B2A3-281A-4910-A737-7EA1F6F43E35}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{44C8B2A3-281A-4910-A737-7EA1F6F43E35}.Debug|Win32.Build.0 = Debug|Win32
+-		{44C8B2A3-281A-4910-A737-7EA1F6F43E35}.Release|Win32.ActiveCfg = Release|Win32
+-		{44C8B2A3-281A-4910-A737-7EA1F6F43E35}.Release|Win32.Build.0 = Release|Win32
+ 		{2D5E8A7F-96DA-4CC5-BFC8-430916ACF18A}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{2D5E8A7F-96DA-4CC5-BFC8-430916ACF18A}.Release|Win32.ActiveCfg = Release|Win32
+ 		{3867E9A4-41F3-4969-B0A8-40757BCB6C29}.Debug|Win32.ActiveCfg = Debug|Win32
+@@ -445,66 +229,10 @@
+ 		{8150E623-2456-4152-AC96-D302B1CFF6E9}.Debug|Win32.Build.0 = Debug|Win32
+ 		{8150E623-2456-4152-AC96-D302B1CFF6E9}.Release|Win32.ActiveCfg = Release|Win32
+ 		{8150E623-2456-4152-AC96-D302B1CFF6E9}.Release|Win32.Build.0 = Release|Win32
+-		{CD6F13A0-F399-411A-9766-0F8E02761D90}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{CD6F13A0-F399-411A-9766-0F8E02761D90}.Debug|Win32.Build.0 = Debug|Win32
+-		{CD6F13A0-F399-411A-9766-0F8E02761D90}.Release|Win32.ActiveCfg = Release|Win32
+-		{CD6F13A0-F399-411A-9766-0F8E02761D90}.Release|Win32.Build.0 = Release|Win32
+-		{B9A9E534-6EB6-4667-B91B-74B930636F5E}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{B9A9E534-6EB6-4667-B91B-74B930636F5E}.Debug|Win32.Build.0 = Debug|Win32
+-		{B9A9E534-6EB6-4667-B91B-74B930636F5E}.Release|Win32.ActiveCfg = Release|Win32
+-		{B9A9E534-6EB6-4667-B91B-74B930636F5E}.Release|Win32.Build.0 = Release|Win32
+-		{8E612AD0-68D1-445E-A31E-7CB1CCA18CA0}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{8E612AD0-68D1-445E-A31E-7CB1CCA18CA0}.Debug|Win32.Build.0 = Debug|Win32
+-		{8E612AD0-68D1-445E-A31E-7CB1CCA18CA0}.Release|Win32.ActiveCfg = Release|Win32
+-		{8E612AD0-68D1-445E-A31E-7CB1CCA18CA0}.Release|Win32.Build.0 = Release|Win32
+-		{EE77E955-42BD-47A4-BDC6-D92759F45D01}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{EE77E955-42BD-47A4-BDC6-D92759F45D01}.Debug|Win32.Build.0 = Debug|Win32
+-		{EE77E955-42BD-47A4-BDC6-D92759F45D01}.Release|Win32.ActiveCfg = Release|Win32
+-		{EE77E955-42BD-47A4-BDC6-D92759F45D01}.Release|Win32.Build.0 = Release|Win32
+-		{6B6A5F65-AA92-4ABF-A95A-4AC302CB44E9}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{6B6A5F65-AA92-4ABF-A95A-4AC302CB44E9}.Debug|Win32.Build.0 = Debug|Win32
+-		{6B6A5F65-AA92-4ABF-A95A-4AC302CB44E9}.Release|Win32.ActiveCfg = Release|Win32
+-		{6B6A5F65-AA92-4ABF-A95A-4AC302CB44E9}.Release|Win32.Build.0 = Release|Win32
+-		{6EA2B9BF-2FDA-4E31-BF17-C56709DFB4D4}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{6EA2B9BF-2FDA-4E31-BF17-C56709DFB4D4}.Debug|Win32.Build.0 = Debug|Win32
+-		{6EA2B9BF-2FDA-4E31-BF17-C56709DFB4D4}.Release|Win32.ActiveCfg = Release|Win32
+-		{6EA2B9BF-2FDA-4E31-BF17-C56709DFB4D4}.Release|Win32.Build.0 = Release|Win32
+-		{B85C2435-267A-461C-AD9E-FE28EE7DCC12}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{B85C2435-267A-461C-AD9E-FE28EE7DCC12}.Debug|Win32.Build.0 = Debug|Win32
+-		{B85C2435-267A-461C-AD9E-FE28EE7DCC12}.Release|Win32.ActiveCfg = Release|Win32
+-		{B85C2435-267A-461C-AD9E-FE28EE7DCC12}.Release|Win32.Build.0 = Release|Win32
+-		{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}.Debug|Win32.Build.0 = Debug|Win32
+-		{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}.Release|Win32.ActiveCfg = Release|Win32
+-		{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}.Release|Win32.Build.0 = Release|Win32
+-		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Debug|Win32.Build.0 = Debug|Win32
+-		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Release|Win32.ActiveCfg = Release|Win32
+-		{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}.Release|Win32.Build.0 = Release|Win32
+-		{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}.Debug|Win32.Build.0 = Debug|Win32
+-		{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}.Release|Win32.ActiveCfg = Release|Win32
+-		{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}.Release|Win32.Build.0 = Release|Win32
+-		{BAA11C61-DA21-4E6F-8B5C-16A062720F1C}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{BAA11C61-DA21-4E6F-8B5C-16A062720F1C}.Debug|Win32.Build.0 = Debug|Win32
+-		{BAA11C61-DA21-4E6F-8B5C-16A062720F1C}.Release|Win32.ActiveCfg = Release|Win32
+-		{BAA11C61-DA21-4E6F-8B5C-16A062720F1C}.Release|Win32.Build.0 = Release|Win32
+-		{9B57BE31-B084-4AB4-AFEF-E45A0FFD220D}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{9B57BE31-B084-4AB4-AFEF-E45A0FFD220D}.Debug|Win32.Build.0 = Debug|Win32
+-		{9B57BE31-B084-4AB4-AFEF-E45A0FFD220D}.Release|Win32.ActiveCfg = Release|Win32
+-		{9B57BE31-B084-4AB4-AFEF-E45A0FFD220D}.Release|Win32.Build.0 = Release|Win32
+-		{84F0FA89-EB3D-47D6-9C6E-628434AE2C70}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{84F0FA89-EB3D-47D6-9C6E-628434AE2C70}.Debug|Win32.Build.0 = Debug|Win32
+-		{84F0FA89-EB3D-47D6-9C6E-628434AE2C70}.Release|Win32.ActiveCfg = Release|Win32
+-		{84F0FA89-EB3D-47D6-9C6E-628434AE2C70}.Release|Win32.Build.0 = Release|Win32
+ 		{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}.Debug|Win32.Build.0 = Debug|Win32
+ 		{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}.Release|Win32.ActiveCfg = Release|Win32
+ 		{EAEC3A1F-2888-4EAC-869D-BFA70FD56A65}.Release|Win32.Build.0 = Release|Win32
+-		{1CE9D735-3119-4E08-B4A0-F4DAD35FC8D5}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{1CE9D735-3119-4E08-B4A0-F4DAD35FC8D5}.Debug|Win32.Build.0 = Debug|Win32
+-		{1CE9D735-3119-4E08-B4A0-F4DAD35FC8D5}.Release|Win32.ActiveCfg = Release|Win32
+-		{1CE9D735-3119-4E08-B4A0-F4DAD35FC8D5}.Release|Win32.Build.0 = Release|Win32
+ 		{CD73E4D1-5832-4DC1-8E65-06052BBD6F49}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{CD73E4D1-5832-4DC1-8E65-06052BBD6F49}.Debug|Win32.Build.0 = Debug|Win32
+ 		{CD73E4D1-5832-4DC1-8E65-06052BBD6F49}.Release|Win32.ActiveCfg = Release|Win32
+@@ -513,18 +241,18 @@
+ 		{90688422-B178-44F3-824A-C8CD6F3BD86F}.Debug|Win32.Build.0 = Debug|Win32
+ 		{90688422-B178-44F3-824A-C8CD6F3BD86F}.Release|Win32.ActiveCfg = Release|Win32
+ 		{90688422-B178-44F3-824A-C8CD6F3BD86F}.Release|Win32.Build.0 = Release|Win32
+-		{547611C2-43E2-4678-B8E9-92CF69770C40}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{547611C2-43E2-4678-B8E9-92CF69770C40}.Debug|Win32.Build.0 = Debug|Win32
+-		{547611C2-43E2-4678-B8E9-92CF69770C40}.Release|Win32.ActiveCfg = Release|Win32
+-		{547611C2-43E2-4678-B8E9-92CF69770C40}.Release|Win32.Build.0 = Release|Win32
+-		{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}.Debug|Win32.Build.0 = Debug|Win32
+-		{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}.Release|Win32.ActiveCfg = Release|Win32
+-		{4F5EEBEB-7594-4934-8DF5-FB4604E84CCB}.Release|Win32.Build.0 = Release|Win32
+-		{726DFDDE-71FA-403B-8F58-6DA9DF0EF297}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{726DFDDE-71FA-403B-8F58-6DA9DF0EF297}.Debug|Win32.Build.0 = Debug|Win32
+-		{726DFDDE-71FA-403B-8F58-6DA9DF0EF297}.Release|Win32.ActiveCfg = Release|Win32
+-		{726DFDDE-71FA-403B-8F58-6DA9DF0EF297}.Release|Win32.Build.0 = Release|Win32
++		{08BC40D8-33D8-4677-993A-32599A93A460}.Debug|Win32.ActiveCfg = Debug|Win32
++		{08BC40D8-33D8-4677-993A-32599A93A460}.Debug|Win32.Build.0 = Debug|Win32
++		{08BC40D8-33D8-4677-993A-32599A93A460}.Release|Win32.ActiveCfg = Release|Win32
++		{08BC40D8-33D8-4677-993A-32599A93A460}.Release|Win32.Build.0 = Release|Win32
++		{E7B61D39-73E5-4C0E-97D4-1E6FFA12390C}.Debug|Win32.ActiveCfg = Debug|Win32
++		{E7B61D39-73E5-4C0E-97D4-1E6FFA12390C}.Debug|Win32.Build.0 = Debug|Win32
++		{E7B61D39-73E5-4C0E-97D4-1E6FFA12390C}.Release|Win32.ActiveCfg = Release|Win32
++		{E7B61D39-73E5-4C0E-97D4-1E6FFA12390C}.Release|Win32.Build.0 = Release|Win32
++		{89182311-DB82-446B-AA9B-C70A3A0AF035}.Debug|Win32.ActiveCfg = Debug|Win32
++		{89182311-DB82-446B-AA9B-C70A3A0AF035}.Debug|Win32.Build.0 = Debug|Win32
++		{89182311-DB82-446B-AA9B-C70A3A0AF035}.Release|Win32.ActiveCfg = Release|Win32
++		{89182311-DB82-446B-AA9B-C70A3A0AF035}.Release|Win32.Build.0 = Release|Win32
+ 	EndGlobalSection
+ 	GlobalSection(SolutionProperties) = preSolution
+ 		HideSolutionNode = FALSE
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000314.html">[Yake-svn] r1244 - trunk/yake/yapp/msg
+</A></li>
+	<LI>Next message: <A HREF="000316.html">[Yake-svn] r1246 - trunk/yake/documentation/api
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#315">[ date ]</a>
+              <a href="thread.html#315">[ thread ]</a>
+              <a href="subject.html#315">[ subject ]</a>
+              <a href="author.html#315">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

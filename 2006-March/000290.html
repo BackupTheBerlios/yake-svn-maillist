@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1218 - trunk/yake/yake/base
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1218%20-%20trunk/yake/yake/base&In-Reply-To=%3C200603051833.k25IXMpb028770%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000289.html">
+   <LINK REL="Next"  HREF="000291.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1218 - trunk/yake/yake/base</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1218%20-%20trunk/yake/yake/base&In-Reply-To=%3C200603051833.k25IXMpb028770%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1218 - trunk/yake/yake/base">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar  5 19:33:22 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000289.html">[Yake-svn] r1217 - in trunk/yake/yake/base: . mpl templates
+</A></li>
+        <LI>Next message: <A HREF="000291.html">[Yake-svn] r1219 - in trunk/yake/yake: . ent prop statemachine
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#290">[ date ]</a>
+              <a href="thread.html#290">[ thread ]</a>
+              <a href="subject.html#290">[ subject ]</a>
+              <a href="author.html#290">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-05 19:33:21 +0100 (Sun, 05 Mar 2006)
+New Revision: 1218
+
+Added:
+   trunk/yake/yake/base/yakeTaggedListenerManager.h
+Log:
+initial revision
+
+Added: trunk/yake/yake/base/yakeTaggedListenerManager.h
+===================================================================
+--- trunk/yake/yake/base/yakeTaggedListenerManager.h	2006-03-05 18:32:28 UTC (rev 1217)
++++ trunk/yake/yake/base/yakeTaggedListenerManager.h	2006-03-05 18:33:21 UTC (rev 1218)
+@@ -0,0 +1,45 @@
++#ifndef YAKE_TAGGED_LISTENER_MANAGER_H
++#define YAKE_TAGGED_LISTENER_MANAGER_H
++
++namespace yake {
++
++	template&lt;typename T_listener&gt;
++	struct ListenerManager
++	{
++		virtual ~ListenerManager() {}
++		typedef T_listener listener_type;
++		enum AttachMode
++		{
++			kTransferOwnership = 0,
++			kKeepOwnership = 1
++		};
++		void attachListener(listener_type*,const std::string&amp; tag = &quot;&quot;,const AttachMode mode = kTransferOwnership);
++
++		//listener_type* detachListener(listener_type*);
++		//listener_type* detachListener(const std::string&amp; tag);
++
++		//void destroyListener(listener_type*);
++		//void destroyListener(const std::string&amp; tag);
++
++		listener_type* getListener(const std::string&amp; tag) const;
++	protected:
++		typedef std::map&lt;std::string,listener_type*&gt; tag_listener_map;
++		tag_listener_map	listenerMap_;
++
++		typedef std::deque&lt;std::pair&lt;listener_type*,AttachMode&gt; &gt; listener_list;
++		listener_list		listeners_;
++	};
++	/** @todo implement iterator and const_iterator.
++	*/
++	template&lt;typename T_listener&gt;
++	void ListenerManager&lt;T_listener&gt;::attachListener(T_listener* listener,const std::string&amp; tag,const AttachMode mode)
++	{
++		assert( listener );
++		listeners_.push_back( listener_list::value_type(listener,mode) );
++		if (!tag.empty()) //@todo add check for existing tag!
++			listenerMap_[ tag ] = listener;
++	}
++
++} // namespace yake
++
++#endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000289.html">[Yake-svn] r1217 - in trunk/yake/yake/base: . mpl templates
+</A></li>
+	<LI>Next message: <A HREF="000291.html">[Yake-svn] r1219 - in trunk/yake/yake: . ent prop statemachine
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#290">[ date ]</a>
+              <a href="thread.html#290">[ thread ]</a>
+              <a href="subject.html#290">[ subject ]</a>
+              <a href="author.html#290">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

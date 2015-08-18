@@ -1,0 +1,143 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1393 - trunk/yake/src/yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1393%20-%20trunk/yake/src/yapp/vehicle&In-Reply-To=%3C200607192158.k6JLwtrm021819%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000460.html">
+   <LINK REL="Next"  HREF="000462.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1393 - trunk/yake/src/yapp/vehicle</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1393%20-%20trunk/yake/src/yapp/vehicle&In-Reply-To=%3C200607192158.k6JLwtrm021819%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1393 - trunk/yake/src/yapp/vehicle">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 19 23:58:56 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000460.html">[Yake-svn] r1392 - in trunk/yake: src/yake/input yake/input
+</A></li>
+        <LI>Next message: <A HREF="000462.html">[Yake-svn] r1394 - trunk/yake/src/yapp/samples/misc/car
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#461">[ date ]</a>
+              <a href="thread.html#461">[ thread ]</a>
+              <a href="subject.html#461">[ subject ]</a>
+              <a href="author.html#461">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-19 23:58:55 +0200 (Wed, 19 Jul 2006)
+New Revision: 1393
+
+Modified:
+   trunk/yake/src/yapp/vehicle/yakeMountPoint.cpp
+   trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+Log:
+various fixes
+
+Modified: trunk/yake/src/yapp/vehicle/yakeMountPoint.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeMountPoint.cpp	2006-07-19 21:56:33 UTC (rev 1392)
++++ trunk/yake/src/yapp/vehicle/yakeMountPoint.cpp	2006-07-19 21:58:55 UTC (rev 1393)
+@@ -43,10 +43,11 @@
+ 	}
+ 	MountPoint::~MountPoint()
+ 	{
+-		ConstVectorIterator&lt; MountablePtrList &gt; it( mMountables );
++		MountablePtrList mountables = mMountables;
++		ConstVectorIterator&lt; MountablePtrList &gt; it( mountables );
+ 		while (it.hasMoreElements())
+ 			detach( it.getNext() );
+-		mMountables.clear();
++		YAKE_ASSERT( mMountables.empty() );
+ 
+ 		ConstVectorIterator&lt; MountPointList &gt; itMP( mChildren );
+ 		while (itMP.hasMoreElements())
+
+Modified: trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2006-07-19 21:56:33 UTC (rev 1392)
++++ trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2006-07-19 21:58:55 UTC (rev 1393)
+@@ -630,10 +630,18 @@
+ 		YAKE_ASSERT( mpChassis );
+ 		YAKE_ASSERT( mpWheel );
+ 		const math::Vector3 chassisDir = mpChassis-&gt;getOrientation() * math::Vector3::kUnitZ;
+-		const math::Vector3 wheelMovementDir = mpWheel-&gt;getBody().getLinearVelocity().normalisedCopy();
+-		mSkid = 1. - chassisDir.dotProduct( wheelMovementDir );
+-		if (mSkid &lt; 0)
++		const math::Vector3 linVel = mpWheel-&gt;getBody().getLinearVelocity();
++		const real linVelf = linVel.length();
++		const math::Vector3 wheelMovementDir = linVel.normalisedCopy();
++		if (linVelf &lt; 0.1) //@todo FIXME should be dependent size...
+ 			mSkid = 0.;
++		else
++		{
++			mSkid = 1. - fabs( chassisDir.dotProduct( wheelMovementDir ) );
++			if (mSkid &lt; 0)
++				mSkid = 0.;
++		}
++		//std::cout &lt;&lt; &quot;skid = &quot; &lt;&lt; mSkid &lt;&lt; &quot;\n&quot;;
+ 	}
+ 	real OdeWheel::getRadius() const
+ 	{
+@@ -678,7 +686,7 @@
+ 			_applyBrakeTq( math::Vector3::kUnitX * mBrakeRatio * 1.5 );
+ 
+ 		const real targetVel = tq &lt; 0. ? -40 : 40;
+-		_applyMotor( targetVel, - tq * 0.0075 );
++		_applyMotor( targetVel, - tq * 0.1/*@todo this is &quot;dt&quot; dependent*/ );
+ 	}
+ 	void OdeWheel::_applyTq( const math::Vector3&amp; torque )
+ 	{
+@@ -691,12 +699,14 @@
+ 		if (dir.dotProduct(linVel) &gt; 0)
+ 		{
+ 			std::cout &lt;&lt; &quot;BRK+\n&quot;;
+-			mpWheel-&gt;getBody().addLocalTorque( torque );
++			//mpWheel-&gt;getBody().addLocalTorque( torque );
++			mpWheel-&gt;getBody().setAngularVelocity( 0.05 * mpWheel-&gt;getBody().getAngularVelocity() );
+ 		}
+ 		else
+ 		{
+ 			std::cout &lt;&lt; &quot;BRK-\n&quot;;
+-			mpWheel-&gt;getBody().addLocalTorque( -torque );
++			//mpWheel-&gt;getBody().addLocalTorque( torque );
++			mpWheel-&gt;getBody().setAngularVelocity( 0.05 * mpWheel-&gt;getBody().getAngularVelocity() );
+ 		}
+ 	}
+ 	void OdeWheel::_applyMotor( real velocity, real fmax )
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000460.html">[Yake-svn] r1392 - in trunk/yake: src/yake/input yake/input
+</A></li>
+	<LI>Next message: <A HREF="000462.html">[Yake-svn] r1394 - trunk/yake/src/yapp/samples/misc/car
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#461">[ date ]</a>
+              <a href="thread.html#461">[ thread ]</a>
+              <a href="subject.html#461">[ subject ]</a>
+              <a href="author.html#461">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

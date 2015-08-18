@@ -1,0 +1,534 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1180 - trunk/yake/src/yapp/ent
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-January/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1180%20-%20trunk/yake/src/yapp/ent&In-Reply-To=%3C200601151844.k0FIigPE027767%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000249.html">
+   <LINK REL="Next"  HREF="000251.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1180 - trunk/yake/src/yapp/ent</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1180%20-%20trunk/yake/src/yapp/ent&In-Reply-To=%3C200601151844.k0FIigPE027767%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1180 - trunk/yake/src/yapp/ent">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Jan 15 19:44:42 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000249.html">[Yake-svn] r1179 - trunk/yake/yapp/plugins/entLua
+</A></li>
+        <LI>Next message: <A HREF="000251.html">[Yake-svn] r1181 - trunk/yake/src/yapp/plugins/entLua
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#250">[ date ]</a>
+              <a href="thread.html#250">[ thread ]</a>
+              <a href="subject.html#250">[ subject ]</a>
+              <a href="author.html#250">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-01-15 19:44:38 +0100 (Sun, 15 Jan 2006)
+New Revision: 1180
+
+Modified:
+   trunk/yake/src/yapp/ent/yakeObject.cpp
+   trunk/yake/src/yapp/ent/yakeSim.cpp
+Log:
+refactored to use yake::object
+
+Modified: trunk/yake/src/yapp/ent/yakeObject.cpp
+===================================================================
+--- trunk/yake/src/yapp/ent/yakeObject.cpp	2006-01-15 18:43:52 UTC (rev 1179)
++++ trunk/yake/src/yapp/ent/yakeObject.cpp	2006-01-15 18:44:38 UTC (rev 1180)
+@@ -34,17 +34,30 @@
+ namespace yake {
+ namespace ent {
+ 
+-	Object* object_class::createInstance() const
++	Object* object_class::createInstance(const ObjectId&amp; id) const
+ 	{
+ 		YAKE_ASSERT( !mCreatorFn.empty() )( mName ).debug(&quot;Class has no registered creation function!&quot;);
+ 		if (mCreatorFn.empty())
+ 			return 0;
+-		return mCreatorFn();
++		return mCreatorFn(id);
+ 	}
+ 	const ObjectCreatorFn&amp; object_class::getCreatorFn() const
+ 	{
+ 		return mCreatorFn;
+ 	}
++	void object_class::destroyInstance(Object* obj) const
++	{
++		if (!obj)
++			return;
++		YAKE_ASSERT( !mDestroyFn.empty() )( mName ).debug(&quot;Class has no registered destruction function!&quot;);
++		if (mDestroyFn.empty())
++			return;
++		return mDestroyFn(obj);
++	}
++	const ObjectDestroyFn&amp; object_class::getDestroyFn() const
++	{
++		return mDestroyFn;
++	}
+ 	void object_class::addParent(object_class* parent)
+ 	{
+ 		YAKE_ASSERT( parent );
+@@ -82,14 +95,15 @@
+ 
+ 	DEFINE_OBJECT_ROOT( Object )
+ 
+-	Object::Object() : mEvtSpawn(&quot;onSpawn&quot;), mEvtTick(&quot;onTick&quot;)
++	Object::Object() : mId(ObjectId::kNull), mEvtSpawn(&quot;onSpawn&quot;), mEvtTick(&quot;onTick&quot;)
+ 	{
+-		static ObjectId lastId = 1;
+-		mId = lastId++;
+-
+ 		regEvent(&amp;mEvtSpawn);
+ 		regEvent(&amp;mEvtTick);
+ 	}
++	void Object::setId(const ObjectId&amp; id)
++	{
++		mId = id;
++	}
+ 	void Object::initialise(object_creation_context&amp; creationCtx)
+ 	{
+ 		onInitialise(creationCtx);
+@@ -133,6 +147,10 @@
+ 	{
+ 		return mId;
+ 	}
++	ObjectId Object::id() const
++	{
++		return mId;
++	}
+ 	Event* Object::getEventByName(const String&amp; name) const
+ 	{
+ 		EventMap::const_iterator itFind = mEvents.find(name);
+
+Modified: trunk/yake/src/yapp/ent/yakeSim.cpp
+===================================================================
+--- trunk/yake/src/yapp/ent/yakeSim.cpp	2006-01-15 18:43:52 UTC (rev 1179)
++++ trunk/yake/src/yapp/ent/yakeSim.cpp	2006-01-15 18:44:38 UTC (rev 1180)
+@@ -38,74 +38,57 @@
+ namespace ent {
+ 
+ 	namespace private_ {
+-		sim* g_sim = 0;
++		Simulation* g_sim = 0;
+ 	}
+-	sim&amp; sim::getSim()
++	Simulation&amp; Simulation::getSim()
+ 	{
+ 		return *(private_::g_sim);
+ 	}
+ 
+-	sim::sim(	scripting::IScriptingSystem&amp; scriptingSystem,
+-				const real ticksPerSecond, 
+-				graphics::IWorld* pGWorld /*= 0*/,
+-				audio::IWorld* pAWorld /*= 0*/,
+-				physics::IWorld* pPWorld /*= 0*/
+-			) : 
++	Simulation::Simulation() :
++		mpGWorld(0),
++		mpAWorld(0),
++		mpPWorld(0),
++		mpScripting(0),
++		mEvtEntityVMSpawned(&quot;onEntitySpawned&quot;),
++		mEvtEntityVMCreated(&quot;onEntityVMCreated&quot;),
+ 		mSimTime(0),
+-		mpGWorld(pGWorld),
+-		mpAWorld(pAWorld),
+-		mpPWorld(pPWorld),
+-		mScripting(scriptingSystem),
+-		mEvtEntitySpawned(&quot;onEntitySpawned&quot;),
+-		mEvtEntityVMCreated(&quot;onEntityVMCreated&quot;),
+ 		mTickTime(0.1f),
+ 		mCurrTickTime(0.f),
+-		mSimTimeInSecs(0.f),
+-		mLastNumericClassId(1)
++		mSimTimeInSecs(0.f)
+ 	{
++	}
++	Simulation::~Simulation()
++	{
++		stop();
++	}
++	bool Simulation::start(	scripting::IScriptingSystem* pScripting /*= 0*/,
++					graphics::IWorld* pGWorld /*= 0*/,
++					audio::IWorld* pAWorld /*= 0*/,
++					physics::IWorld* pPWorld /*= 0*/)
++	{
+ 		private_::g_sim = this;
+-
+-		if (ticksPerSecond &gt; 0)
+-			mTickTime = 1.f / ticksPerSecond;
++		mpScripting = pScripting;
++		mpGWorld = pGWorld;
++		mpAWorld = pAWorld;
++		mpPWorld = pPWorld;
++		return true;
+ 	}
+-	sim::~sim()
++	void Simulation::stop()
+ 	{
++		removeAndDestroyObjects();
+ 		mNonOwnedBinders.clear();
+ 		mBinders.clear();
+-		mObjectClasses.clear();
+-		mObjectClassIds.clear();
+-		mObjects.clear();
+ 		private_::g_sim = 0;
+ 	}
+-	void sim::setTicksPerSecond(const real ticksPerSecond)
++	void Simulation::tick(const real timeElapsed)
+ 	{
+-		if (ticksPerSecond &gt; 0)
+-			mTickTime = 0.1f;
+-	}
+-	Event&amp; sim::getEvent_onEntitySpawned()
+-	{
+-		return mEvtEntitySpawned;
+-	}
+-	Event&amp; sim::getEvent_onEntityVMCreated()
+-	{
+-		return mEvtEntityVMCreated;
+-	}
+-	simtime sim::getTime() const
+-	{
+-		return mSimTime;
+-	}
+-	real sim::getTimeAsSeconds() const
+-	{
+-		return mSimTimeInSecs;
+-	}
+-	void sim::tick(const real timeElapsed)
+-	{
+ 		mCurrTickTime += timeElapsed;
+ 		while (mCurrTickTime &gt; 0)
+ 		{
+ 			mMsgMgr.execute();
+ 
+-			ConstVectorIterator&lt;ObjectList&gt; itEntity( mObjects );
++			ConstVectorIterator&lt;ObjectList&gt; itEntity( mObjs );
+ 			while (itEntity.hasMoreElements())
+ 			{
+ 				itEntity.getNext()-&gt;tick();
+@@ -117,37 +100,115 @@
+ 			mSimTimeInSecs += mTickTime;
+ 		}
+ 	}
+-	void sim::removeAndDestroyAll()
++	Object* Simulation::createObject(const String&amp; clsName,
++												const StringPairVector&amp; components,
++												const StringVector&amp; scriptFiles )
+ 	{
+-		mObjects.clear();
++		std::pair&lt;object::ResultCode,ClassId&gt; clsId = mObjMgr.getClassId( clsName );
++		YAKE_ASSERT( clsId.first == object::RC_OK );
++		if (clsId.first != object::RC_OK)
++			return 0;
++		return createObject( clsId.second, components, scriptFiles );
+ 	}
+-	void sim::regObjectClass( object_class* theClass )
++	Object* Simulation::createObject(const ClassId clsId,
++												const StringPairVector&amp; components,
++												const StringVector&amp; scriptFiles)
+ 	{
+-		YAKE_ASSERT( theClass ).debug(&quot;Trying to register 0 class!&quot;);
+-		if (!theClass)
+-			return;
+-		const ObjectClassId id = theClass-&gt;getName();
+-		mObjectClassIds.push_back( id );
+-		mObjectClasses[ id ] = theClass;
+-		mNumericClassIds[ id ] = mLastNumericClassId++;
++		Object* pObject = mObjMgr.createObject( clsId );
++		if (!pObject)
++			return 0;
++		Entity* pEntity = Entity::cast(pObject);
++
++		if (!pEntity)
++			mObjs.push_back( pObject );
++		else
++		{
++
++			// create VMs &amp; load &amp; execute entity scripts
++			const size_t numVMs = (scriptFiles.size() &gt; 0) ? scriptFiles.size() : 1; // at least one VM
++			ParamList params;
++			params[&quot;object&quot;] = pObject;
++			params[&quot;entity&quot;] = pEntity;
++			if (mpScripting)
++			{
++				for (size_t i=0; i&lt;numVMs; ++i)
++				{
++					// create VM
++					scripting::IVM* pVM = createEntityVM();
++					pEntity-&gt;addVM( pVM );
++
++					// fire &quot;entity VM created&quot;
++					params[&quot;vm&quot;] = pVM;
++					mEvtEntityVMCreated.fire(params);
++
++					// load &amp; execute entity script
++					if (i &lt;= scriptFiles.size())
++					{
++						const String scriptFile = scriptFiles.at(i);
++						if (scriptFile.empty())
++							continue;
++						AutoPtr&lt;scripting::IScript&gt; pScript( mpScripting-&gt;createScriptFromFile(scriptFile) );
++						YAKE_ASSERT( pScript.get() );
++						pVM-&gt;execute( pScript.get() );
++					} // for each script
++				} // for each VM
++			} // if mpScripting
++
++			// create components
++			ConstVectorIterator&lt;StringPairVector&gt; itC( components );
++			while (itC.hasMoreElements())
++			{
++				const StringPair stringPair = itC.getNext();
++				pEntity-&gt;addComponent( stringPair.first, create&lt;EntityComponent&gt;( stringPair.second, *pEntity ) );
++			}
++
++			// minimal first time setup
++			object_creation_context ctx;
++			ctx.mpGWorld = mpGWorld;
++			ctx.mpAWorld = mpAWorld;
++			ctx.mpPWorld = mpPWorld;
++			pEntity-&gt;initialise( ctx );
++
++			// store entity &amp; fire events
++			mObjs.push_back( pObject );
++
++			// fire &quot;entity spawned&quot; for each VM
++
++			params.clear();
++			params[&quot;object&quot;] = pObject;
++			params[&quot;entity&quot;] = pEntity;
++			for (size_t i=0; i&lt;pEntity-&gt;getVMCount(); ++i)
++			{
++				params[&quot;vm&quot;] = pEntity-&gt;getVM(i);
++				mEvtEntityVMSpawned.fire(params);
++			}
++
++			// spawn entity itself
++
++			pEntity-&gt;spawn();
++
++			ObjectMessage* pMsg = pEntity-&gt;createMessage( MSGID_EntitySpawned );
++			pMsg-&gt;set(&quot;entity&quot;, pEntity );
++			mMsgMgr.postMessage( pMsg );
++		}
++		return pObject;
+ 	}
+-	const ObjectClassIdList&amp; sim::getRegisteredObjectClasses() const
++	void Simulation::addEntityVMBinder( scripting::IBinder* pBinder, const bool bTransferOwnership )
+ 	{
+-		return mObjectClassIds;
+-	}
+-	void sim::addEntityVMBinder( scripting::IBinder* pBinder, const bool bTransferOwnership )
+-	{
+ 		YAKE_ASSERT( pBinder );
+ 		if (!pBinder)
+ 			return;
+ 		if (bTransferOwnership)
+-			mBinders.push_back( BinderPtr( pBinder ) );
++			mBinders.push_back( BinderSharedPtr( pBinder ) );
+ 		else
+ 			mNonOwnedBinders.push_back( pBinder );
+ 	}
+-	scripting::IVM* sim::createEntityVM()
++	scripting::IVM* Simulation::createEntityVM()
+ 	{
+-		scripting::IVM* pVM = mScripting.createVM();
++		YAKE_ASSERT( mpScripting );
++		if (!mpScripting)
++			return 0;
++		scripting::IVM* pVM = mpScripting-&gt;createVM();
+ 		YAKE_ASSERT( pVM );
+ 
+ 		// bind complete entity system to VM
+@@ -170,103 +231,29 @@
+ 
+ 		return pVM;
+ 	}
+-	Entity* sim::createEntity( const ObjectClassId&amp; id, const StringPairVector&amp; components, const StringVector&amp; scriptFiles )
++	void Simulation::destroyObject( Object* obj )
+ 	{
+-		ObjectClassMap::const_iterator itFind = mObjectClasses.find( id );
+-		if (itFind == mObjectClasses.end())
++		if (!obj)
++			return;
++		// remove from list
++		ObjectList::iterator itFind = std::find( mObjs.begin(), mObjs.end(), obj );
++		if (itFind != mObjs.end())
++			mObjs.erase( itFind );
++		// destroy
++		mObjMgr.destroyObject( obj );
++	}
++	void Simulation::removeAndDestroyObjects()
++	{
++		ConstDequeIterator&lt;ObjectList&gt; itObj( mObjs );
++		while (itObj.hasMoreElements())
+ 		{
+-			std::stringstream msg;
+-			msg &lt;&lt; &quot;Could not find creator for object class: &quot; &lt;&lt; id.c_str();
+-			YAKE_EXCEPT(msg.str());
++			Object* obj = itObj.getNext();
++			mObjMgr.destroyObject(obj);
+ 		}
+-		YAKE_ASSERT( itFind-&gt;second );
+-		Object* pObject = itFind-&gt;second-&gt;createInstance();
+-		Entity* pEntity = Entity::cast( pObject );
+-		YAKE_ASSERT( pEntity ).debug(&quot;The created object is an Object but not an Entity!&quot;);
+-		if (!pEntity)
+-		{
+-			delete pObject;
+-			return 0;
+-		}
+-
+-		// create VMs &amp; load &amp; execute entity scripts
+-		const size_t numVMs = (scriptFiles.size() &gt; 0) ? scriptFiles.size() : 1; // at least one VM
+-		ParamList params;
+-		params[&quot;object&quot;] = pObject;
+-		params[&quot;entity&quot;] = pEntity;
+-		for (size_t i=0; i&lt;numVMs; ++i)
+-		{
+-			// create VM
+-			scripting::IVM* pVM = createEntityVM();
+-			pEntity-&gt;addVM( pVM );
+-
+-			// fire &quot;entity VM created&quot;
+-			params[&quot;vm&quot;] = pVM;
+-			mEvtEntityVMCreated.fire(params);
+-
+-			// load &amp; execute entity script
+-			if (i &lt;= scriptFiles.size())
+-			{
+-				const String scriptFile = scriptFiles.at(i);
+-				if (scriptFile.empty())
+-					continue;
+-				AutoPtr&lt;scripting::IScript&gt; pScript( mScripting.createScriptFromFile(scriptFile) );
+-				YAKE_ASSERT( pScript.get() );
+-				pVM-&gt;execute( pScript.get() );
+-			}
+-		}
+-
+-		// create components
+-		ConstVectorIterator&lt;StringPairVector&gt; itC( components );
+-		while (itC.hasMoreElements())
+-		{
+-			const StringPair stringPair = itC.getNext();
+-			pEntity-&gt;addComponent( stringPair.first, create&lt;EntityComponent&gt;( stringPair.second, *pEntity ) );
+-		}
+-
+-		// minimal first time setup
+-		object_creation_context ctx;
+-		ctx.mpGWorld = mpGWorld;
+-		ctx.mpAWorld = mpAWorld;
+-		ctx.mpPWorld = mpPWorld;
+-		pEntity-&gt;initialise( ctx );
+-
+-		// store entity &amp; fire events
+-		mObjects.push_back( SharedPtr&lt;Entity&gt;(pEntity) );
+-
+-		// fire &quot;entity spawned&quot;
+-
+-		params.clear();
+-		params[&quot;object&quot;] = pObject;
+-		params[&quot;entity&quot;] = pEntity;
+-		for (size_t i=0; i&lt;pEntity-&gt;getVMCount(); ++i)
+-		{
+-			params[&quot;vm&quot;] = pEntity-&gt;getVM(i);
+-			mEvtEntitySpawned.fire(params);
+-		}
+-
+-		// spawn entity itself
+-
+-		pEntity-&gt;spawn();
+-
+-		ObjectMessage* pMsg = pEntity-&gt;createMessage( MSGID_EntitySpawned );
+-		pMsg-&gt;set(&quot;entity&quot;, pEntity );
+-		mMsgMgr.postMessage( pMsg );
+-
+-		return pEntity;
++		mObjs.clear();
+ 	}
+-	bool operator == (const SharedPtr&lt;Object&gt;&amp; lhs, const Object* rhs)
+-	{ return lhs.get() == rhs; }
+-	void sim::destroyEntity( Entity* pEnt )
++	void Simulation::postMessage(ObjectMessage* pMessage, Object* target)
+ 	{
+-		if (!pEnt)
+-			return;
+-		ObjectList::iterator itFind = std::find( mObjects.begin(), mObjects.end(), pEnt );
+-		if (itFind != mObjects.end())
+-			mObjects.erase( itFind );
+-	}
+-	void sim::postMessage(ObjectMessage* pMessage, Object* target)
+-	{
+ 		YAKE_ASSERT( pMessage ).warning(&quot;null message&quot;);
+ 		if (!pMessage)
+ 			return;
+@@ -278,6 +265,27 @@
+ 		// forward/post
+ 		target-&gt;postMessage( pMessage );
+ 	}
+-
++	void Simulation::setTicksPerSecond(const real ticksPerSecond)
++	{
++		YAKE_ASSERT( ticksPerSecond &gt; 0. );
++		if (ticksPerSecond &gt; 0.)
++			mTickTime = 1. / ticksPerSecond;
++	}
++	Event&amp; Simulation::getEvent_onEntityVMSpawned()
++	{
++		return mEvtEntityVMSpawned;
++	}
++	Event&amp; Simulation::getEvent_onEntityVMCreated()
++	{
++		return mEvtEntityVMCreated;
++	}
++	simtime Simulation::getTime() const
++	{
++		return mSimTime;
++	}
++	real Simulation::getTimeAsSeconds() const
++	{
++		return mSimTimeInSecs;
++	}
+ } // namespace yake
+ } // namespace ent
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000249.html">[Yake-svn] r1179 - trunk/yake/yapp/plugins/entLua
+</A></li>
+	<LI>Next message: <A HREF="000251.html">[Yake-svn] r1181 - trunk/yake/src/yapp/plugins/entLua
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#250">[ date ]</a>
+              <a href="thread.html#250">[ thread ]</a>
+              <a href="subject.html#250">[ subject ]</a>
+              <a href="author.html#250">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,228 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r937 - trunk/yake/src/yapp/ent
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r937%20-%20trunk/yake/src/yapp/ent&In-Reply-To=%3C200509261655.j8QGtM5U020862%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000007.html">
+   <LINK REL="Next"  HREF="000009.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r937 - trunk/yake/src/yapp/ent</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r937%20-%20trunk/yake/src/yapp/ent&In-Reply-To=%3C200509261655.j8QGtM5U020862%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r937 - trunk/yake/src/yapp/ent">codeandroid at berlios.de
+       </A><BR>
+    <I>Mon Sep 26 18:55:22 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000007.html">[Yake-svn] r936 - trunk/yake/src/yapp/ent
+</A></li>
+        <LI>Next message: <A HREF="000009.html">[Yake-svn] r938 - trunk/yake/yapp/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#8">[ date ]</a>
+              <a href="thread.html#8">[ thread ]</a>
+              <a href="subject.html#8">[ subject ]</a>
+              <a href="author.html#8">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-26 18:55:19 +0200 (Mon, 26 Sep 2005)
+New Revision: 937
+
+Added:
+   trunk/yake/src/yapp/ent/yakeTrigger.cpp
+Log:
+initial revision
+
+Added: trunk/yake/src/yapp/ent/yakeTrigger.cpp
+===================================================================
+--- trunk/yake/src/yapp/ent/yakeTrigger.cpp	2005-09-26 16:54:39 UTC (rev 936)
++++ trunk/yake/src/yapp/ent/yakeTrigger.cpp	2005-09-26 16:55:19 UTC (rev 937)
+@@ -0,0 +1,152 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &lt;yapp/ent/yakePCH.h&gt;
++#include &lt;yapp/ent/yakeCommon.h&gt;
++#include &lt;yapp/ent/yakeEvent.h&gt;
++#include &lt;yapp/ent/yakeMessaging.h&gt;
++#include &lt;yapp/ent/yakeObject.h&gt;
++#include &lt;yapp/ent/yakeEntityMachine.h&gt;
++#include &lt;yapp/ent/yakeEntityComponent.h&gt;
++#include &lt;yapp/ent/yakeEntity.h&gt;
++#include &lt;yapp/ent/yakeTrigger.h&gt;
++#include &lt;yapp/ent/yakeSim.h&gt;
++
++namespace yake {
++namespace ent {
++	namespace geom {
++		Volume::Volume()
++		{}
++		VolumeSet::VolumeSet()
++		{}
++		VolumeSet::~VolumeSet()
++		{
++			_removeAndDestroyAllVolumes();
++		}
++		void VolumeSet::_removeAndDestroyAllVolumes()
++		{
++			ConstVectorIterator&lt; VolumePtrList &gt; itV( mVolumes );
++			while (itV.hasMoreElements())
++				delete itV.getNext();
++			mVolumes.clear();
++		}
++		void VolumeSet::addVolume( Volume* pV )
++		{
++			YAKE_ASSERT( pV ).warning(&quot;Tried to add 0 ptr volume.&quot;);
++			if (pV)
++				mVolumes.push_back( pV );
++		}
++		Volume* VolumeSet::removeVolume( Volume* pV )
++		{
++			VolumePtrList::iterator itFind = std::find( mVolumes.begin(), mVolumes.end(), pV );
++			YAKE_ASSERT( itFind != mVolumes.end() );
++			if (itFind == mVolumes.end())
++				return pV;
++			mVolumes.erase( itFind );
++		}
++		void VolumeSet::translate(const Vector3&amp;)
++		{
++			YAKE_ASSERT( 1==0 ).debug(&quot;NOT IMPLEMENTED!&quot;);
++		}
++		bool VolumeSet::contains(const Point3&amp;) const
++		{
++			YAKE_ASSERT( 1==0 ).debug(&quot;NOT IMPLEMENTED!&quot;);
++			return false;
++		}
++	} // namespace  geom
++	
++
++	YAKE_IMPLEMENT_REGISTRY( TriggerCondition );
++
++	TriggerCondition::~TriggerCondition()
++	{
++	}
++
++	YAKE_REGISTER_CONCRETE( SpatialTriggerCondition );
++
++	YAKE_REGISTER_CONCRETE( TimedTriggerCondition );
++	void TimedTriggerCondition::onFrame()
++	{
++		YAKE_ASSERT( 1==0 ).debug(&quot;NOT IMPLEMENTED!&quot;);
++	}
++	void TimedTriggerCondition::onTick()
++	{
++		YAKE_ASSERT( 1==0 ).debug(&quot;NOT IMPLEMENTED!&quot;);
++	}
++
++	YAKE_DEFINE_ENTITY_1( Trigger, Entity )
++
++	Trigger::Trigger()
++	{
++	}
++	Trigger::~Trigger()
++	{
++		mConds.clear();
++	}
++	SharedPtr&lt;TriggerCondition&gt; Trigger::addCondition(SharedPtr&lt;TriggerCondition&gt; pCond)
++	{
++		YAKE_ASSERT( pCond.get() ).warning(&quot;Cannot add a null condition!&quot;);
++
++		if (pCond.get())
++			mConds.push_back(pCond);
++	
++		return pCond;
++	}
++	SharedPtr&lt;TriggerCondition&gt; Trigger::removeCondition(SharedPtr&lt;TriggerCondition&gt; pCond)
++	{
++		ConditionPtrList::iterator itFind = std::find( mConds.begin(), mConds.end(), pCond );
++		if (itFind != mConds.end())
++			mConds.erase( itFind );
++		return pCond;
++	}
++	void Trigger::addVolume( geom::Volume* pVolume )
++	{
++		mVolume.addVolume( pVolume );
++	}
++	geom::Volume* Trigger::removeVolume( geom::Volume* pVolume )
++	{
++		return mVolume.removeVolume( pVolume );
++	}
++	void Trigger::onTick()
++	{
++		Entity::onTick();
++		onUpdateConditionsOncePerTick();
++	}
++	void Trigger::onUpdateConditionsOncePerFrame()
++	{
++		ConstVectorIterator&lt; ConditionPtrList &gt; itC( mConds );
++		while (itC.hasMoreElements())
++			itC.getNext()-&gt;onFrame();
++	}
++	void Trigger::onUpdateConditionsOncePerTick()
++	{
++		ConstVectorIterator&lt; ConditionPtrList &gt; itC( mConds );
++		while (itC.hasMoreElements())
++			itC.getNext()-&gt;onTick();
++	}
++
++} // namespace yake
++} // namespace ent
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000007.html">[Yake-svn] r936 - trunk/yake/src/yapp/ent
+</A></li>
+	<LI>Next message: <A HREF="000009.html">[Yake-svn] r938 - trunk/yake/yapp/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#8">[ date ]</a>
+              <a href="thread.html#8">[ thread ]</a>
+              <a href="subject.html#8">[ subject ]</a>
+              <a href="author.html#8">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

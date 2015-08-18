@@ -1,0 +1,549 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1289 - trunk/yake/yake/msg
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1289%20-%20trunk/yake/yake/msg&In-Reply-To=%3C200603162231.k2GMVqCx018824%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000358.html">
+   <LINK REL="Next"  HREF="000360.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1289 - trunk/yake/yake/msg</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1289%20-%20trunk/yake/yake/msg&In-Reply-To=%3C200603162231.k2GMVqCx018824%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1289 - trunk/yake/yake/msg">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Mar 16 23:31:52 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000358.html">[Yake-svn] r1288 - trunk/yake/documentation/api
+</A></li>
+        <LI>Next message: <A HREF="000360.html">[Yake-svn] r1290 - trunk/yake/yake/statemachine
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#359">[ date ]</a>
+              <a href="thread.html#359">[ thread ]</a>
+              <a href="subject.html#359">[ subject ]</a>
+              <a href="author.html#359">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-16 23:31:52 +0100 (Thu, 16 Mar 2006)
+New Revision: 1289
+
+Modified:
+   trunk/yake/yake/msg/listener.h
+   trunk/yake/yake/msg/listener_mgr.h
+   trunk/yake/yake/msg/message.h
+   trunk/yake/yake/msg/processors.h
+   trunk/yake/yake/msg/router.h
+Log:
+added message sources,
+added documentation
+
+Modified: trunk/yake/yake/msg/listener.h
+===================================================================
+--- trunk/yake/yake/msg/listener.h	2006-03-16 22:30:36 UTC (rev 1288)
++++ trunk/yake/yake/msg/listener.h	2006-03-16 22:31:52 UTC (rev 1289)
+@@ -31,23 +31,30 @@
+ 
+ MSG_NAMESPACE_BEGIN
+ 
+-	struct listener_base
+-	{
+-		listener_base(const std::string&amp; msgTypeName) : msgTypeName_(msgTypeName) {}
+-		void execute(const message_base&amp; msg)
+-		{ doExecute(msg); }
+-		const std::string&amp; msgTypeName() const
+-		{ return msgTypeName_; }
+-		void destroy()
++	namespace detail {
++		/** Internal base class for listeners providing the basic interface and functionality. */
++		struct listener_base
+ 		{
+-			assert( this );
+-			delete this;
+-		}
+-	protected:
+-		virtual void doExecute(const message_base&amp;) = 0;
+-	private:
+-		std::string		msgTypeName_;
+-	};
++		private:
++			listener_base(const listener_base&amp;);
++			listener_base&amp; operator = (const listener_base&amp;);
++		public:
++			listener_base(const std::string&amp; msgTypeName) : msgTypeName_(msgTypeName) {}
++			void execute(const message_base&amp; msg)
++			{ doExecute(msg); }
++			const std::string&amp; msgTypeName() const
++			{ return msgTypeName_; }
++			void destroy()
++			{
++				assert( this );
++				delete this;
++			}
++		protected:
++			virtual void doExecute(const message_base&amp;) = 0;
++		private:
++			std::string		msgTypeName_;
++		};
++	} // namespace detail
+ 	/*
+ 	enum ListenerResult
+ 	{
+@@ -56,15 +63,25 @@
+ 		LR_FAILED
+ 	};
+ 	*/
++	/** Represents a listener for a specific type; \
++		the listener object encapsulates a user provided message handling function object.
++	*/
+ 	template&lt;typename MsgType&gt;
+-	struct listener : public listener_base
++	struct listener : public detail::listener_base
+ 	{
++	private:
++		listener(const listener&amp;);
++		listener&amp; operator(const listener&amp;);
++	public:
+ 		typedef boost::function&lt;void(const MsgType&amp;)&gt; HandlerFn;
+ 
+-		listener(const HandlerFn&amp; fn) : listener_base(typeid(MsgType).name()),fn_(fn)
++		/** Construct a listener object with a handler function. The handler function has to be valid (i.e. non-empty).
++		*/
++		listener(const HandlerFn&amp; fn) : detail::listener_base(typeid(MsgType).name()),fn_(fn)
+ 		{}
+ 	protected:
+-		virtual void doExecute(const message_base&amp; msgbase)
++		/** Executes the message handler function object and provides the message 'msgbase' as a parameter. */
++		virtual void doExecute(const detail::message_base&amp; msgbase)
+ 		{
+ 			try {
+ 				fn_( static_cast&lt;const MsgType&amp;&gt;(boost::any_cast&lt;MsgType&gt;(msgbase.value())) );
+@@ -82,6 +99,7 @@
+ 		HandlerFn			fn_;
+ 	};
+ 
++	/** Helper function to easily create listener objects for a given message type. */
+ 	template&lt;typename T&gt;
+ 	listener&lt;T&gt;* makeListener(const boost::function&lt;void(const T&amp;)&gt;&amp; fn)
+ 	{ return new listener&lt;T&gt;(fn); }
+
+Modified: trunk/yake/yake/msg/listener_mgr.h
+===================================================================
+--- trunk/yake/yake/msg/listener_mgr.h	2006-03-16 22:30:36 UTC (rev 1288)
++++ trunk/yake/yake/msg/listener_mgr.h	2006-03-16 22:31:52 UTC (rev 1289)
+@@ -32,34 +32,47 @@
+ MSG_NAMESPACE_BEGIN
+ 
+ 	namespace detail {
+-		typedef std::deque&lt;boost::shared_ptr&lt;listener_base&gt; &gt; listener_list;
++		typedef std::deque&lt;boost::shared_ptr&lt;detail::listener_base&gt; &gt; listener_list;
+ 		typedef std::map&lt;std::string,listener_list&gt; listener_map;
+ 
++		/** Internal base class providing listener management and
++			a hook for derived routers/processors.
++		*/
+ 		struct msg_listener_mgr
+ 		{
+-			bool add(listener_base* l)
++			bool add(detail::listener_base* l, source_type source = 0)
+ 			{
+-				assert(l);
++				YAKE_ASSERT(l);
+ 				if (!l)
+ 					return false;
+-				listeners_[l-&gt;msgTypeName()].push_back( boost::shared_ptr&lt;listener_base&gt;(l) );
++				sources_[source][l-&gt;msgTypeName()].push_back( boost::shared_ptr&lt;detail::listener_base&gt;(l) );
+ 				return true;
+ 			}
+-			void process(message_base* msg)
++			void process(detail::message_base* msg)
+ 			{
+-				assert( msg );
+-				listener_map::const_iterator itMsgType = listeners_.find(msg-&gt;msgTypeName());
+-				if (itMsgType == listeners_.end())
++				YAKE_ASSERT( msg );
++				source_map::const_iterator itSource = sources_.find(msg-&gt;source());
++				if (itSource == sources_.end())
+ 					return;
++				const listener_map&amp; listeners = itSource-&gt;second;
++				listener_map::const_iterator itMsgType = listeners.find(msg-&gt;msgTypeName());
++				if (itMsgType == listeners.end())
++					return;
+ 				const listener_list&amp; l = itMsgType-&gt;second;
+ 				for (listener_list::const_iterator it = l.begin(); it != l.end(); ++it)
+ 					(*it)-&gt;execute(*msg);
+ 				MSG_NAMESPACE::destroyMessage(msg);
+ 			}
++			void clear()
++			{
++				sources_.clear();
++			}
+ 		private:
+ 			typedef MSG_NAMESPACE::detail::listener_list listener_list;
+ 			typedef MSG_NAMESPACE::detail::listener_map listener_map;
+-			listener_map	listeners_;
++			typedef AssocVector&lt;source_type,listener_map&gt; source_map;
++			source_map		sources_;
++			//listener_map	listeners_;
+ 		};
+ 	}
+ 
+
+Modified: trunk/yake/yake/msg/message.h
+===================================================================
+--- trunk/yake/yake/msg/message.h	2006-03-16 22:30:36 UTC (rev 1288)
++++ trunk/yake/yake/msg/message.h	2006-03-16 22:31:52 UTC (rev 1289)
+@@ -31,56 +31,84 @@
+ 
+ MSG_NAMESPACE_BEGIN
+ 
+-	struct message_base
+-	{
+-	private:
+-		message_base(const message_base&amp;);
+-		message_base&amp; operator=(const message_base&amp;);
+-	public:
+-		template&lt;typename T&gt;
+-		message_base(const T&amp; value) : value_(value), msgTypeName_(typeid(T).name())
+-		{}
+-		const boost::any&amp; value() const
+-		{ return value_; }
+-		const std::string&amp; msgTypeName() const
+-		{ return msgTypeName_; }
+-	protected:
+-		boost::any		value_;
+-	private:
+-		std::string		msgTypeName_;
+-	};
++	/** Represents the (optionally to be used) source of a message. */
++	typedef const void* source_type;
++
++	/** @copydoc source_type
++		@Remarks This is an alias for good looking client code.
++	*/
++	typedef source_type Source;
++
++	namespace detail {
++		/** Internal base class for messages providing the very basic interface.
++		*/
++		struct message_base
++		{
++		private:
++			message_base(const message_base&amp;);
++			message_base&amp; operator=(const message_base&amp;);
++		public:
++			template&lt;typename T&gt;
++			message_base(const T&amp; value, source_type src = 0) : value_(value), msgTypeName_(typeid(T).name()), src_(src)
++			{}
++			const boost::any&amp; value() const
++			{ return value_; }
++			const std::string&amp; msgTypeName() const
++			{ return msgTypeName_; }
++			source_type source() const
++			{ return src_; }
++		protected:
++			boost::any		value_;
++		private:
++			std::string		msgTypeName_;
++			source_type		src_;
++		};
++	} // namespace detail
++	/** Represents a concrete message for the type T.
++		Provides value assignment.
++	*/
+ 	template&lt;typename T&gt;
+-	struct message : public message_base
++	struct message : public detail::message_base
+ 	{
+-		message(const T&amp; v) : message_base(v)
++		/** Construct a message with value and optional source (0 by default).
++			
++		*/
++		message(const T&amp; v, source_type src = 0) : detail::message_base(v,src)
+ 		{}
+-		message() : message_base(T())
++		/** Construct a message with default value for type T and source 0. */
++		message() : detail::message_base(T())
+ 		{}
++		/** Set the value to v. */
+ 		void setValue(const T&amp; v)
+-		{ value_ = v; } //@todo add type mismatch tests
++		{ value_ = v; } //@todo add type mismatch tests!?
+ 	};
+ 
++	/** As the name implies this allocator is used by default for message creation and destruction. */
+ 	struct DefaultMessageAllocator
+ 	{
+ 		DefaultMessageAllocator&amp; instance();
+ 		template&lt;typename T&gt;
+-		static message&lt;T&gt;* create(const T&amp; v)
++		static message&lt;T&gt;* create(const T&amp; v, source_type src = 0)
+ 		{
+-			return new message&lt;T&gt;(v);
++			return new message&lt;T&gt;(v,src);
+ 		}
+ 		template&lt;typename MsgType&gt;
+ 		static void destroy(const MsgType* msg)
+ 		{
+-			assert( msg );
++			YAKE_ASSERT( msg );
+ 			delete msg;
+ 		}
+ 	};
+ 
++	/** Helper function to easily create messages.
++	*/
+ 	template&lt;typename T&gt;
+-	message&lt;T&gt;* makeMessage(const T&amp; v)
++	message&lt;T&gt;* makeMessage(const T&amp; v, source_type src = 0)
+ 	{ 
+-		return DefaultMessageAllocator::create&lt;T&gt;(v); 
++		return DefaultMessageAllocator::create&lt;T&gt;(v,src); 
+ 	}
++
++	/** Destroys the message. */
+ 	template&lt;typename T&gt;
+ 	void destroyMessage(T* msg)
+ 	{ 
+
+Modified: trunk/yake/yake/msg/processors.h
+===================================================================
+--- trunk/yake/yake/msg/processors.h	2006-03-16 22:30:36 UTC (rev 1288)
++++ trunk/yake/yake/msg/processors.h	2006-03-16 22:31:52 UTC (rev 1289)
+@@ -31,17 +31,23 @@
+ 
+ MSG_NAMESPACE_BEGIN
+ 
++	/** Processes messages immediately when they are possed. */
+ 	struct ImmediateProcessor : public detail::msg_listener_mgr
+ 	{
+ 		typedef detail::listener_map listener_map;
+ 		typedef detail::listener_list listener_list;
+ 
+-		void onPost(message_base* msg)
++		void onPost(detail::message_base* msg)
+ 		{
+-			assert(msg);
++			YAKE_ASSERT(msg);
+ 			this-&gt;process(msg);
+ 		}
+ 	};
++	/** Queues messages in a single queue and processes them when processMessages() is called.
++		@Remarks It is not possible post messages while processing is in progress! See DoubleQueuedProcessor for a processor which can do that. processMessages() must not be called when processing is already in progress.
++		@see ImmediateProcessor
++		@see DoubleQueuedProcessor
++	*/
+ 	struct SingleQueuedProcessor : public detail::msg_listener_mgr
+ 	{
+ 		typedef detail::listener_map listener_map;
+@@ -49,60 +55,65 @@
+ 
+ 		SingleQueuedProcessor() : isProcessing_(false)
+ 		{}
+-		void onPost(message_base* msg)
++		void onPost(detail::message_base* msg)
+ 		{
+-			assert(!isProcessing_);
+-			assert(msg);
++			YAKE_ASSERT(!isProcessing_);
++			YAKE_ASSERT(msg);
+ 			q_.push_back(msg); //@todo sort by msg type!?
+ 		}
+ 		void processMessages()
+ 		{
+-			assert( !isProcessing_ );
++			YAKE_ASSERT( !isProcessing_ );
+ 			isProcessing_ = true;
+ 			for (msg_q::const_iterator it = q_.begin(); it != q_.end(); ++it)
+ 			{
+-				message_base* msg = *it;
+-				assert( msg );
++				detail::message_base* msg = *it;
++				YAKE_ASSERT( msg );
+ 				this-&gt;process(msg);
+ 			}
+ 			q_.clear();
+ 			isProcessing_ = false;
+ 		}
+ 	private:
+-		typedef std::deque&lt;message_base*&gt; msg_q;
++		typedef std::deque&lt;detail::message_base*&gt; msg_q;
+ 		msg_q		q_;
+ 		bool		isProcessing_;
+ 	};
++	/** Queues messages in a single queue and processes them when processMessages() is called.
++		@Remarks It is possible post messages while processing is in progress! processMessages() must not be called when processing is already in progress.
++		@see ImmediateProcessor
++		@see SingleQueuedProcessor
++	*/
+ 	struct DoubleQueuedProcessor : public detail::msg_listener_mgr
+ 	{
+ 		typedef detail::listener_map listener_map;
+ 		typedef detail::listener_list listener_list;
+ 
+ 		DoubleQueuedProcessor() : q_(&amp;q1_), isProcessing_(false) {}
+-		void onPost(message_base* msg)
++		void onPost(detail::message_base* msg)
+ 		{
+-			assert(msg);
++			YAKE_ASSERT(msg);
+ 			q_-&gt;push_back(msg); //@todo sort by msg type!?
+ 		}
+ 		void processMessages()
+ 		{
+-			assert( !isProcessing_ );
++			YAKE_ASSERT( !isProcessing_ );
+ 			isProcessing_ = true;
+ 			msg_q* procQ = q_;
+ 			q_ = (q_ == &amp;q1_) ? &amp;q2_ : &amp;q1_;
+ 			for (msg_q::const_iterator it = procQ-&gt;begin(); it != procQ-&gt;end(); ++it)
+ 			{
+-				message_base* msg = *it;
+-				assert( msg );
++				detail::message_base* msg = *it;
++				YAKE_ASSERT( msg );
+ 				this-&gt;process(msg);
+ 			}
+ 			procQ-&gt;clear();
+ 			isProcessing_ = false;
+ 		}
+ 	private:
+-		typedef std::deque&lt;message_base*&gt; msg_q;
++		typedef std::deque&lt;detail::message_base*&gt; msg_q;
+ 		msg_q		q1_,q2_;
+-		msg_q*	q_;
++		msg_q*		q_;
+ 		bool		isProcessing_;
+ 	};
+ 
+
+Modified: trunk/yake/yake/msg/router.h
+===================================================================
+--- trunk/yake/yake/msg/router.h	2006-03-16 22:30:36 UTC (rev 1288)
++++ trunk/yake/yake/msg/router.h	2006-03-16 22:31:52 UTC (rev 1289)
+@@ -31,29 +31,52 @@
+ 
+ MSG_NAMESPACE_BEGIN
+ 
++	/** Generic customizable message router which represents a central point for listener management, message posting and message processing.
++		
++		Example:
++		@code
++			using namespace msg;
++
++			router&lt; ImmediateProcessor &gt; myrouter;
++
++			myrouter.post(makeMessage(1)); // int(1) is the message
++			myrouter.postMessage(1); // the same - but using an alternative posting method
++		@endcode
++		@see detail::msg_listener_mgr
++		@todo merge documentation of listener_mgr into router's docs.
++	*/
+ 	template&lt;typename T_processor&gt;
+ 	struct router : public T_processor
+ 	{
++	private:
++		// disallow:
++		router(const router&amp;);
++		router&amp; operator=(const router&amp;);
++	public:
++		/** @todo add docs */
++		typedef T_processor processor_type;
++
++		/** Construct a router. */
+ 		router();
+ 
+ 		template&lt;typename T&gt;
+-		void postMessage(const T&amp; v)
+-		{ this-&gt;post( MSG_NAMESPACE::makeMessage(v) ); }
++		void postMessage(const T&amp; v, source_type source = 0)
++		{ this-&gt;post( MSG_NAMESPACE::makeMessage(v,source) ); }
+ 
+-		void post(message_base* msg)
++		/** Post a message. Processing is controlled by T_processor.
++			@see postMessage()
++		*/
++		void post(detail::message_base* msg)
+ 		{
+ 			this-&gt;onPost(msg);
+ 		}
+ 
++		/** Operator for listener registration (with source identifier 0). */
++		router&amp; operator &lt;&lt; (detail::listener_base*);
++		/** Operator for listener registration with user supplied source identifier. */
++		router&amp; operator &lt;&lt; (const std::pair&lt;detail::listener_base*,source_type&gt;&amp;);
+ 
+-		router&amp; operator &lt;&lt; (listener_base*);
+-
+ 	private:
+-		// disallow:
+-		router(const router&amp;);
+-		router&amp; operator=(const router&amp;);
+-		//...
+-	private:
+ 		typedef detail::listener_list listener_list;
+ 		typedef detail::listener_map listener_map;
+ 	};
+@@ -61,15 +84,23 @@
+ 	router&lt;T_processor&gt;::router()
+ 	{}
+ 	template&lt;typename T_processor&gt;
+-	router&lt;T_processor&gt;&amp; router&lt;T_processor&gt;::operator &lt;&lt; (listener_base* l)
++	router&lt;T_processor&gt;&amp; router&lt;T_processor&gt;::operator &lt;&lt; (detail::listener_base* l)
+ 	{
+-		assert(l);
++		YAKE_ASSERT(l);
+ 		if (!l)
+ 			return *this;
+ 		this-&gt;add(l);
+ 		return *this;
+ 	}
+-
++	template&lt;typename T_processor&gt;
++	router&lt;T_processor&gt;&amp; router&lt;T_processor&gt;::operator &lt;&lt; (const std::pair&lt;detail::listener_base*,source_type&gt;&amp; l)
++	{
++		YAKE_ASSERT(l.first);
++		if (!l.first)
++			return *this;
++		this-&gt;add(l.first,l.second);
++		return *this;
++	}
+ MSG_NAMESPACE_END
+ 
+ #endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000358.html">[Yake-svn] r1288 - trunk/yake/documentation/api
+</A></li>
+	<LI>Next message: <A HREF="000360.html">[Yake-svn] r1290 - trunk/yake/yake/statemachine
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#359">[ date ]</a>
+              <a href="thread.html#359">[ thread ]</a>
+              <a href="subject.html#359">[ subject ]</a>
+              <a href="author.html#359">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

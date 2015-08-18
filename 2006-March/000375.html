@@ -1,0 +1,240 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1304 - trunk/yake/src/yapp/samples/physics/paging_terrain
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1304%20-%20trunk/yake/src/yapp/samples/physics/paging_terrain&In-Reply-To=%3C200603192226.k2JMQRIa003619%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000373.html">
+   <LINK REL="Next"  HREF="000374.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1304 - trunk/yake/src/yapp/samples/physics/paging_terrain</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1304%20-%20trunk/yake/src/yapp/samples/physics/paging_terrain&In-Reply-To=%3C200603192226.k2JMQRIa003619%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1304 - trunk/yake/src/yapp/samples/physics/paging_terrain">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 19 23:26:27 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000373.html">[Yake-svn] r1303 - in trunk/yake/src/yapp/samples: . physics physics/paging_terrain
+</A></li>
+        <LI>Next message: <A HREF="000374.html">[Yake-svn] r1305 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#375">[ date ]</a>
+              <a href="thread.html#375">[ thread ]</a>
+              <a href="subject.html#375">[ subject ]</a>
+              <a href="author.html#375">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-19 23:26:26 +0100 (Sun, 19 Mar 2006)
+New Revision: 1304
+
+Modified:
+   trunk/yake/src/yapp/samples/physics/paging_terrain/yakeDemo.cpp
+Log:
+small fixes
+
+Modified: trunk/yake/src/yapp/samples/physics/paging_terrain/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/physics/paging_terrain/yakeDemo.cpp	2006-03-19 17:56:19 UTC (rev 1303)
++++ trunk/yake/src/yapp/samples/physics/paging_terrain/yakeDemo.cpp	2006-03-19 22:26:26 UTC (rev 1304)
+@@ -1,4 +1,4 @@
+-#include &lt;yapp/samples/base/vehicle/yakePCH.h&gt;
++#include &lt;yake/base/yake.h&gt;
+ #include &lt;yake/audio/yakeAudio.h&gt;
+ #include &lt;yapp/raf/yakeRaf.h&gt;
+ #include &lt;yapp/model/yakeModelMovableLink.h&gt;
+@@ -7,8 +7,8 @@
+ 
+ #include &lt;yapp/vehicle/yakeNativeOde.h&gt;
+ 
++#include &quot;Ogre.h&quot;
+ #include &lt;yake/plugins/graphicsOgre/graphicsOgreCore.h&gt;
+-#include &lt;yake/plugins/graphicsOgre/yakeGraphicsSystem.h&gt;
+ 
+ #include &lt;yake/plugins/physicsODE/yakePCH.h&gt;
+ #include &lt;yake/plugins/physicsODE/PhysicsSystemODE.h&gt;
+@@ -20,6 +20,11 @@
+ 
+ using namespace yake;
+ 
++const input::ActionId ACTIONID_CAM_LEFT( input::ACTIONID_USER+1, &quot;camLeft&quot; );
++const input::ActionId ACTIONID_CAM_RIGHT( input::ACTIONID_USER+2, &quot;camRight&quot; );
++const input::ActionId ACTIONID_CAM_UP( input::ACTIONID_USER+3, &quot;camUp&quot; );
++const input::ActionId ACTIONID_CAM_DOWN( input::ACTIONID_USER+4, &quot;camDown&quot; );
++
+ /** Configuration of the application */
+ struct TheConfiguration : public raf::ApplicationConfiguration
+ {
+@@ -59,21 +64,28 @@
+ 		{
+ 			YAKE_LOG( &quot;INITIALIZING TERRAIN&quot;);
+ 
+-			Ogre::PagingLandScapeSceneManager * sceneMgr = (Ogre::PagingLandScapeSceneManager *) getSceneMgr();
+-			
+-			sceneMgr-&gt;setWorldGeometry(&quot;paginglandscape2.cfg&quot;); 
+-						
+-			pG = new model::Graphical();
+-			YAKE_ASSERT( pG);
+-			
+-			pPh = new model::Physical();
+-			YAKE_ASSERT( pPh);
++			try {
+ 
+-  			sceneMgr-&gt;setOption( &quot;LoadNow&quot;, NULL); 
+-// 			sceneMgr-&gt;InitScene();
+-// 			sceneMgr-&gt;PagingLandScapeOctreeResize();
+-			
+-			physics::TerrainPhysicsManager::instance().init( sceneMgr, getPhysicalWorld() );
++				Ogre::PagingLandScapeSceneManager * sceneMgr = (Ogre::PagingLandScapeSceneManager *) getSceneMgr();
++				
++				sceneMgr-&gt;setWorldGeometry(&quot;paginglandscape2.cfg&quot;); 
++							
++				pG = new model::Graphical();
++				YAKE_ASSERT( pG);
++				
++				pPh = new model::Physical();
++				YAKE_ASSERT( pPh);
++
++  				sceneMgr-&gt;setOption( &quot;LoadNow&quot;, NULL); 
++	// 			sceneMgr-&gt;InitScene();
++	// 			sceneMgr-&gt;PagingLandScapeOctreeResize();
++				
++				physics::TerrainPhysicsManager::instance().init( sceneMgr, getPhysicalWorld() );
++			} catch (Ogre::Exception&amp; e)
++			{
++				YAKE_LOG_ERROR( e.getFullDescription() );
++				YAKE_EXCEPT(&quot;Caught OGRE exception.&quot;);
++			}
+ 		}
+ 
+ 		void onMouseMoved( const math::Vector3&amp; rDelta )
+@@ -165,7 +177,7 @@
+ 	{
+ 		graphics::ogre3d::GraphicsSystem* pSys = (graphics::ogre3d::GraphicsSystem *)getApp().getGraphicsSystem();
+ 			
+-		graphics::ogre3d::OgreCore * ogreCore = pSys-&gt;getCore();
++		graphics::ogre3d::OgreCore * ogreCore = pSys-&gt;_getCore();
+ 				
+ 		return ogreCore-&gt;getSceneMgr();
+ 	}
+@@ -183,25 +195,25 @@
+ 		using namespace input;
+ 
+ 		//camera controls
+-		mActionMap.reg( ACTIONID_A,
++		mActionMap.reg( ACTIONID_CAM_LEFT,
+ 				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_A, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_A, boost::bind(&amp;TheMainState::onCameraLeft,this) );
++		mActionMap.subscribeToActionId( ACTIONID_CAM_LEFT, boost::bind(&amp;TheMainState::onCameraLeft,this) );
+ 		
+-		mActionMap.reg( ACTIONID_D,
++		mActionMap.reg( ACTIONID_CAM_RIGHT,
+ 				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_D, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_D, boost::bind(&amp;TheMainState::onCameraRight,this) );
++		mActionMap.subscribeToActionId( ACTIONID_CAM_RIGHT, boost::bind(&amp;TheMainState::onCameraRight,this) );
+ 
+-		mActionMap.reg( ACTIONID_W,
++		mActionMap.reg( ACTIONID_CAM_UP,
+ 				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_W, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_W, boost::bind(&amp;TheMainState::onCameraUp,this) );
++		mActionMap.subscribeToActionId( ACTIONID_CAM_UP, boost::bind(&amp;TheMainState::onCameraUp,this) );
+ 
+-		mActionMap.reg( ACTIONID_S,
++		mActionMap.reg( ACTIONID_CAM_DOWN,
+ 				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_S, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_S, boost::bind(&amp;TheMainState::onCameraDown,this) );
++		mActionMap.subscribeToActionId( ACTIONID_CAM_DOWN, boost::bind(&amp;TheMainState::onCameraDown,this) );
+ 
+-		mActionMap.reg( ACTIONID_T,
+-				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_T, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_T, boost::bind(&amp;TheMainState::cycleCameraDetailWiews,this) );
++		mActionMap.reg( ACTIONID_FIRE1,
++				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_T, KAM_RELEASED ) );
++		mActionMap.subscribeToActionId( ACTIONID_FIRE1, boost::bind(&amp;TheMainState::cycleCameraDetailWiews,this) );
+ 
+ 		// front wheel controls
+ 
+@@ -254,22 +266,22 @@
+ 		{
+  			const input::ActionId activeId = itAction.getNext();
+ 
+-			 if (activeId == input::ACTIONID_A)
++			 if (activeId == ACTIONID_CAM_LEFT)
+ 			{
+ 				getDefaultCamera()-&gt;translate(  math::Vector3( -2.5, 0,0));
+ 			}
+-			else if (activeId == input::ACTIONID_D)
++			else if (activeId == ACTIONID_CAM_RIGHT)
+ 			{	
+ 				getDefaultCamera()-&gt;translate(  math::Vector3( 2.5, 0,0));
+ 			}
+-			else if (activeId == input::ACTIONID_S)
++			else if (activeId == ACTIONID_CAM_DOWN)
+ 			{	
+ 				math::Vector3 currentDir = getDefaultCamera()-&gt;getDirection();
+ 				currentDir *= -15;
+ 				
+ 				getDefaultCamera()-&gt;translate(  currentDir);
+ 			}
+-			else if (activeId == input::ACTIONID_W)
++			else if (activeId == ACTIONID_CAM_UP)
+ 			{	
+ 				math::Vector3 currentDir = getDefaultCamera()-&gt;getDirection();
+ 				currentDir *= 15;
+@@ -317,16 +329,16 @@
+ 	{ mActiveActions.insert( input::ACTIONID_RIGHT ); }
+ 	
+ 	void onCameraLeft()
+-	{ mActiveActions.insert( input::ACTIONID_A); }
++	{ mActiveActions.insert( ACTIONID_CAM_LEFT); }
+ 	
+ 	void onCameraRight()
+-	{ mActiveActions.insert( input::ACTIONID_D); }
++	{ mActiveActions.insert( ACTIONID_CAM_RIGHT); }
+ 
+ 	void onCameraUp()
+-	{ mActiveActions.insert( input::ACTIONID_W); }
++	{ mActiveActions.insert( ACTIONID_CAM_UP); }
+ 
+ 	void onCameraDown()
+-	{ mActiveActions.insert( input::ACTIONID_S); }
++	{ mActiveActions.insert( ACTIONID_CAM_DOWN); }
+ 
+ 	void cycleCameraDetailWiews()
+ 	{
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000373.html">[Yake-svn] r1303 - in trunk/yake/src/yapp/samples: . physics physics/paging_terrain
+</A></li>
+	<LI>Next message: <A HREF="000374.html">[Yake-svn] r1305 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#375">[ date ]</a>
+              <a href="thread.html#375">[ thread ]</a>
+              <a href="subject.html#375">[ subject ]</a>
+              <a href="author.html#375">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

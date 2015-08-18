@@ -1,0 +1,110 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1265 - trunk/yake/yake/physics
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1265%20-%20trunk/yake/yake/physics&In-Reply-To=%3C200603122230.k2CMUhGN014178%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000334.html">
+   <LINK REL="Next"  HREF="000336.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1265 - trunk/yake/yake/physics</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1265%20-%20trunk/yake/yake/physics&In-Reply-To=%3C200603122230.k2CMUhGN014178%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1265 - trunk/yake/yake/physics">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 12 23:30:43 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000334.html">[Yake-svn] r1264 - trunk/yake/yake/plugins/entLua
+</A></li>
+        <LI>Next message: <A HREF="000336.html">[Yake-svn] r1266 - trunk/yake/yake/physics
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#335">[ date ]</a>
+              <a href="thread.html#335">[ thread ]</a>
+              <a href="subject.html#335">[ subject ]</a>
+              <a href="author.html#335">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-12 23:30:42 +0100 (Sun, 12 Mar 2006)
+New Revision: 1265
+
+Modified:
+   trunk/yake/yake/physics/yakePhysicsPrerequisites.h
+Log:
+removed listener
+
+Modified: trunk/yake/yake/physics/yakePhysicsPrerequisites.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsPrerequisites.h	2006-03-12 22:20:49 UTC (rev 1264)
++++ trunk/yake/yake/physics/yakePhysicsPrerequisites.h	2006-03-12 22:30:42 UTC (rev 1265)
+@@ -44,34 +44,6 @@
+ 	typedef Deque&lt;CLASS##Ptr&gt; CLASS##PtrList;
+ 
+ namespace yake {
+-	/** @todo move out */
+-	template&lt;class ListenerType&gt;
+-		class ListenerManager
+-		{
+-		private:
+-			typedef Deque&lt;ListenerType*&gt; ListenerPtrList;
+-			ListenerPtrList	mListeners;
+-		public:
+-			virtual ~ListenerManager()
+-			{
+-				ConstDequeIterator&lt;ListenerPtrList&gt; it(mListeners);
+-				while (it.hasMoreElements())
+-					delete it.getNext();
+-			}
+-
+-			void pushListener(ListenerType* pListener)
+-			{
+-				if (pListener)
+-					mListeners.push_back( pListener );
+-			}
+-			void removeListener(ListenerType* pListener)
+-			{
+-				typename ListenerPtrList::iterator itFind = std::find( mListeners.begin(), mListeners.end(), pListener );
+-				if (itFind != mListeners.end())
+-					mListeners.erase( itFind );
+-			}
+-		};
+-
+ namespace physics {
+ 	typedef ::yake::uint32 TriangleMeshId;
+ 	const TriangleMeshId kTriangleMeshIdNone = 0xFFFFFFFF;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000334.html">[Yake-svn] r1264 - trunk/yake/yake/plugins/entLua
+</A></li>
+	<LI>Next message: <A HREF="000336.html">[Yake-svn] r1266 - trunk/yake/yake/physics
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#335">[ date ]</a>
+              <a href="thread.html#335">[ thread ]</a>
+              <a href="subject.html#335">[ subject ]</a>
+              <a href="author.html#335">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

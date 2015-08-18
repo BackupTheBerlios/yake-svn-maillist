@@ -1,0 +1,1062 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1326 - in trunk/yake/scripts: . cb
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1326%20-%20in%20trunk/yake/scripts%3A%20.%20cb&In-Reply-To=%3C200604252012.k3PKCjep014561%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000393.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1326 - in trunk/yake/scripts: . cb</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1326%20-%20in%20trunk/yake/scripts%3A%20.%20cb&In-Reply-To=%3C200604252012.k3PKCjep014561%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1326 - in trunk/yake/scripts: . cb">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Apr 25 22:12:46 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000393.html">[Yake-svn] r1325 - in trunk/yake/scripts/msvc8: . samples/misc samples/model samples/net
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#394">[ date ]</a>
+              <a href="thread.html#394">[ thread ]</a>
+              <a href="subject.html#394">[ subject ]</a>
+              <a href="author.html#394">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-04-25 22:12:43 +0200 (Tue, 25 Apr 2006)
+New Revision: 1326
+
+Added:
+   trunk/yake/scripts/cb/
+   trunk/yake/scripts/cb/audio.cbp
+   trunk/yake/scripts/cb/base.cbp
+   trunk/yake/scripts/cb/data.cbp
+   trunk/yake/scripts/cb/ent.cbp
+   trunk/yake/scripts/cb/generic.cbp
+   trunk/yake/scripts/cb/graphics.cbp
+   trunk/yake/scripts/cb/input.cbp
+   trunk/yake/scripts/cb/net.cbp
+   trunk/yake/scripts/cb/physics.cbp
+   trunk/yake/scripts/cb/raf.cbp
+   trunk/yake/scripts/cb/scripting.cbp
+   trunk/yake/scripts/cb/vehicle.cbp
+Log:
+initial revision
+
+Added: trunk/yake/scripts/cb/audio.cbp
+===================================================================
+--- trunk/yake/scripts/cb/audio.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/audio.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,43 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::audio&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_audio-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\mgw\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++					&lt;Add directory=&quot;..\..&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,YAKE_AUDIO_EXPORTS&quot;/&gt;
++		&lt;/Compiler&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\audio\yakeAudio.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/base.cbp
+===================================================================
+--- trunk/yake/scripts/cb/base.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/base.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,234 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::base&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_base-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\mgw\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\dependencies\lib\libboost_signals-mgw34-mt-d.lib&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++			&lt;Target title=&quot;release&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_base-mgw342.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\release&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\release&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\mgw\release&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\dependencies\lib\libboost_signals-mgw34-mt.lib&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,DLL,WIN32,_CONSOLE,YAKE_BASE_EXPORTS&quot;/&gt;
++			&lt;Add directory=&quot;D:\dev\yake.trunk\yake\dependencies\boost&quot;/&gt;
++			&lt;Add directory=&quot;D:\dev\yake.trunk\yake\dependencies\ttl&quot;/&gt;
++			&lt;Add directory=&quot;D:\dev\yake.trunk\yake&quot;/&gt;
++		&lt;/Compiler&gt;
++		&lt;Linker&gt;
++			&lt;Add library=&quot;libgdi32.a&quot;/&gt;
++			&lt;Add library=&quot;libwinmm.a&quot;/&gt;
++			&lt;Add directory=&quot;D:\dev\yake.trunk\yake\dependencies\lib&quot;/&gt;
++		&lt;/Linker&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\math\yakeMath.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\math\yakeMatrix3.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\math\yakeMatrix4.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\math\yakeQuaternion.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\math\yakeRand.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\math\yakeRay.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\math\yakeSimpleSpline.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\math\yakeVector3.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\Linux\yakeApplication.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\Linux\yakeCriticalSection.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\Linux\yakeDebug.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\Linux\yakeLibrary.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\Linux\yakeTime.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\win32\yakeApplication.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\win32\yakeConfig.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\win32\yakeCriticalSection.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\win32\yakeDebug.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\win32\yakeLibrary.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\win32\yakeProcessor.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\native\win32\yakeTime.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\templates\yakeSingleton.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\templates\yakeSmartAssert.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeCriticalSection.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeDataChunk.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeDebugLogAppender.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeException.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeInputStream.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeLibrary.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeLock.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeLog.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeMimeTypeManager.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeMovable.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeOutputStream.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakePCH.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeParamHolder.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeString.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeUniqueId.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\base\yakeUniqueName.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++			&lt;Option target=&quot;release&quot;/&gt;
++		&lt;/Unit&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/data.cbp
+===================================================================
+--- trunk/yake/scripts/cb/data.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/data.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,75 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::data&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_data-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\mgw\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DDLL,BUILD_DLL,WIN32,_CONSOLE,YAKE_DATA_EXPORTS&quot;/&gt;
++			&lt;Add directory=&quot;..\..&quot;/&gt;
++			&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++			&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++		&lt;/Compiler&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\tinyxml\tinystr.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\tinyxml\tinystr.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\tinyxml\tinyxml.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\tinyxml\tinyxml.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\tinyxml\tinyxmlerror.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\tinyxml\tinyxmlparser.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\data\yakePCH.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\data\yakeXMLSerializer.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/ent.cbp
+===================================================================
+--- trunk/yake/scripts/cb/ent.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/ent.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,71 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::ent&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_ent-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\mgw\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++					&lt;Add directory=&quot;..\..&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,YAKE_ENT_EXPORTS&quot;/&gt;
++		&lt;/Compiler&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\ent\component.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\ent\component_holder.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\ent\object.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\ent\object_listener.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\ent\object_mgr.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\ent\object_mgr_listener.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\ent\pch.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\ent\vm_holder.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/generic.cbp
+===================================================================
+--- trunk/yake/scripts/cb/generic.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/generic.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,39 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::input&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_input-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\mgw\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++					&lt;Add directory=&quot;..\..&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,YAKE_INPUT_EXPORTS&quot;/&gt;
++		&lt;/Compiler&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/graphics.cbp
+===================================================================
+--- trunk/yake/scripts/cb/graphics.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/graphics.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,43 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::graphics&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_graphics-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\mgw\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++					&lt;Add directory=&quot;..\..&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,YAKE_GRAPHICS_EXPORTS&quot;/&gt;
++		&lt;/Compiler&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\graphics\yakeGraphicsSystem.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/input.cbp
+===================================================================
+--- trunk/yake/scripts/cb/input.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/input.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,55 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::input&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_input-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\mgw\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++					&lt;Add directory=&quot;..\..&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,YAKE_INPUT_EXPORTS&quot;/&gt;
++		&lt;/Compiler&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\input\yakeActionMap.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\input\yakeInput.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\input\yakeInputEventGenerator.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\input\yakeInputSystem.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/net.cbp
+===================================================================
+--- trunk/yake/scripts/cb/net.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/net.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,155 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::net&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_net-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\mgw\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++					&lt;Add directory=&quot;..\..&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++					&lt;Add library=&quot;..\..\dependencies\lib\libboost_thread-mgw34-mt-d.lib&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,YAKE_NET_EXPORTS&quot;/&gt;
++			&lt;Add directory=&quot;..\..\dependencies\enet\include&quot;/&gt;
++		&lt;/Compiler&gt;
++		&lt;Linker&gt;
++			&lt;Add library=&quot;libwsock32.a&quot;/&gt;
++			&lt;Add library=&quot;libws2_32.a&quot;/&gt;
++			&lt;Add library=&quot;libwinmm.a&quot;/&gt;
++			&lt;Add directory=&quot;..\..\dependencies\lib&quot;/&gt;
++		&lt;/Linker&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\callbacks.c&quot;&gt;
++			&lt;Option compilerVar=&quot;CC&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\host.c&quot;&gt;
++			&lt;Option compilerVar=&quot;CC&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\include\enet\callbacks.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\include\enet\enet.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\include\enet\list.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\include\enet\protocol.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\include\enet\time.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\include\enet\types.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\include\enet\unix.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\include\enet\utility.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\include\enet\win32.h&quot;&gt;
++			&lt;Option compilerVar=&quot;&quot;/&gt;
++			&lt;Option compile=&quot;0&quot;/&gt;
++			&lt;Option link=&quot;0&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\list.c&quot;&gt;
++			&lt;Option compilerVar=&quot;CC&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\packet.c&quot;&gt;
++			&lt;Option compilerVar=&quot;CC&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\peer.c&quot;&gt;
++			&lt;Option compilerVar=&quot;CC&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\protocol.c&quot;&gt;
++			&lt;Option compilerVar=&quot;CC&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\unix.c&quot;&gt;
++			&lt;Option compilerVar=&quot;CC&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\dependencies\enet\win32.c&quot;&gt;
++			&lt;Option compilerVar=&quot;CC&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\net\detail\netCommon.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\net\detail\netEnetClientPacketConnection.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\net\detail\netEnetServerPacketConnection.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\net\detail\netEventConnection.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\net\detail\netInternal.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\net\net.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/physics.cbp
+===================================================================
+--- trunk/yake/scripts/cb/physics.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/physics.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,51 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::physics&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_physics-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\mgw\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++					&lt;Add directory=&quot;..\..&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,YAKE_PHYSICS_EXPORTS&quot;/&gt;
++		&lt;/Compiler&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\physics\yakePhysicsAffectorZone.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\physics\yakePhysicsAffectors.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\physics\yakePhysicsSystem.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/raf.cbp
+===================================================================
+--- trunk/yake/scripts/cb/raf.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/raf.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,62 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::raf&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_raf-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\mgw\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++					&lt;Add directory=&quot;..\..&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_input-mgw342-d.a&quot;/&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_audio-mgw342-d.a&quot;/&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_scripting-mgw342-d.a&quot;/&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_graphics-mgw342-d.a&quot;/&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_physics-mgw342-d.a&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,YAKE_RAF_EXPORTS&quot;/&gt;
++			&lt;Add directory=&quot;..\..\dependencies\cegui_mk2&quot;/&gt;
++			&lt;Add directory=&quot;..\..\dependencies\cegui_mk2\CEGUI&quot;/&gt;
++		&lt;/Compiler&gt;
++		&lt;Unit filename=&quot;..\..\src\yapp\raf\yakeApplication.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yapp\raf\yakeApplicationState.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yapp\raf\yakeRaf.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++		&lt;Unit filename=&quot;..\..\src\yapp\raf\yakeRtApplicationState.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/scripting.cbp
+===================================================================
+--- trunk/yake/scripts/cb/scripting.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/scripting.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,43 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::scripting&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_scripting-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\mgw\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++					&lt;Add directory=&quot;..\..&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,YAKE_SCRIPTING_EXPORTS&quot;/&gt;
++		&lt;/Compiler&gt;
++		&lt;Unit filename=&quot;..\..\src\yake\scripting\yakeScriptingSystem.cpp&quot;&gt;
++			&lt;Option compilerVar=&quot;CPP&quot;/&gt;
++			&lt;Option target=&quot;debug&quot;/&gt;
++		&lt;/Unit&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+Added: trunk/yake/scripts/cb/vehicle.cbp
+===================================================================
+--- trunk/yake/scripts/cb/vehicle.cbp	2006-04-25 20:10:34 UTC (rev 1325)
++++ trunk/yake/scripts/cb/vehicle.cbp	2006-04-25 20:12:43 UTC (rev 1326)
+@@ -0,0 +1,39 @@
++&lt;?xml version=&quot;1.0&quot;?&gt;
++&lt;!DOCTYPE CodeBlocks_project_file&gt;
++&lt;CodeBlocks_project_file&gt;
++	&lt;FileVersion major=&quot;1&quot; minor=&quot;1&quot;/&gt;
++	&lt;Project&gt;
++		&lt;Option title=&quot;yake::vehicle&quot;/&gt;
++		&lt;Option makefile=&quot;Makefile&quot;/&gt;
++		&lt;Option makefile_is_custom=&quot;0&quot;/&gt;
++		&lt;Option compiler=&quot;0&quot;/&gt;
++		&lt;Build&gt;
++			&lt;Target title=&quot;debug&quot;&gt;
++				&lt;Option output=&quot;..\..\common\lib\yake_vehicle-mgw342-d.dll&quot;/&gt;
++				&lt;Option working_dir=&quot;..\..\common\bin\mgw\debug&quot;/&gt;
++				&lt;Option object_output=&quot;..\..\common\obj\mgw\debug&quot;/&gt;
++				&lt;Option deps_output=&quot;..\..\common\dep\debug&quot;/&gt;
++				&lt;Option type=&quot;3&quot;/&gt;
++				&lt;Option compiler=&quot;0&quot;/&gt;
++				&lt;Option createStaticLib=&quot;1&quot;/&gt;
++				&lt;Compiler&gt;
++					&lt;Add option=&quot;-W&quot;/&gt;
++					&lt;Add option=&quot;-Wall&quot;/&gt;
++					&lt;Add option=&quot;-g&quot;/&gt;
++					&lt;Add option=&quot;-D_DEBUG&quot;/&gt;
++					&lt;Add directory=&quot;..\..&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\boost&quot;/&gt;
++					&lt;Add directory=&quot;..\..\dependencies\ttl&quot;/&gt;
++				&lt;/Compiler&gt;
++				&lt;Linker&gt;
++					&lt;Add library=&quot;..\..\common\lib\libyake_base-mgw342-d.a&quot;/&gt;
++				&lt;/Linker&gt;
++			&lt;/Target&gt;
++		&lt;/Build&gt;
++		&lt;Compiler&gt;
++			&lt;Add option=&quot;-W&quot;/&gt;
++			&lt;Add option=&quot;-Wall&quot;/&gt;
++			&lt;Add option=&quot;-DBUILD_DLL,YAKE_VEHICLE_EXPORTS&quot;/&gt;
++		&lt;/Compiler&gt;
++	&lt;/Project&gt;
++&lt;/CodeBlocks_project_file&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000393.html">[Yake-svn] r1325 - in trunk/yake/scripts/msvc8: . samples/misc samples/model samples/net
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#394">[ date ]</a>
+              <a href="thread.html#394">[ thread ]</a>
+              <a href="subject.html#394">[ subject ]</a>
+              <a href="author.html#394">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

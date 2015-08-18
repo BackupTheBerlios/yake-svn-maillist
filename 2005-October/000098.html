@@ -1,0 +1,308 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1028 - trunk/yake/src/yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1028%20-%20trunk/yake/src/yapp/vehicle&In-Reply-To=%3C200510132104.j9DL4uID006964%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000099.html">
+   <LINK REL="Next"  HREF="000100.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1028 - trunk/yake/src/yapp/vehicle</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1028%20-%20trunk/yake/src/yapp/vehicle&In-Reply-To=%3C200510132104.j9DL4uID006964%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1028 - trunk/yake/src/yapp/vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Oct 13 23:04:56 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000099.html">[Yake-svn] r1027 - trunk/yake/src/yapp/samples/base/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000100.html">[Yake-svn] r1029 - trunk/yake/yake/input
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#98">[ date ]</a>
+              <a href="thread.html#98">[ thread ]</a>
+              <a href="subject.html#98">[ subject ]</a>
+              <a href="author.html#98">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-13 23:04:56 +0200 (Thu, 13 Oct 2005)
+New Revision: 1028
+
+Modified:
+   trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp
+   trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+Log:
+loading of wheels via dotVehicle XML,
+steering of front wheel of jet,
+various wheel related improvements
+
+Modified: trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp	2005-10-13 21:04:23 UTC (rev 1027)
++++ trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp	2005-10-13 21:04:56 UTC (rev 1028)
+@@ -87,6 +87,10 @@
+ 				parseEngine( *pN );
+ 			else if (name == &quot;chassis&quot;)
+ 				parseChassis( *pN );
++			else if (name == &quot;steeringGroup&quot;)
++				parseSteeringGroup( *pN );
++			else if (name == &quot;wheel&quot;)
++				parseWheel( *pN );
+ 		}
+ 
+ 		const String tplId = n.getAttributeValueAs&lt;String&gt;(&quot;name&quot;);
+@@ -221,6 +225,52 @@
+ 			}
+ 		}
+ 	}
++	void DotVehicleParser::parseSteeringGroup( const data::dom::INode&amp; n )
++	{
++		const uint32 idx = uint32( StringUtil::toSizeT( n.getAttributeValueAs&lt;String&gt;(&quot;index&quot;) ) );
++		mpCurrVehTpl-&gt;mSteeringGroups = std::max( idx, mpCurrVehTpl-&gt;mSteeringGroups );
++		if (mpCurrVehTpl-&gt;mSteeringGroups == 0)
++			mpCurrVehTpl-&gt;mSteeringGroups = 1;
++	}
++	void DotVehicleParser::parseWheel( const data::dom::INode&amp; n )
++	{
++		const String name = n.getAttributeValueAs&lt;String&gt;(&quot;name&quot;);
++		YAKE_ASSERT( !name.empty() );
++		if (name.empty())
++			return;
++		YAKE_ASSERT( mpCurrVehTpl-&gt;mWheels.find( name ) == mpCurrVehTpl-&gt;mWheels.end() )( name ).debug(&quot;duplicate wheel name. overriding values.&quot;);
++
++		Vector3 position;
++		SharedPtr&lt;data::dom::INode&gt; pN = n.getNodeByName(&quot;position&quot;);
++		if (pN.get())
++			parsePosition( *pN, position );
++
++		Quaternion rotation( Quaternion::kIdentity );
++		pN = n.getNodeByName(&quot;orientation&quot;);
++		if (pN.get())
++			parseOrientation( *pN, rotation );
++
++		const real radius = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;radius&quot;) );
++		uint32 sg = SG_NO_STEERING_GROUP;
++		if (!n.getAttributeValueAs&lt;String&gt;(&quot;steeringGroup&quot;).empty())
++			sg = uint32( StringUtil::toSizeT( n.getAttributeValueAs&lt;String&gt;(&quot;steeringGroup&quot;) ) );
++		const real mass = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;mass&quot;) );
++		const bool relToChassis = StringUtil::parseBool( n.getAttributeValueAs&lt;String&gt;(&quot;massIsRelativeToChassis&quot;) );
++		const real suspSpring = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;suspensionSpring&quot;) );
++		const real suspDamping = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;suspensionDamping&quot;) );
++
++		mpCurrVehTpl-&gt;mWheels[ name ] = VehicleTemplate::WheelTpl(
++											position,
++											rotation,
++											radius,
++											mass,
++											relToChassis,
++											sg,
++											suspSpring,
++											suspDamping );
++
++
++	}
+ 	void DotVehicleParser::parsePosition( const data::dom::INode&amp; n, Vector3&amp; ret )
+ 	{
+ 		ret.x = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;x&quot;) );
+
+Modified: trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2005-10-13 21:04:23 UTC (rev 1027)
++++ trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2005-10-13 21:04:56 UTC (rev 1028)
+@@ -29,6 +29,17 @@
+ #include &lt;yapp/vehicle/yakeNativeOde.h&gt;
+ #include &lt;yapp/vehicle/yakeDotVehicle.h&gt;
+ 
++#if defined(YAKE_VEHICLE_USE_ODE)
++#	include &lt;dependencies/ode/include/ode/ode.h&gt;
++#	include &lt;dependencies/ode/include/ode/odecpp.h&gt;
++#	include &lt;dependencies/ode/include/ode/objects.h&gt;
++#	include &lt;yake/plugins/physicsODE/OdeJoint.h&gt;
++#	include &lt;yake/plugins/physicsODE/OdeBody.h&gt;
++#	include &lt;yake/plugins/physicsODE/OdeWorld.h&gt;
++#	pragma comment(lib, &quot;physicsODE.lib&quot;)
++#	pragma comment(lib, &quot;oded.lib&quot;)
++#endif // #if defined(YAKE_VEHICLE_USE_ODE)
++
+ namespace yake {
+ namespace vehicle {
+ 
+@@ -323,7 +334,32 @@
+ 			mWheels[ wtp.first ] = pW;
+ 		}
+ 	}
++	void GenericVehicle::setSteering( const uint32 sg, const real value )
++	{
++		//SteeringGroupList::iterator itFind = std::find( mSteeringGroups.begin(), mSteeringGroups.end(), sg );
++		//YAKE_ASSERT( itFind != mSteeringGroups.end() )( sg ).debug(&quot;steering group not found!&quot;);
++		//if (itFind == mSteeringGroups.end())
++		//	return;
++		real newVal = value;
++		if (newVal &lt; -1.)
++			newVal = -1.;
++		else if (newVal &gt; 1.)
++			newVal = 1.;
++		ConstVectorIterator&lt; Deque&lt;OdeWheel*&gt; &gt; itWheel( mSteeringGroups[ sg ] );
++		while (itWheel.hasMoreElements())
++		{
++			OdeWheel* pW = itWheel.getNext();
++			YAKE_ASSERT( pW );
++			pW-&gt;setSteering( newVal );
++		}
++	}
++	real GenericVehicle::getSteering( const uint32 sg ) const
++	{
++		YAKE_ASSERT(0 &amp;&amp; &quot;NOT IMPLEMENTED&quot;)(sg);
++		return 0.;
++	}
+ 
++#if defined(YAKE_VEHICLE_USE_ODE)
+ 	//-----------------------------------------------------
+ 	// Class: OdeWheel
+ 	//-----------------------------------------------------
+@@ -332,8 +368,17 @@
+ 						physics::IWorld&amp; PWorld ) :
+ 		mpJoint(0),
+ 		mpWheel(0),
+-		mRadius(tpl.mRadius)
++		mRadius(tpl.mRadius),
++		mTargetSteer(0),
++		mCurrSteer(0)
+ 	{
++		{
++			physics::OdeWorld* pW = dynamic_cast&lt;physics::OdeWorld*&gt;( &amp;PWorld );
++			YAKE_ASSERT( pW ).debug(&quot;Incorrect physics world provider used! ODE expected!&quot;);
++			if (!pW)
++				YAKE_EXCEPT(&quot;Incorrect physics world provider used! ODE expected!&quot;);
++		}
++
+ 		YAKE_ASSERT( chassisObj );
+ 		mpWheel = PWorld.createActor( physics::ACTOR_DYNAMIC );
+ 		mpWheel-&gt;createShape( physics::IShape::SphereDesc( mRadius ) );
+@@ -343,13 +388,56 @@
+ 		mpWheel-&gt;setOrientation( tpl.mOrientation );
+ 		mpWheel-&gt;getBody().setMass( mass );
+ 
+-		mpJoint = PWorld.createJoint( physics::IJoint::DescFixed( chassisObj, mpWheel ) );
+-		//mpJoint = PWorld.createJoint( physics::IJoint::DescBall( chassisObj, mpWheel, chassisObj-&gt;getPosition() ) );
++		physics::OdeBody* pBody = static_cast&lt;physics::OdeBody*&gt;( mpWheel-&gt;getBodyPtr() );
++		dBodyID bodyId = pBody-&gt;_getOdeBody()-&gt;id();
++		dBodySetFiniteRotationMode( bodyId, 1 );
++
++		//if (tpl.mSteeringGroup == SG_NO_STEERING_GROUP)
++		//	mpJoint = PWorld.createJoint( physics::IJoint::DescFixed( chassisObj, mpWheel ) );
++		//else
++		{
++			mpJoint = PWorld.createJoint( physics::IJoint::DescHinge2( 
++				chassisObj, mpWheel, 
++				tpl.mOrientation * Vector3::kUnitY,
++				tpl.mOrientation * Vector3::kUnitX,
++				tpl.mPosition ) );
++
++			mpJoint-&gt;setSpring( tpl.mSuspensionSpring );
++			mpJoint-&gt;setDamping( tpl.mSuspensionDamping );
++			//-&gt; equals: dJointSetHinge2Param( jID, dParamSuspensionERP, _getERPFromSpring() );
++			//           and dJointSetHinge2Param( jID, dParamSuspensionCFM, _getCFMFromSpring() );
++
++			if (tpl.mSteeringGroup == SG_NO_STEERING_GROUP)
++			{
++				mpJoint-&gt;setLimits( 0, 0.0, 0.0 );
++				mpJoint-&gt;setLimits( 1, 0.0, 0.0 );
++			}
++			else
++			{
++				mpJoint-&gt;setLimits( 0, -0.1, 0.1 );
++				mpJoint-&gt;setLimits( 1,  0.0, 0.0 );
++			}
++
++			physics::OdeHinge2Joint* pJ = static_cast&lt;physics::OdeHinge2Joint*&gt;( mpJoint );
++			dJointID jID = pJ-&gt;_getOdeJoint()-&gt;id();
++
++			dJointSetHinge2Param( jID, dParamSuspensionERP, 0.95 );
++			dJointSetHinge2Param( jID, dParamSuspensionCFM, 0.2 );
++
++			dJointSetHinge2Param( jID, dParamStopERP, 0.95 );
++			dJointSetHinge2Param( jID, dParamStopCFM, 0.1 );
++			//dJointSetHinge2Param( hinges_[i], dParamStopERP, (!(i&amp;2) ? FRONT_TURN_ERP : REAR_TURN_ERP) );
++			//dJointSetHinge2Param( hinges_[i], dParamStopCFM, (!(i&amp;2) ? FRONT_TURN_CFM : REAR_TURN_CFM) );
++		}
+ 		
+ 		YAKE_ASSERT( mpJoint );
++
++
++		mPostStepSigConn = PWorld.subscribeToPreStepInternal( boost::bind(&amp;OdeWheel::_onPreStepInternal,this,_1) );
+ 	}
+ 	OdeWheel::~OdeWheel()
+ 	{
++		mPostStepSigConn.disconnect();
+ 		YAKE_ASSERT( mpWheel );
+ 		YAKE_ASSERT( mpJoint );
+ 		mpWheel-&gt;getCreator()-&gt;destroyJoint( mpJoint );
+@@ -357,6 +445,22 @@
+ 		mpWheel-&gt;getCreator()-&gt;destroyActor( mpWheel );
+ 		mpWheel = 0;
+ 	}
++	void OdeWheel::setSteering( const real s )
++	{
++		mTargetSteer = s;
++		if (mTargetSteer &lt; -1.)
++			mTargetSteer = -1.;
++		else if (mTargetSteer &gt; 1.)
++			mTargetSteer = 1.;
++	}
++	void OdeWheel::_onPreStepInternal( const real dt )
++	{
++		// interpolate towards target steering
++		mCurrSteer = mCurrSteer + /*@todo make this configurable:*/ 1.3 * dt * (mTargetSteer - mCurrSteer);
++
++		YAKE_ASSERT( mpJoint );
++		mpJoint-&gt;setLimits( 0, mCurrSteer - 0.05, mCurrSteer + 0.05 );
++	}
+ 	real OdeWheel::getRadius() const
+ 	{
+ 		return mRadius;
+@@ -371,7 +475,7 @@
+ 		YAKE_ASSERT( mpWheel );
+ 		return mpWheel-&gt;getOrientation();
+ 	}
+-
++#endif // YAKE_VEHICLE_USE_ODE
+ 	//-----------------------------------------------------
+ 	// Class: GenericThruster
+ 	//-----------------------------------------------------
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000099.html">[Yake-svn] r1027 - trunk/yake/src/yapp/samples/base/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000100.html">[Yake-svn] r1029 - trunk/yake/yake/input
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#98">[ date ]</a>
+              <a href="thread.html#98">[ thread ]</a>
+              <a href="subject.html#98">[ subject ]</a>
+              <a href="author.html#98">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

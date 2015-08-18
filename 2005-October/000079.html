@@ -1,0 +1,327 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1008 - in trunk/yake/yapp: model vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1008%20-%20in%20trunk/yake/yapp%3A%20model%20vehicle&In-Reply-To=%3C200510112144.j9BLiOSM025153%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000078.html">
+   <LINK REL="Next"  HREF="000080.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1008 - in trunk/yake/yapp: model vehicle</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1008%20-%20in%20trunk/yake/yapp%3A%20model%20vehicle&In-Reply-To=%3C200510112144.j9BLiOSM025153%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1008 - in trunk/yake/yapp: model vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Oct 11 23:44:24 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000078.html">[Yake-svn] r1007 - in trunk/yake/src/yake: plugins/physicsNX samples/physics/demo
+</A></li>
+        <LI>Next message: <A HREF="000080.html">[Yake-svn] r1009 - trunk/yake/scripts/yapp
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#79">[ date ]</a>
+              <a href="thread.html#79">[ thread ]</a>
+              <a href="subject.html#79">[ subject ]</a>
+              <a href="author.html#79">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-11 23:44:24 +0200 (Tue, 11 Oct 2005)
+New Revision: 1008
+
+Modified:
+   trunk/yake/yapp/model/yakeComplexModel.h
+   trunk/yake/yapp/vehicle/yakeDotVehicle.h
+   trunk/yake/yapp/vehicle/yakeInterfaces.h
+   trunk/yake/yapp/vehicle/yakeNativeOde.h
+   trunk/yake/yapp/vehicle/yakeTemplates.h
+   trunk/yake/yapp/vehicle/yakeVehicleSystem.h
+Log:
+improved vehicle implementation,
+improved complex::Model interface
+
+Modified: trunk/yake/yapp/model/yakeComplexModel.h
+===================================================================
+--- trunk/yake/yapp/model/yakeComplexModel.h	2005-10-11 21:43:42 UTC (rev 1007)
++++ trunk/yake/yapp/model/yakeComplexModel.h	2005-10-11 21:44:24 UTC (rev 1008)
+@@ -81,6 +81,9 @@
+ 		*/
+ 		void addPhysical( const SharedPtr&lt;Physical&gt; &amp; pPhysical, const String &amp; rName = &quot;&quot;/*, bool bManaged*/ );
+ 
++		/** @copydoc addPhysical */
++		void addPhysical( Physical* pPhysical, const String &amp; rName = &quot;&quot;/*, bool bManaged*/ );
++
+ 		/** Adds a &quot;Graphical&quot; object to this model.
+ 			The model references it using a shared pointer.
+ 			If it holds the only reference to the object it effectively
+@@ -90,6 +93,10 @@
+ 		*/
+ 		void addGraphical( const SharedPtr&lt;Graphical&gt; &amp; pGraphical, const String &amp; rName = &quot;&quot; );
+ 
++		/** @copydoc addGraphical
++		*/
++		void addGraphical( Graphical* pGraphical, const String &amp; rName = &quot;&quot; );
++
+ 		void addGraphicsController( const SharedPtr&lt;IObjectController&gt; &amp; pController, const String &amp; rName = &quot;&quot; );
+ 		void addLink( const SharedPtr&lt;ModelLink&gt; &amp; pModelLink, const String &amp; rName = &quot;&quot; );
+ 
+
+Modified: trunk/yake/yapp/vehicle/yakeDotVehicle.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeDotVehicle.h	2005-10-11 21:43:42 UTC (rev 1007)
++++ trunk/yake/yapp/vehicle/yakeDotVehicle.h	2005-10-11 21:44:24 UTC (rev 1008)
+@@ -54,6 +54,8 @@
+ 		  void parseBody( const data::dom::INode&amp; n );
+ 		  void parseShapeSet( const data::dom::INode&amp; n );
+ 		   void parseShape( const data::dom::INode&amp; n );
++		    void parseShapeBox( const data::dom::INode&amp; n );
++		    void parseShapeSphere( const data::dom::INode&amp; n );
+ 		   void parseMountPoint( const data::dom::INode&amp; n, VehicleTemplate::MountPointTpl* parentMtPt = 0 );
+ 		 void parseEngine( const data::dom::INode&amp; n );
+ 		void parseEngineTpl( const data::dom::INode&amp; n );
+
+Modified: trunk/yake/yapp/vehicle/yakeInterfaces.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeInterfaces.h	2005-10-11 21:43:42 UTC (rev 1007)
++++ trunk/yake/yapp/vehicle/yakeInterfaces.h	2005-10-11 21:44:24 UTC (rev 1008)
+@@ -55,7 +55,7 @@
+ 		virtual MountPoint* getMountPoint(const String&amp; id) const = 0;
+ 		virtual IEngine* getEngineInterface(const String&amp; id) const = 0;
+ 		virtual IEnginePtrList getEngineInterfaces() const = 0;
+-		virtual IWheel* getWheelInterface(size_t index) const = 0;
++		virtual IWheel* getWheelInterface(const String&amp; id) const = 0;
+ 
+ 		virtual Vector3 getChassisPosition() const = 0;
+ 		virtual Quaternion getChassisOrientation() const = 0;
+@@ -158,6 +158,8 @@
+ 	{
+ 	public:
+ 		virtual ~IWheel() {}
++
++		virtual real getRadius() const = 0;
+ 	};
+ 
+ } // namespace vehicle
+
+Modified: trunk/yake/yapp/vehicle/yakeNativeOde.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeNativeOde.h	2005-10-11 21:43:42 UTC (rev 1007)
++++ trunk/yake/yapp/vehicle/yakeNativeOde.h	2005-10-11 21:44:24 UTC (rev 1008)
+@@ -33,14 +33,16 @@
+ namespace vehicle {
+ 
+ 	class DotVehicleParser;
+-	class YAKE_VEH_API OdeVehicleSystem : public IVehicleSystem
++	class YAKE_VEH_API GenericVehicleSystem : public IVehicleSystem
+ 	{
+-		YAKE_DECLARE_CONCRETE(OdeVehicleSystem,&quot;ode&quot;);
++		YAKE_DECLARE_CONCRETE(GenericVehicleSystem,&quot;generic&quot;);
+ 	public:
+-		OdeVehicleSystem();
+-		~OdeVehicleSystem();
++		GenericVehicleSystem();
++		~GenericVehicleSystem();
+ 		virtual IVehicle* create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld);
+ 		virtual bool loadTemplates(const String&amp; fn);
++		virtual VehicleTemplate* getTemplate(const String&amp; tpl) const;
++		//virtual VehicleTemplate* cloneTemplate(const String&amp; tpl);
+ 		virtual IVehicle* create(const String&amp; tpl, physics::IWorld&amp; PWorld);
+ 	private:
+ 		void _onVehicleTpl(DotVehicleParser&amp; parser, const String&amp; tplId);
+@@ -50,11 +52,11 @@
+ 	};
+ 
+ 	class OdeWheel;
+-	class OdeVehicle : public IVehicle
++	class GenericVehicle : public IVehicle
+ 	{
+ 	public:
+-		OdeVehicle();
+-		virtual ~OdeVehicle();
++		GenericVehicle();
++		virtual ~GenericVehicle();
+ 
+ 		virtual void updateSimulation( real timeElapsed );
+ 
+@@ -65,7 +67,7 @@
+ 
+ 		virtual IEngine* getEngineInterface(const String&amp; id) const;
+ 		virtual IEnginePtrList getEngineInterfaces() const;
+-		virtual IWheel* getWheelInterface(size_t index) const;
++		virtual IWheel* getWheelInterface(const String&amp; id) const;
+ 
+ 		virtual Vector3 getChassisPosition() const;
+ 		virtual Quaternion getChassisOrientation() const;
+@@ -87,7 +89,7 @@
+ 		typedef AssocVector&lt;uint32,Deque&lt;OdeWheel*&gt; &gt; SteeringGroupList;
+ 		SteeringGroupList	mSteeringGroups;
+ 
+-		typedef Deque&lt;OdeWheel*&gt; WheelList;
++		typedef AssocVector&lt;String,OdeWheel*&gt; WheelList;
+ 		WheelList			mWheels;
+ 
+ 		typedef AssocVector&lt;String,MountPoint*&gt; MountPointList;
+@@ -95,11 +97,11 @@
+ 	};
+ 
+ 	class GearBox;
+-	class OdeCarEngine : public ICarEngine
++	class GenericCarEngine : public ICarEngine
+ 	{
+ 	public:
+-		OdeCarEngine();
+-		virtual ~OdeCarEngine();
++		GenericCarEngine();
++		virtual ~GenericCarEngine();
+ 
+ 		virtual void setThrottle(real throttle);
+ 		virtual real getThrottle() const;
+@@ -164,25 +166,28 @@
+ 		virtual Vector3 getPosition() const;
+ 		virtual void setOrientation(const Quaternion&amp;) {}
+ 		virtual Quaternion getOrientation() const;
++
++		virtual real getRadius() const;
+ 	private:
+ 		physics::IJointPtr		mpJoint;
+ 		physics::IActorPtr		mpWheel;
++		real					mRadius;
+ 	};
+ 
+-	class OdeMountPoint : public MountPoint
++	class GenericMountPoint : public MountPoint
+ 	{
+ 	public:
+-		OdeMountPoint() {}
++		GenericMountPoint() {}
+ 
+ 	private:
+ 		//typedef Deque&lt;IThruster*&gt; ThrusterPtrList;
+ 		//ThrusterPtrList		mThrusters; // references thruster engines (does NOT own them!)
+ 	};
+ 
+-	class OdeThruster : public IThruster
++	class GenericThruster : public IThruster
+ 	{
+ 	public:
+-		OdeThruster();
++		GenericThruster();
+ 
+ 		virtual void setThrottle( real throttle );
+ 		virtual real getThrottle() const;
+@@ -191,10 +196,10 @@
+ 	private:
+ 		real	mThrottle;
+ 	};
+-	class OdeMountedThruster : public IMountedThruster
++	class GenericMountedThruster : public IMountedThruster
+ 	{
+ 	public:
+-		OdeMountedThruster();
++		GenericMountedThruster();
+ 
+ 		virtual void onApplyToTargets();
+ 	private:
+
+Modified: trunk/yake/yapp/vehicle/yakeTemplates.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeTemplates.h	2005-10-11 21:43:42 UTC (rev 1007)
++++ trunk/yake/yapp/vehicle/yakeTemplates.h	2005-10-11 21:44:24 UTC (rev 1008)
+@@ -33,6 +33,7 @@
+ namespace vehicle {
+ 
+ 	const String MPID_NO_PARENT = String(&quot;&quot;);
++	const uint32 SG_NO_STEERING_GROUP = 0xffffffff;
+ 	struct VehicleTemplate
+ 	{
+ 		struct MountPointTpl;
+@@ -139,19 +140,25 @@
+ 			real			mSuspensionDamping;
+ 			String			mGfxReference; // e.g. dotScene file
+ 			String			mGfxReferenceType; // e.g. &quot;dotscene&quot;
+-			WheelTpl() :
+-				mPosition(Vector3::kZero),
++			WheelTpl(
++				const Vector3&amp; position = Vector3::kZero,
++				const real radius = real(0.8),
++				const real mass = real(0.01),
++				const bool massRelativeToChassis = true,
++				const uint32 steeringGrp = SG_NO_STEERING_GROUP
++				) :
++				mPosition(position),
+ 				mOrientation(Quaternion::kIdentity),
+-				mSteeringGroup(0),
+-				mRadius(real(0.8)),
+-				mMass(real(0.015)),
+-				mMassRelativeToChassis(true),
++				mSteeringGroup(steeringGrp),
++				mRadius(radius),
++				mMass(mass),
++				mMassRelativeToChassis(massRelativeToChassis),
+ 				mSuspensionSpring(real(1)),
+ 				mSuspensionDamping(real(0.9))
+ 			{}
+ 		};
+ 
+-		typedef Deque&lt; WheelTpl &gt; WheelTplList;
++		typedef AssocVector&lt; String, WheelTpl &gt; WheelTplList;
+ 
+ 		//
+ 
+@@ -174,6 +181,7 @@
+ 				delete itShape.getNext();
+ 			mChassis.mChassisShapes.clear();
+ 		}
++		//VehicleTemplate* clone() const;
+ 	};
+ 
+ } // namespace vehicle
+
+Modified: trunk/yake/yapp/vehicle/yakeVehicleSystem.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeVehicleSystem.h	2005-10-11 21:43:42 UTC (rev 1007)
++++ trunk/yake/yapp/vehicle/yakeVehicleSystem.h	2005-10-11 21:44:24 UTC (rev 1008)
+@@ -40,6 +40,8 @@
+ 		virtual ~IVehicleSystem() {}
+ 		virtual IVehicle* create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld) = 0;
+ 		virtual bool loadTemplates(const String&amp; fn) = 0;
++		//virtual VehicleTemplate* cloneTemplate(const String&amp; tpl) = 0;
++		virtual VehicleTemplate* getTemplate(const String&amp; tpl) const = 0;
+ 		virtual IVehicle* create(const String&amp; tpl, physics::IWorld&amp; PWorld) = 0;
+ 	};
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000078.html">[Yake-svn] r1007 - in trunk/yake/src/yake: plugins/physicsNX samples/physics/demo
+</A></li>
+	<LI>Next message: <A HREF="000080.html">[Yake-svn] r1009 - trunk/yake/scripts/yapp
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#79">[ date ]</a>
+              <a href="thread.html#79">[ thread ]</a>
+              <a href="subject.html#79">[ subject ]</a>
+              <a href="author.html#79">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

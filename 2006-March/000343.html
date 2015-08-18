@@ -1,0 +1,179 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1273 - trunk/yake/src/yake/ent
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1273%20-%20trunk/yake/src/yake/ent&In-Reply-To=%3C200603152011.k2FKBeCb008133%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000342.html">
+   <LINK REL="Next"  HREF="000344.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1273 - trunk/yake/src/yake/ent</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1273%20-%20trunk/yake/src/yake/ent&In-Reply-To=%3C200603152011.k2FKBeCb008133%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1273 - trunk/yake/src/yake/ent">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Mar 15 21:11:40 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000342.html">[Yake-svn] r1272 - trunk/yake/yake/ent
+</A></li>
+        <LI>Next message: <A HREF="000344.html">[Yake-svn] r1274 - in trunk/yake/src/yake/samples: . statemachine statemachine/sampleFsm1
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#343">[ date ]</a>
+              <a href="thread.html#343">[ thread ]</a>
+              <a href="subject.html#343">[ subject ]</a>
+              <a href="author.html#343">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-15 21:11:38 +0100 (Wed, 15 Mar 2006)
+New Revision: 1273
+
+Modified:
+   trunk/yake/src/yake/ent/component.cpp
+   trunk/yake/src/yake/ent/component_holder.cpp
+   trunk/yake/src/yake/ent/object.cpp
+   trunk/yake/src/yake/ent/vm_holder.cpp
+Log:
+renamed Co to Component
+
+Modified: trunk/yake/src/yake/ent/component.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/component.cpp	2006-03-15 20:04:26 UTC (rev 1272)
++++ trunk/yake/src/yake/ent/component.cpp	2006-03-15 20:11:38 UTC (rev 1273)
+@@ -30,7 +30,7 @@
+ namespace yake {
+ namespace ent {
+ 
+-	IMPL_CLASS_RTTI(Co)
++	IMPL_CLASS_RTTI(Component)
+ } // namespace object
+ } // namespace yake
+ 
+
+Modified: trunk/yake/src/yake/ent/component_holder.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/component_holder.cpp	2006-03-15 20:04:26 UTC (rev 1272)
++++ trunk/yake/src/yake/ent/component_holder.cpp	2006-03-15 20:11:38 UTC (rev 1273)
+@@ -30,13 +30,13 @@
+ namespace yake {
+ namespace ent {
+ 
+-	void CoHolder::addCo(const CoTag&amp; tag, Co* co)
++	void CoHolder::addComponent(const CoTag&amp; tag, Component* co)
+ 	{
+-		if (getCo(tag))
++		if (getComponent(tag))
+ 			return; //@todo throw instead?
+ 		components_.insert( std::make_pair(tag, co) );
+ 	}
+-	Co* CoHolder::getCo(const CoTag&amp; tag) const
++	Component* CoHolder::getComponent(const CoTag&amp; tag) const
+ 	{
+ 		TagCoMap::const_iterator itFind = components_.find(tag);
+ 		return ((itFind == components_.end()) ? 0 : itFind-&gt;second);
+
+Modified: trunk/yake/src/yake/ent/object.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object.cpp	2006-03-15 20:04:26 UTC (rev 1272)
++++ trunk/yake/src/yake/ent/object.cpp	2006-03-15 20:11:38 UTC (rev 1273)
+@@ -70,5 +70,26 @@
+ 		//std::cout &lt;&lt; &quot;Entity.state.exit '&quot; &lt;&lt; state &lt;&lt; &quot;'\n&quot;;
+ 		listeners_fsmExitState(*this,fsm,state);
+ 	}
++	boost::signals::connection Entity::subsribeToVmAttached(const VMHolder::VmAttachedSignal::slot_type&amp; slot)
++	{
++		return vms_.subsribeToVmAttached(slot);
++	}
++	boost::signals::connection Entity::subscribeToVmDetached(const VMHolder::VmDetachedSignal::slot_type&amp; slot)
++	{
++		return vms_.subscribeToVmDetached(slot);
++	}
++	bool Entity::attachVM(scripting::IVM* vm,const std::string&amp; tag)
++	{
++		return vms_.attachVM(vm,tag);
++	}
++	scripting::IVM* Entity::detachVM(const std::string&amp; tag)
++	{
++		return vms_.detachVM(tag);
++	}
++	scripting::IVM* Entity::getVM(const std::string&amp; tag) const
++	{
++		return vms_.getVM(tag);
++	}
++
+ }
+ }
+\ No newline at end of file
+
+Modified: trunk/yake/src/yake/ent/vm_holder.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/vm_holder.cpp	2006-03-15 20:04:26 UTC (rev 1272)
++++ trunk/yake/src/yake/ent/vm_holder.cpp	2006-03-15 20:11:38 UTC (rev 1273)
+@@ -57,6 +57,7 @@
+ 		if (vms_.end() != it)
+ 			return false;
+ 		vms_.insert( VmMap::value_type(tag,vm) );
++		sigAttached_(tag,vm);
+ 		return true;
+ 	}
+ 	scripting::IVM* VMHolder::detachVM(const std::string &amp;tag)
+@@ -70,6 +71,7 @@
+ 			return 0;
+ 		scripting::IVM* vm = it-&gt;second;
+ 		vms_.erase(tag);
++		sigAttached_(tag,vm);
+ 		return vm;
+ 	}
+ 	scripting::IVM* VMHolder::getVM(const std::string &amp;tag) const
+@@ -83,6 +85,14 @@
+ 			return 0;
+ 		return it-&gt;second;
+ 	}
++	boost::signals::connection VMHolder::subsribeToVmAttached(const VmAttachedSignal::slot_type&amp; slot)
++	{
++		return sigAttached_.connect(slot);
++	}
++	boost::signals::connection VMHolder::subscribeToVmDetached(const VmDetachedSignal::slot_type&amp; slot)
++	{
++		return sigDetached_.connect(slot);
++	}
+ 
+ }
+ }
+\ No newline at end of file
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000342.html">[Yake-svn] r1272 - trunk/yake/yake/ent
+</A></li>
+	<LI>Next message: <A HREF="000344.html">[Yake-svn] r1274 - in trunk/yake/src/yake/samples: . statemachine statemachine/sampleFsm1
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#343">[ date ]</a>
+              <a href="thread.html#343">[ thread ]</a>
+              <a href="subject.html#343">[ subject ]</a>
+              <a href="author.html#343">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

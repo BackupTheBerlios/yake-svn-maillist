@@ -1,0 +1,547 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r998 - trunk/yake/src/yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r998%20-%20trunk/yake/src/yapp/vehicle&In-Reply-To=%3C200510090045.j990j0wf030936%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000066.html">
+   <LINK REL="Next"  HREF="000070.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r998 - trunk/yake/src/yapp/vehicle</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r998%20-%20trunk/yake/src/yapp/vehicle&In-Reply-To=%3C200510090045.j990j0wf030936%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r998 - trunk/yake/src/yapp/vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Oct  9 02:45:00 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000066.html">[Yake-svn] r997 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000070.html">[Yake-svn] r999 - trunk/yake/src/yapp/samples/base/vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#69">[ date ]</a>
+              <a href="thread.html#69">[ thread ]</a>
+              <a href="subject.html#69">[ subject ]</a>
+              <a href="author.html#69">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-09 02:44:57 +0200 (Sun, 09 Oct 2005)
+New Revision: 998
+
+Added:
+   trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp
+Modified:
+   trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+Log:
+slight refactoring,
+added basic .vehicle loader
+
+Added: trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp	2005-10-06 18:10:33 UTC (rev 997)
++++ trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp	2005-10-09 00:44:57 UTC (rev 998)
+@@ -0,0 +1,218 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &lt;yapp/vehicle/yakePCH.h&gt;
++#include &lt;yapp/vehicle/yakeVehicle.h&gt;
++#include &lt;yapp/vehicle/yakeDotVehicle.h&gt;
++
++namespace yake {
++namespace vehicle {
++
++	using namespace data::dom;
++
++	//-----------------------------------------------------
++	// Class: DotVehicleParser
++	//-----------------------------------------------------
++	DotVehicleParser::DotVehicleParser() : mpCurrVehTpl(0)
++	{
++	}
++	bool DotVehicleParser::parse( const String&amp; fn )
++	{
++		data::dom::xml::XmlSerializer xmlSer;
++		xmlSer.parse( fn, false );
++		if (!xmlSer.getDocumentNode().get())
++			return false;
++
++		return parse( *xmlSer.getDocumentNode() );
++	}
++	bool DotVehicleParser::parse( const data::dom::INode&amp; rootNode )
++	{
++		NodeList nodes = rootNode.getNodes();
++		ConstVectorIterator&lt; NodeList &gt; itN( nodes );
++		while (itN.hasMoreElements())
++		{
++			INode* pN = itN.getNext().get();
++			const String name = pN-&gt;getName();
++			if (name == &quot;vehicleTemplate&quot;)
++			{
++				parseVehicleTpl( *pN );
++			}
++		}
++		YAKE_SAFE_DELETE( mpCurrVehTpl );
++		return true;
++	}
++	VehicleTemplate* DotVehicleParser::detachCurrentVehicleTpl()
++	{
++		VehicleTemplate* ret = mpCurrVehTpl;
++		mpCurrVehTpl = 0;
++		return ret;
++	}
++	void DotVehicleParser::parseVehicleTpl( const data::dom::INode&amp; n )
++	{
++		YAKE_SAFE_DELETE( mpCurrVehTpl );
++		mpCurrVehTpl = new VehicleTemplate();
++
++		NodeList nodes = n.getNodes();
++		ConstVectorIterator&lt; NodeList &gt; itN( nodes );
++		while (itN.hasMoreElements())
++		{
++			INode* pN = itN.getNext().get();
++			const String name = pN-&gt;getName();
++			if (name == &quot;mountPoint&quot;)
++			{
++				parseMountPoint( *pN );
++			} else if (name == &quot;engine&quot;)
++			{
++				parseEngine( *pN );
++			}
++		}
++
++		const String tplId = n.getAttributeValueAs&lt;String&gt;(&quot;name&quot;);
++
++		mSigOnVehicleTpl( *this, tplId );
++		YAKE_SAFE_DELETE( mpCurrVehTpl );
++	}
++	void DotVehicleParser::parseEngine( const data::dom::INode&amp; n )
++	{
++		String id = n.getAttributeValueAs&lt;String&gt;(&quot;name&quot;);
++		YAKE_ASSERT( !id.empty() );
++
++		String type = n.getAttributeValueAs&lt;String&gt;(&quot;type&quot;);
++		YAKE_ASSERT( !type.empty() );
++
++		if (type == &quot;MountedThruster&quot;)
++		{
++			String mtPt = n.getAttributeValueAs&lt;String&gt;(&quot;mountPoint&quot;);
++			YAKE_ASSERT( !mtPt.empty() );
++
++			SharedPtr&lt;data::dom::INode&gt; pForcesN = n.getNodeByName(&quot;forces&quot;);
++			YAKE_ASSERT( pForcesN.get() );
++
++			mpCurrVehTpl-&gt;mEngines[ id ] = new VehicleTemplate::ThrusterTpl(
++				StringUtil::parseReal( pForcesN-&gt;getAttributeValueAs&lt;String&gt;(&quot;min&quot;) ),
++				StringUtil::parseReal( pForcesN-&gt;getAttributeValueAs&lt;String&gt;(&quot;max&quot;) ),
++				mtPt );
++		}
++		else
++		{
++			YAKE_ASSERT( 1==0 &amp;&amp; &quot;Unhandled engine type!&quot; );
++		}
++	}
++	void DotVehicleParser::parseMountPoint( const data::dom::INode&amp; n, VehicleTemplate::MountPointTpl* parentMtPt /*= 0*/ )
++	{
++		YAKE_ASSERT( mpCurrVehTpl );
++
++		const String thisId = n.getAttributeValueAs&lt;String&gt;(&quot;name&quot;);
++		YAKE_ASSERT( !thisId.empty() );
++
++		Vector3 position;
++		SharedPtr&lt;INode&gt; pNode = n.getNodeByName(&quot;position&quot;);
++		if (pNode.get())
++			parsePosition( *pNode, position );
++
++		Quaternion orientation;
++		pNode = n.getNodeByName(&quot;orientation&quot;);
++		if (pNode.get())
++			parseOrientation( *pNode, orientation );
++
++		Vector3 direction;
++		pNode = n.getNodeByName(&quot;direction&quot;);
++		if (pNode.get())
++			parseDirection( *pNode, direction );
++
++		VehicleTemplate::MountPointTpl* thisMtPt = 0;
++
++		if (parentMtPt)
++		{
++			parentMtPt-&gt;mChildren[ thisId ] = VehicleTemplate::MountPointTpl(position);
++			thisMtPt = &amp;(parentMtPt-&gt;mChildren[ thisId ]);
++		}
++		else 
++		{
++			mpCurrVehTpl-&gt;mMountPoints[ thisId ] = VehicleTemplate::MountPointTpl(position);
++			thisMtPt = &amp;(mpCurrVehTpl-&gt;mMountPoints[ thisId ]);
++		}
++
++		thisMtPt-&gt;mDirection = direction.normalisedCopy();
++		thisMtPt-&gt;mOrientation = orientation;
++		thisMtPt-&gt;mUseDirection = direction.length() &gt; 0.001;
++
++		// child mount points
++
++		NodeList nodes = n.getNodes();
++		ConstVectorIterator&lt; NodeList &gt; itN( nodes );
++		while (itN.hasMoreElements())
++		{
++			INode* pN = itN.getNext().get();
++			const String name = pN-&gt;getName();
++			if (name == &quot;mountPoint&quot;)
++			{
++				parseMountPoint( *pN, thisMtPt );
++			}
++		}
++	}
++	void DotVehicleParser::parsePosition( const data::dom::INode&amp; n, Vector3&amp; ret )
++	{
++		ret.x = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;x&quot;) );
++		ret.y = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;y&quot;) );
++		ret.z = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;z&quot;) );
++	}
++	void DotVehicleParser::parseDirection( const data::dom::INode&amp; n, Vector3&amp; ret )
++	{
++		ret.x = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;x&quot;) );
++		ret.y = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;y&quot;) );
++		ret.z = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;z&quot;) );
++	}
++	void DotVehicleParser::parseOrientation( const data::dom::INode&amp; n, Quaternion&amp; ret )
++	{
++		if ( n.getAttributeValueAs&lt;String&gt;(&quot;qx&quot;) != &quot;&quot; )
++		{
++			ret.x = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;qx&quot;) );
++			ret.y = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;qy&quot;) );
++			ret.z = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;qz&quot;) );
++			ret.w = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;qw&quot;) );
++		}
++		else if ( n.getAttributeValueAs&lt;String&gt;(&quot;axisX&quot;) != &quot;&quot; )
++		{
++			Vector3 axis;
++			axis.x = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;axisX&quot;) );
++			axis.y = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;axisY&quot;) );
++			axis.z = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;axisZ&quot;) );
++			ret.FromAxes( &amp;axis );
++		}
++		else if ( n.getAttributeValueAs&lt;String&gt;(&quot;angleX&quot;) != &quot;&quot; )
++		{
++			Vector3 axis;
++			axis.x = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;angleX&quot;) );
++			axis.y = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;angleY&quot;) );
++			axis.z = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;angleZ&quot;) );
++			real angle = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;angle&quot;) );
++			ret.FromAngleAxis( angle, axis );
++		}
++	}
++
++} // namespace vehicle
++} // namespace yake
+
+Modified: trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2005-10-06 18:10:33 UTC (rev 997)
++++ trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2005-10-09 00:44:57 UTC (rev 998)
+@@ -27,6 +27,7 @@
+ #include &lt;yapp/vehicle/yakePCH.h&gt;
+ #include &lt;yapp/vehicle/yakeVehicle.h&gt;
+ #include &lt;yapp/vehicle/yakeNativeOde.h&gt;
++#include &lt;yapp/vehicle/yakeDotVehicle.h&gt;
+ 
+ namespace yake {
+ namespace vehicle {
+@@ -39,12 +40,41 @@
+ 	//-----------------------------------------------------
+ 	OdeVehicleSystem::OdeVehicleSystem()
+ 	{}
++	OdeVehicleSystem::~OdeVehicleSystem()
++	{
++		mVehicleTemplates.clear();
++	}
+ 	IVehicle* OdeVehicleSystem::create(const VehicleTemplate&amp; tpl, physics::IWorld&amp; PWorld)
+ 	{
+ 		OdeVehicle* pV = new OdeVehicle();
+ 		pV-&gt;_create( tpl, PWorld );
+ 		return pV;
+ 	}
++	bool OdeVehicleSystem::loadTemplates(const String&amp; fn)
++	{
++		DotVehicleParser dvp;
++		dvp.subscribeToOnVehicleTpl( boost::bind(&amp;OdeVehicleSystem::_onVehicleTpl,this,_1,_2) );
++		bool ret = dvp.parse( fn );
++		return ret;
++	}
++	IVehicle* OdeVehicleSystem::create(const String&amp; tplId, physics::IWorld&amp; PWorld)
++	{
++		VehTplList::const_iterator itFind = mVehicleTemplates.find( tplId );
++		YAKE_ASSERT( itFind != mVehicleTemplates.end() );
++		if (itFind == mVehicleTemplates.end() )
++			return 0;
++		const VehicleTemplate* tpl = itFind-&gt;second.get();
++		YAKE_ASSERT( tpl );
++		if (!tpl)
++			return 0;
++		return create(*tpl,PWorld);
++	}
++	void OdeVehicleSystem::_onVehicleTpl(vehicle::DotVehicleParser&amp; parser, const String&amp; tplId)
++	{
++		YAKE_LOG(&quot;OdeVehicleSystem: loaded vehicle template'&quot; + tplId + &quot;'.&quot;);
++		mVehicleTemplates[ tplId ] = SharedPtr&lt;vehicle::VehicleTemplate&gt;( parser.detachCurrentVehicleTpl() );
++		YAKE_ASSERT( mVehicleTemplates[ tplId ] );
++	}
+ 
+ 	//-----------------------------------------------------
+ 	// Class: OdeVehicle
+@@ -64,12 +94,12 @@
+ 
+ 		ConstDequeIterator&lt; EnginePtrList &gt; itEngine( mEngines );
+ 		while (itEngine.hasMoreElements())
+-			delete itEngine.getNext();
++			delete itEngine.getNext().second;
+ 		mEngines.clear();
+ 
+ 		ConstDequeIterator&lt; MountPointList &gt; itMP( mMountPoints );
+ 		while (itMP.hasMoreElements())
+-			delete itMP.getNext();
++			delete itMP.getNext().second;
+ 		mMountPoints.clear();
+ 
+ 		mpChassis-&gt;getCreator()-&gt;destroyActor( mpChassis );
+@@ -80,27 +110,43 @@
+ 		ConstDequeIterator&lt; EnginePtrList &gt; itEngine( mEngines );
+ 		while (itEngine.hasMoreElements())
+ 		{
+-			IEngine* pEngine = itEngine.getNext();
++			IEngine* pEngine = itEngine.getNext().second;
+ 			pEngine-&gt;updateSimulation(timeElapsed);
+ 		}
+ 		//
+ 		mSigUpdateThrusterSimulation( timeElapsed );
+ 		mSigApplyThrusterToTargets();
+ 	}
+-	MountPoint* OdeVehicle::getMountPoint(size_t index) const
++	MountPoint* OdeVehicle::getMountPoint(const String&amp; id) const
+ 	{
+-		YAKE_ASSERT( index &lt; mMountPoints.size() );
+-		if (index &gt;= mMountPoints.size())
++		YAKE_ASSERT( !id.empty() );
++		if (id.empty())
+ 			return 0;
+-		return mMountPoints.at(index);
++		MountPointList::const_iterator itFind = mMountPoints.find(id);
++		YAKE_ASSERT( itFind != mMountPoints.end() );
++		if (itFind == mMountPoints.end())
++			return 0;
++		return itFind-&gt;second;
+ 	}
+-	IEngine* OdeVehicle::getEngineInterface(size_t index) const
++	IEngine* OdeVehicle::getEngineInterface(const String&amp; id) const
+ 	{
+-		YAKE_ASSERT( index &lt; mEngines.size() );
+-		if (index &gt;= mEngines.size())
++		YAKE_ASSERT( !id.empty() );
++		if (id.empty())
+ 			return 0;
+-		return mEngines.at(index);
++		EnginePtrList::const_iterator itFind = mEngines.find(id);
++		YAKE_ASSERT( itFind != mEngines.end() );
++		if (itFind == mEngines.end())
++			return 0;
++		return itFind-&gt;second;
+ 	}
++	IEnginePtrList OdeVehicle::getEngineInterfaces() const
++	{
++		IEnginePtrList engines;
++		ConstVectorIterator&lt; EnginePtrList &gt; itEngine( mEngines );
++		while (itEngine.hasMoreElements())
++			engines.push_back( itEngine.getNext().second );
++		return engines;
++	}
+ 	IWheel* OdeVehicle::getWheelInterface(size_t index) const
+ 	{
+ 		YAKE_ASSERT( index &lt; mWheels.size() );
+@@ -123,6 +169,36 @@
+ 		YAKE_ASSERT( mpChassis );
+ 		return mpChassis;
+ 	}
++	void OdeVehicle::_createMountPoint(const String&amp; id, const VehicleTemplate::MountPointTpl&amp; mtPtTpl,MountPoint* parentMtPt)
++	{
++		MountPoint* thisMtPt = new OdeMountPoint();
++
++		// link to parent if necessary
++		if (parentMtPt)
++			parentMtPt-&gt;addChild( thisMtPt );
++		else
++		{
++			mMountPoints[ id ] = thisMtPt;
++			thisMtPt-&gt;setOverrideParentMovable( mpChassis );
++		}
++
++		//
++		thisMtPt-&gt;setPosition( mtPtTpl.mPosition );
++		if (mtPtTpl.mUseDirection)
++			thisMtPt-&gt;setDirection( mtPtTpl.mDirection );
++		else
++			thisMtPt-&gt;setOrientation( mtPtTpl.mOrientation );
++
++		// child mount points
++		ConstVectorIterator&lt; VehicleTemplate::MountPointTplList &gt; itMP( mtPtTpl.mChildren );
++		while (itMP.hasMoreElements())
++		{
++			const std::pair&lt;String,VehicleTemplate::MountPointTpl&gt; mptTplEntry = itMP.getNext();
++			const VehicleTemplate::MountPointTpl&amp; childMtPtTpl = mptTplEntry.second;
++
++			_createMountPoint( mptTplEntry.first, childMtPtTpl, thisMtPt );
++		}
++	}
+ 	void OdeVehicle::_create(const VehicleTemplate&amp; tpl, physics::IWorld&amp; PWorld )
+ 	{
+ 		// chassis
+@@ -136,39 +212,14 @@
+ 		mpChassis-&gt;getBody().setMass( tpl.mChassis.mMass );
+ 
+ 		// mount points
+-		MountPointList allMPs;
+ 		ConstDequeIterator&lt; VehicleTemplate::MountPointTplList &gt; itMP( tpl.mMountPoints );
+ 		while (itMP.hasMoreElements())
+ 		{
+-			const VehicleTemplate::MountPointTpl mptTpl = itMP.getNext();
+-			MountPoint* pMP = new OdeMountPoint();
+-			pMP-&gt;setPosition( mptTpl.mPosition );
+-			if (mptTpl.mUseDirection)
+-				pMP-&gt;setDirection( mptTpl.mDirection );
+-			else
+-				pMP-&gt;setOrientation( mptTpl.mOrientation );
++			const std::pair&lt;String,VehicleTemplate::MountPointTpl&gt; mptTplEntry = itMP.getNext();
++			const VehicleTemplate::MountPointTpl&amp; mptTpl = mptTplEntry.second;
+ 
+-			allMPs.push_back( pMP );
+-
+-			if (mptTpl.mParentMountPointIdx == MPID_NO_PARENT)
+-			{
+-				mMountPoints.push_back( pMP );
+-				pMP-&gt;setOverrideParentMovable( mpChassis );
+-			}
+-			//mptTpl.
++			_createMountPoint( mptTplEntry.first, mptTpl );
+ 		}
+-		size_t idx = 0;
+-		itMP.reset( tpl.mMountPoints );
+-		while (itMP.hasMoreElements())
+-		{
+-			const VehicleTemplate::MountPointTpl mptTpl = itMP.getNext();
+-			if (mptTpl.mParentMountPointIdx != MPID_NO_PARENT)
+-			{
+-				allMPs.at(mptTpl.mParentMountPointIdx)-&gt;addChild( allMPs.at(idx), true );
+-			}
+-			++idx;
+-		}
+-		allMPs.clear();
+ 
+ 		// engines
+ 		ConstDequeIterator&lt; VehicleTemplate::EngineTplList &gt; itEngineTpl( tpl.mEngines );
+@@ -176,7 +227,8 @@
+ 		{
+ 			//@todo refactor to avoid casting... ?
+ 
+-			const VehicleTemplate::EngineTpl* engineTpl = itEngineTpl.getNext();
++			const VehicleTemplate::EngineTplList::value_type engineTplEntry = itEngineTpl.getNext();
++			const VehicleTemplate::EngineTpl* engineTpl = engineTplEntry.second;
+ 
+ 			//@todo replace dynamic_casts with static_casts in release mode ?
+ 
+@@ -185,7 +237,7 @@
+ 			if (carEngineTpl)
+ 			{
+ 				OdeCarEngine* pEngine = new OdeCarEngine();
+-				mEngines.push_back(pEngine);
++				mEngines[ engineTplEntry.first ] = pEngine;
+ 				pEngine-&gt;setParamMaxRPM( carEngineTpl-&gt;rpmMax_ );
+ 				pEngine-&gt;setParamMinRPM( carEngineTpl-&gt;rpmMin_ );
+ 				pEngine-&gt;setParamRedlineRPM( carEngineTpl-&gt;rpmRedline_ );
+@@ -198,15 +250,15 @@
+ 				{
+ 					// thruster itself
+ 					OdeThruster* pEngine = new OdeThruster();
+-					mEngines.push_back(pEngine);
++					mEngines[ engineTplEntry.first ] = pEngine;
+ 					pEngine-&gt;setMinimumForce( thrusterTpl-&gt;minForce );
+ 					pEngine-&gt;setMaximumForce( thrusterTpl-&gt;maxForce );
+ 					pEngine-&gt;setThrottle(0.);
+ 					subscribeToUpdateThrusterSimulation(
+ 						boost::bind( &amp;OdeThruster::updateSimulation, pEngine, _1 ) );
+ 
+-					// the mountable thruster wrapper
+-					if (thrusterTpl-&gt;mountPtIdx != MPID_NO_PARENT)
++					// the thruster is attached to a mount point, create wrapper:
++					if (thrusterTpl-&gt;mountPt != MPID_NO_PARENT)
+ 					{
+ 						OdeMountedThruster* pMounted = new OdeMountedThruster();
+ 						pMounted-&gt;setThruster( pEngine );
+@@ -216,7 +268,7 @@
+ 						subscribeToApplyThrusterToTargets(
+ 							boost::bind( &amp;OdeMountedThruster::applyToTargets, pMounted ) );
+ 
+-						mMountPoints[thrusterTpl-&gt;mountPtIdx]-&gt;attach( pMounted );
++						mMountPoints[thrusterTpl-&gt;mountPt]-&gt;attach( pMounted );
+ 					}
+ 				}
+ 			}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000066.html">[Yake-svn] r997 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000070.html">[Yake-svn] r999 - trunk/yake/src/yapp/samples/base/vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#69">[ date ]</a>
+              <a href="thread.html#69">[ thread ]</a>
+              <a href="subject.html#69">[ subject ]</a>
+              <a href="author.html#69">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

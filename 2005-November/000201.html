@@ -1,0 +1,236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1131 - trunk/yake/src/yake/samples/physics/demo
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1131%20-%20trunk/yake/src/yake/samples/physics/demo&In-Reply-To=%3C200511092317.jA9NHYif009765%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000200.html">
+   <LINK REL="Next"  HREF="000202.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1131 - trunk/yake/src/yake/samples/physics/demo</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1131%20-%20trunk/yake/src/yake/samples/physics/demo&In-Reply-To=%3C200511092317.jA9NHYif009765%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1131 - trunk/yake/src/yake/samples/physics/demo">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov 10 00:17:34 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000200.html">[Yake-svn] r1130 - trunk/yake/yake/plugins/graphicsOgre
+</A></li>
+        <LI>Next message: <A HREF="000202.html">[Yake-svn] r1132 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#201">[ date ]</a>
+              <a href="thread.html#201">[ thread ]</a>
+              <a href="subject.html#201">[ subject ]</a>
+              <a href="author.html#201">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-10 00:17:34 +0100 (Thu, 10 Nov 2005)
+New Revision: 1131
+
+Modified:
+   trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+Log:
+ownership management for graphics objects
+
+Modified: trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2005-11-09 23:16:45 UTC (rev 1130)
++++ trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2005-11-09 23:17:34 UTC (rev 1131)
+@@ -27,8 +27,6 @@
+ 		{}
+ 	};
+ 	typedef Deque&lt; SharedPtr&lt;graphics::ISceneNode&gt; &gt; SceneNodes;
+-	typedef Deque&lt; SharedPtr&lt;graphics::IEntity&gt; &gt; Entities;
+-	typedef Deque&lt; SharedPtr&lt;graphics::ILight&gt; &gt; Lights;
+ 	typedef Deque&lt; SharedPtr&lt;View&gt; &gt; Views;
+ 
+ 	physics::IMaterialPtr	mBouncyPhysicsMaterial1;
+@@ -37,7 +35,6 @@
+ 	struct Simple
+ 	{
+ 		SharedPtr&lt;graphics::ISceneNode&gt;		pSN;
+-		SharedPtr&lt;graphics::IEntity&gt;		pE;
+ 		physics::IActorPtr					pActor;
+ 		void update()
+ 		{
+@@ -61,8 +58,6 @@
+ 
+ 	Views						mViews;;
+ 	SceneNodes					mSceneNodes;
+-	Entities					mEntities;
+-	Lights						mLights;
+ 
+ 	Deque&lt; SharedPtr&lt;Library&gt; &gt;	mLibs;
+ 
+@@ -83,21 +78,15 @@
+ 		if (itFind != mSceneNodes.end())
+ 			mSceneNodes.erase( itFind );
+ 	}
+-	void removeEntity( SharedPtr&lt;graphics::IEntity&gt; &amp; pEntity )
+-	{
+-		Entities::iterator itFind = std::find(mEntities.begin(),mEntities.end(),pEntity);
+-		if (itFind != mEntities.end())
+-			mEntities.erase( itFind );
+-	}
+ 	void createSimpleGraphicalObject(	Simple &amp; rSimple,
+ 										const String &amp; rkMesh,
+ 										const Vector3 &amp; rkPosition = Vector3::kZero,
+ 										const Vector3 &amp; rkScale = Vector3(1,1,1))
+ 	{
+ 		rSimple.pSN.reset( mGWorld-&gt;createSceneNode() );
+-		rSimple.pE.reset( mGWorld-&gt;createEntity(rkMesh) );
+-		rSimple.pE-&gt;setMaterial(&quot;Examples/BumpyMetal&quot;);
+-		rSimple.pSN-&gt;attachEntity( rSimple.pE.get() );
++		graphics::IEntity* pE = mGWorld-&gt;createEntity(rkMesh);
++		pE-&gt;setMaterial(&quot;Examples/BumpyMetal&quot;);
++		rSimple.pSN-&gt;attachEntity( pE );
+ 		rSimple.pSN-&gt;setPosition( rkPosition );
+ 		rSimple.pSN-&gt;setScale( rkScale );
+ 	}
+@@ -161,22 +150,22 @@
+ 		mLibs.push_back( pDynLib );
+ 		return pDynLib;
+ 	}
+-	void createSimpleEntity( const String &amp; rkMesh )
++	void createSimpleEntity( const String &amp; rkMesh, const bool castsShadow = true, const String&amp; material = &quot;&quot;)
+ 	{
+ 		SharedPtr&lt;graphics::ISceneNode&gt; pSN( mGWorld-&gt;createSceneNode() );
+-		SharedPtr&lt;graphics::IEntity&gt; pE( mGWorld-&gt;createEntity( rkMesh ) );
+-		pSN-&gt;attachEntity( pE.get() );
++		graphics::IEntity* pE = mGWorld-&gt;createEntity( rkMesh );
++		pSN-&gt;attachEntity( pE );
+ 		mSceneNodes.push_back( pSN );
+-		mEntities.push_back( pE );
+-		pE-&gt;setCastsShadow( true );
++		pE-&gt;setCastsShadow( castsShadow );
++		if (!material.empty())
++			pE-&gt;setMaterial( material );
+ 	}
+ 	void createNinja()
+ 	{
+ 		SharedPtr&lt;graphics::ISceneNode&gt; pSN( mGWorld-&gt;createSceneNode() );
+-		SharedPtr&lt;graphics::IEntity&gt; pE( mGWorld-&gt;createEntity( &quot;ninja.mesh&quot; ) );
++		graphics::IEntity* pE = mGWorld-&gt;createEntity( &quot;ninja.mesh&quot; );
+ 		mSceneNodes.push_back( pSN );
+-		mEntities.push_back( pE );
+-		pSN-&gt;attachEntity( pE.get() );
++		pSN-&gt;attachEntity( pE );
+ 
+ 		pE-&gt;setCastsShadow( true );
+ 
+@@ -185,10 +174,9 @@
+ 	void createPositionedLight()
+ 	{
+ 		SharedPtr&lt;graphics::ISceneNode&gt; pSN( mGWorld-&gt;createSceneNode() );
+-		SharedPtr&lt;graphics::ILight&gt; pL( mGWorld-&gt;createLight() );
+-		pSN-&gt;attachLight( pL.get() );
++		graphics::ILight* pL = mGWorld-&gt;createLight();
++		pSN-&gt;attachLight( pL );
+ 		mSceneNodes.push_back( pSN );
+-		mLights.push_back( pL );
+ 		pL-&gt;setType( graphics::ILight::LT_POINT );
+ 		pL-&gt;setDiffuseColour( Color(1,1,1,1) );
+ 		pSN-&gt;setPosition( Vector3(0,50,0) );
+@@ -199,10 +187,8 @@
+ 	}
+ 	void createGroundPlane()
+ 	{
+-		createSimpleEntity(&quot;plane_1x1.mesh&quot;);
++		createSimpleEntity(&quot;plane_1x1.mesh&quot;, false, &quot;Examples/BumpyMetal&quot;);
+ 		mSceneNodes.back()-&gt;setScale(Vector3(30,1,30));
+-		mEntities.back()-&gt;setMaterial(&quot;Examples/BumpyMetal&quot;);
+-		mEntities.back()-&gt;setCastsShadow(false);
+ 	}
+ 	void requestShutdown()
+ 	{
+@@ -216,11 +202,10 @@
+ 	{
+ 		using namespace graphics;
+ 		// fixed light (sun)
+-		SharedPtr&lt;graphics::ILight&gt; pL( mGWorld-&gt;createLight() );
++		graphics::ILight* pL = mGWorld-&gt;createLight();
+ 		SharedPtr&lt;graphics::ISceneNode&gt; pNode( mGWorld-&gt;createSceneNode() );
+-		pNode-&gt;attachLight( pL.get() );
++		pNode-&gt;attachLight( pL );
+ 		
+-		mLights.push_back( pL );
+ 		mSceneNodes.push_back(pNode);
+ 
+ 		pL-&gt;setType(ILight::LT_DIRECTIONAL);
+@@ -243,22 +228,22 @@
+ 	SharedPtr&lt;base::Library&gt; pLib = loadLib(&quot;physicsOde&quot; );
+ 	YAKE_ASSERT( pLib ).debug(&quot;Cannot load physics plugin 1.&quot;);
+ 
+-	mPhysics2 = create&lt; physics::IPhysicsSystem &gt;(&quot;ode&quot;);
+-	YAKE_ASSERT( mPhysics2 ).debug(&quot;Cannot create physics system 1.&quot;);
++	mPhysics1 = create&lt; physics::IPhysicsSystem &gt;(&quot;ode&quot;);
++	YAKE_ASSERT( mPhysics1 ).debug(&quot;Cannot create physics system 1.&quot;);
+ 
+-	mPWorld2 = mPhysics2-&gt;createWorld();
+-	YAKE_ASSERT( mPWorld2 ).debug(&quot;Cannot create world 1.&quot;);
++	mPWorld1 = mPhysics1-&gt;createWorld();
++	YAKE_ASSERT( mPWorld1 ).debug(&quot;Cannot create world 1.&quot;);
+ 
+ 	// physics 2
+ #ifdef USE_SECOND_PHYSICS_PLUGIN
+ 	pLib = loadLib(&quot;physicsNX&quot; );
+ 	YAKE_ASSERT( pLib ).debug(&quot;Cannot load physics plugin 2.&quot;);
+ 
+-	mPhysics1 = create&lt; physics::IPhysicsSystem &gt;(&quot;nx&quot;);
+-	YAKE_ASSERT( mPhysics1 ).debug(&quot;Cannot create physics system 2.&quot;);
++	mPhysics2 = create&lt; physics::IPhysicsSystem &gt;(&quot;nx&quot;);
++	YAKE_ASSERT( mPhysics2 ).debug(&quot;Cannot create physics system 2.&quot;);
+ 
+-	mPWorld1 = mPhysics1-&gt;createWorld();
+-	YAKE_ASSERT( mPWorld1 ).debug(&quot;Cannot create world 2.&quot;);
++	mPWorld2 = mPhysics2-&gt;createWorld();
++	YAKE_ASSERT( mPWorld2 ).debug(&quot;Cannot create world 2.&quot;);
+ #endif
+ 	// graphics
+ 
+@@ -322,8 +307,6 @@
+ }
+ void MiniApp::cleanUp()
+ {
+-	mLights.clear();
+-	mEntities.clear();
+ 	mSceneNodes.clear();
+ 	if (mBouncyPhysicsMaterial1)
+ 		mPWorld1-&gt;destroyMaterial( mBouncyPhysicsMaterial1 );
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000200.html">[Yake-svn] r1130 - trunk/yake/yake/plugins/graphicsOgre
+</A></li>
+	<LI>Next message: <A HREF="000202.html">[Yake-svn] r1132 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#201">[ date ]</a>
+              <a href="thread.html#201">[ thread ]</a>
+              <a href="subject.html#201">[ subject ]</a>
+              <a href="author.html#201">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

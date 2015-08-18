@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1238 - trunk/yake/src/yake/ent
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1238%20-%20trunk/yake/src/yake/ent&In-Reply-To=%3C200603121855.k2CItoGc022635%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000307.html">
+   <LINK REL="Next"  HREF="000309.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1238 - trunk/yake/src/yake/ent</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1238%20-%20trunk/yake/src/yake/ent&In-Reply-To=%3C200603121855.k2CItoGc022635%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1238 - trunk/yake/src/yake/ent">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 12 19:55:50 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000307.html">[Yake-svn] r1237 - trunk/yake/yake/ent
+</A></li>
+        <LI>Next message: <A HREF="000309.html">[Yake-svn] r1239 - trunk/yake/src/yake/plugins/entLua
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#308">[ date ]</a>
+              <a href="thread.html#308">[ thread ]</a>
+              <a href="subject.html#308">[ subject ]</a>
+              <a href="author.html#308">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-12 19:55:48 +0100 (Sun, 12 Mar 2006)
+New Revision: 1238
+
+Modified:
+   trunk/yake/src/yake/ent/component.cpp
+   trunk/yake/src/yake/ent/component_holder.cpp
+   trunk/yake/src/yake/ent/object.cpp
+   trunk/yake/src/yake/ent/object_listener.cpp
+   trunk/yake/src/yake/ent/object_mgr.cpp
+   trunk/yake/src/yake/ent/object_mgr_listener.cpp
+   trunk/yake/src/yake/ent/vm_holder.cpp
+Log:
+renamed namespace,
+next development state
+
+Modified: trunk/yake/src/yake/ent/component.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/component.cpp	2006-03-12 18:54:42 UTC (rev 1237)
++++ trunk/yake/src/yake/ent/component.cpp	2006-03-12 18:55:48 UTC (rev 1238)
+@@ -2,7 +2,7 @@
+ #include &quot;yake/ent/ent.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+ 	IMPL_CLASS_RTTI(Co)
+ } // namespace object
+
+Modified: trunk/yake/src/yake/ent/component_holder.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/component_holder.cpp	2006-03-12 18:54:42 UTC (rev 1237)
++++ trunk/yake/src/yake/ent/component_holder.cpp	2006-03-12 18:55:48 UTC (rev 1238)
+@@ -2,7 +2,7 @@
+ #include &quot;yake/ent/ent.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+ 	void CoHolder::addCo(const CoTag&amp; tag, Co* co)
+ 	{
+
+Modified: trunk/yake/src/yake/ent/object.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object.cpp	2006-03-12 18:54:42 UTC (rev 1237)
++++ trunk/yake/src/yake/ent/object.cpp	2006-03-12 18:55:48 UTC (rev 1238)
+@@ -2,37 +2,47 @@
+ #include &quot;yake/ent/ent.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+-	IMPL_CLASS_RTTI(Object)
++	IMPL_OBJECT(Object)
+ 
+-	void Object::processFsmEvent(const fsm_event_type&amp; evt)
++	void Object::setId(const ObjectId&amp; id)
+ 	{
+-		m_.processEventCb(evt,boost::bind(&amp;Object::onEnter,this,_1,_2),boost::bind(&amp;Object::onExit,this,_1,_2));
++		id_ = id;
++	}
++	const ObjectId&amp; Object::getId() const
++	{
++		return id_;
++	}
++
++	IMPL_OBJECT(Entity)
++
++	void Entity::processFsmEvent(const fsm_event_type&amp; evt)
++	{
++		m_.processEventCb(evt,boost::bind(&amp;Entity::onEnter,this,_1,_2),boost::bind(&amp;Entity::onExit,this,_1,_2));
+ 		listeners_fsmEventHandled(*this,m_,evt);
+ 	}
+-	void Object::addFsmState(const fsm_state_type&amp; state)
++	void Entity::addFsmState(const fsm_state_type&amp; state)
+ 	{
+ 		m_.addState(state);
+ 	}
+-	void Object::addFsmTransition(const fsm_state_type&amp; from, const fsm_event_type&amp; evt, const fsm_state_type&amp; to)
++	void Entity::addFsmTransition(const fsm_state_type&amp; from, const fsm_event_type&amp; evt, const fsm_state_type&amp; to)
+ 	{
+ 		m_.addTransition(from,evt,to);
+ 	}
+-	void Object::setFsmState(const fsm_state_type&amp; state)
++	void Entity::setFsmState(const fsm_state_type&amp; state)
+ 	{
+ 		m_.setState(state);
+ 	}
+-	void Object::onEnter(const object_fsm&amp; fsm, const object_fsm::state_type&amp; state)
++	void Entity::onEnter(const object_fsm&amp; fsm, const object_fsm::state_type&amp; state)
+ 	{
+-		//std::cout &lt;&lt; &quot;object.state.enter '&quot; &lt;&lt; state &lt;&lt; &quot;'\n&quot;;
++		//std::cout &lt;&lt; &quot;Entity.state.enter '&quot; &lt;&lt; state &lt;&lt; &quot;'\n&quot;;
+ 		listeners_fsmEnterState(*this,fsm,state);
+ 	}
+-	void Object::onExit(const object_fsm&amp; fsm, const object_fsm::state_type&amp; state)
++	void Entity::onExit(const object_fsm&amp; fsm, const object_fsm::state_type&amp; state)
+ 	{
+-		//std::cout &lt;&lt; &quot;object.state.exit '&quot; &lt;&lt; state &lt;&lt; &quot;'\n&quot;;
++		//std::cout &lt;&lt; &quot;Entity.state.exit '&quot; &lt;&lt; state &lt;&lt; &quot;'\n&quot;;
+ 		listeners_fsmExitState(*this,fsm,state);
+ 	}
+-
+ }
+ }
+\ No newline at end of file
+
+Modified: trunk/yake/src/yake/ent/object_listener.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_listener.cpp	2006-03-12 18:54:42 UTC (rev 1237)
++++ trunk/yake/src/yake/ent/object_listener.cpp	2006-03-12 18:55:48 UTC (rev 1238)
+@@ -2,7 +2,7 @@
+ #include &quot;yake/ent/ent.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+ }
+ }
+\ No newline at end of file
+
+Modified: trunk/yake/src/yake/ent/object_mgr.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_mgr.cpp	2006-03-12 18:54:42 UTC (rev 1237)
++++ trunk/yake/src/yake/ent/object_mgr.cpp	2006-03-12 18:55:48 UTC (rev 1238)
+@@ -2,12 +2,19 @@
+ #include &quot;yake/ent/ent.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+-	Object* ObjectManager::makeObject()
++	Object* ObjectManager::makeObject(const std::string strClsId)
+ 	{
+-		Object* obj = new Object();
+-		assert( obj );
++		YAKE_ASSERT( !strClsId.empty() )(strClsId);
++		std::pair&lt;object::ResultCode,ClassId&gt; ret = objMgr_.getClassId(strClsId);
++		YAKE_ASSERT( ret.first == object::RC_OK )(ret.first)(ret.second);
++		return makeObject( ret.second );
++	}
++	Object* ObjectManager::makeObject(const ClassId clsId)
++	{
++		Object* obj = objMgr_.createObject(clsId);
++		YAKE_ASSERT( obj )(clsId);
+ 		objs_.push_back( obj );
+ 
+ 		listeners_onObjectCreated(obj);
+@@ -20,7 +27,7 @@
+ 	}
+ 	void ObjectManager::destroyObject(Object* obj)
+ 	{
+-		assert( obj );
++		YAKE_ASSERT( obj );
+ 
+ 		listeners_onDestroyObject( obj );
+ 		//obj-&gt;shutdown();
+@@ -29,7 +36,7 @@
+ 		if (it != objs_.end())
+ 			objs_.erase( it );
+ 
+-		delete obj;
++		objMgr_.destroyObject( obj );
+ 	}
+ 	void ObjectManager::tick()
+ 	{
+
+Modified: trunk/yake/src/yake/ent/object_mgr_listener.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_mgr_listener.cpp	2006-03-12 18:54:42 UTC (rev 1237)
++++ trunk/yake/src/yake/ent/object_mgr_listener.cpp	2006-03-12 18:55:48 UTC (rev 1238)
+@@ -2,7 +2,7 @@
+ #include &quot;yake/ent/ent.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+ }
+ }
+\ No newline at end of file
+
+Modified: trunk/yake/src/yake/ent/vm_holder.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/vm_holder.cpp	2006-03-12 18:54:42 UTC (rev 1237)
++++ trunk/yake/src/yake/ent/vm_holder.cpp	2006-03-12 18:55:48 UTC (rev 1238)
+@@ -2,7 +2,7 @@
+ #include &quot;yake/ent/ent.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+ 	VMHolder::~VMHolder()
+ 	{
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000307.html">[Yake-svn] r1237 - trunk/yake/yake/ent
+</A></li>
+	<LI>Next message: <A HREF="000309.html">[Yake-svn] r1239 - trunk/yake/src/yake/plugins/entLua
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#308">[ date ]</a>
+              <a href="thread.html#308">[ thread ]</a>
+              <a href="subject.html#308">[ subject ]</a>
+              <a href="author.html#308">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

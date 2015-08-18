@@ -1,0 +1,1122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r954 - trunk/yake/yapp/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r954%20-%20trunk/yake/yapp/model&In-Reply-To=%3C200509302133.j8ULXM2K007184%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000067.html">
+   <LINK REL="Next"  HREF="000025.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r954 - trunk/yake/yapp/model</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r954%20-%20trunk/yake/yapp/model&In-Reply-To=%3C200509302133.j8ULXM2K007184%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r954 - trunk/yake/yapp/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:33:22 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000067.html">[Yake-svn] r953 - trunk/yake/src/yapp/model
+</A></li>
+        <LI>Next message: <A HREF="000025.html">[Yake-svn] r955 - in trunk/yake/common/media: . graphics.fx graphics.scenes/arena0 vehicles
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#24">[ date ]</a>
+              <a href="thread.html#24">[ thread ]</a>
+              <a href="subject.html#24">[ subject ]</a>
+              <a href="author.html#24">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:33:22 +0200 (Fri, 30 Sep 2005)
+New Revision: 954
+
+Removed:
+   trunk/yake/yapp/model/yakeNativeEngine.h
+   trunk/yake/yapp/model/yakeNativeVehicleInputComponent.h
+   trunk/yake/yapp/model/yakeNativeVehiclePhysicalComponent.h
+   trunk/yake/yapp/model/yakeNativeWheel.h
+   trunk/yake/yapp/model/yakeVehicle.h
+   trunk/yake/yapp/model/yakeVehicleInputComponent.h
+   trunk/yake/yapp/model/yakeVehiclePhysicalComponent.h
+   trunk/yake/yapp/model/yakeVehicleSerializerXML.h
+   trunk/yake/yapp/model/yakeVehicleSystem.h
+   trunk/yake/yapp/model/yakeVehicleTpl.h
+Log:
+refactoring of yake::vehicle
+
+Deleted: trunk/yake/yapp/model/yakeNativeEngine.h
+===================================================================
+--- trunk/yake/yapp/model/yakeNativeEngine.h	2005-09-30 21:32:54 UTC (rev 953)
++++ trunk/yake/yapp/model/yakeNativeEngine.h	2005-09-30 21:33:22 UTC (rev 954)
+@@ -1,126 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#ifndef YAKE_APP_MODEL_VEHICLE_NATIVEENGINE_H
+-#define YAKE_APP_MODEL_VEHICLE_NATIVEENGINE_H
+-
+-#include &lt;yapp/base/yappPrerequisites.h&gt;
+-#include &lt;yapp/model/yakeVehicleTpl.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	class YAPP_BASE_API NativeGearBox
+-	{
+-	public:
+-		enum GearMode {
+-			GM_REVERSE,
+-			GM_NEUTRAL,
+-			GM_FORWARD
+-		};
+-		void setSpeed( uint8 numGears );
+-		uint8 getSpeed() const;
+-
+-		void setGearRatio( uint8 gear, real ratio );
+-		void setGearMode( uint8 gear, const GearMode mode );
+-		real getGearRatio( uint8 gear );
+-
+-		void setFromTemplate( const VehicleTemplate::GearTemplateList &amp; gears );
+-	private:
+-		struct Gear
+-		{
+-			real		ratio_;
+-			GearMode	mode_;
+-		};
+-		typedef Vector&lt; Gear &gt; GearList;
+-		GearList	mGears;
+-	};
+-
+-	class YAPP_BASE_API NativeCarEngine : public IEngine
+-	{
+-	public:
+-		NativeCarEngine();
+-		~NativeCarEngine();
+-
+-		virtual void updateSimulation( real timeElapsed );
+-
+-		void setFromTemplate( const VehicleTemplate::EngineTemplate &amp; tpl );
+-
+-		virtual void setParamMinRPM( const real rpm );
+-		virtual void setParamMaxRPM( const real rpm );
+-		virtual void setParamRedlineRPM( const real rpm );
+-
+-		virtual void setThrottle( real throttle );
+-		virtual real getThrottle() const;
+-
+-		virtual real getRPM() const;
+-		virtual uint8 getGear() const;
+-		virtual void shiftGear( uint8 gear );
+-		virtual void shiftGearUp();
+-		virtual void shiftGearDown();
+-
+-		/** Returns the torque for the current engine data. [Nm] */
+-		virtual real getDriveTorque() const;
+-
+-		//
+-
+-		NativeGearBox&amp; getGearBox();
+-
+-		real getMinRPM() const;
+-		real getMaxRPM() const;
+-
+-		/** Get the amount the RPM can rise [RPM/sec]. */
+-		real getRPMRise() const;
+-		/** Amount of RPM when decreasing when throttle is 0. [RPM/sec] */
+-		real getRPMDieOff() const;
+-		/** Minimum time needed to shift gears. */
+-		real getMinShiftingTime() const;
+-	private:
+-		real		mCurrentRPM;
+-		real		mMaxRPM;
+-		real		mMinRPM;
+-		real		mThrottle;
+-		real		mThrottleRPMRise;
+-		real		mRPMDieOff;
+-		real		mGearRatio;
+-		real		mInvGearRatio;
+-		real		mDifferentialRatio;
+-		NativeGearBox*	mpGearBox;
+-		uint8		mCurrentGear;
+-		real		mDriveTorque;
+-	private:
+-		void updateCurrentRPM( const real timeElapsed );
+-		void updateGearRatios();
+-		real getMaxTorque( const real rpm );
+-	};
+-
+-}
+-}
+-}
+-
+-
+-#endif
+
+Deleted: trunk/yake/yapp/model/yakeNativeVehicleInputComponent.h
+===================================================================
+--- trunk/yake/yapp/model/yakeNativeVehicleInputComponent.h	2005-09-30 21:32:54 UTC (rev 953)
++++ trunk/yake/yapp/model/yakeNativeVehicleInputComponent.h	2005-09-30 21:33:22 UTC (rev 954)
+@@ -1,52 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#ifndef YAKE_APP_MODEL_NATIVE_VEHICLE_INPUTCOMPONENT_H
+-#define YAKE_APP_MODEL_NATIVE_VEHICLE_INPUTCOMPONENT_H
+-
+-#include &lt;yapp/base/yappPrerequisites.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	class YAPP_BASE_API IInputVehicleComponent : public InputComponent
+-	{
+-	public:
+-		YAKE_DECLARE_CLASS( IInputVehicleComponent );
+-		YAKE_DECLARE_REGISTRY( IInputVehicleComponent );
+-
+-		virtual void steerAnalog( const String &amp; rSteerGroup, const real targetSteer ) = 0;
+-		virtual void brakeAnalog( const String &amp; rBrake, const real ratio ) = 0;
+-		virtual void throttleAnalog( const String &amp; rEngine, const real ratio ) = 0;
+-		//virtual void handbrake( const bool activate ) = 0;
+-	};
+-
+-}
+-}
+-}
+-
+-#endif
+
+Deleted: trunk/yake/yapp/model/yakeNativeVehiclePhysicalComponent.h
+===================================================================
+--- trunk/yake/yapp/model/yakeNativeVehiclePhysicalComponent.h	2005-09-30 21:32:54 UTC (rev 953)
++++ trunk/yake/yapp/model/yakeNativeVehiclePhysicalComponent.h	2005-09-30 21:33:22 UTC (rev 954)
+@@ -1,141 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#ifndef YAKE_APP_MODEL_VEHICLE_NATIVE_PHYSICALCOMPONENT_H
+-#define YAKE_APP_MODEL_VEHICLE_NATIVE_PHYSICALCOMPONENT_H
+-
+-#include &lt;yapp/base/yappPrerequisites.h&gt;
+-#include &lt;yapp/model/yakeVehiclePhysicalComponent.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	class NativeWheel;
+-	/** WIP version of the &quot;yake.native&quot; implementation of a IPhysicalVehicleComponent.
+-		@Remarks Work-in-progress version.
+-	*/
+-	class YAPP_BASE_API NativePhysicalVehicleComponent : public IPhysicalVehicleComponent
+-	{
+-	public:
+-		YAKE_DECLARE_CLASS( NativePhysicalVehicleComponent );
+-		YAKE_DECLARE_CONCRETE( NativePhysicalVehicleComponent, &quot;yake.native&quot; );
+-
+-		NativePhysicalVehicleComponent(::yake::physics::IWorld* pWorld);
+-		virtual ~NativePhysicalVehicleComponent();
+-
+-		virtual bool createFromTemplate( const VehicleTemplate &amp; tpl );
+-		/*
+-		virtual bool createChassis(const String &amp; rName);
+-		virtual bool createEngine(const String &amp; rName, const String &amp; rTemplate) ;
+-		virtual bool createAxle(const String &amp; rName, const String &amp; rEngineName = &quot;&quot;) ;
+-		virtual bool createSteerGroup(const String &amp; rName) ;
+-		virtual bool createWheel(const String &amp; rName, const String &amp; rAxleName, const String &amp; rSteerGroup = &quot;&quot;) ;
+-		virtual bool createBrake(const String &amp; rName) ;
+-		*/
+-
+-		virtual IEngine* getEngine(const size_t index) ;
+-
+-		//virtual void attachComplexModel(::yake::model::complex::Model* pModel);
+-
+-		/*
+-		virtual bool attachAxleToEngine(const String &amp; axleName, const String &amp; engineName) ;
+-		virtual bool attachWheelToAxle(const String &amp; wheelName, const String &amp; axleName) ;
+-		virtual bool attachWheelToBrake(const String &amp; wheelName, const String &amp; brakeName, const real influence) ;
+-		virtual bool attachWheelToSteerGroup(const String &amp; wheelName, const String &amp; steerGroup) ;
+-		*/
+-		virtual void update(const real timeElapsed);
+-
+-		virtual void setWheelMass(const size_t index, const real mass);
+-		virtual void setWheelRadius(const size_t index, const real r);
+-		virtual void setWheelPosition(const size_t index, const Vector3 &amp; position);
+-		virtual void setWheelSuspension(const size_t index, const real stiffness) ;
+-		virtual void setWheelFriction(const size_t index, const real f) ;
+-		virtual void setWheelLateralFriction(const size_t index, const real f) ;
+-
+-		virtual void setSteer(const size_t index, const real steerValue) ;
+-		virtual void setBrake(const size_t index, const real brakeValue) ;
+-		virtual void setEngineThrottle(const size_t index, const real throttle) ;
+-
+-		virtual Movable* getChassisMovable();
+-		virtual Movable* getWheelMovable(const size_t index);
+-
+-		virtual void subscribeToOnWheelCollision( const WheelCollisionSignal::slot_type &amp; slot )
+-		{ mWheelCollisionSig.connect( slot ); }
+-
+-		void translate( const Vector3 &amp; d );
+-	private:
+-		typedef ::yake::Vector&lt; IEngine* &gt; EngineList;
+-		typedef ::yake::Vector&lt; NativeCarEngine* &gt; CarEngineList;
+-		EngineList		mEngines;
+-		CarEngineList	mCarEngines;
+-
+-		typedef ::yake::Vector&lt; NativeWheel* &gt; WheelList;
+-		WheelList		mWheels;
+-
+-		struct Axle
+-		{
+-			WheelList			wheels;
+-			NativeCarEngine*	engine;
+-			Axle() : engine(0)
+-			{
+-			}
+-		};
+-		typedef ::yake::Vector&lt; Axle* &gt; AxleList;
+-		AxleList		mAxles;
+-
+-		struct SteerGroup
+-		{
+-			real		steer;
+-			WheelList	wheels;
+-			SteerGroup() : steer(0)
+-			{
+-			}
+-		};
+-
+-		typedef ::yake::Vector&lt; SteerGroup* &gt; SteerGroupList;
+-		SteerGroupList						mSteerGroups;
+-
+-		physics::IWorld*					mpPWorld;
+-
+-		WheelCollisionSignal				mWheelCollisionSig;
+-
+-		physics::IActor*			mpChassis;
+-		Physical*							mpPhysical;
+-	private:
+-		SteerGroup* _getSteerGroup(const size_t index) const;
+-		Axle* _getAxle(const size_t index) const;
+-		NativeCarEngine* _getCarEngine(const size_t index) const;
+-		IEngine* _getEngine(const size_t index) const;
+-		NativeWheel* _getWheel(const size_t index) const;
+-		void _reset();
+-	};
+-
+-}
+-}
+-}
+-
+-#endif
+
+Deleted: trunk/yake/yapp/model/yakeNativeWheel.h
+===================================================================
+--- trunk/yake/yapp/model/yakeNativeWheel.h	2005-09-30 21:32:54 UTC (rev 953)
++++ trunk/yake/yapp/model/yakeNativeWheel.h	2005-09-30 21:33:22 UTC (rev 954)
+@@ -1,82 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#ifndef YAKE_APP_MODEL_VEHICLE_NATIVEWHEEL_H
+-#define YAKE_APP_MODEL_VEHICLE_NATIVEWHEEL_H
+-
+-#include &lt;yapp/base/yappPrerequisites.h&gt;
+-#include &lt;yapp/model/yakeModel.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	/** Utilized by the &quot;yake.native&quot; vehicle implementation.
+-	*/
+-	class NativeWheel : public Movable
+-	{
+-	public:
+-		NativeWheel(physics::IWorld* pPWorld);
+-		virtual ~NativeWheel();
+-		physics::IActor* getPhysicsComplex() const;
+-
+-		void setJoint( physics::IJointPtr jt );
+-		physics::IJoint* getJoint() const;
+-		void setSuspension( const real spring, const real damping );
+-		real getSuspensionSpring() const;
+-		real getSuspensionDamping() const;
+-		void applySteer( real steer );
+-
+-		void apply( real velocity, real fmax );
+-		void applyTq( const Vector3 &amp; torque );
+-		void applyBrakeTq( const Vector3 &amp; torque );
+-
+-		void update();
+-
+-		void setRadius( const real radius );
+-		void setMass( const real mass );
+-
+-		Vector3 getLateralSlipNormal() const;
+-
+-		virtual void setPosition(const Vector3 &amp; rPosition);
+-		virtual void setOrientation(const Quaternion&amp; rOrientation);
+-		virtual Vector3 getPosition() const;
+-		virtual Quaternion getOrientation() const;
+-
+-		SharedPtr&lt;CachedInterpolator&lt;real&gt; &gt; _getLinSkidCache();
+-		SharedPtr&lt;CachedInterpolator&lt;real&gt; &gt; _getAngSkidCache();
+-	private:
+-		physics::IJoint*	mJoint;
+-		physics::IActor*	mCO;
+-		SharedPtr&lt;CachedInterpolator&lt;real&gt; &gt;	mLinSkidCache;
+-		SharedPtr&lt;CachedInterpolator&lt;real&gt; &gt;	mAngSkidCache;
+-	};
+-
+-}
+-}
+-}
+-
+-#endif
+
+Deleted: trunk/yake/yapp/model/yakeVehicle.h
+===================================================================
+--- trunk/yake/yapp/model/yakeVehicle.h	2005-09-30 21:32:54 UTC (rev 953)
++++ trunk/yake/yapp/model/yakeVehicle.h	2005-09-30 21:33:22 UTC (rev 954)
+@@ -1,68 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#ifndef YAPP_MODEL_VEHICLE_H
+-#define YAPP_MODEL_VEHICLE_H
+-
+-#include &lt;yapp/base/yappPrerequisites.h&gt;
+-#include &lt;yapp/model/yakeActor.h&gt;
+-#include &lt;yapp/model/yakeVehicleInputComponent.h&gt;
+-
+-namespace yake {
+-namespace model {
+-
+-/** yapp::vehicle is experimental code!
+-*/
+-namespace vehicle {
+-
+-	class IPhysicalVehicleComponent;
+-	/** Represents a vehicle :)
+-	*/
+-	class YAPP_BASE_API Vehicle// : public Actor
+-	{
+-	public:
+-		Vehicle();
+-		virtual ~Vehicle();
+-		void setModel( complex::Model* pComplex );
+-		
+-		//virtual void onAct();
+-		void update(real timeElapsed);
+-
+-
+-		void setPhysicalComponent(IPhysicalVehicleComponent* pPhysical);
+-
+-		InputComponent* queryInputInterface( VehicleInputComponentType type );
+-	private:
+-		complex::Model*				mComplex;
+-		IPhysicalVehicleComponent*	mPhysics;
+-	};
+-
+-} // vehicle
+-
+-} // model
+-} // yake
+-
+-#endif
+
+Deleted: trunk/yake/yapp/model/yakeVehicleInputComponent.h
+===================================================================
+--- trunk/yake/yapp/model/yakeVehicleInputComponent.h	2005-09-30 21:32:54 UTC (rev 953)
++++ trunk/yake/yapp/model/yakeVehicleInputComponent.h	2005-09-30 21:33:22 UTC (rev 954)
+@@ -1,91 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright  2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#ifndef YAKE_APP_MODEL_VEHICLE_INPUTCOMPONENT_H
+-#define YAKE_APP_MODEL_VEHICLE_INPUTCOMPONENT_H
+-
+-#include &lt;yapp/base/yappPrerequisites.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	enum VehicleInputComponentType {
+-		VICT_ENGINE,
+-		VICT_THRUSTER,
+-		VICT_CAR_ENGINE,
+-		VICT_CAR
+-	};
+-
+-	enum VehicleGearMode {
+-		VGM_FORWARD,
+-		VGM_NEUTRAL,
+-		VGM_REVERSE
+-	};
+-
+-	class YAPP_BASE_API IEngineInputComponent : public InputComponent
+-	{
+-	public:
+-		virtual ~IEngineInputComponent() {}
+-
+-		/** Set throttle for a given engine. Value is in the range [0,1]. */
+-		virtual void throttleAnalog( const size_t idxEngine, const real throttle ) = 0;
+-	};
+-	class YAPP_BASE_API ICarEngineInputComponent : public IEngineInputComponent
+-	{
+-	public:
+-		/** Shift up for a given engine. */
+-		virtual void shiftGearUp( const size_t idxEngine ) = 0;
+-		/** Shift down for a given engine. */
+-		virtual void shiftGearDown( const size_t idxEngine ) = 0;
+-		/** Get current gear's mode (reverse, neutral, forward) for a given engine. */
+-		virtual VehicleGearMode getCurrentGearMode( const size_t idxEngine ) const = 0;
+-		/** Get current gear for a given engine. */
+-		virtual uint8 getCurrentGear( const size_t idxEngine ) const = 0;
+-	};
+-	class YAPP_BASE_API IThrusterInputComponent : public IEngineInputComponent
+-	{
+-	public:
+-		//inherits: virtual void throttleAnalog( const size_t idxThruster, const real throttle ) = 0;
+-	};
+-
+-	class YAPP_BASE_API ICarInputComponent : public InputComponent
+-	{
+-	public:
+-		/** Set steering value. Value is in the range [-1,1]. */
+-		virtual void steerAnalog( const size_t idxSteerGroup, const real targetSteer ) = 0;
+-
+-		/** Set braking value for a given brake. Value is in the range [0,1]. */
+-		virtual void brakeAnalog( const size_t idxBrake, const real ratio ) = 0;
+-
+-		//virtual void handbrake( const bool activate ) = 0;
+-	};
+-
+-}
+-}
+-}
+-
+-#endif
+
+Deleted: trunk/yake/yapp/model/yakeVehiclePhysicalComponent.h
+===================================================================
+--- trunk/yake/yapp/model/yakeVehiclePhysicalComponent.h	2005-09-30 21:32:54 UTC (rev 953)
++++ trunk/yake/yapp/model/yakeVehiclePhysicalComponent.h	2005-09-30 21:33:22 UTC (rev 954)
+@@ -1,105 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#ifndef YAKE_APP_MODEL_VEHICLE_PHYSICALCOMPONENT_H
+-#define YAKE_APP_MODEL_VEHICLE_PHYSICALCOMPONENT_H
+-
+-#include &lt;yapp/base/yappPrerequisites.h&gt;
+-#include &lt;yapp/model/yakeActor.h&gt;
+-#include &lt;yapp/model/yakeModel.h&gt;
+-#include &lt;yapp/model/yakeEngine.h&gt;
+-#include &lt;yapp/model/yakeVehicleTpl.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	class YAPP_BASE_API IPhysicalVehicleComponent : public PhysicalComponent
+-	{
+-	public:
+-		YAKE_DECLARE_CLASS( IPhysicalVehicleComponent );
+-		YAKE_DECLARE_REGISTRY_1( IPhysicalVehicleComponent, ::yake::String, ::yake::physics::IWorld* );
+-		//VehiclePhysicalCaps getCaps() const = 0;
+-
+-		virtual bool createFromTemplate( const VehicleTemplate &amp; tpl ) = 0;
+-
+-		/*
+-		virtual bool createChassis(const size_t index) = 0;
+-		virtual bool createEngine(const size_t index, const String &amp; rTemplate) = 0;
+-		virtual bool createAxle(const size_t index, const String &amp; rEngineName = &quot;&quot;) = 0;
+-		virtual bool createSteerGroup(const size_t index) = 0;
+-		virtual bool createWheel(const size_t index, const String &amp; rAxleName, const String &amp; rSteerGroup = &quot;&quot;) = 0;
+-		virtual bool createBrake(const size_t index) = 0;
+-		*/
+-
+-		virtual IEngine* getEngine(const size_t index) = 0;
+-
+-		virtual void setWheelMass(const size_t index, const real mass) = 0;
+-		virtual void setWheelRadius(const size_t index, const real r) = 0;
+-		virtual void setWheelPosition(const size_t index, const Vector3 &amp; position) = 0;
+-		virtual void setWheelSuspension(const size_t index, const real stiffness) = 0;
+-		virtual void setWheelFriction(const size_t index, const real f) = 0;
+-		virtual void setWheelLateralFriction(const size_t index, const real f) = 0;
+-
+-		virtual void setSteer(const size_t index, const real steerValue) = 0;
+-		virtual void setBrake(const size_t index, const real brakeValue) = 0;
+-		virtual void setEngineThrottle(const size_t index, const real throttle) = 0;
+-
+-		virtual Movable* getChassisMovable() = 0;
+-		virtual Movable* getWheelMovable(const size_t index) = 0;
+-
+-		virtual void update(const real timeElapsed) = 0;
+-
+-		/** As not every implementation necessarily supports all of this information
+-			these flags are specified or'd in a WheelCollisionInfo::flags_ member.
+-			@Remarks WIP. will be revised.
+-		*/
+-		enum WheelCollisionFlag
+-		{
+-			WCF_NAME					= 0x00000001,
+-			WCF_OTHEROBJ				= 0x00000002,
+-			WCF_OTHEROBJ_NAME			= 0x00000004,
+-			WCF_OTHEROBJ_MATERIAL_NAME	= 0x00000008
+-		};
+-		struct WheelCollisionInfo
+-		{
+-			uint32						flags_;
+-			String						wheelName_;
+-			physics::IActor*			otherObj_;
+-			String						otherObjName_;
+-			String						otherObjMaterialName_;
+-		};
+-		typedef Signal1&lt;void(const WheelCollisionInfo&amp;)&gt; WheelCollisionSignal;
+-		virtual void subscribeToOnWheelCollision( const WheelCollisionSignal::slot_type &amp; slot ) = 0;
+-	};
+-
+-
+-}
+-}
+-}
+-
+-
+-#endif
+
+Deleted: trunk/yake/yapp/model/yakeVehicleSerializerXML.h
+===================================================================
+--- trunk/yake/yapp/model/yakeVehicleSerializerXML.h	2005-09-30 21:32:54 UTC (rev 953)
++++ trunk/yake/yapp/model/yakeVehicleSerializerXML.h	2005-09-30 21:33:22 UTC (rev 954)
+@@ -1,97 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright  2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#ifndef YAKE_DATA_VEHICLE_H
+-#define YAKE_DATA_VEHICLE_H
+-
+-#include &lt;yake/data/yakeData.h&gt;
+-#include &lt;yapp/model/yakeVehicleTpl.h&gt;
+-
+-#pragma warning(disable: 4244)
+-
+-namespace yake {
+-namespace data {
+-namespace serializer {
+-namespace vehicle {
+-
+-	/** VehicleReader base class providing default implementation for DOM parsing.
+-	*/
+-	class VehicleSerializer
+-	{
+-	public:
+-		VehicleSerializer();
+-		~VehicleSerializer() {}
+-
+-		String getName() const
+-		{ return &quot;yake.data.vehicle&quot;; }
+-
+-		virtual Version getVersion() const = 0;
+-
+-		/** Build vehicle from DOM.
+-			\param
+-			\return 
+-		*/
+-		virtual bool load(	const SharedPtr&lt;dom::INode&gt; &amp; docNode, model::vehicle::VehicleTemplate &amp; tpl);
+-
+-		/** Prepare for next run of load/store.
+-		*/
+-		virtual void reset();
+-	protected:
+-		/// Default implementations for common functions.
+-
+-		virtual void readVehicle( const SharedPtr&lt;dom::INode&gt; &amp; pNode );
+-		virtual void readChassis( const SharedPtr&lt;dom::INode&gt; &amp; pNodes );
+-		virtual void readGeoms( const SharedPtr&lt;dom::INode&gt; &amp; pNodes, model::vehicle::VehicleTemplate::ChassisTemplate &amp; chassisTpl );
+-			virtual void readGeom( const SharedPtr&lt;dom::INode&gt; &amp; pNode, model::vehicle::VehicleTemplate::ChassisTemplate &amp; chassisTpl );
+-				virtual void readGeomDimensions( const SharedPtr&lt;dom::INode&gt; &amp; pNode, Vector3 &amp; dimensions );
+-		virtual void readEngines( const SharedPtr&lt;dom::INode&gt; &amp; pNodes );
+-			virtual void readEngine( const SharedPtr&lt;dom::INode&gt; &amp; pNode );
+-				virtual void readRPM( const SharedPtr&lt;dom::INode&gt; &amp; pNode, model::vehicle::VehicleTemplate::CarEngineTemplate&amp; engineTpl );
+-				virtual void readGearbox( const SharedPtr&lt;dom::INode&gt; &amp; pNode, model::vehicle::VehicleTemplate::CarEngineTemplate&amp; engineTpl );
+-		virtual void readAxles( const SharedPtr&lt;dom::INode&gt; &amp; pNodes );
+-			virtual void readAxle( const SharedPtr&lt;dom::INode&gt; &amp; pNode );
+-		virtual void readWheels( const SharedPtr&lt;dom::INode&gt; &amp; pNodes );
+-			virtual void readWheel( const SharedPtr&lt;dom::INode&gt; &amp; pNode );
+-				virtual void readSuspension( const SharedPtr&lt;dom::INode&gt; &amp; pNode, real &amp; spring, real &amp; damping );
+-		virtual void readOrientation( const SharedPtr&lt;dom::INode&gt; &amp; pNode, Quaternion &amp; orientation );
+-		virtual void readPosition( const SharedPtr&lt;dom::INode&gt; &amp; pNode, Vector3 &amp; position );
+-	protected:
+-		SharedPtr&lt;dom::INode&gt;							mDocNode;
+-		model::vehicle::VehicleTemplate*			mpTpl;
+-	};
+-	class VehicleSerializerV1 : public VehicleSerializer
+-	{
+-	public:
+-		virtual Version getVersion() const
+-		{ return Version(0,1,0); }
+-	};
+-
+-} // dotscene
+-} // serializer
+-} // data
+-} // yake
+-
+-#endif
+
+Deleted: trunk/yake/yapp/model/yakeVehicleSystem.h
+===================================================================
+--- trunk/yake/yapp/model/yakeVehicleSystem.h	2005-09-30 21:32:54 UTC (rev 953)
++++ trunk/yake/yapp/model/yakeVehicleSystem.h	2005-09-30 21:33:22 UTC (rev 954)
+@@ -1,73 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#ifndef YAKE_APP_MODEL_VEHICLE_SYSTEM_H
+-#define YAKE_APP_MODEL_VEHICLE_SYSTEM_H
+-
+-#include &lt;yapp/base/yappPrerequisites.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	class Vehicle;
+-	class IPhysicalVehicleComponent;
+-
+-	class YAPP_BASE_API IVehicleSystem
+-	{
+-	public:
+-		YAKE_DECLARE_CLASS( IVehicleSystem );
+-		YAKE_DECLARE_REGISTRY_0( IVehicleSystem, ::yake::String );
+-
+-		virtual Vehicle* createVehicle( const ::yake::String &amp; rTemplate,
+-										physics::IWorld* pPWorld, 
+-										graphics::IWorld* pGWorld ) = 0;
+-	};
+-
+-	class YAPP_BASE_API NativeVehicleSystem : public IVehicleSystem
+-	{
+-	public:
+-		YAKE_DECLARE_CLASS( NativeVehicleSystem );
+-		YAKE_DECLARE_CONCRETE( NativeVehicleSystem, &quot;yake.native&quot; );
+-
+-		virtual Vehicle* createVehicle( const ::yake::String &amp; rTemplate, 
+-										physics::IWorld* pWorld, 
+-										graphics::IWorld* pGWorld );
+-	private:
+-		bool _loadModelFromDotVehicle(::yake::model::complex::Model* pModel,
+-									const ::yake::String &amp; rFN, 
+-									physics::IWorld* pPWorld,
+-									graphics::IWorld* pGWorld,
+-									IPhysicalVehicleComponent* pPC
+-									);
+-	};
+-
+-
+-}
+-}
+-}
+-
+-#endif
+
+Deleted: trunk/yake/yapp/model/yakeVehicleTpl.h
+===================================================================
+--- trunk/yake/yapp/model/yakeVehicleTpl.h	2005-09-30 21:32:54 UTC (rev 953)
++++ trunk/yake/yapp/model/yakeVehicleTpl.h	2005-09-30 21:33:22 UTC (rev 954)
+@@ -1,148 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#ifndef YAKE_APP_MODEL_VEHICLE_TEMPLATE_H
+-#define YAKE_APP_MODEL_VEHICLE_TEMPLATE_H
+-
+-#include &lt;yapp/base/yappPrerequisites.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	struct VehicleTemplate
+-	{
+-	public:
+-		VehicleTemplate();
+-		~VehicleTemplate();
+-
+-		struct ShapeTemplate
+-		{
+-			Vector3								position_;
+-			Quaternion							orientation_;
+-			physics::ShapeType					type_;
+-			SharedPtr&lt;physics::IShape::Desc&gt;	pDesc_;
+-		};
+-		typedef Deque&lt;ShapeTemplate&gt; ShapeTemplateList;
+-
+-		enum GearMode
+-		{
+-			GM_FORWARD,
+-			GM_NEUTRAL,
+-			GM_REVERSE
+-		};
+-		struct GearTemplate
+-		{
+-			real				ratio_;
+-			GearMode			mode_;
+-		};
+-		typedef Vector&lt;GearTemplate&gt; GearTemplateList;
+-
+-		struct EngineTemplate
+-		{
+-			virtual ~EngineTemplate() {}
+-		};
+-		struct ThrusterTemplate : public EngineTemplate
+-		{
+-			real				minForce;
+-			real				maxForce;
+-		};
+-		struct CarEngineTemplate : public EngineTemplate
+-		{
+-			real				rpmMin_;
+-			real				rpmMax_;
+-			real				rpmRedline_;
+-			real				rpmDieOff_;
+-			real				rpmRise_;
+-			real				minShiftingTime_;
+-			GearTemplateList	gears_;
+-			//Curve*			torqueCurve_;
+-			real				differentialRatio;
+-		};
+-		size_t getNumEngines() const;
+-		const EngineTemplate&amp; getEngine(const size_t index) const;
+-		void addEngine( const EngineTemplate &amp; tpl);
+-
+-		struct AxleTemplate
+-		{
+-			int32				idxEngine_;
+-			real				efficiency_;
+-		};
+-		size_t getNumAxles() const;
+-		const AxleTemplate&amp; getAxle(const size_t index) const;
+-		void addAxle( const AxleTemplate &amp; tpl);
+-
+-		size_t getNumSteeringGroups() const;
+-		void addSteeringGroup();
+-
+-		struct WheelTemplate
+-		{
+-			int32		idxAxle_;
+-			int32		idxSteeringGroup_;
+-			real		radius_;
+-			real		mass_;
+-			bool		bMassIsRelativeToChassisMass_;
+-			String		gfxDescriptor_;
+-			String		gfxDescriptorType_;
+-			Vector3		position_;
+-			Quaternion	orientation;
+-			real		suspensionSpring_;
+-			real		suspensionDamping_;
+-		};
+-		size_t getNumWheels() const;
+-		const WheelTemplate&amp; getWheel(const size_t index) const;
+-		void addWheel( const WheelTemplate &amp; tpl);
+-
+-		struct ChassisTemplate
+-		{
+-			real				mass_;
+-			String				gfxDescriptor_;
+-			Vector3				position_;
+-			Quaternion			orientation_;
+-			Vector3				dimensions_;
+-			ShapeTemplateList	collisionShapes_;
+-		};
+-		ChassisTemplate	chassisTpl_;
+-	private:
+-		GearTemplateList	mGears;
+-		
+-		typedef Vector&lt;EngineTemplate&gt; EngineTemplateList;
+-		EngineTemplateList	mEngines;
+-
+-		typedef Vector&lt;AxleTemplate&gt; AxleTemplateList;
+-		AxleTemplateList	mAxles;
+-
+-		typedef Vector&lt;WheelTemplate&gt; WheelTemplateList;
+-		WheelTemplateList	mWheels;
+-
+-		uint32				mNumSteerGroups;
+-	};
+-
+-}
+-}
+-}
+-
+-#endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000067.html">[Yake-svn] r953 - trunk/yake/src/yapp/model
+</A></li>
+	<LI>Next message: <A HREF="000025.html">[Yake-svn] r955 - in trunk/yake/common/media: . graphics.fx graphics.scenes/arena0 vehicles
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#24">[ date ]</a>
+              <a href="thread.html#24">[ thread ]</a>
+              <a href="subject.html#24">[ subject ]</a>
+              <a href="author.html#24">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

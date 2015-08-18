@@ -1,0 +1,666 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r995 - trunk/yake/yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r995%20-%20trunk/yake/yapp/vehicle&In-Reply-To=%3C200510061734.j96HYupI029688%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000064.html">
+   <LINK REL="Next"  HREF="000068.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r995 - trunk/yake/yapp/vehicle</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r995%20-%20trunk/yake/yapp/vehicle&In-Reply-To=%3C200510061734.j96HYupI029688%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r995 - trunk/yake/yapp/vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Oct  6 19:34:56 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000064.html">[Yake-svn] r994 - trunk/yake/src/yake/samples/physics/demo
+</A></li>
+        <LI>Next message: <A HREF="000068.html">[Yake-svn] r996 - in trunk/yake: . src/yake/base/native/Linux src/yake/physics src/yake/plugins/graphicsOgre src/yake/samples/graphics/demo src/yapp src/yapp/loader src/yapp/model src/yapp/samples src/yapp/samples/base src/yapp/samples/base/vehicle src/yapp/samples/model/dotLink src/yapp/vehicle yake/base yake/base/prerequisites yake/base/templates yapp/loader
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#65">[ date ]</a>
+              <a href="thread.html#65">[ thread ]</a>
+              <a href="subject.html#65">[ subject ]</a>
+              <a href="author.html#65">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-06 19:34:54 +0200 (Thu, 06 Oct 2005)
+New Revision: 995
+
+Added:
+   trunk/yake/yapp/vehicle/yakeMountPoint.h
+   trunk/yake/yapp/vehicle/yakeTemplates.h
+   trunk/yake/yapp/vehicle/yakeVehicleSystem.h
+Modified:
+   trunk/yake/yapp/vehicle/yakeInterfaces.h
+   trunk/yake/yapp/vehicle/yakeVehicle.h
+Log:
+slight reorganization
+
+Modified: trunk/yake/yapp/vehicle/yakeInterfaces.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeInterfaces.h	2005-10-04 20:43:34 UTC (rev 994)
++++ trunk/yake/yapp/vehicle/yakeInterfaces.h	2005-10-06 17:34:54 UTC (rev 995)
+@@ -28,219 +28,21 @@
+ #define YAKE_VEHICLE_INTERFACES_H
+ 
+ #include &quot;yakePrerequisites.h&quot;
++#include &quot;yakeTemplates.h&quot;
+ 
+ namespace yake {
+ namespace vehicle {
+ 
+-	const size_t MPID_NO_PARENT = 0xffffffff;
+-	struct VehicleTemplate
+-	{
+-		struct MountPointTpl
+-		{
+-			Vector3		mPosition;
+-			Quaternion	mOrientation;
+-			Vector3		mDirection;
+-			size_t		mParentMountPointIdx;
+-			bool		mUseDirection;
+-			MountPointTpl(
+-				const Vector3&amp; pos = Vector3::kZero,
+-				const Quaternion rot = Quaternion::kIdentity,
+-				size_t parentMountPoint = MPID_NO_PARENT) :
+-				mPosition(pos),
+-				mOrientation(rot),
+-				mParentMountPointIdx(parentMountPoint),
+-				mUseDirection(false)
+-			{}
+-			MountPointTpl(
+-				const Vector3&amp; pos,
+-				const Vector3&amp; dir,
+-				size_t parentMountPoint = MPID_NO_PARENT) :
+-				mPosition(pos),
+-				mDirection(dir),
+-				mParentMountPointIdx(parentMountPoint),
+-				mUseDirection(true)
+-			{}
+-		};
+-		typedef Deque&lt; MountPointTpl &gt; MountPointTplList;
+-		enum GearMode
+-		{
+-			GM_FORWARD,
+-			GM_NEUTRAL,
+-			GM_REVERSE
+-		};
+-		struct GearTpl
+-		{
+-			real				ratio_;
+-			GearMode			mode_;
+-			GearTpl() : ratio_(1.), mode_(GM_FORWARD) {}
+-		};
+-		typedef Vector&lt;GearTpl&gt; GearTplList;
+-		struct EngineTpl
+-		{
+-			virtual ~EngineTpl() {}
+-		};
+-		struct ThrusterTpl : public EngineTpl
+-		{
+-			real				minForce;
+-			real				maxForce;
+-			size_t				mountPtIdx;
+-			ThrusterTpl(real minF = 0., real maxF = 1., size_t mtPt = 0) : minForce(minF), maxForce(maxF), mountPtIdx(mtPt) {}
+-		};
+-		struct CarEngineTpl : public EngineTpl
+-		{
+-			real				rpmMin_;
+-			real				rpmMax_;
+-			real				rpmRedline_;
+-			real				rpmDieOff_;
+-			real				rpmRise_;
+-			real				minShiftingTime_;
+-			GearTplList			gears_;
+-			//Curve*			torqueCurve_;
+-			real				differentialRatio;
+-			CarEngineTpl() :
+-				rpmMin_(0.),
+-				rpmMax_(8000.),
+-				rpmRedline_(6000.),
+-				rpmDieOff_(800.),
+-				rpmRise_(2000.),
+-				minShiftingTime_(0.15),
+-				differentialRatio(3.14)
+-			{}
+-		};
+-
+-		typedef Deque&lt;EngineTpl*&gt; EngineTplList;
+-
+-		typedef Deque&lt;physics::IShape::Desc*&gt; ShapeTplList;
+-
+-		struct ChassisTpl
+-		{
+-			Vector3			mPosition; // initial position
+-			real			mMass;
+-			ShapeTplList	mChassisShapes;
+-			String			mGfxReference; // e.g. dotScene file
+-			ChassisTpl() : 
+-				mPosition(Vector3::kZero),
+-				mMass(1.6)
+-			{}
+-		};
+-
+-		struct WheelTpl
+-		{
+-			Vector3			mPosition;
+-			Quaternion		mOrientation;
+-			uint32			mSteeringGroup;
+-			real			mRadius;
+-			real			mMass;
+-			bool			mMassRelativeToChassis;
+-			real			mSuspensionSpring;
+-			real			mSuspensionDamping;
+-			String			mGfxReference; // e.g. dotScene file
+-			String			mGfxReferenceType; // e.g. &quot;dotscene&quot;
+-			WheelTpl() :
+-				mPosition(Vector3::kZero),
+-				mOrientation(Quaternion::kIdentity),
+-				mSteeringGroup(0),
+-				mRadius(0.8),
+-				mMass(0.015),
+-				mMassRelativeToChassis(true),
+-				mSuspensionSpring(1),
+-				mSuspensionDamping(0.9)
+-			{}
+-		};
+-
+-		typedef Deque&lt; WheelTpl &gt; WheelTplList;
+-
+-		//
+-
+-		ChassisTpl		mChassis;
+-		MountPointTplList	mMountPoints;
+-		EngineTplList	mEngines;
+-		uint32			mSteeringGroups;
+-		WheelTplList	mWheels;
+-
+-		VehicleTemplate() : mSteeringGroups(0)
+-		{}
+-		~VehicleTemplate()
+-		{
+-			ConstVectorIterator&lt; EngineTplList &gt; itEngine( mEngines );
+-			while (itEngine.hasMoreElements())
+-				delete itEngine.getNext();
+-			mEngines.clear();
+-			ConstVectorIterator&lt; ShapeTplList &gt; itShape( mChassis.mChassisShapes );
+-			while (itShape.hasMoreElements())
+-				delete itShape.getNext();
+-			mChassis.mChassisShapes.clear();
+-		}
+-	};
+-
+-	/** Base class for objects that can be attached to mount points (MountPoint).
+-		@see MountPoint
+-	*/
+-	class YAKE_VEH_API Mountable
+-	{
+-		friend class MountPoint;
+-	protected:
+-		virtual ~Mountable();
+-		Mountable();
+-	public:
+-		MountPoint* getMountPoint() const;
+-	protected:
+-		void onAttached( MountPoint* mountpoint );
+-		void onDetached();
+-	private:
+-		MountPoint*	mPt;
+-	};
+-
+-	/** Base class for mount points. Mountable objects can be attached to it.
+-		@see Mountable
+-	*/
+-	class YAKE_VEH_API MountPoint : public Mountable, public Movable
+-	{
+-	public:
+-		MountPoint();
+-		virtual ~MountPoint();
+-
+-		void setParent(MountPoint*);
+-		void setOverrideParentMovable(Movable*);
+-
+-		void addChild(MountPoint*,bool transferOwnership = true);
+-		MountPoint* createChild() const;
+-
+-		virtual bool isSuitableFor( const Mountable* mountable ) const;
+-		void attach( Mountable* mountable );
+-		void detach( Mountable* mountable );
+-		void setDirection( const Vector3&amp; dir );
+-		Vector3 getDirection() const;
+-		virtual void setOrientation( const Quaternion&amp; );
+-		virtual Quaternion getOrientation() const;
+-		virtual void setPosition(const Vector3&amp; rPosition );
+-		virtual Vector3 getPosition() const;
+-		Vector3 getDerivedPosition() const;
+-		Quaternion getDerivedOrientation() const;
+-		void lookAt(const Vector3&amp;);
+-	private:
+-		typedef Deque&lt; Mountable* &gt; MountablePtrList;
+-		MountablePtrList	mMountables;
+-		Quaternion			mOrientation;
+-		Vector3				mPosition;
+-		typedef Deque&lt; std::pair&lt;MountPoint*,bool&gt; &gt; MountPointList;
+-		MountPointList		mChildren;
+-		MountPoint*			mParent;
+-		Movable*			mOverrideParent;
+-	};
+-
+-	class IVehicle;
+-	class YAKE_VEH_API IVehicleSystem
+-	{
+-		YAKE_DECLARE_REGISTRY_0(IVehicleSystem,String);
+-	public:
+-		virtual IVehicle* create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld) = 0;
+-	};
+-
+ 	class IEngine;
+ 	class IWheel;
++	class MountPoint;
++	class Mountable;
+ 	class YAKE_VEH_API IVehicle
+ 	{
++		IVehicle(const IVehicle&amp;);
++		IVehicle&amp; operator=(const IVehicle&amp;);
++	protected:
++		IVehicle() {}
+ 	public:
+ 		virtual ~IVehicle() {}
+ 
+
+Added: trunk/yake/yapp/vehicle/yakeMountPoint.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeMountPoint.h	2005-10-04 20:43:34 UTC (rev 994)
++++ trunk/yake/yapp/vehicle/yakeMountPoint.h	2005-10-06 17:34:54 UTC (rev 995)
+@@ -0,0 +1,99 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_VEHICLE_MOUNTPOINT_H
++#define YAKE_VEHICLE_MOUNTPOINT_H
++
++#include &quot;yakePrerequisites.h&quot;
++
++namespace yake {
++namespace vehicle {
++
++	/** Base class for objects that can be attached to mount points (MountPoint).
++		@see MountPoint
++	*/
++	class YAKE_VEH_API Mountable
++	{
++		friend class MountPoint;
++		Mountable(const Mountable&amp;);
++		Mountable&amp; operator=(const Mountable&amp;);
++	protected:
++		virtual ~Mountable();
++		Mountable();
++	public:
++		MountPoint* getMountPoint() const;
++	protected:
++		void onAttached( MountPoint* mountpoint );
++		void onDetached();
++	private:
++		MountPoint*	mPt;
++	};
++
++	/** Base class for mount points. Mountable objects can be attached to it.
++		@see Mountable
++	*/
++	class YAKE_VEH_API MountPoint : public Mountable, public Movable
++	{
++		MountPoint(const MountPoint&amp;);
++		MountPoint&amp; operator=(const MountPoint&amp;);
++	public:
++		MountPoint();
++		virtual ~MountPoint();
++
++		void setParent(MountPoint*);
++		void setOverrideParentMovable(Movable*);
++
++		void addChild(MountPoint*,bool transferOwnership = true);
++		MountPoint* createChild() const;
++
++		virtual bool isSuitableFor( const Mountable* mountable ) const;
++		void attach( Mountable* mountable );
++		void detach( Mountable* mountable );
++		void setDirection( const Vector3&amp; dir );
++		Vector3 getDirection() const;
++		virtual void setOrientation( const Quaternion&amp; );
++		virtual Quaternion getOrientation() const;
++		virtual void setPosition(const Vector3&amp; rPosition );
++		virtual Vector3 getPosition() const;
++		Vector3 getDerivedPosition() const;
++		Quaternion getDerivedOrientation() const;
++		void lookAt(const Vector3&amp;);
++	private:
++		typedef Deque&lt; Mountable* &gt; MountablePtrList;
++		MountablePtrList	mMountables;
++		Quaternion			mOrientation;
++		Vector3				mPosition;
++		typedef Deque&lt; std::pair&lt;MountPoint*,bool&gt; &gt; MountPointList;
++		MountPointList		mChildren;
++		MountPoint*			mParent;
++		Movable*			mOverrideParent;
++	};
++
++} // namespace vehicle
++} // namespace yake
++
++
++#endif
+
+Added: trunk/yake/yapp/vehicle/yakeTemplates.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeTemplates.h	2005-10-04 20:43:34 UTC (rev 994)
++++ trunk/yake/yapp/vehicle/yakeTemplates.h	2005-10-06 17:34:54 UTC (rev 995)
+@@ -0,0 +1,180 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_VEHICLE_TEMPLATES_H
++#define YAKE_VEHICLE_TEMPLATES_H
++
++#include &quot;yakePrerequisites.h&quot;
++
++namespace yake {
++namespace vehicle {
++
++	const size_t MPID_NO_PARENT = 0xffffffff;
++	struct VehicleTemplate
++	{
++		struct MountPointTpl
++		{
++			Vector3		mPosition;
++			Quaternion	mOrientation;
++			Vector3		mDirection;
++			size_t		mParentMountPointIdx;
++			bool		mUseDirection;
++			MountPointTpl(
++				const Vector3&amp; pos = Vector3::kZero,
++				const Quaternion rot = Quaternion::kIdentity,
++				size_t parentMountPoint = MPID_NO_PARENT) :
++				mPosition(pos),
++				mOrientation(rot),
++				mParentMountPointIdx(parentMountPoint),
++				mUseDirection(false)
++			{}
++			MountPointTpl(
++				const Vector3&amp; pos,
++				const Vector3&amp; dir,
++				size_t parentMountPoint = MPID_NO_PARENT) :
++				mPosition(pos),
++				mDirection(dir),
++				mParentMountPointIdx(parentMountPoint),
++				mUseDirection(true)
++			{}
++		};
++		typedef Deque&lt; MountPointTpl &gt; MountPointTplList;
++		enum GearMode
++		{
++			GM_FORWARD,
++			GM_NEUTRAL,
++			GM_REVERSE
++		};
++		struct GearTpl
++		{
++			real				ratio_;
++			GearMode			mode_;
++			GearTpl() : ratio_(1.), mode_(GM_FORWARD) {}
++		};
++		typedef Vector&lt;GearTpl&gt; GearTplList;
++		struct EngineTpl
++		{
++			virtual ~EngineTpl() {}
++		};
++		struct ThrusterTpl : public EngineTpl
++		{
++			real				minForce;
++			real				maxForce;
++			size_t				mountPtIdx;
++			ThrusterTpl(real minF = 0., real maxF = 1., size_t mtPt = 0) : minForce(minF), maxForce(maxF), mountPtIdx(mtPt) {}
++		};
++		struct CarEngineTpl : public EngineTpl
++		{
++			real				rpmMin_;
++			real				rpmMax_;
++			real				rpmRedline_;
++			real				rpmDieOff_;
++			real				rpmRise_;
++			real				minShiftingTime_;
++			GearTplList			gears_;
++			//Curve*			torqueCurve_;
++			real				differentialRatio;
++			CarEngineTpl() :
++				rpmMin_(real(0.)),
++				rpmMax_(real(8000.)),
++				rpmRedline_(real(6000.)),
++				rpmDieOff_(real(800.)),
++				rpmRise_(real(2000.)),
++				minShiftingTime_(real(0.15)),
++				differentialRatio(real(3.14))
++			{}
++		};
++
++		typedef Deque&lt;EngineTpl*&gt; EngineTplList;
++
++		typedef Deque&lt;physics::IShape::Desc*&gt; ShapeTplList;
++
++		struct ChassisTpl
++		{
++			Vector3			mPosition; // initial position
++			real			mMass;
++			ShapeTplList	mChassisShapes;
++			String			mGfxReference; // e.g. dotScene file
++			ChassisTpl() : 
++				mPosition(Vector3::kZero),
++				mMass(real(1.6))
++			{}
++		};
++
++		struct WheelTpl
++		{
++			Vector3			mPosition;
++			Quaternion		mOrientation;
++			uint32			mSteeringGroup;
++			real			mRadius;
++			real			mMass;
++			bool			mMassRelativeToChassis;
++			real			mSuspensionSpring;
++			real			mSuspensionDamping;
++			String			mGfxReference; // e.g. dotScene file
++			String			mGfxReferenceType; // e.g. &quot;dotscene&quot;
++			WheelTpl() :
++				mPosition(Vector3::kZero),
++				mOrientation(Quaternion::kIdentity),
++				mSteeringGroup(0),
++				mRadius(real(0.8)),
++				mMass(real(0.015)),
++				mMassRelativeToChassis(true),
++				mSuspensionSpring(real(1)),
++				mSuspensionDamping(real(0.9))
++			{}
++		};
++
++		typedef Deque&lt; WheelTpl &gt; WheelTplList;
++
++		//
++
++		ChassisTpl		mChassis;
++		MountPointTplList	mMountPoints;
++		EngineTplList	mEngines;
++		uint32			mSteeringGroups;
++		WheelTplList	mWheels;
++
++		VehicleTemplate() : mSteeringGroups(0)
++		{}
++		~VehicleTemplate()
++		{
++			ConstVectorIterator&lt; EngineTplList &gt; itEngine( mEngines );
++			while (itEngine.hasMoreElements())
++				delete itEngine.getNext();
++			mEngines.clear();
++			ConstVectorIterator&lt; ShapeTplList &gt; itShape( mChassis.mChassisShapes );
++			while (itShape.hasMoreElements())
++				delete itShape.getNext();
++			mChassis.mChassisShapes.clear();
++		}
++	};
++
++} // namespace vehicle
++} // namespace yake
++
++
++#endif
+
+Modified: trunk/yake/yapp/vehicle/yakeVehicle.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeVehicle.h	2005-10-04 20:43:34 UTC (rev 994)
++++ trunk/yake/yapp/vehicle/yakeVehicle.h	2005-10-06 17:34:54 UTC (rev 995)
+@@ -35,6 +35,9 @@
+ 
+ #include &lt;yake/base/yake.h&gt;
+ #include &lt;yapp/base/yapp.h&gt;
++#include &lt;yapp/vehicle/yakeTemplates.h&gt;
++#include &lt;yapp/vehicle/yakeMountPoint.h&gt;
+ #include &lt;yapp/vehicle/yakeInterfaces.h&gt;
++#include &lt;yapp/vehicle/yakeVehicleSystem.h&gt;
+ 
+ #endif
+
+Added: trunk/yake/yapp/vehicle/yakeVehicleSystem.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeVehicleSystem.h	2005-10-04 20:43:34 UTC (rev 994)
++++ trunk/yake/yapp/vehicle/yakeVehicleSystem.h	2005-10-06 17:34:54 UTC (rev 995)
+@@ -0,0 +1,47 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_VEHICLE_SYSTEM_H
++#define YAKE_VEHICLE_SYSTEM_H
++
++#include &quot;yakePrerequisites.h&quot;
++
++namespace yake {
++namespace vehicle {
++
++	class IVehicle;
++	class YAKE_VEH_API IVehicleSystem
++	{
++		YAKE_DECLARE_REGISTRY_0(IVehicleSystem,String);
++	public:
++		virtual IVehicle* create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld) = 0;
++	};
++
++} // namespace vehicle
++} // namespace yake
++
++
++#endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000064.html">[Yake-svn] r994 - trunk/yake/src/yake/samples/physics/demo
+</A></li>
+	<LI>Next message: <A HREF="000068.html">[Yake-svn] r996 - in trunk/yake: . src/yake/base/native/Linux src/yake/physics src/yake/plugins/graphicsOgre src/yake/samples/graphics/demo src/yapp src/yapp/loader src/yapp/model src/yapp/samples src/yapp/samples/base src/yapp/samples/base/vehicle src/yapp/samples/model/dotLink src/yapp/vehicle yake/base yake/base/prerequisites yake/base/templates yapp/loader
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#65">[ date ]</a>
+              <a href="thread.html#65">[ thread ]</a>
+              <a href="subject.html#65">[ subject ]</a>
+              <a href="author.html#65">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

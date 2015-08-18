@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r934 - trunk/yake/src/yapp/loader
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r934%20-%20trunk/yake/src/yapp/loader&In-Reply-To=%3C200509252154.j8PLsnQx006022%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000004.html">
+   <LINK REL="Next"  HREF="000006.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r934 - trunk/yake/src/yapp/loader</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r934%20-%20trunk/yake/src/yapp/loader&In-Reply-To=%3C200509252154.j8PLsnQx006022%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r934 - trunk/yake/src/yapp/loader">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Sep 25 23:54:49 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000004.html">[Yake-svn] r933 - trunk/yake/yapp/loader
+</A></li>
+        <LI>Next message: <A HREF="000006.html">[Yake-svn] r935 - trunk/yake/src/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#5">[ date ]</a>
+              <a href="thread.html#5">[ thread ]</a>
+              <a href="subject.html#5">[ subject ]</a>
+              <a href="author.html#5">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-25 23:54:48 +0200 (Sun, 25 Sep 2005)
+New Revision: 934
+
+Modified:
+   trunk/yake/src/yapp/loader/yakeDotScene.cpp
+Log:
+fixed name collision
+
+Modified: trunk/yake/src/yapp/loader/yakeDotScene.cpp
+===================================================================
+--- trunk/yake/src/yapp/loader/yakeDotScene.cpp	2005-09-25 21:54:38 UTC (rev 933)
++++ trunk/yake/src/yapp/loader/yakeDotScene.cpp	2005-09-25 21:54:48 UTC (rev 934)
+@@ -367,8 +367,8 @@
+ 	{
+ 		YAKE_ASSERT( pNode );
+ 		
+-		desc.clipping.near = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;near&quot; ) );
+-		desc.clipping.far = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;far&quot; ) );
++		desc.clipping.nearClip = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;near&quot; ) );
++		desc.clipping.farClip = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;far&quot; ) );
+ 	}
+ 	
+ 	//------------------------------------------------------
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000004.html">[Yake-svn] r933 - trunk/yake/yapp/loader
+</A></li>
+	<LI>Next message: <A HREF="000006.html">[Yake-svn] r935 - trunk/yake/src/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#5">[ date ]</a>
+              <a href="thread.html#5">[ thread ]</a>
+              <a href="subject.html#5">[ subject ]</a>
+              <a href="author.html#5">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

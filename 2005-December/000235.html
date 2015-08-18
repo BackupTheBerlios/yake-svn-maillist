@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1165 - trunk/yake/src/yake/plugins/graphicsOgre
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-December/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1165%20-%20trunk/yake/src/yake/plugins/graphicsOgre&In-Reply-To=%3C200512072222.jB7MMjui021842%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000234.html">
+   <LINK REL="Next"  HREF="000237.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1165 - trunk/yake/src/yake/plugins/graphicsOgre</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1165%20-%20trunk/yake/src/yake/plugins/graphicsOgre&In-Reply-To=%3C200512072222.jB7MMjui021842%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1165 - trunk/yake/src/yake/plugins/graphicsOgre">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Dec  7 23:22:45 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000234.html">[Yake-svn] r1164 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+        <LI>Next message: <A HREF="000237.html">[Yake-svn] r1166 - trunk/yake/src/yake/plugins/physicsNX
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#235">[ date ]</a>
+              <a href="thread.html#235">[ thread ]</a>
+              <a href="subject.html#235">[ subject ]</a>
+              <a href="author.html#235">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-12-07 23:22:45 +0100 (Wed, 07 Dec 2005)
+New Revision: 1165
+
+Modified:
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCore.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp
+Log:
+various fixes
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCore.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCore.cpp	2005-12-07 22:22:33 UTC (rev 1164)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCore.cpp	2005-12-07 22:22:45 UTC (rev 1165)
+@@ -199,8 +199,8 @@
+ 	{
+ 		try {
+ 			Ogre::SceneNode* pSN = this-&gt;getSceneMgr()-&gt;getRootSceneNode();
+-			YAKE_ASSERT( pSN-&gt;numAttachedObjects() == 0 )( pSN-&gt;numAttachedObjects() );
+-			YAKE_ASSERT( pSN-&gt;numChildren() == 0 )( pSN-&gt;numChildren() );
++			YAKE_ASSERT( pSN-&gt;numAttachedObjects() == 0 )( pSN-&gt;numAttachedObjects() ).warning(&quot;should be 0&quot;);
++			YAKE_ASSERT( pSN-&gt;numChildren() == 0 )( pSN-&gt;numChildren() ).warning(&quot;should be 0&quot;);
+ 			if (pSN-&gt;numAttachedObjects() &gt; 0)
+ 			{
+ 				Ogre::SceneNode::ObjectIterator itObj = pSN-&gt;getAttachedObjectIterator();
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp	2005-12-07 22:22:33 UTC (rev 1164)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp	2005-12-07 22:22:45 UTC (rev 1165)
+@@ -45,7 +45,7 @@
+ 		String ogreid = name;
+ 		if (ogreid.empty())
+ 			ogreid = uniqueName::create(&quot;sn_&quot;+name+&quot;_&quot;);
+-		mName = name;
++		mName = ogreid;
+ 		mSceneNode = static_cast&lt; Ogre::SceneNode* &gt;( mSceneMgr-&gt;getRootSceneNode()-&gt;createChild( ogreid ) );
+ 		YAKE_ASSERT( mSceneNode ).warning(&quot;Couldn't create a scene node!&quot;);
+ 		mSceneNode-&gt;setPosition( 0, 0, 0 );
+@@ -107,6 +107,7 @@
+ 			mSceneNode-&gt;removeAndDestroyAllChildren(); // just in case...
+ 			//YAKE_LOG(String(&quot;destroying OGRE SN '&quot;) &lt;&lt; mSceneNode-&gt;getName().c_str() &lt;&lt; &quot;'&quot;);
+ 			mSceneMgr-&gt;destroySceneNode( mSceneNode-&gt;getName() );
++			mSceneNode = 0;
+ 		}
+ 
+ 		this-&gt;mWorld.unreg( this );
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000234.html">[Yake-svn] r1164 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+	<LI>Next message: <A HREF="000237.html">[Yake-svn] r1166 - trunk/yake/src/yake/plugins/physicsNX
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#235">[ date ]</a>
+              <a href="thread.html#235">[ thread ]</a>
+              <a href="subject.html#235">[ subject ]</a>
+              <a href="author.html#235">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

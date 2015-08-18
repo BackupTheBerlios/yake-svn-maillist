@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1232 - trunk/yake/yake/prop
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1232%20-%20trunk/yake/yake/prop&In-Reply-To=%3C200603121847.k2CIlPmV019127%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000301.html">
+   <LINK REL="Next"  HREF="000303.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1232 - trunk/yake/yake/prop</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1232%20-%20trunk/yake/yake/prop&In-Reply-To=%3C200603121847.k2CIlPmV019127%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1232 - trunk/yake/yake/prop">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 12 19:47:25 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000301.html">[Yake-svn] r1231 - trunk/yake/yake/prop
+</A></li>
+        <LI>Next message: <A HREF="000303.html">[Yake-svn] r1233 - trunk/yake/yake/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#302">[ date ]</a>
+              <a href="thread.html#302">[ thread ]</a>
+              <a href="subject.html#302">[ subject ]</a>
+              <a href="author.html#302">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-12 19:47:24 +0100 (Sun, 12 Mar 2006)
+New Revision: 1232
+
+Modified:
+   trunk/yake/yake/prop/prop.h
+   trunk/yake/yake/prop/prop_def.h
+Log:
+readonly properties
+
+Modified: trunk/yake/yake/prop/prop.h
+===================================================================
+--- trunk/yake/yake/prop/prop.h	2006-03-12 18:45:53 UTC (rev 1231)
++++ trunk/yake/yake/prop/prop.h	2006-03-12 18:47:24 UTC (rev 1232)
+@@ -41,13 +41,13 @@
+ 		const PropDef&amp; def() const
+ 		{ return def_; }
+ 	private:
+-		Prop();
+-		Prop(const PropDef&amp; def, const boost::any&amp; defaultValue) :
+-		value_(defaultValue), def_(def)
++		Prop(const PropDef&amp; def, const boost::any&amp; defaultValue, const bool readOnly) :
++		value_(defaultValue), def_(def), readOnly_(readOnly)
+ 		{}
+ 	private:
+ 		boost::any				value_;
+ 		const PropDef&amp;			def_;
++		bool						readOnly_;
+ 	};
+ 	typedef std::vector&lt;Prop&gt; PropList;
+ 
+
+Modified: trunk/yake/yake/prop/prop_def.h
+===================================================================
+--- trunk/yake/yake/prop/prop_def.h	2006-03-12 18:45:53 UTC (rev 1231)
++++ trunk/yake/yake/prop/prop_def.h	2006-03-12 18:47:24 UTC (rev 1232)
+@@ -8,7 +8,7 @@
+ 	struct Prop;
+ 	struct PropDef
+ 	{
+-		PropDef() {}
++		PropDef(const bool readOnly = false) : readOnly_(readOnly) {}
+ 		PropDef(const PropDef&amp; other) :
+ 		name_(other.name_),
+ 			description_(other.description_),
+@@ -24,11 +24,12 @@
+ 			return *this;
+ 		}
+ 		template&lt;typename T&gt;
+-		PropDef(const std::string&amp; name, const std::string&amp; desc, const T&amp; defaultValue) :
++		PropDef(const std::string&amp; name, const std::string&amp; desc, const T&amp; defaultValue, const bool readOnly = false) :
+ 		name_(name),
+ 			description_(desc),
+ 			defaultValue_(defaultValue),
+-			type_(typeid(T).name())
++			type_(typeid(T).name()),
++			readOnly_(readOnly)
+ 		{
+ 		}
+ 		std::string name() const
+@@ -44,6 +45,7 @@
+ 		std::string		description_;
+ 		std::string		type_;
+ 		boost::any		defaultValue_;
++		bool				readOnly_;
+ 	};
+ 	inline std::ostream&amp; operator &lt;&lt; (std::ostream&amp; out, const PropDef&amp; propdef)
+ 	{
+@@ -55,7 +57,7 @@
+ 	#include &quot;prop.h&quot;
+ namespace yake {
+ 	inline Prop* PropDef::create() const
+-	{ return new Prop(*this,defaultValue_); }
++	{ return new Prop(*this,defaultValue_,readOnly_); }
+ } // namespace yake
+ 
+ #endif
+\ No newline at end of file
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000301.html">[Yake-svn] r1231 - trunk/yake/yake/prop
+</A></li>
+	<LI>Next message: <A HREF="000303.html">[Yake-svn] r1233 - trunk/yake/yake/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#302">[ date ]</a>
+              <a href="thread.html#302">[ thread ]</a>
+              <a href="subject.html#302">[ subject ]</a>
+              <a href="author.html#302">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

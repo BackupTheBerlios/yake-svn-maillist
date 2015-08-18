@@ -1,0 +1,199 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1407 - in trunk/yake: src/yake/samples/model/dotScene	src/yapp/samples/misc/vehicle src/yapp/vehicle yake/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1407%20-%20in%20trunk/yake%3A%20src/yake/samples/model/dotScene%0A%09src/yapp/samples/misc/vehicle%20src/yapp/vehicle%20yake/model&In-Reply-To=%3C200607261936.k6QJaB6N032179%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000474.html">
+   <LINK REL="Next"  HREF="000476.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1407 - in trunk/yake: src/yake/samples/model/dotScene	src/yapp/samples/misc/vehicle src/yapp/vehicle yake/model</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1407%20-%20in%20trunk/yake%3A%20src/yake/samples/model/dotScene%0A%09src/yapp/samples/misc/vehicle%20src/yapp/vehicle%20yake/model&In-Reply-To=%3C200607261936.k6QJaB6N032179%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1407 - in trunk/yake: src/yake/samples/model/dotScene	src/yapp/samples/misc/vehicle src/yapp/vehicle yake/model">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 26 21:36:11 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000474.html">[Yake-svn] r1406 - in trunk/yake/src/yake: base/native/win32 data
+</A></li>
+        <LI>Next message: <A HREF="000476.html">[Yake-svn] r1408 - trunk/yake/documentation/manual
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#475">[ date ]</a>
+              <a href="thread.html#475">[ thread ]</a>
+              <a href="subject.html#475">[ subject ]</a>
+              <a href="author.html#475">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-26 21:36:09 +0200 (Wed, 26 Jul 2006)
+New Revision: 1407
+
+Modified:
+   trunk/yake/src/yake/samples/model/dotScene/demo.cpp
+   trunk/yake/src/yapp/samples/misc/vehicle/yakeDemo.cpp
+   trunk/yake/src/yapp/vehicle/yakeVehicleModelComponentCreator.cpp
+   trunk/yake/yake/model/model_component.h
+Log:
+cleaned up interfaces for model and component creation contexts
+
+Modified: trunk/yake/src/yake/samples/model/dotScene/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/model/dotScene/demo.cpp	2006-07-26 19:07:07 UTC (rev 1406)
++++ trunk/yake/src/yake/samples/model/dotScene/demo.cpp	2006-07-26 19:36:09 UTC (rev 1407)
+@@ -137,8 +137,8 @@
+ 		modelMgr.setCreationContext_CentralController( this );
+ 
+ 		// just for demo purposes:
+-		modelMgr.subscribeToComponentPreInitializeSignal( Bind2(&amp;TheApp::onModelComponent_preInit,this) );
+-		modelMgr.subscribeToComponentPostInitializeSignal( Bind2(&amp;TheApp::onModelComponent_postInit,this) );
++		modelMgr.subscribeToPreInitializeComponentSignal( Bind2(&amp;TheApp::onModelComponent_preInit,this) );
++		modelMgr.subscribeToPostInitializeComponentSignal( Bind2(&amp;TheApp::onModelComponent_postInit,this) );
+ 
+ 		// create models :)
+ 
+
+Modified: trunk/yake/src/yapp/samples/misc/vehicle/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/misc/vehicle/yakeDemo.cpp	2006-07-26 19:07:07 UTC (rev 1406)
++++ trunk/yake/src/yapp/samples/misc/vehicle/yakeDemo.cpp	2006-07-26 19:36:09 UTC (rev 1407)
+@@ -78,8 +78,8 @@
+ 		mModelMgr.setCreationContext_NamedParameter(&quot;vehicleSystem&quot;,static_cast&lt;vehicle::IVehicleSystem*&gt;(mVehicleSystem.get()));
+ 
+ 		// set up model component creation hooks.
+-		mModelMgr.subscribeToComponentPreInitializeSignal( Bind2(&amp;TheMainState::onModelComponent_preInit,this) );
+-		mModelMgr.subscribeToComponentPostInitializeSignal( Bind2(&amp;TheMainState::onModelComponent_postInit,this) );
++		mModelMgr.subscribeToPreInitializeComponentSignal( Bind2(&amp;TheMainState::onModelComponent_preInit,this) );
++		mModelMgr.subscribeToPostInitializeComponentSignal( Bind2(&amp;TheMainState::onModelComponent_postInit,this) );
+ 
+ 
+ 
+
+Modified: trunk/yake/src/yapp/vehicle/yakeVehicleModelComponentCreator.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeVehicleModelComponentCreator.cpp	2006-07-26 19:07:07 UTC (rev 1406)
++++ trunk/yake/src/yapp/vehicle/yakeVehicleModelComponentCreator.cpp	2006-07-26 19:36:09 UTC (rev 1407)
+@@ -54,22 +54,18 @@
+ 	void VehicleModelComponentCreator::create(const model::ComponentCreationContext&amp; ctx, const StringMap&amp; params)
+ 	{
+ 		// Verify validity of creation context
+-		physics::IWorld* pPWorld = ctx.pworld_;
++		physics::IWorld* pPWorld = ctx.getPhysicalWorld();
+ 		YAKE_ASSERT( pPWorld );
+ 		if (!pPWorld)
+ 			return;
+ 
+ 		// Extract parameters
+ 
++		const String name = ctx.getName();
++
+ 		StringMap::const_iterator itParam = params.find(&quot;file&quot;);
+ 		const String fn = (itParam == params.end()) ? &quot;&quot; : itParam-&gt;second;
+ 
+-		itParam = params.find(&quot;name&quot;);
+-		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
+-		if (itParam == params.end())
+-			return;
+-		const String name = itParam-&gt;second;
+-
+ 		itParam = params.find(&quot;physical&quot;);
+ 		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'physical'.&quot;);
+ 		if (itParam == params.end())
+@@ -86,17 +82,9 @@
+ 
+ 		IVehicleSystem* vehSys = 0;
+ 		{
+-			model::ComponentCreationContext::ParamMap::const_iterator it = ctx.params_.find(&quot;vehicleSystem&quot;);
+-			YAKE_ASSERT(it != ctx.params_.end()).debug(&quot;Missing context parameter 'vehicleSystem'.&quot;);
+-			if (it == ctx.params_.end())
++			const bool success = ctx.getParamValueAs&lt;vehicle::IVehicleSystem*&gt;(&quot;vehicleSystem&quot;,vehSys);
++			YAKE_ASSERT( success )(name).debug(&quot;Failed to retrieve IVehicleSystem interface from context parameter!&quot;);
+ 				return;
+-			try {
+-				vehSys = boost::any_cast&lt;vehicle::IVehicleSystem*&gt;(it-&gt;second);
+-			} catch (boost::bad_any_cast&amp; e)
+-			{
+-				YAKE_ASSERT( 0 )(name).debug(String(&quot;Failed to retrieve IVehicleSystem interface from context parameter! (&quot;) + e.what() + &quot;)&quot;);
+-				return;
+-			}
+ 			YAKE_ASSERT( vehSys )(name).debug(&quot;IVehicleSystem interface not set.&quot;);
+ 			if (!vehSys)
+ 				return;
+@@ -113,9 +101,7 @@
+ 
+ 		// Retrieve 'Physical'
+ 
+-		YAKE_ASSERT( ctx.model_ );
+-
+-		model::Physical* pPhysical = dynamic_cast&lt;model::Physical*&gt;(ctx.model_-&gt;getComponentByTag(physicalTag));
++		model::Physical* pPhysical = dynamic_cast&lt;model::Physical*&gt;(ctx.getModel().getComponentByTag(physicalTag));
+ 		YAKE_ASSERT( pPhysical )(physicalTag)(name).debug(&quot;Failed to retrieve Physical.&quot;);
+ 
+ 		// Instantiate template vehicle
+@@ -129,7 +115,7 @@
+ 		VehicleModelComponent* c = new VehicleModelComponent(pVehicle);
+ 		YAKE_ASSERT( c );
+ 
+-		ctx.model_-&gt;addComponent( c, name );
++		ctx.getModel().addComponent( c, name );
+ 
+ 		return;
+ 	}
+
+Modified: trunk/yake/yake/model/model_component.h
+===================================================================
+--- trunk/yake/yake/model/model_component.h	2006-07-26 19:07:07 UTC (rev 1406)
++++ trunk/yake/yake/model/model_component.h	2006-07-26 19:36:09 UTC (rev 1407)
+@@ -80,7 +80,7 @@
+ 
+ 	/** Contextual information on component creation time.
+ 	*/
+-	struct ComponentCreationContext
++	struct YAKE_MODEL_API ComponentCreationContext
+ 	{
+ 		ComponentCreationContext(ModelCreationContext&amp; modelCtx, const String&amp; name = &quot;&quot;);
+ 
+@@ -97,7 +97,7 @@
+ 		bool getParamValue(const String&amp;,boost::any&amp;) const;
+ 
+ 		template&lt;typename OutT&gt;
+-		bool getParamValueAs(const String&amp;,OutT&amp;) const
++		bool getParamValueAs(const String&amp; key,OutT&amp; out) const
+ 		{
+ 			ModelCreationContext::ParamMap::const_iterator it = modelCtx_.params_.find(key);
+ 			if (it == modelCtx_.params_.end())
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000474.html">[Yake-svn] r1406 - in trunk/yake/src/yake: base/native/win32 data
+</A></li>
+	<LI>Next message: <A HREF="000476.html">[Yake-svn] r1408 - trunk/yake/documentation/manual
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#475">[ date ]</a>
+              <a href="thread.html#475">[ thread ]</a>
+              <a href="subject.html#475">[ subject ]</a>
+              <a href="author.html#475">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

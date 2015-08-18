@@ -1,0 +1,746 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1386 - in trunk/yake: src/yake/model src/yapp/raf	src/yapp/samples/misc/car src/yapp/vehicle yake/model yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1386%20-%20in%20trunk/yake%3A%20src/yake/model%20src/yapp/raf%0A%09src/yapp/samples/misc/car%20src/yapp/vehicle%20yake/model%20yapp/vehicle&In-Reply-To=%3C200607151429.k6FETwCr002647%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000453.html">
+   <LINK REL="Next"  HREF="000455.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1386 - in trunk/yake: src/yake/model src/yapp/raf	src/yapp/samples/misc/car src/yapp/vehicle yake/model yapp/vehicle</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1386%20-%20in%20trunk/yake%3A%20src/yake/model%20src/yapp/raf%0A%09src/yapp/samples/misc/car%20src/yapp/vehicle%20yake/model%20yapp/vehicle&In-Reply-To=%3C200607151429.k6FETwCr002647%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1386 - in trunk/yake: src/yake/model src/yapp/raf	src/yapp/samples/misc/car src/yapp/vehicle yake/model yapp/vehicle">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Sat Jul 15 16:29:58 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000453.html">[Yake-svn] r1385 - trunk/yake/src/yake/model
+</A></li>
+        <LI>Next message: <A HREF="000455.html">[Yake-svn] r1387 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#454">[ date ]</a>
+              <a href="thread.html#454">[ thread ]</a>
+              <a href="subject.html#454">[ subject ]</a>
+              <a href="author.html#454">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-15 16:29:56 +0200 (Sat, 15 Jul 2006)
+New Revision: 1386
+
+Modified:
+   trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+   trunk/yake/src/yake/model/yakeLinkCreator.cpp
+   trunk/yake/src/yake/model/yakeModelComponentContainer.cpp
+   trunk/yake/src/yake/model/yakeModelManager.cpp
+   trunk/yake/src/yake/model/yakePhysicalCreator.cpp
+   trunk/yake/src/yapp/raf/yakeApplication.cpp
+   trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp
+   trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+   trunk/yake/yake/model/model.h
+   trunk/yake/yake/model/model_component.h
+   trunk/yake/yapp/vehicle/yakeInterfaces.h
+   trunk/yake/yapp/vehicle/yakeNativeOde.h
+   trunk/yake/yapp/vehicle/yakeVehicle.h
+Log:
+added &quot;graphics/empty&quot; and &quot;physics/empty&quot; component creators,
+fixed object management policy in yake::vehicle,
+added generic model generation context parameters
+
+Modified: trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -32,6 +32,21 @@
+ namespace yake {
+ namespace model {
+ 
++	//-----------------------------------------------------
++	// class GraphicalFromDotSceneCreator
++	//-----------------------------------------------------
++
++	struct GraphicalFromDotSceneCreator : public ComponentCreator
++	{
++		YAKE_DECLARE_CONCRETE(GraphicalFromDotSceneCreator,&quot;graphics/dotScene&quot;);
++
++		GraphicalFromDotSceneCreator();
++		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++
++	private:
++		SharedPtr&lt;data::parser::dotscene::DotSceneParser&gt;	defaultParser_;
++	};
++
+ 	YAKE_REGISTER_CONCRETE(GraphicalFromDotSceneCreator)
+ 
+ 	GraphicalFromDotSceneCreator::GraphicalFromDotSceneCreator() :
+@@ -101,5 +116,35 @@
+ 		ctx.model_-&gt;addComponent( pGraphical, name );
+ 	}
+ 
++	//-----------------------------------------------------
++	// class GraphicalEmptyCreator
++	//-----------------------------------------------------
++
++	struct GraphicalEmptyCreator : public ComponentCreator
++	{
++		YAKE_DECLARE_CONCRETE(GraphicalEmptyCreator,&quot;graphics/empty&quot;);
++
++		GraphicalEmptyCreator();
++		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++	};
++
++	YAKE_REGISTER_CONCRETE(GraphicalEmptyCreator)
++
++	GraphicalEmptyCreator::GraphicalEmptyCreator()
++	{
++	}
++	void GraphicalEmptyCreator::create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
++	{
++		// Extract parameters
++
++		StringMap::const_iterator itParam = params.find(&quot;name&quot;);
++		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
++		if (itParam == params.end())
++			return;
++		const String name = itParam-&gt;second;
++
++		YAKE_ASSERT( ctx.model_ );
++		ctx.model_-&gt;addComponent( new Graphical(), name );
++	}
+ } // namespace model
+ } // namespace yake
+
+Modified: trunk/yake/src/yake/model/yakeLinkCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeLinkCreator.cpp	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/src/yake/model/yakeLinkCreator.cpp	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -32,6 +32,17 @@
+ namespace yake {
+ namespace model {
+ 
++	//-----------------------------------------------------
++	// class LinkFromDotLinkCreator
++	//-----------------------------------------------------
++
++	struct LinkFromDotLinkCreator : public ComponentCreator
++	{
++		YAKE_DECLARE_CONCRETE(LinkFromDotLinkCreator,&quot;model/dotLink&quot;);
++
++		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++	};
++
+ 	YAKE_REGISTER_CONCRETE(LinkFromDotLinkCreator)
+ 
+ 	void LinkFromDotLinkCreator::create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
+
+Modified: trunk/yake/src/yake/model/yakeModelComponentContainer.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelComponentContainer.cpp	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/src/yake/model/yakeModelComponentContainer.cpp	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -37,6 +37,9 @@
+ 	ModelComponentContainer::ModelComponentContainer()
+ 	{
+ 	}
++	ModelComponentContainer::~ModelComponentContainer()
++	{
++	}
+ 	/*
+ 	void ModelComponentContainer::_cloneComponents(Model&amp; cloned) const
+ 	{
+@@ -77,17 +80,16 @@
+ 		YAKE_ASSERT( c );
+ 		YAKE_ASSERT( !tag.empty() )(tag);
+ 
+-		SharedPtr&lt;ModelComponent&gt; ptr(c);
+-		components_.push_back( ptr );
++		components_.push_back( SharedPtr&lt;ModelComponent&gt;(c) );
+ #ifdef YAKE_DEBUG_BUILD
+ 		YAKE_ASSERT( tag2components_.end() == tag2components_.find(tag) );
+ #endif
+-		tag2components_[ tag ] = ptr;
++		tag2components_[ tag ] = c;
+ 	}
+ 	ModelComponent* ModelComponentContainer::getComponentByTag(const ComponentTag&amp; tag) const
+ 	{
+ 		TagModelComponentMap::const_iterator it = tag2components_.find(tag);
+-		return ((it == tag2components_.end()) ? 0 : it-&gt;second.get());
++		return ((it == tag2components_.end()) ? 0 : it-&gt;second);
+ 	}
+ 	ModelComponent* ModelComponentContainer::getComponentByIndex(const size_t idx) const
+ 	{
+
+Modified: trunk/yake/src/yake/model/yakeModelManager.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelManager.cpp	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/src/yake/model/yakeModelManager.cpp	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -193,6 +193,13 @@
+ 	{
+ 		ctx_.xodeParser_ = parser;
+ 	}
++	void ModelManager::setCreationContext_NamedParameter(const String&amp; name, const boost::any&amp; value)
++	{
++		YAKE_ASSERT( !name.empty() );
++		if (name.empty())
++			return;
++		ctx_.params_[ name ] = value;
++	}
+ 
+ } // namespace model
+ } // namespace yake
+
+Modified: trunk/yake/src/yake/model/yakePhysicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakePhysicalCreator.cpp	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/src/yake/model/yakePhysicalCreator.cpp	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -32,6 +32,20 @@
+ namespace yake {
+ namespace model {
+ 
++	//-----------------------------------------------------
++	// class PhysicalFromXODECreator
++	//-----------------------------------------------------
++	struct PhysicalFromXODECreator : public ComponentCreator
++	{
++		YAKE_DECLARE_CONCRETE(PhysicalFromXODECreator,&quot;physics/dotXODE&quot;);
++
++		PhysicalFromXODECreator();
++		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++
++	private:
++		SharedPtr&lt;data::parser::xode::XODEParser&gt;	defaultParser_;
++	};
++
+ 	YAKE_REGISTER_CONCRETE(PhysicalFromXODECreator)
+ 
+ 	PhysicalFromXODECreator::PhysicalFromXODECreator() :
+@@ -95,5 +109,34 @@
+ 		ctx.model_-&gt;addComponent( pPhysical, name );
+ 	}
+ 
++	//-----------------------------------------------------
++	// class PhysicalEmptyCreator
++	//-----------------------------------------------------
++	struct PhysicalEmptyCreator : public ComponentCreator
++	{
++		YAKE_DECLARE_CONCRETE(PhysicalEmptyCreator,&quot;physics/empty&quot;);
++
++		PhysicalEmptyCreator();
++		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++	};
++
++	YAKE_REGISTER_CONCRETE(PhysicalEmptyCreator)
++
++	PhysicalEmptyCreator::PhysicalEmptyCreator()
++	{
++	}
++	void PhysicalEmptyCreator::create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
++	{
++		// Extract parameters
++
++		StringMap::const_iterator itParam = params.find(&quot;name&quot;);
++		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
++		if (itParam == params.end())
++			return;
++		const String name = itParam-&gt;second;
++
++		YAKE_ASSERT( ctx.model_ );
++		ctx.model_-&gt;addComponent( new Physical(), name );
++	}
+ } // namespace model
+ } // namespace yake
+
+Modified: trunk/yake/src/yapp/raf/yakeApplication.cpp
+===================================================================
+--- trunk/yake/src/yapp/raf/yakeApplication.cpp	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/src/yapp/raf/yakeApplication.cpp	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -373,6 +373,7 @@
+ 		if (!mMainState)
+ 			return false;
+ 		mMachine-&gt;addState( &quot;main&quot;, mMainState );
++		mMachine-&gt;addState( &quot;dead&quot;, new ApplicationState(*this) );
+ 
+ 		// user application init
+ 		if (!onInitialise())
+@@ -389,6 +390,7 @@
+ 		YAKE_ASSERT( mMachine );
+ 		if (mMachine)
+ 		{
++			mMachine-&gt;setState(&quot;dead&quot;); // This trigger's onExit etc
+ 			YAKE_SAFE_DELETE( mMachine );
+ 		}
+ #if YAKE_RAF_USES_CEGUI == 1
+@@ -422,6 +424,7 @@
+ 			return false;
+ 		mMachine-&gt;setState(&quot;main&quot;); // initial state
+ 		mMachine-&gt;step();
++		mMachine-&gt;setState(&quot;dead&quot;);
+ 		return true;
+ 	}
+ 	AppMachine* Application::getMachine()
+
+Modified: trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -45,7 +45,7 @@
+ 	TheMainState(raf::Application&amp; owner) :
+ 		raf::RtMainState(owner),
+ 		mVehicle(0),
+-		mComplex(0),
++		mVehicleModel(0),
+ 		mGround(0)
+ 	{
+ 		enableInstantQuitByKey( input::KC_ESCAPE );
+@@ -54,25 +54,15 @@
+ 	{
+ 	}
+ private:
+-	typedef Signal2&lt;void(const uint32,const real)&gt; GraphicsUpdateSignal;
+-	GraphicsUpdateSignal	graphicsUpdateSig_;
+-	void subscribeToGraphicsUpdate(const GraphicsUpdateSignal::slot_type&amp; slot)
++	void _createWheelVisual(model::Model&amp; theModel, vehicle::IVehicle&amp; theVehicle, const String&amp; wheelId, graphics::ISceneNode&amp; parentSN)
+ 	{
+-		graphicsUpdateSig_.connect(slot);
+-	}
+-	void _triggerGraphicsUpdate(const uint32 si, const real dt)
+-	{
+-		graphicsUpdateSig_(si,dt);
+-	}
+-	void _createWheelVisual(const String&amp; wheelId, graphics::ISceneNode&amp; parentSN)
+-	{
+ 		// scene node + wheel mesh
+ 		graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode();
+ 		graphics::IEntity* pE = getGraphicalWorld()-&gt;createEntity(&quot;wheel1.mesh&quot;);
+ 		pE-&gt;setCastsShadow( true );
+ 		pSN-&gt;attachEntity( pE );
+-		model::ModelMovableLink* pLink = mComplex-&gt;createLink( mVehicle-&gt;getWheelInterface(wheelId), pSN );
+-		this-&gt;subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
++		model::ModelMovableLink* pLink = theModel.createLink( theVehicle.getWheelInterface(wheelId), pSN );
++		mCentralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
+ 
+ 		// scene node + particle system for smoke...
+ 		pSN = getGraphicalWorld()-&gt;createSceneNode();
+@@ -81,16 +71,39 @@
+ 		mEmitterEmissionRate[wheelId] = pPS-&gt;getEmissionRate(0);
+ 		pSN-&gt;attachParticleSystem( pPS );
+ 		pLink = new model::ModelMovableDirectLink();
+-		pLink-&gt;setSource( mVehicle-&gt;getWheelInterface(wheelId) );
++		pLink-&gt;setSource( theVehicle.getWheelInterface(wheelId) );
+ 		pLink-&gt;subscribeToPositionChanged( pSN ); //position only!
+-		mComplex-&gt;addLink( pLink );
+-		this-&gt;subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
++		theModel.addLink( pLink );
++		mCentralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
+ 	}
++	void onModelComponent_preInit(const model::ComponentCreationContext&amp; ctx, model::ModelComponent&amp;)
++	{
++		YAKE_LOG(&quot;demo: onModelComponent_preInit()&quot;);
++	}
++	void onModelComponent_postInit(const model::ComponentCreationContext&amp; ctx, model::ModelComponent&amp;)
++	{
++		YAKE_LOG(&quot;demo: onModelComponent_postInit()&quot;);
++	}
+ protected:
+ 	virtual void onCreateScene()
+ 	{
+ 		YAKE_LOG_INFORMATION(&quot;Creating scene&quot;);
+ 
++		// create vehicle system
++		mVehicleSystem.reset(new vehicle::GenericVehicleSystem());
++
++		// set up the model creation context.
++		mModelMgr.setCreationContext_GraphicalWorld( getGraphicalWorld() );
++		mModelMgr.setCreationContext_PhysicalWorld( getPhysicalWorld() );
++		mModelMgr.setCreationContext_CentralController( &amp;mCentralController );
++		mModelMgr.setCreationContext_NamedParameter(&quot;vehicleSystem&quot;,static_cast&lt;vehicle::IVehicleSystem*&gt;(mVehicleSystem.get()));
++
++		// set up model component creation hooks.
++		mModelMgr.subscribeToComponentPreInitializeSignal( Bind2(&amp;TheMainState::onModelComponent_preInit,this) );
++		mModelMgr.subscribeToComponentPostInitializeSignal( Bind2(&amp;TheMainState::onModelComponent_postInit,this) );
++
++
++
+ 		// create a light
+ 		graphics::ILight* pLight = getGraphicalWorld()-&gt;createLight();
+ 		pLight-&gt;setType( graphics::ILight::LT_DIRECTIONAL );
+@@ -99,7 +112,7 @@
+ 
+ 		getGraphicalWorld()-&gt;setShadowsEnabled( true );
+ 
+-		// position camera and look at the ninja
++		// set up camera
+ 		getDefaultCamera()-&gt;setNearClipDistance( 1 );
+ 		getDefaultCamera()-&gt;setFixedYawAxis(Vector3::kUnitY);
+ 		getDefaultCamera()-&gt;setPosition(Vector3(7,4,-7));
+@@ -133,30 +146,31 @@
+ 			mGround-&gt;addComponent( pP );
+ 		}
+ 
+-		// create vehicle container (e.g. for graphical objects and links)
+-		mComplex = new model::Model();
+-		model::Graphical* pG = new model::Graphical();
+-		mComplex-&gt;addComponent( pG, &quot;g&quot; );
+-		model::Physical* pP = new model::Physical();
+-		mComplex-&gt;addComponent( pP, &quot;p&quot; );
+-
+ 		// materials @todo read from .physics:
+ 		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.01f, 0.01f, 0.01f ), &quot;chassis&quot; );
+ 		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.01f, 0.2f, 0.01f ), &quot;chassisTop&quot; );
+ 		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.01f, 0.25f, 0.01f ), &quot;wheel&quot; );
+ 
+-		// vehicle
+-		SharedPtr&lt;vehicle::IVehicleSystem&gt; pVS = //create&lt;vehicle::IVehicleSystem&gt;(&quot;generic&quot;);
+-			SharedPtr&lt;vehicle::IVehicleSystem&gt;(new vehicle::GenericVehicleSystem());
++		// vehicle(s)
+ 
+-		pVS-&gt;loadTemplates(&quot;../../media/vehicles/delorean.xml&quot;);
++		YAKE_ASSERT( mVehicleSystem.get() );
++		mVehicleSystem-&gt;loadTemplates(&quot;../../media/vehicles/delorean.xml&quot;);
+ 
+ 		// It's possible retrieve the template and make further adjustments to it before
+ 		// instantiating vehicles.
+ 		// e.g.: vehicle::VehicleTemplate* tpl = pVS-&gt;getTemplate(&quot;delorean&quot;);
+ 
+-		// instantiate
+-		mVehicle = pVS-&gt;create(&quot;delorean&quot;, *getPhysicalWorld(), *pP );
++		// instantiate vehicle model (physics + representation containers)
++		mVehicleModel = mModelMgr.createModel(&quot;theCar&quot;,
++				&quot;physics/empty:name=p&quot;
++				&quot;|graphics/empty:name=g&quot;
++				&quot;|yake/dotVehicle:name=veh;template=delorean;physical=p&quot;
++				);
++		YAKE_ASSERT( mVehicleModel );
++		vehicle::VehicleModelComponent* vehComp = static_cast&lt;vehicle::VehicleModelComponent*&gt;(mVehicleModel-&gt;getComponentByTag(&quot;veh&quot;));
++		YAKE_ASSERT( vehComp );
++		mVehicle = vehComp-&gt;getVehicle();
++		YAKE_ASSERT( mVehicle );
+ 
+ 		//mVehicle-&gt;enableDebugGeometry( *getGraphicalWorld() );
+ 
+@@ -167,30 +181,35 @@
+ 		pE-&gt;setCastsShadow( true );
+ 		pSN-&gt;attachEntity( pE );
+ 		//pSN-&gt;setScale( Vector3::kUnitScale * razorMeshScale );
++		model::Graphical* pG = dynamic_cast&lt;model::Graphical*&gt;(mVehicleModel-&gt;getComponentByTag(&quot;g&quot;));
++		YAKE_ASSERT( pG );
+ 		pG-&gt;addSceneNode(pSN, &quot;delorean_root&quot;);
+ 
+ 		// - wheel visuals
+ 		if (mVehicle-&gt;getWheelInterface(&quot;leftFrontWheel&quot;))
+ 		{
+-			_createWheelVisual( &quot;leftFrontWheel&quot;, *pSN );
+-			_createWheelVisual( &quot;rightFrontWheel&quot;, *pSN );
+-			_createWheelVisual( &quot;leftRearWheel&quot;, *pSN );
+-			_createWheelVisual( &quot;rightRearWheel&quot;, *pSN );
++			_createWheelVisual( *mVehicleModel, *mVehicle, &quot;leftFrontWheel&quot;, *pSN );
++			_createWheelVisual( *mVehicleModel, *mVehicle, &quot;rightFrontWheel&quot;, *pSN );
++			_createWheelVisual( *mVehicleModel, *mVehicle, &quot;leftRearWheel&quot;, *pSN );
++			_createWheelVisual( *mVehicleModel, *mVehicle, &quot;rightRearWheel&quot;, *pSN );
+ 		}
+ 
+ 		// create visual &lt;-&gt; physics links
+-		model::ModelMovableLink* pLink = mComplex-&gt;createLink( mVehicle-&gt;getChassisMovable(), pSN );
+-		this-&gt;subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
++		model::ModelMovableLink* pLink = mVehicleModel-&gt;createLink( mVehicle-&gt;getChassisMovable(), pSN );
++		mCentralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
+ 
+ 		// sky box
+ 		getGraphicalWorld()-&gt;setSkyBox(&quot;Examples/SpaceSkyBox&quot;);
+ 	}
+ 	virtual void onDestroyScene()
+ 	{
++		mVehicleModel = 0;
++		mVehicle = 0;
++
++		mModelMgr.clear();
++		mVehicleSystem.reset();
++
+ 		YAKE_SAFE_DELETE( mGround );
+-
+-		YAKE_SAFE_DELETE( mComplex );
+-		YAKE_SAFE_DELETE( mVehicle );
+ 	}
+ 	virtual void onEnter()
+ 	{
+@@ -221,6 +240,7 @@
+ 	}
+ 	virtual void onExit()
+ 	{
++		RtMainState::onExit();
+ 	}
+ 	virtual void onFrame(const real timeElapsed)
+ 	{
+@@ -255,7 +275,7 @@
+ 		mVehicle-&gt;getWheelInterface(&quot;rightFrontWheel&quot;)-&gt;brake(braking0);
+ 
+ 		mVehicle-&gt;updateSimulation( timeElapsed );
+-		//mComplex-&gt;updatePhysics( timeElapsed );
++		//mVehicleModel-&gt;updatePhysics( timeElapsed );
+ 
+ 		ConstDequeIterator&lt; WheelPsMap &gt; itWheel( mWheelPs );
+ 		while (itWheel.hasMoreElements())
+@@ -265,9 +285,10 @@
+ 		}
+ 
+ 		getDefaultCamera()-&gt;lookAt(mVehicle-&gt;getChassisPosition());
+-		//mComplex-&gt;updateGraphics( timeElapsed );
++		//mVehicleModel-&gt;updateGraphics( timeElapsed );
+ 
+-		this-&gt;_triggerGraphicsUpdate(0,timeElapsed);
++		mCentralController.triggerPhysicsUpdateSignal(0,timeElapsed);
++		mCentralController.triggerGraphicsUpdateSignal(0,timeElapsed);
+ 
+ 		mActiveActions.clear();
+ 	}
+@@ -286,7 +307,7 @@
+ private:
+ 	model::Model*			mGround;
+ 	vehicle::IVehicle*		mVehicle;
+-	model::Model*			mComplex;
++	model::Model*			mVehicleModel;
+ 	typedef AssocVector&lt;String,real&gt; EmitterRealMap;
+ 	EmitterRealMap			mEmitterMinVel;
+ 	EmitterRealMap			mEmitterMaxVel;
+@@ -297,6 +318,10 @@
+ 
+ 	typedef std::set&lt;input::ActionId&gt; ActionIdList;
+ 	ActionIdList			mActiveActions;
++
++	model::ModelManager					mModelMgr;
++	model::CentralControllerBase		mCentralController;
++	SharedPtr&lt;vehicle::IVehicleSystem&gt;	mVehicleSystem;
+ };
+ 
+ /** The mighty application itself! */
+
+Modified: trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -140,7 +140,9 @@
+ 			delete itMP.getNext().second;
+ 		mMountPoints.clear();
+ 
+-		mpChassis-&gt;getCreator()-&gt;destroyActor( mpChassis );
++		// NB Do not destroy the mpChassis actor!
++		//    This object is owned by model::Physical and will be destroyed by it, too!
++		//    [mpChassis-&gt;getCreator()-&gt;destroyActor( mpChassis );]
+ 		mpChassis = 0;
+ 	}
+ 	void GenericVehicle::updateSimulation(real timeElapsed)
+@@ -294,7 +296,7 @@
+ 		    ConstDequeIterator&lt; VehicleTemplate::ShapeTplList &gt; itShapeTpl( tpl.mChassis.mChassisShapes );
+ 		    while (itShapeTpl.hasMoreElements())
+ 		    {
+-			mpChassis-&gt;createShape( *itShapeTpl.getNext() );
++				mpChassis-&gt;createShape( *itShapeTpl.getNext() );
+ 		    }
+ 		    mpChassis-&gt;getBody().setMass( tpl.mChassis.mMass );
+ 		}
+@@ -492,6 +494,19 @@
+ 	{
+ 		YAKE_SAFE_DELETE( mDebugModel );
+ 	}
++	void GenericVehicle::setPosition(const Vector3&amp; position)
++	{
++		YAKE_ASSERT( mpChassis );
++		const Vector3 delta = position - this-&gt;getChassisPosition();
++		this-&gt;translate(delta);
++	}
++	void GenericVehicle::translate(const Vector3&amp; delta)
++	{
++		YAKE_ASSERT( mpChassis );
++		mpChassis-&gt;translate( delta );
++		for (WheelList::const_iterator it = mWheels.begin(); it != mWheels.end(); ++it)
++			it-&gt;second-&gt;translate(delta);
++	}
+ 
+ #if defined(YAKE_VEHICLE_USE_ODE)
+ 	//-----------------------------------------------------
+@@ -624,6 +639,16 @@
+ 	{
+ 		return mRadius;
+ 	}
++	void OdeWheel::setPosition(const math::Vector3&amp; pos)
++	{
++		YAKE_ASSERT( mpWheel );
++		mpWheel-&gt;setPosition( pos );
++	}
++	void OdeWheel::setOrientation(const math::Quaternion&amp; o)
++	{
++		YAKE_ASSERT( mpWheel );
++		mpWheel-&gt;setOrientation( o );
++	}
+ 	math::Vector3 OdeWheel::getPosition() const
+ 	{
+ 		YAKE_ASSERT( mpWheel );
+
+Modified: trunk/yake/yake/model/model.h
+===================================================================
+--- trunk/yake/yake/model/model.h	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/yake/model/model.h	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -153,6 +153,7 @@
+ 		void setCreationContext_CentralController(CentralControllerBase*);
+ 		void setCreationContext_DotSceneParser(data::parser::dotscene::DotSceneParser*);
+ 		void setCreationContext_XODEParser(data::parser::xode::XODEParser*);
++		void setCreationContext_NamedParameter(const String&amp; name, const boost::any&amp; value);
+ 		//@}
+ 
+ 		/** @name Signals (in order that they are called in) */
+
+Modified: trunk/yake/yake/model/model_component.h
+===================================================================
+--- trunk/yake/yake/model/model_component.h	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/yake/model/model_component.h	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -57,6 +57,9 @@
+ 		data::parser::dotscene::DotSceneParser*		dotSceneParser_;
+ 		data::parser::xode::XODEParser*				xodeParser_;
+ 
++		typedef AssocVector&lt;String,boost::any&gt; ParamMap;
++		ParamMap				params_;
++
+ 		typedef Signal2&lt;void(const ComponentCreationContext&amp;,ModelComponent&amp;)&gt; ComponentPreInitializeSignal;
+ 		typedef ComponentPreInitializeSignal ComponentPostInitializeSignal;
+ 		ComponentPreInitializeSignal	sigPreInit_;
+@@ -107,6 +110,7 @@
+ 	struct YAKE_MODEL_API ModelComponentContainer
+ 	{
+ 		ModelComponentContainer();
++		~ModelComponentContainer();
+ 		/** @name Component container interface */
+ 		//@{
+ 		void addComponent(ModelComponent*);
+@@ -123,7 +127,7 @@
+ 		//void _cloneComponents(Model&amp; cloned) const;
+ 	protected:
+ 		ModelComponentList		components_;
+-		typedef std::map&lt;ComponentTag,ModelComponentSharedPtr&gt; TagModelComponentMap;
++		typedef std::map&lt;ComponentTag,ModelComponent*&gt; TagModelComponentMap;
+ 		TagModelComponentMap	tag2components_;
+ 	};
+ 
+@@ -292,32 +296,6 @@
+ 
+ 		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params) = 0;
+ 	};
+-	struct GraphicalFromDotSceneCreator : public ComponentCreator
+-	{
+-		YAKE_DECLARE_CONCRETE(GraphicalFromDotSceneCreator,&quot;graphics/dotScene&quot;);
+-
+-		GraphicalFromDotSceneCreator();
+-		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
+-
+-	private:
+-		SharedPtr&lt;data::parser::dotscene::DotSceneParser&gt;	defaultParser_;
+-	};
+-	struct PhysicalFromXODECreator : public ComponentCreator
+-	{
+-		YAKE_DECLARE_CONCRETE(PhysicalFromXODECreator,&quot;physics/dotXODE&quot;);
+-
+-		PhysicalFromXODECreator();
+-		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
+-
+-	private:
+-		SharedPtr&lt;data::parser::xode::XODEParser&gt;	defaultParser_;
+-	};
+-	struct LinkFromDotLinkCreator : public ComponentCreator
+-	{
+-		YAKE_DECLARE_CONCRETE(LinkFromDotLinkCreator,&quot;model/dotLink&quot;);
+-
+-		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
+-	};
+ 	struct YAKE_MODEL_API ComponentCreatorManager
+ 	{
+ 		ComponentCreatorManager();
+
+Modified: trunk/yake/yapp/vehicle/yakeInterfaces.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeInterfaces.h	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/yapp/vehicle/yakeInterfaces.h	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -73,6 +73,9 @@
+ 
+ 		virtual void enableDebugGeometry(graphics::IWorld&amp;) = 0;
+ 		virtual void disableDebugGeometry() = 0;
++
++		virtual void setPosition(const Vector3&amp;) = 0;
++		virtual void translate(const Vector3&amp;) = 0;
+ 	};
+ 
+ 	/** Interface to a vehicle engine.
+
+Modified: trunk/yake/yapp/vehicle/yakeNativeOde.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeNativeOde.h	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/yapp/vehicle/yakeNativeOde.h	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -108,6 +108,9 @@
+ 		virtual void enableDebugGeometry(graphics::IWorld&amp;);
+ 		virtual void disableDebugGeometry();
+ 
++		virtual void setPosition(const Vector3&amp;);
++		virtual void translate(const Vector3&amp;);
++
+ 		void _create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld, model::Physical&amp; physModel );
+ 
+ 		YAKE_MEMBERSIGNAL(private,void(real),UpdateEngineSimulation);
+@@ -205,10 +208,10 @@
+ 					const VehicleTemplate::WheelTpl&amp; tpl,
+ 					physics::IWorld&amp; PWorld );
+ 
+-		virtual void setPosition(const math::Vector3&amp;) {}
++		virtual void setPosition(const math::Vector3&amp;);
+ 		virtual math::Vector3 getPosition() const;
+ 		virtual math::Vector3 getDerivedPosition() const;
+-		virtual void setOrientation(const math::Quaternion&amp;) {}
++		virtual void setOrientation(const math::Quaternion&amp;);
+ 		virtual math::Quaternion getOrientation() const;
+ 		virtual math::Quaternion getDerivedOrientation() const;
+ 
+
+Modified: trunk/yake/yapp/vehicle/yakeVehicle.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeVehicle.h	2006-07-14 17:14:38 UTC (rev 1385)
++++ trunk/yake/yapp/vehicle/yakeVehicle.h	2006-07-15 14:29:56 UTC (rev 1386)
+@@ -42,6 +42,7 @@
+ #include &lt;yapp/vehicle/yakeMountPoint.h&gt;
+ #include &lt;yapp/vehicle/yakeInterfaces.h&gt;
+ #include &lt;yapp/vehicle/yakeVehicleSystem.h&gt;
++#include &lt;yapp/vehicle/yakeVehicleModelComponent.h&gt;
+ 
+ #endif
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000453.html">[Yake-svn] r1385 - trunk/yake/src/yake/model
+</A></li>
+	<LI>Next message: <A HREF="000455.html">[Yake-svn] r1387 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#454">[ date ]</a>
+              <a href="thread.html#454">[ thread ]</a>
+              <a href="subject.html#454">[ subject ]</a>
+              <a href="author.html#454">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

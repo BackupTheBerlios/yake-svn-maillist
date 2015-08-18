@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r935 - trunk/yake/src/yapp/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r935%20-%20trunk/yake/src/yapp/model&In-Reply-To=%3C200509252155.j8PLt87W006064%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000005.html">
+   <LINK REL="Next"  HREF="000007.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r935 - trunk/yake/src/yapp/model</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r935%20-%20trunk/yake/src/yapp/model&In-Reply-To=%3C200509252155.j8PLt87W006064%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r935 - trunk/yake/src/yapp/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Sep 25 23:55:08 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000005.html">[Yake-svn] r934 - trunk/yake/src/yapp/loader
+</A></li>
+        <LI>Next message: <A HREF="000007.html">[Yake-svn] r936 - trunk/yake/src/yapp/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#6">[ date ]</a>
+              <a href="thread.html#6">[ thread ]</a>
+              <a href="subject.html#6">[ subject ]</a>
+              <a href="author.html#6">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-25 23:55:07 +0200 (Sun, 25 Sep 2005)
+New Revision: 935
+
+Modified:
+   trunk/yake/src/yapp/model/yakeGraphical.cpp
+Log:
+fixed name collision
+
+Modified: trunk/yake/src/yapp/model/yakeGraphical.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeGraphical.cpp	2005-09-25 21:54:48 UTC (rev 934)
++++ trunk/yake/src/yapp/model/yakeGraphical.cpp	2005-09-25 21:55:07 UTC (rev 935)
+@@ -326,8 +326,8 @@
+ 		pCamera-&gt;setFOV( desc.fov );
+ 		pCamera-&gt;setAspectRatio( desc.aspectRatio );
+ 		pCamera-&gt;setProjectionType( desc.projectionType );
+-		pCamera-&gt;setNearClipDistance( desc.clipping.near );
+-		pCamera-&gt;setFarClipDistance( desc.clipping.far );
++		pCamera-&gt;setNearClipDistance( desc.clipping.nearClip );
++		pCamera-&gt;setFarClipDistance( desc.clipping.farClip );
+ 		pCamera-&gt;setDirection( desc.normal );
+ 		
+ 		CameraInfo info;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000005.html">[Yake-svn] r934 - trunk/yake/src/yapp/loader
+</A></li>
+	<LI>Next message: <A HREF="000007.html">[Yake-svn] r936 - trunk/yake/src/yapp/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#6">[ date ]</a>
+              <a href="thread.html#6">[ thread ]</a>
+              <a href="subject.html#6">[ subject ]</a>
+              <a href="author.html#6">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

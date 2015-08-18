@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1000 - trunk/yake/common/media/vehicles
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1000%20-%20trunk/yake/common/media/vehicles&In-Reply-To=%3C200510090045.j990jqrp031583%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000070.html">
+   <LINK REL="Next"  HREF="000072.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1000 - trunk/yake/common/media/vehicles</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1000%20-%20trunk/yake/common/media/vehicles&In-Reply-To=%3C200510090045.j990jqrp031583%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1000 - trunk/yake/common/media/vehicles">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Oct  9 02:45:52 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000070.html">[Yake-svn] r999 - trunk/yake/src/yapp/samples/base/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000072.html">[Yake-svn] r1001 - trunk/yake/yapp/vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#71">[ date ]</a>
+              <a href="thread.html#71">[ thread ]</a>
+              <a href="subject.html#71">[ subject ]</a>
+              <a href="author.html#71">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-09 02:45:51 +0200 (Sun, 09 Oct 2005)
+New Revision: 1000
+
+Added:
+   trunk/yake/common/media/vehicles/jet.xml
+Log:
+initial revision
+
+Added: trunk/yake/common/media/vehicles/jet.xml
+===================================================================
+--- trunk/yake/common/media/vehicles/jet.xml	2005-10-09 00:45:22 UTC (rev 999)
++++ trunk/yake/common/media/vehicles/jet.xml	2005-10-09 00:45:51 UTC (rev 1000)
+@@ -0,0 +1,45 @@
++&lt;dotvehicle&gt;
++	&lt;vehicleTemplate name=&quot;jet&quot;&gt;
++		&lt;!-- chassis --&gt;
++		&lt;chassis&gt;
++			&lt;body totalMass=&quot;10&quot; /&gt;
++			&lt;shapeset&gt;
++				&lt;box x=&quot;1.5&quot; y=&quot;1&quot; z=&quot;2&quot;&gt;
++					&lt;position x=&quot;0&quot; y=&quot;0&quot; z=&quot;0&quot; /&gt;
++				&lt;/box&gt;
++			&lt;/shapeset&gt;
++		&lt;/chassis&gt;
++		&lt;!-- left thruster --&gt;
++		&lt;mountPoint name=&quot;left&quot;&gt;
++			&lt;position x=&quot;70&quot; y=&quot;0&quot; z=&quot;0&quot; /&gt;
++			&lt;direction x=&quot;1&quot; y=&quot;0&quot; z=&quot;0&quot; /&gt;
++		&lt;/mountPoint&gt;
++		&lt;engine name=&quot;left&quot; type=&quot;MountedThruster&quot; mountPoint=&quot;left&quot;&gt;
++			&lt;forces min=&quot;0.&quot; max=&quot;10.&quot; dieOff=&quot;4&quot; rise=&quot;8&quot; /&gt;
++		&lt;/engine&gt;
++		&lt;!-- right thruster --&gt;
++		&lt;mountPoint name=&quot;right&quot;&gt;
++			&lt;position x=&quot;-70&quot; y=&quot;0&quot; z=&quot;0&quot; /&gt;
++			&lt;direction x=&quot;-1&quot; y=&quot;0&quot; z=&quot;0&quot; /&gt;
++		&lt;/mountPoint&gt;
++		&lt;engine name=&quot;right&quot; type=&quot;MountedThruster&quot; mountPoint=&quot;right&quot;&gt;
++			&lt;forces min=&quot;0.&quot; max=&quot;10.&quot; dieOff=&quot;4&quot; rise=&quot;8&quot; /&gt;
++		&lt;/engine&gt;
++		&lt;!-- front thruster --&gt;
++		&lt;mountPoint name=&quot;front&quot;&gt;
++			&lt;position x=&quot;0&quot; y=&quot;0&quot; z=&quot;70&quot; /&gt;
++			&lt;direction x=&quot;0&quot; y=&quot;0&quot; z=&quot;1&quot; /&gt;
++		&lt;/mountPoint&gt;
++		&lt;engine name=&quot;backward&quot; type=&quot;MountedThruster&quot; mountPoint=&quot;front&quot;&gt;
++			&lt;forces min=&quot;0.&quot; max=&quot;10.&quot; dieOff=&quot;4&quot; rise=&quot;8&quot; /&gt;
++		&lt;/engine&gt;
++		&lt;!-- rear thruster --&gt;
++		&lt;mountPoint name=&quot;rear&quot;&gt;
++			&lt;position x=&quot;0&quot; y=&quot;0&quot; z=&quot;-70&quot; /&gt;
++			&lt;direction x=&quot;0&quot; y=&quot;0&quot; z=&quot;-1&quot; /&gt;
++		&lt;/mountPoint&gt;
++		&lt;engine name=&quot;forward&quot; type=&quot;MountedThruster&quot; mountPoint=&quot;rear&quot;&gt;
++			&lt;forces min=&quot;0.&quot; max=&quot;20.&quot; dieOff=&quot;10&quot; rise=&quot;20&quot; /&gt;
++		&lt;/engine&gt;
++	&lt;/vehicleTemplate&gt;
++&lt;/dotvehicle&gt;
+\ No newline at end of file
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000070.html">[Yake-svn] r999 - trunk/yake/src/yapp/samples/base/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000072.html">[Yake-svn] r1001 - trunk/yake/yapp/vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#71">[ date ]</a>
+              <a href="thread.html#71">[ thread ]</a>
+              <a href="subject.html#71">[ subject ]</a>
+              <a href="author.html#71">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

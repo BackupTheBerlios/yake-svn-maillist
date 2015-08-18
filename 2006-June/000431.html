@@ -1,0 +1,1490 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1363 - in trunk/yake: src/yake/net/detail src/yake/samples/net src/yake/samples/net/packet src/yake/samples/net/roclient src/yake/samples/net/roserver yake/net yake/net/detail yake/samples/net yake/samples/net/packet yake/samples/net/roclient yake/samples/net/roserver
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1363%20-%20in%20trunk/yake%3A%20src/yake/net/detail%20src/yake/samples/net%20src/yake/samples/net/packet%20src/yake/samples/net/roclient%20src/yake/samples/net/roserver%20yake/net%20yake/net/detail%20yake/samples/net%20yake/samples/net/packet%20yake/samples/net/roclient%20yake/samples/net/roserver&In-Reply-To=%3C200606212206.k5LM63Vt014304%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000430.html">
+   <LINK REL="Next"  HREF="000432.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1363 - in trunk/yake: src/yake/net/detail src/yake/samples/net src/yake/samples/net/packet src/yake/samples/net/roclient src/yake/samples/net/roserver yake/net yake/net/detail yake/samples/net yake/samples/net/packet yake/samples/net/roclient yake/samples/net/roserver</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1363%20-%20in%20trunk/yake%3A%20src/yake/net/detail%20src/yake/samples/net%20src/yake/samples/net/packet%20src/yake/samples/net/roclient%20src/yake/samples/net/roserver%20yake/net%20yake/net/detail%20yake/samples/net%20yake/samples/net/packet%20yake/samples/net/roclient%20yake/samples/net/roserver&In-Reply-To=%3C200606212206.k5LM63Vt014304%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1363 - in trunk/yake: src/yake/net/detail src/yake/samples/net src/yake/samples/net/packet src/yake/samples/net/roclient src/yake/samples/net/roserver yake/net yake/net/detail yake/samples/net yake/samples/net/packet yake/samples/net/roclient yake/samples/net/roserver">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Jun 22 00:06:03 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000430.html">[Yake-svn] r1362 - in trunk/yake: src/yake/net/detail yake/net yake/net/detail yake/samples/net/roclient
+</A></li>
+        <LI>Next message: <A HREF="000432.html">[Yake-svn] r1364 - trunk/yake/scripts/msvc8/samples/net
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#431">[ date ]</a>
+              <a href="thread.html#431">[ thread ]</a>
+              <a href="subject.html#431">[ subject ]</a>
+              <a href="author.html#431">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-22 00:06:02 +0200 (Thu, 22 Jun 2006)
+New Revision: 1363
+
+Added:
+   trunk/yake/src/yake/samples/net/packet/
+   trunk/yake/src/yake/samples/net/packet/demo.cpp
+   trunk/yake/src/yake/samples/net/packet/pch.cpp
+   trunk/yake/src/yake/samples/net/roclient/ROClient.cpp
+   trunk/yake/src/yake/samples/net/roserver/ROServer.cpp
+   trunk/yake/yake/samples/net/packet/
+   trunk/yake/yake/samples/net/packet/pch.h
+   trunk/yake/yake/samples/net/roclient/ROClient.h
+   trunk/yake/yake/samples/net/roserver/ROServer.h
+Modified:
+   trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp
+   trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp
+   trunk/yake/src/yake/net/detail/netEventConnection.cpp
+   trunk/yake/src/yake/net/detail/netInternal.cpp
+   trunk/yake/src/yake/samples/net/roclient/demo.cpp
+   trunk/yake/src/yake/samples/net/roserver/demo.cpp
+   trunk/yake/yake/net/detail/netEnetClientPacketConnection.h
+   trunk/yake/yake/net/detail/netEnetServerPacketConnection.h
+   trunk/yake/yake/net/detail/netInternal.h
+   trunk/yake/yake/net/net.h
+Log:
+added sampleNetPacket,
+refactored yake::net
+
+Modified: trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -32,7 +32,7 @@
+ 	}
+ 	CallbackConnection EnetClientPacketConnection::addPacketReceivedCallback(const OnPacketReceivedFn&amp; fn)
+ 	{
+-		boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++		//boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
+ 		packetReceivedFnList_.insert( std::make_pair(++lastPacketReceivedCbHandle_, fn) );
+ 		return CallbackConnection(lastPacketReceivedCbHandle_,boost::bind(&amp;EnetClientPacketConnection::disconnectPacketReceivedCallback,this,_1));
+ 	}
+@@ -56,7 +56,7 @@
+ 		}
+ 
+ 		{
+-			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 			m_host = enet_host_create (			0 /* create a client host */,
+ 												1 /* only allow 1 outgoing connection */,
+ 										57600 / 8 /* 56K modem with 56 Kbps downstream bandwidth */,
+@@ -94,7 +94,10 @@
+ 		{
+ 			//@todo timeout
+ 			while (m_waitingForConnect &amp;&amp; !m_ready)
++			{
+ 				net::native::sleep(10);
++				net::update();
++			}
+ 		}
+ 	}
+ 	void EnetClientPacketConnection::disconnect()
+@@ -111,18 +114,18 @@
+ 		{
+ 			if (m_serverPeer)
+ 			{
+-				boost::mutex::scoped_lock enetLock(getEnetMtx());
++				//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 				enet_peer_disconnect( m_serverPeer, 0 /*@todo data*/ );
+ 			}
+ 			Timer timer;
+ 			timer.start();
+ 			while (timer.getTime() &lt; 1)
+ 			{
+-				this-&gt;update();
+-				::Sleep(10);
++				net::update();
++				net::native::sleep(10);
+ 			}
+ 			{
+-				boost::mutex::scoped_lock enetLock(getEnetMtx());
++				//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 				enet_peer_reset( m_peer );
+ 				enet_host_destroy( m_host );
+ 				m_host = 0;
+@@ -141,7 +144,7 @@
+ 		ENetEvent event;
+ 		int ret = 0;
+ 		{
+-			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 			ret = enet_host_service(m_host, &amp;event, 5);
+ 		}
+ 		if (ret == 0) // no events
+@@ -190,7 +193,7 @@
+ 					this-&gt;fireCallback_PacketReceived(0,event.packet-&gt;data,event.packet-&gt;dataLength,ChannelId(event.channelID));
+ 				}
+ 				{
+-					boost::mutex::scoped_lock enetLock(getEnetMtx());
++					//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 					enet_packet_destroy( event.packet );
+ 				}
+ 				break;
+@@ -226,7 +229,7 @@
+ 		NET_ASSERT( dataPtr );
+ 		NET_ASSERT( m_serverPeer );
+ 		{
+-			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 			ENetPacket* packet = enet_packet_create( 
+ 									dataPtr, dataSize,
+ 									//rPacket.m_data, 
+
+Modified: trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -34,18 +34,18 @@
+ 	}
+ 	CallbackConnection EnetServerPacketConnection::addPacketReceivedCallback( const OnPacketReceivedFn&amp; fn)
+ 	{
+-		boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++		//boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
+ 		packetReceivedFnList_.insert( std::make_pair(++lastPacketReceivedCbHandle_,fn) );
+ 		return CallbackConnection(lastPacketReceivedCbHandle_,boost::bind(&amp;EnetServerPacketConnection::disconnectPacketReceivedCallback,this,_1));
+ 	}
+ 	void EnetServerPacketConnection::setAllowedClientIps(const std::vector&lt;std::string&gt; &amp;ips)
+ 	{
+-		boost::mutex::scoped_lock ipsLock(m_ipListMtx);
++		//boost::mutex::scoped_lock ipsLock(m_ipListMtx);
+ 		m_ipWhiteList = ips;
+ 	}
+ 	bool EnetServerPacketConnection::isIpAllowed( const std::string&amp; ip )
+ 	{
+-		boost::mutex::scoped_lock ipsLock(m_ipListMtx);
++		//boost::mutex::scoped_lock ipsLock(m_ipListMtx);
+ 		if (m_ipWhiteList.empty() &amp;&amp; m_ipBlackList.empty())
+ 			return true;
+ 		if (contains(m_ipBlackList,ip))
+@@ -85,7 +85,7 @@
+ 		}
+ 
+ 		{
+-			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 			m_address.port = addr.port();
+ 			m_host = enet_host_create( &amp;m_address,
+ 										maxClients, // up to 'maxClients' clients
+@@ -100,6 +100,8 @@
+ 		}
+ 
+ 		m_state.set(S_RUNNING);
++		m_timer.start();
++		m_timeOfLastUpdate = m_timer.getTime();
+ 		this-&gt;fireCallback_Started();
+ 		m_id = UpdateThread::instance().add( boost::bind(&amp;EnetServerPacketConnection::update,this) );
+ 	}
+@@ -123,7 +125,7 @@
+ 				if (m_host-&gt;peerCount &gt; 0)
+ 				{
+ 					{
+-						boost::mutex::scoped_lock enetLock(getEnetMtx());
++						//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 						// try to gracefully disconnect clients
+ 						for (size_t i=0; i&lt;m_host-&gt;peerCount; ++i)
+ 							enet_peer_disconnect( &amp;m_host-&gt;peers[i], 0 /*@todo data*/ );
+@@ -132,19 +134,19 @@
+ 					timer.start();
+ 					while (timer.getTime() &lt; 2) // wait 2 seconds for acknowledgement
+ 					{
+-						::Sleep(10);
+-						this-&gt;update();
++						net::update();
++						net::native::sleep(10);
+ 					}
+ 					// forcefully disconnect remaining clients
+ 					if (m_host-&gt;peerCount &gt; 0)
+ 					{
+-						boost::mutex::scoped_lock enetLock(getEnetMtx());
++						//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 						for (size_t i=0; i&lt;m_host-&gt;peerCount; ++i)
+ 							enet_peer_reset( &amp;m_host-&gt;peers[i] );
+ 					}
+ 				}
+ 				{
+-					boost::mutex::scoped_lock enetLock(getEnetMtx());
++					//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 					enet_host_destroy( m_host );
+ 					m_host = 0;
+ 				}
+@@ -153,7 +155,7 @@
+ 		m_ip2string.clear();
+ 		m_ipWhiteList.clear();
+ 		{
+-			boost::mutex::scoped_lock lockClients(m_clientsMtx);
++			//boost::mutex::scoped_lock lockClients(m_clientsMtx);
+ 			for (PeerToClientMap::iterator it = m_clients.begin(); it != m_clients.end(); ++it)
+ 				delete it-&gt;second;
+ 			m_clients.clear();
+@@ -161,10 +163,12 @@
+ 		}
+ 		//m_events.clear();
+ 		m_state.set(S_DEAD);
++		m_timer.stop();
++		m_timer.reset();
+ 	}
+ 	void EnetServerPacketConnection::disconnect( const PeerId client )
+ 	{
+-		boost::mutex::scoped_lock lockClients(m_clientsMtx);
++		//boost::mutex::scoped_lock lockClients(m_clientsMtx);
+ 		IdToClientMap::iterator itFindClient = m_id2client.find( client );
+ 		NET_ASSERT( itFindClient != m_id2client.end() );
+ 		if (itFindClient == m_id2client.end())
+@@ -173,7 +177,7 @@
+ 		itFindClient-&gt;second-&gt;state = CS_DISCONNECTING;
+ 		// disconnect enet client
+ 		{
+-			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 			enet_peer_disconnect( itFindClient-&gt;second-&gt;peer, 0 /*@todo data*/ );
+ 		}
+ 	}
+@@ -182,7 +186,7 @@
+ 		if (peer == 0)
+ 			return CS_DEAD;
+ 
+-		boost::mutex::scoped_lock lockClients(m_clientsMtx);
++		//boost::mutex::scoped_lock lockClients(m_clientsMtx);
+ 		PeerToClientMap::const_iterator it = m_clients.find( peer );
+ 		if (it == m_clients.end())
+ 			return CS_DEAD;
+@@ -204,11 +208,34 @@
+ 		if (state != S_RUNNING &amp;&amp; state != S_STOPPING)
+ 			return;
+ 
++		// timeouts
++		{
++			const double currT = m_timer.getTime();
++			const double deltaT = max(currT - m_timeOfLastUpdate, 0.0001);
++			NET_ASSERT( deltaT &gt; 0. )(deltaT);
++			PeerToClientMap::iterator itEnd = m_clients.end();
++			for (PeerToClientMap::iterator it = m_clients.begin(); it != itEnd; ++it)
++			{
++				Client* c = it-&gt;second;
++				NET_ASSERT(c);
++				if (c-&gt;state == CS_CONNECTING) // connection attempts
++				{
++					c-&gt;timeLeft_ -= deltaT;
++					if (c-&gt;timeLeft_ &lt; 0.)
++					{
++						NET_LOG(&quot;net_packet_server: client connection attempt timed out.&quot;);
++						this-&gt;disconnect( c-&gt;id );
++					}
++				}
++			}
++			m_timeOfLastUpdate = currT;
++		}
++
+ 		// packet handling
+ 		ENetEvent event;
+ 		int ret = 0;
+ 		{
+-			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 			ret = enet_host_service(m_host, &amp;event, 5);
+ 		}
+ 		if (ret == 0) // no events
+@@ -230,16 +257,17 @@
+ 					if (!isIpAllowed(host))
+ 					{
+ 						NET_LOG(&quot;net_packet_server: new client '&quot; &lt;&lt; host &lt;&lt; &quot;' is NOT ALLOWED to connect. disconnecting.&quot;);
+-						boost::mutex::scoped_lock enetLock(getEnetMtx());
++						//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 						//enet_disconnect_peer( event.peer ); // gracefully
+ 						enet_peer_reset( event.peer ); // hard!
+ 					}
+ 
+ 					PeerId peerId = PEERID_BROADCAST;
+ 					{
+-						boost::mutex::scoped_lock lockClients(m_clientsMtx);
++						//boost::mutex::scoped_lock lockClients(m_clientsMtx);
+ 
+ 						Client* c = new Client();
++						c-&gt;timeLeft_ = 5.; // 5 seconds to complete connection.
+ 						c-&gt;state = CS_CONNECTING;
+ 						c-&gt;peer = event.peer;
+ 						c-&gt;id = m_nextPeerId++;
+@@ -265,7 +293,7 @@
+ 					{
+ 						const std::string host = ipToStringCached( event.peer-&gt;address.host );
+ 						NET_LOG(&quot;net_packet_server: client finished connecting: '&quot; &lt;&lt; host &lt;&lt; &quot;:&quot; &lt;&lt; event.peer-&gt;address.port &lt;&lt; &quot;'.&quot;);
+-						boost::mutex::scoped_lock lockClients(m_clientsMtx);
++						//boost::mutex::scoped_lock lockClients(m_clientsMtx);
+ 						PeerToClientMap::iterator it = m_clients.find(event.peer);
+ 						NET_ASSERT( it != m_clients.end() );
+ 						NET_ASSERT( it-&gt;second );
+@@ -283,7 +311,7 @@
+ 						// get &quot;id&quot;
+ 						PeerId peerId = PEERID_BROADCAST;
+ 						{
+-							boost::mutex::scoped_lock lockClients(m_clientsMtx);
++							//boost::mutex::scoped_lock lockClients(m_clientsMtx);
+ 							peerId = (reinterpret_cast&lt;Client*&gt;(event.peer-&gt;data))-&gt;id;
+ 						}
+ 
+@@ -291,7 +319,7 @@
+ 					}
+ 					{
+ 						// destroy enet packet
+-						boost::mutex::scoped_lock enetLock(getEnetMtx());
++						//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 						enet_packet_destroy( event.packet );
+ 					}
+ 				}
+@@ -303,7 +331,7 @@
+ 					PeerId peerId = PEERID_BROADCAST;
+ 					if (event.peer)
+ 					{
+-						boost::mutex::scoped_lock lockClients(m_clientsMtx);
++						//boost::mutex::scoped_lock lockClients(m_clientsMtx);
+ 						Client* c = reinterpret_cast&lt;Client*&gt;(event.peer-&gt;data);
+ 						if (c)
+ 							peerId = c-&gt;id;
+@@ -351,12 +379,12 @@
+ 				return;
+ 		}
+ 		{
+-			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 			ENetPacket* packet = enet_packet_create(
+ 														dataPtr, dataSize,
+ 														(rel == R_RELIABLE) ? ENET_PACKET_FLAG_RELIABLE : 0 );
+ 			// send
+-			boost::mutex::scoped_lock clientsLock(m_clientsMtx);
++			//boost::mutex::scoped_lock clientsLock(m_clientsMtx);
+ 			IdToClientMap::const_iterator it = m_id2client.find( clientId );
+ 			NET_ASSERT( it != m_id2client.end() );
+ 			enet_peer_send( it-&gt;second-&gt;peer, channel, packet );
+@@ -372,7 +400,7 @@
+ 				return;
+ 		}
+ 		{
+-			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			//boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 			ENetPacket* packet = enet_packet_create(
+ 														dataPtr, dataSize,
+ 														(rel == R_RELIABLE) ? ENET_PACKET_FLAG_RELIABLE : 0 );
+
+Modified: trunk/yake/src/yake/net/detail/netEventConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -105,8 +105,6 @@
+ 	void EventConnection::stop()
+ 	{
+ 		boost::mutex::scoped_lock lck(startedMtx_);
+-		NET_ASSERT( started_ );
+-		NET_ASSERT( conn_ );
+ 		if (conn_)
+ 		{
+ 			//@todo fixme unsubscribe from packet connection 'conn_'
+
+Modified: trunk/yake/src/yake/net/detail/netInternal.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netInternal.cpp	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/src/yake/net/detail/netInternal.cpp	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -3,6 +3,10 @@
+ #include &lt;yake/net/detail/netInternal.h&gt;
+ 
+ namespace net {
++	void update()
++	{
++		impl::UpdateThread::instance().__update__();
++	}
+ namespace impl {
+ 
+ 	//--------------------------------------------------------------------------
+@@ -21,7 +25,10 @@
+ 		{
+ 			instance_-&gt;requestQuit();
+ 			while (!instance_-&gt;dead())
++			{
+ 				native::sleep(10);
++				net::update();
++			}
+ 			delete instance_;
+ 			instance_ = 0;
+ 		}
+@@ -33,7 +40,7 @@
+ 	}
+ 	UpdateThread::UpdateThread() : nextId_(1), thread_(0), quitRequested_(false), dead_(false)
+ 	{
+-		thread_ = new boost::thread( boost::bind(&amp;UpdateThread::callFns,this) );
++		//thread_ = new boost::thread( boost::bind(&amp;UpdateThread::callFns,this) );
+ 	}
+ 	UpdateThread::~UpdateThread()
+ 	{
+@@ -47,24 +54,22 @@
+ 	}
+ 	void UpdateThread::requestQuit()
+ 	{
+-		boost::mutex::scoped_lock lock(mtx_);
+ 		quitRequested_ = true;
+ 	}
+ 	bool UpdateThread::dead() const
+ 	{
+-		boost::mutex::scoped_lock lock(deadMtx_);
+ 		return dead_;
+ 	}
+ 	void UpdateThread::callFns()
+ 	{
+-		while (true)
++		//while (true)
+ 		{
+ 			{
+-				boost::mutex::scoped_lock lock(mtx_);
++				//boost::mutex::scoped_lock lock(mtx_);
+ 
+ 				if (quitRequested_)
+ 				{
+-					boost::mutex::scoped_lock lock(deadMtx_);
++					//boost::mutex::scoped_lock lock(deadMtx_);
+ 					fns_.clear();
+ 					dead_ = true;
+ 					return;
+@@ -80,14 +85,14 @@
+ 	}
+ 	uint32 UpdateThread::add( const UpdateFn&amp; fn )
+ 	{
+-		boost::mutex::scoped_lock lock(mtx_);
++		//boost::mutex::scoped_lock lock(mtx_);
+ 		std::cout &lt;&lt; &quot;UpdateThread::add()\n&quot;;
+ 		fns_[ nextId_++ ] = fn;
+ 		return nextId_-1;
+ 	}
+ 	void UpdateThread::remove( const uint32 id )
+ 	{
+-		boost::mutex::scoped_lock lock(mtx_);
++		//boost::mutex::scoped_lock lock(mtx_);
+ 		std::cout &lt;&lt; &quot;UpdateThread::remove()\n&quot;;
+ 		UpdateFnMap::iterator it = fns_.find( id );
+ 		if (it != fns_.end())
+@@ -106,11 +111,13 @@
+ 	//	}
+ 	//}
+ 
++	/*
+ 	boost::mutex&amp; getEnetMtx()
+ 	{
+ 		static boost::mutex mtx;
+ 		return mtx;
+ 	}
++	*/
+ 
+ } // namespace impl
+ } // namespace net
+
+Added: trunk/yake/src/yake/samples/net/packet/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/packet/demo.cpp	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/src/yake/samples/net/packet/demo.cpp	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -0,0 +1,152 @@
++#include &lt;yake/samples/net/packet/pch.h&gt;
++#include &lt;yake/net/net.h&gt;
++#include &lt;yake/base/yake.h&gt; // for YAKE_ASSERT etc
++#include &lt;yake/samples/net/common/common.h&gt;
++
++/** A simple server class for managing packet connections.
++*/
++struct server
++{
++private:
++	server&amp; operator=(const server&amp;);
++	server(const server&amp;);
++public:
++	server(const net::Address&amp;, const net::uint32 maxClients);
++	~server();
++
++	bool start();
++	void stop();
++
++	void broadcastHello();
++	size_t numConnectedClients() const
++	{
++		return conn_ ? conn_-&gt;getNumConnectedClients() : 0;
++	}
++private:
++	void onStarted();
++private:
++	safe_var&lt;bool&gt;					started_;
++	net::Address					addr_;
++	net::uint32						maxClients_;
++	net::IServerPacketConnection*	conn_;
++};
++server::server(const net::Address&amp; addr, const net::uint32 maxClients) : 
++	addr_(addr), 
++	maxClients_(maxClients),
++	conn_(0), 
++	started_(false)
++{
++	YAKE_ASSERT( maxClients &gt; 0 );
++}
++server::~server()
++{
++	stop();
++}
++void server::onStarted()
++{
++	started_ = true;
++}
++bool server::start()
++{
++	YAKE_ASSERT( !started_.getCopy() );
++	YAKE_ASSERT( !conn_ );
++
++	YAKE_LOG(&quot;creating server...\n&quot;);
++	conn_ = net::createServerPacketConnection();
++	YAKE_ASSERT( conn_ );
++
++	YAKE_LOG(&quot;starting server...\n&quot;);
++	started_ = false;
++	conn_-&gt;addStartedCallback(boost::bind(&amp;server::onStarted,this));
++	try {
++		conn_-&gt;start(addr_, maxClients_);
++	} 
++	catch (net::Exception&amp; e)
++	{
++		YAKE_LOG_ERROR( yake::String(&quot;NET Exception\n&quot;) + e.what() );
++		YAKE_SAFE_DELETE( conn_ );
++		return false;
++	}
++	while (!started_.getCopy())
++	{
++		net::native::sleep(10);
++		net::update();
++	}
++	COUTLN(&quot;server is running.&quot;);
++
++	return true;
++}
++void server::stop()
++{
++	if (!conn_)
++		return;
++	conn_-&gt;stop();
++	YAKE_SAFE_DELETE( conn_ );
++}
++void server::broadcastHello()
++{
++	YAKE_ASSERT( conn_ );
++	YAKE_ASSERT( started_.getCopy() );
++	std::string hello(&quot;hello!&quot;);
++	conn_-&gt;send( hello.c_str(), hello.size(), net::SendOptions().reliability(net::R_RELIABLE) );
++	COUTLN(&quot;server:broadcastHello() &quot; &lt;&lt; conn_-&gt;getNumConnectedClients() &lt;&lt; &quot; client(s)&quot;);
++}
++
++void client_onPacketReceived(const net::PeerId peerId, const void* data, const size_t len, const net::ChannelId channel)
++{
++	COUTLN(&quot;  client &quot; &lt;&lt; peerId &lt;&lt; &quot; packet(size=&quot; &lt;&lt; len &lt;&lt; &quot;) on channel &quot; &lt;&lt; channel &lt;&lt; &quot;\n&quot;);
++}
++
++int main(int argc, char* argv[])
++{
++	net::initialize();
++
++	// server
++	server theServer(net::Address(4000), 16);
++	if (!theServer.start())
++		return 0;
++
++	// client(s)
++	YAKE_LOG(&quot;creating clients...\n&quot;);
++	typedef std::deque&lt;yake::SharedPtr&lt;net::IClientPacketConnection&gt; &gt; ClientConnections;
++	ClientConnections clients;
++	for (size_t i=0; i&lt;3; ++i)
++	{
++		net::IClientPacketConnection* client = net::createClientPacketConnection();
++		YAKE_ASSERT( client );
++		client-&gt;connect(net::Address(4000), false /*true=block until connection established or timeout.*/);
++		client-&gt;addPacketReceivedCallback( client_onPacketReceived );
++		clients.push_back( yake::SharedPtr&lt;net::IClientPacketConnection&gt;(client) );
++	}
++
++	//net::native::sleep(500); // unfortunately, this is still necessary...
++
++	// main loop
++	YAKE_LOG(&quot;waiting for key press...&quot;);
++	bool sentHello = false;
++	while (!_kbhit())
++	{
++		net::native::sleep(10);
++		net::update();
++		if (!sentHello &amp;&amp; theServer.numConnectedClients() &gt; 0)
++		{
++			theServer.broadcastHello();
++			sentHello = true;
++		}
++	}
++	if (_kbhit())
++		_getch();
++
++	// cleanup
++	YAKE_LOG(&quot;stopping clients...\n&quot;);
++	yake::ConstVectorIterator&lt;ClientConnections&gt; itClient(clients);
++	while (itClient.hasMoreElements())
++		itClient.getNext()-&gt;disconnect();
++	clients.clear();
++
++	theServer.stop();
++
++	net::shutdown();
++	return 0;
++}
++
+
+Added: trunk/yake/src/yake/samples/net/packet/pch.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/packet/pch.cpp	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/src/yake/samples/net/packet/pch.cpp	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -0,0 +1 @@
++#include &lt;yake/samples/net/packet/pch.h&gt;
+
+Added: trunk/yake/src/yake/samples/net/roclient/ROClient.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/roclient/ROClient.cpp	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/src/yake/samples/net/roclient/ROClient.cpp	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -0,0 +1,180 @@
++#include &lt;yake/samples/net/roclient/pch.h&gt;
++#include &lt;yake/net/net.h&gt;
++#include &lt;yake/samples/net/common/common.h&gt;
++#include &lt;yake/samples/net/common/commonEvents.h&gt;
++#include &lt;yake/samples/net/roclient/ROClient.h&gt;
++
++namespace ro {
++
++client::client() : timedOut_(false), conn_(false), running_(false), evtConn_(0), stage_(CS_JOINING)
++{
++}
++client::~client()
++{
++	stop();
++}
++bool client::running() const
++{
++	boost::mutex::scoped_lock lck(runningMtx_);
++	return running_;
++}
++bool client::start(const net::Address&amp; serverAddr)
++{
++	try {
++		// create connection &amp; register callbacks
++		conn_ = net::createClientPacketConnection();
++		assert( conn_ );
++
++		conn_-&gt;addTimeOutCallback( boost::bind(&amp;client::onTimeOut,this) );
++		conn_-&gt;addStartedCallback( boost::bind(&amp;client::onClientStarted,this) );
++
++		// attempt to connect to server
++		conn_-&gt;connect( serverAddr );
++
++		return true;
++	}
++	catch (const net::Exception&amp; e)
++	{
++		COUTLN(&quot;Caught net exception: &quot; &lt;&lt; e.what());
++		if (conn_)
++		{
++			delete conn_;
++			conn_ = 0;
++		}
++	}
++	return false;
++}
++void client::waitForStart()
++{
++	while (!timedOut_.getCopy() &amp;&amp; !running())
++	{
++		net::native::sleep(10);
++		net::update();
++	}
++	if (timedOut_.getCopy())
++		return;
++	// set up event connection
++	assert( conn_ );
++	assert( !evtConn_ );
++	evtConn_ = net::createEventConnection();
++	assert( evtConn_ );
++
++	evtConn_-&gt;setPolling( true );
++
++	evtConn_-&gt;registerEvent( c2sEvtJoinReq::ID, net::NetEvent::DIR_ANY,
++		c2sEvtJoinReq::create, c2sEvtJoinReq::destroy );
++	evtConn_-&gt;registerEvent( s2cEvtJoinReqReply::ID, net::NetEvent::DIR_ANY,
++		s2cEvtJoinReqReply::create, s2cEvtJoinReqReply::destroy );
++	evtConn_-&gt;registerEvent( s2cEvtClassTable::ID, net::NetEvent::DIR_ANY,
++			s2cEvtClassTable::create, s2cEvtClassTable::destroy );
++
++	evtConn_-&gt;setProcessEventCallback( boost::bind(&amp;client::init_onProcessEvent,this,_1,_2,_3) );
++	evtConn_-&gt;setPacketConnection( conn_, net::NetEvent::DIR_ANY );
++
++	evtConn_-&gt;start();
++
++	// initiate &quot;join&quot; sequence
++	this-&gt;stage_ = CS_JOINING;
++
++	c2sEvtJoinReq evt;
++	evtConn_-&gt;sendEvent( evt, net::SendOptions().channel(CHANNELID_CONTROL) );
++
++#if NET_STRESS_TEST_LEVEL &gt;= 1
++	// send a second time to test our server logic :)
++	for (size_t i=0; i&lt;3; ++i)
++		evtConn_-&gt;sendEvent( evt, net::SendOptions().channel(CHANNELID_CONTROL) );
++#endif
++
++	evt.setId( 23 ); // invalid id!
++	evtConn_-&gt;sendEvent( evt, net::SendOptions().channel(CHANNELID_CONTROL) );
++
++	while (stage_ == CS_JOINING)
++	{
++		evtConn_-&gt;poll();
++		net::update();
++		net::native::sleep(1);
++	}
++}
++void client::step()
++{
++	if (!running())
++		return;
++
++	evtConn_-&gt;poll();
++
++	if (stage_ == CS_RUNNING)
++	{
++	}
++}
++void client::stop()
++{
++	{
++		boost::mutex::scoped_lock lck(runningMtx_);
++		running_ = false;
++	}
++	// clean up
++	if (evtConn_)
++	{
++		evtConn_-&gt;stop();
++		delete evtConn_;
++		evtConn_ = 0;
++	}
++	if (conn_)
++	{
++		conn_-&gt;disconnect();
++		delete conn_;
++		conn_ = 0;
++	}
++}
++void client::onClientStarted()
++{
++	COUTLN(&quot;client started.&quot;);
++
++	{
++		boost::mutex::scoped_lock lck(runningMtx_);
++		running_ = true;
++	}
++}
++void client::onTimeOut()
++{
++	COUTLN(&quot;client could not connect to server. destroying connection object.&quot;);
++
++	// Do NOT destroy the connection object here! It may still be inside the callback loop!
++	// We can call disconnect(), though.
++	timedOut_ = true;
++	//conn-&gt;disconnect();
++}
++void client::running_onProcessEvent(const net::PeerId, const net::NetEvent&amp; evt, const net::ChannelId)
++{
++	COUTLN(&quot;client (running) received event (&quot; &lt;&lt; (int)evt.id() &lt;&lt; &quot;).&quot;);
++	if (evt.id() == s2cEvtClassTable::ID)
++	{
++		COUTLN(&quot;starting sim &quot; &lt;&lt; evt.id());
++	}
++}
++void client::init_onProcessEvent(const net::PeerId, const net::NetEvent&amp; evt, const net::ChannelId)
++{
++	COUTLN(&quot;client (init) received event (&quot; &lt;&lt; (int)evt.id() &lt;&lt; &quot;).&quot;);
++	if (stage_ == CS_JOINING)
++	{
++		if (evt.id() == s2cEvtJoinReqReply::ID)
++		{
++			const s2cEvtJoinReqReply&amp; reply = static_cast&lt;const s2cEvtJoinReqReply&amp;&gt;( evt );
++			if (reply.accepted)
++			{
++				COUTLN(&quot;CONNECTED TO SERVER.&quot;);
++				stage_ = CS_RUNNING;
++			}
++			else
++			{
++				COUTLN(&quot;SERVER DENIED ACCESS!&quot;);
++				stage_ = CS_DEAD;
++				evtConn_-&gt;setProcessEventCallback( boost::bind(&amp;client::init_onProcessEvent,this,_1,_2,_3) );
++			}
++		}
++	}
++}
++
++
++} // namespace ro
++
+
+Modified: trunk/yake/src/yake/samples/net/roclient/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/roclient/demo.cpp	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/src/yake/samples/net/roclient/demo.cpp	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -19,6 +19,7 @@
+ 		while (!_kbhit())
+ 		{
+ 			net::native::sleep(10);
++			net::update();
+ 			clientApp.step();
+ 		}
+ 		if (_kbhit())
+
+Added: trunk/yake/src/yake/samples/net/roserver/ROServer.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/roserver/ROServer.cpp	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/src/yake/samples/net/roserver/ROServer.cpp	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -0,0 +1,212 @@
++#include &lt;yake/samples/net/roserver/pch.h&gt;
++#include &lt;yake/net/net.h&gt;
++#include &lt;yake/samples/net/common/common.h&gt;
++#include &lt;yake/samples/net/common/commonEvents.h&gt;
++#include &lt;yake/samples/net/roserver/ROServer.h&gt;
++
++namespace ro {
++	//-----------------------------------------------------------------------------
++	namespace server_impl {
++		class client
++		{
++		public:
++			enum stage_t
++			{
++				CS_WAIT_FOR_REQ = 1, // waiting for &quot;req join&quot;
++				CS_JOINED, // server acknowledged &quot;join&quot; request &amp; sent ...
++				CS_RUNNING,
++				CS_DEAD
++			};
++			enum access_mode_t {
++				AM_ADMIN = 0,
++				AM_MODERATOR,
++				AM_REGULAR,
++				AM_SPECTATOR
++			};
++			net::PeerId						id;
++			stage_t							stage;
++			access_mode_t					accessMode;
++			net::INetEventConnection*	evtConn;
++
++			client() : id(net::NetEvent::EVTID_NONE), stage(CS_DEAD), accessMode(AM_REGULAR), evtConn(0)
++			{
++				processEventFn_ = boost::bind(&amp;client::init_onProcessEvent,this,_1,_2);
++			}
++			void onProcessEvent(const net::NetEvent&amp; evt, const net::ChannelId channel)
++			{
++				YAKE_ASSERT( !processEventFn_.empty() );
++				if (!processEventFn_.empty())
++					processEventFn_(evt,channel);
++			}
++		private:
++			void init_onProcessEvent(const net::NetEvent&amp; evt, const net::ChannelId);
++			void running_onProcessEvent(const net::NetEvent&amp; evt, const net::ChannelId);
++		private:
++			typedef boost::function&lt;void(const net::NetEvent&amp;,const net::ChannelId)&gt; ProcessNetEventFn;
++			ProcessNetEventFn	processEventFn_;
++		};
++	} // namespace server_impl
++
++	//-----------------------------------------------------------------------------
++
++	server::server() : conn_(0), running_(false), evtConn_(0)
++	{
++	}
++	server::~server()
++	{
++		stop();
++	}
++	bool server::start()
++	{
++		if (conn_)
++			return true;
++
++		const net::uint16 port = 40000;
++		const size_t maxClients = 32;
++
++		conn_ = net::createServerPacketConnection();
++		YAKE_ASSERT( conn_ );
++
++		conn_-&gt;addStartedCallback( boost::bind(&amp;server::onServerStarted,this) );
++		conn_-&gt;addPacketReceivedCallback( boost::bind(&amp;server::onReceivePacket,this,_1,_2,_3,_4) );
++
++		COUTLN(&quot;starting server at port &quot; &lt;&lt; port &lt;&lt; &quot; with max. &quot; &lt;&lt; maxClients &lt;&lt; &quot; clients...&quot;);
++		conn_-&gt;start( net::Address(port), maxClients );
++
++		while (!running())
++		{
++			net::update();
++			net::native::sleep(10);
++		}
++
++		return true;
++	}
++	void server::stop()
++	{
++		{
++			boost::mutex::scoped_lock lck(runningMtx_);
++			running_ = false;
++		}
++		if (conn_)
++		{
++			conn_-&gt;stop();
++			delete conn_;
++			conn_ = 0;
++		}
++		if (evtConn_)
++		{
++			evtConn_-&gt;stop();
++			delete evtConn_;
++			evtConn_ = 0;
++		}
++	}
++	void server::step()
++	{
++		if (!running())
++			return;
++		if (evtConn_)
++			evtConn_-&gt;poll();
++	}
++	bool server::running() const
++	{
++		boost::mutex::scoped_lock lck(runningMtx_);
++		return running_;
++	}
++	void server::onServerStarted()
++	{
++		COUTLN(&quot;server started.&quot;);
++		{
++			boost::mutex::scoped_lock lck(runningMtx_);
++			running_ = true;
++		}
++		YAKE_ASSERT( !evtConn_ );
++		evtConn_ = net::createEventConnection();
++		YAKE_ASSERT( evtConn_ );
++
++		evtConn_-&gt;setPolling(true);
++
++		evtConn_-&gt;registerEvent( c2sEvtJoinReq::ID, net::NetEvent::DIR_ANY, c2sEvtJoinReq::create, c2sEvtJoinReq::destroy );
++		evtConn_-&gt;registerEvent( s2cEvtJoinReqReply::ID, net::NetEvent::DIR_ANY, s2cEvtJoinReqReply::create, s2cEvtJoinReqReply::destroy );
++		evtConn_-&gt;registerEvent( s2cEvtClassTable::ID, net::NetEvent::DIR_ANY, s2cEvtClassTable::create, s2cEvtClassTable::destroy );
++		evtConn_-&gt;registerEvent( c2sEvtSimOk::ID, net::NetEvent::DIR_ANY, c2sEvtSimOk::create, c2sEvtSimOk::destroy );
++
++		evtConn_-&gt;setProcessEventCallback( boost::bind(&amp;server::onProcessEvent,this,_1,_2,_3) );
++		evtConn_-&gt;setPacketConnection( conn_, net::NetEvent::DIR_ANY );
++
++		evtConn_-&gt;start();
++	}
++	void server::onReceivePacket(const net::PeerId peerId, const void* data, const size_t len, const net::ChannelId channel)
++	{
++		COUTLN(&quot;server received packet.&quot;);
++		//echoing...
++		//conn_-&gt;send( peerId, data, len, net::SendOptions().channel(channel) );
++	}
++	void server::onProcessEvent(const net::PeerId peerId, const net::NetEvent&amp; evt, const net::ChannelId channel)
++	{
++		try {
++			COUTLN(&quot;server received event (&quot; &lt;&lt; (int)evt.id() &lt;&lt; &quot;).&quot;);
++
++			// get client object
++			client* c = 0;
++			ClientPtrMap::iterator it = clients_.find( peerId );
++			if (it == clients_.end())
++			{
++				c = new client();
++				c-&gt;id = peerId;
++				c-&gt;stage = client::CS_WAIT_FOR_REQ;
++				c-&gt;evtConn = evtConn_;
++				clients_.insert(std::make_pair(peerId,c));
++			}
++			else
++				c = it-&gt;second;
++
++			// handle event
++			c-&gt;onProcessEvent( evt, channel );
++		}
++		catch (...)
++		{
++		}
++	}
++	//-----------------------------------------------------------------------------
++	namespace server_impl {
++
++		void client::init_onProcessEvent(const net::NetEvent&amp; evt, const net::ChannelId channel)
++		{
++			YAKE_ASSERT( stage == CS_WAIT_FOR_REQ );
++			if (stage != CS_WAIT_FOR_REQ)
++				return;
++			if (evt.id() == c2sEvtJoinReq::ID)
++			{
++				const c2sEvtJoinReq&amp; evtJoinReq = static_cast&lt;const c2sEvtJoinReq&amp;&gt;(evt);
++				COUTLN(&quot;   evt: Join Request&quot;);
++
++				// send reply: OK
++				COUTLN(&quot;   =&gt; accepted&quot;);
++				s2cEvtJoinReqReply joinReply;
++				joinReply.accepted = true;
++				evtConn-&gt;sendEvent( this-&gt;id, joinReply, net::SendOptions().channel(CHANNELID_CONTROL) );
++#if NET_STRESS_TEST_LEVEL &gt;= 1
++				for (size_t i=0; i&lt;3; ++i)
++					evtConn-&gt;sendEvent( this-&gt;id, joinReply, net::SendOptions().channel(CHANNELID_CONTROL) );
++#endif
++				this-&gt;stage = CS_JOINED;
++
++				// use different event callback for the CS_RUNNING stage:
++				COUTLN(&quot;   =&gt; RUNNING&quot;);
++				processEventFn_ = boost::bind(&amp;client::running_onProcessEvent,this,_1,_2);
++				this-&gt;stage = CS_RUNNING;
++			}
++		}
++		void client::running_onProcessEvent(const net::NetEvent&amp; evt, const net::ChannelId channel)
++		{
++			COUTLN(&quot;server::client::running_onProcessEvent()&quot;);
++			YAKE_ASSERT( stage == CS_RUNNING );
++			if (stage != CS_RUNNING)
++				return;
++			//@todo put events in a queue - it is then processed in the main simulation thread!
++			//// send class table &amp; start sim
++			//s2cEvtClassTable evtClassTbl;
++			//evtConn-&gt;sendEvent( this-&gt;id, evtClassTbl, net::SendOptions().channel(CHANNELID_SIMCTRL) );
++		}
++	} // namespace server_impl
++} // namespace ro
+
+Modified: trunk/yake/src/yake/samples/net/roserver/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/net/roserver/demo.cpp	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/src/yake/samples/net/roserver/demo.cpp	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -20,6 +20,7 @@
+ 		COUTLN(&quot;waiting for key press...&quot;);
+ 		while (!_kbhit())
+ 		{
++			net::update();
+ 			serverApp.step();
+ 			net::native::sleep(10);
+ 		}
+
+Modified: trunk/yake/yake/net/detail/netEnetClientPacketConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEnetClientPacketConnection.h	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/yake/net/detail/netEnetClientPacketConnection.h	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -23,7 +23,7 @@
+ 
+ 		void disconnectPacketReceivedCallback(const CallbackHandle h)
+ 		{
+-			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++			//boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
+ 			OnPacketReceivedFnList::iterator it = packetReceivedFnList_.find(h);
+ 			if (it == packetReceivedFnList_.end())
+ 				return;
+@@ -42,7 +42,7 @@
+ 		}
+ 		void fireCallback_PacketReceived(const PeerId peerId, const void* data, const size_t dataLen, const ChannelId channel)
+ 		{
+-			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++			//boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
+ 			for (OnPacketReceivedFnList::const_iterator it = packetReceivedFnList_.begin(); it != packetReceivedFnList_.end(); ++it)
+ 				(it-&gt;second)(peerId,data,dataLen,channel);
+ 		}
+@@ -57,7 +57,7 @@
+ 		typedef std::deque&lt;OnTimeOutFn&gt; OnTimeOutFnList;
+ 		OnStartedFnList					startedFnList_;
+ 		OnPacketReceivedFnList			packetReceivedFnList_;
+-		boost::mutex						packetReceivedFnListMtx_;
++		//boost::mutex						packetReceivedFnListMtx_;
+ 		OnTimeOutFnList					timeOutFnList_;
+ 		CallbackHandle						lastPacketReceivedCbHandle_;
+ 
+
+Modified: trunk/yake/yake/net/detail/netEnetServerPacketConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEnetServerPacketConnection.h	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/yake/net/detail/netEnetServerPacketConnection.h	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -18,7 +18,6 @@
+ 
+ 		virtual size_t getNumConnectedClients() const
+ 		{
+-			boost::mutex::scoped_lock lockClients(m_clientsMtx);
+ 			PeerToClientMap::const_iterator itEnd = m_clients.end();
+ 			size_t count = 0;
+ 			for (PeerToClientMap::const_iterator it = m_clients.begin(); it != itEnd; ++it)
+@@ -41,11 +40,20 @@
+ 
+ 		void disconnectPacketReceivedCallback(const CallbackHandle h)
+ 		{
+-			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
+ 			OnPacketReceivedFnList::iterator it = packetReceivedFnList_.find( h );
+ 			if (it != packetReceivedFnList_.end())
+ 				packetReceivedFnList_.erase( it );
+ 		}
++
++		struct statistics_t
++		{
++			size_t		numConnectionAttempts_;
++			size_t		numSuccessfulConnectionAttempts_;
++			size_t		numRefusedConnectionAttempts_;
++			size_t		numConnectionAttemptTimeouts_;
++			size_t		numConnectionTimeouts_;
++			size_t		numMaxLiveClients_;
++		};
+ 	private:
+ 		void sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
+ 		void sendBroadcast(const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
+@@ -71,7 +79,6 @@
+ 		}
+ 		void fireCallback_PacketReceived(const PeerId peerId, const void* data, const size_t dataLen, const ChannelId channel)
+ 		{
+-			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
+ 			for (OnPacketReceivedFnList::const_iterator it = packetReceivedFnList_.begin(); it != packetReceivedFnList_.end(); ++it)
+ 				(it-&gt;second)(peerId,data,dataLen,channel);
+ 		}
+@@ -84,8 +91,7 @@
+ 		OnClientConnectedFnList			clientConnectedFnList_;
+ 		OnClientDisconnectedFnList		clientDisconnectedFnList_;
+ 		OnPacketReceivedFnList			packetReceivedFnList_;
+-		CallbackHandle						lastPacketReceivedCbHandle_;
+-		boost::mutex						packetReceivedFnListMtx_;
++		CallbackHandle					lastPacketReceivedCbHandle_;
+ 
+ 	private:
+ 		enum State {
+@@ -97,17 +103,14 @@
+ 		struct state_t {
+ 			State get() const
+ 			{
+-				boost::mutex::scoped_lock lock(mtx_);
+ 				return state_;
+ 			}
+ 			void set(const State state)
+ 			{
+-				boost::mutex::scoped_lock lock(mtx_);
+ 				state_ = state;
+ 			}
+ 		private:
+ 			State					state_;
+-			mutable boost::mutex mtx_;
+ 		} m_state;
+ 
+ 		ENetAddress				m_address;
+@@ -118,7 +121,6 @@
+ 		typedef std::vector&lt;std::string&gt; HostList;
+ 		HostList				m_ipWhiteList;
+ 		HostList				m_ipBlackList;
+-		mutable boost::mutex	m_ipListMtx;
+ 
+ 		typedef std::map&lt;uint32,std::string&gt; IpToString;
+ 		IpToString				m_ip2string;
+@@ -132,6 +134,7 @@
+ 		};
+ 		struct Client
+ 		{
++			double		timeLeft_;
+ 			ENetPeer*	peer;
+ 			ClientState	state;
+ 			PeerId		id;
+@@ -150,7 +153,8 @@
+ 		typedef std::map&lt;PeerId,Client*&gt; IdToClientMap;
+ 		IdToClientMap			m_id2client;
+ 		PeerId					m_nextPeerId;
+-		mutable boost::mutex m_clientsMtx;
++		net::Timer				m_timer;
++		double					m_timeOfLastUpdate;
+ 	private:
+ 		ClientState getClientState(ENetPeer* peer) const; // access only via update()
+ 	};
+
+Modified: trunk/yake/yake/net/detail/netInternal.h
+===================================================================
+--- trunk/yake/yake/net/detail/netInternal.h	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/yake/net/detail/netInternal.h	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -35,8 +35,6 @@
+ namespace net {
+ namespace impl {
+ 
+-	boost::mutex&amp; getEnetMtx();
+-
+ 	typedef boost::function&lt;void(void)&gt; UpdateFn;
+ 	class UpdateThread
+ 	{
+@@ -64,11 +62,8 @@
+ 		UpdateFnMap		fns_;
+ 		uint32			nextId_;
+ 		boost::thread*	thread_;
+-		mutable boost::mutex	mtx_;
+ 		bool			quitRequested_;
+-
+ 		bool			dead_;
+-		mutable boost::mutex	deadMtx_;
+ 
+ 		static UpdateThread* instance_;
+ 	};
+
+Modified: trunk/yake/yake/net/net.h
+===================================================================
+--- trunk/yake/yake/net/net.h	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/yake/net/net.h	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -9,6 +9,7 @@
+ namespace net {
+ 
+ 	NET_API bool initialize();
++	NET_API void update();
+ 	NET_API void shutdown();
+ 
+ } // namespace net
+
+Added: trunk/yake/yake/samples/net/packet/pch.h
+===================================================================
+--- trunk/yake/yake/samples/net/packet/pch.h	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/yake/samples/net/packet/pch.h	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -0,0 +1,7 @@
++#ifndef PCH_H
++#define PCH_H
++
++#include &lt;boost/function.hpp&gt;
++#include &lt;boost/bind.hpp&gt;
++
++#endif
+
+Added: trunk/yake/yake/samples/net/roclient/ROClient.h
+===================================================================
+--- trunk/yake/yake/samples/net/roclient/ROClient.h	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/yake/samples/net/roclient/ROClient.h	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -0,0 +1,78 @@
++#ifndef RO_CLIENT_H
++#define RO_CLIENT_H
++
++namespace ro {
++
++	struct client
++	{
++	public:
++		client();
++		~client();
++		bool start( const net::Address&amp; );
++		void waitForStart();
++		void stop();
++		bool running() const;
++		void step();
++	private:
++		net::IClientPacketConnection*	conn_;
++		safe_var&lt;bool&gt;					timedOut_;
++		net::INetEventConnection*	evtConn_;
++
++		bool								running_;
++		mutable boost::mutex			runningMtx_;
++
++		enum stage_t {
++			CS_DEAD = 1,
++			CS_JOINING,
++			CS_RUNNING
++		};
++		stage_t							stage_;
++	private:
++		void onClientStarted();
++		void onTimeOut();
++		void running_onProcessEvent(const net::PeerId, const net::NetEvent&amp; , const net::ChannelId);
++		void init_onProcessEvent(const net::PeerId, const net::NetEvent&amp; , const net::ChannelId);
++	};
++
++} // namespace ro
++
++#endif
++#ifndef RO_CLIENT_H
++#define RO_CLIENT_H
++
++namespace ro {
++
++	struct client
++	{
++	public:
++		client();
++		~client();
++		bool start( const net::Address&amp; );
++		void waitForStart();
++		void stop();
++		bool running() const;
++		void step();
++	private:
++		net::IClientPacketConnection*	conn_;
++		safe_var&lt;bool&gt;					timedOut_;
++		net::INetEventConnection*	evtConn_;
++
++		bool								running_;
++		mutable boost::mutex			runningMtx_;
++
++		enum stage_t {
++			CS_DEAD = 1,
++			CS_JOINING,
++			CS_RUNNING
++		};
++		stage_t							stage_;
++	private:
++		void onClientStarted();
++		void onTimeOut();
++		void running_onProcessEvent(const net::PeerId, const net::NetEvent&amp; , const net::ChannelId);
++		void init_onProcessEvent(const net::PeerId, const net::NetEvent&amp; , const net::ChannelId);
++	};
++
++} // namespace ro
++
++#endif
+
+Added: trunk/yake/yake/samples/net/roserver/ROServer.h
+===================================================================
+--- trunk/yake/yake/samples/net/roserver/ROServer.h	2006-06-21 20:57:41 UTC (rev 1362)
++++ trunk/yake/yake/samples/net/roserver/ROServer.h	2006-06-21 22:06:02 UTC (rev 1363)
+@@ -0,0 +1,106 @@
++#ifndef RO_SERVER_H
++#define RO_SERVER_H
++
++namespace ro {
++	namespace server_impl {
++		class client;
++	}
++	struct server
++	{
++	public:
++		server();
++		~server();
++		bool start();
++		void stop();
++		void step();
++
++		void queueEvent(const net::PeerId, net::NetEvent*, const net::ChannelId);
++		void queueEventBroadcast(net::NetEvent*, const net::ChannelId);
++	private:
++		void onServerStarted();
++		void onReceivePacket(const net::PeerId, const void*, const size_t, const net::ChannelId);
++		void onProcessEvent(const net::PeerId, const net::NetEvent&amp;, const net::ChannelId);
++	private:
++		bool									running_;
++		mutable boost::mutex				runningMtx_;
++
++		bool running() const;
++
++		//
++		net::IServerPacketConnection*	conn_;
++		net::INetEventConnection*		evtConn_;
++
++		typedef server_impl::client client;
++
++		typedef std::map&lt;net::PeerId,client*&gt; ClientPtrMap;
++		ClientPtrMap	clients_;
++
++		//@todo put into specialized object &quot;NetEventQueue&quot;
++		struct EventQEntry
++		{
++			net::NetEvent*	evt_;
++			net::PeerId		peerId_;
++			net::ChannelId	channelId_;
++			EventQEntry(const net::PeerId, const net::NetEvent*, const net::ChannelId);
++		};
++		typedef std::deque&lt;EventQEntry&gt; EventQ;
++		EventQ								outEvtQ_;
++		mutable boost::mutex				outEvtQMtx_;
++	};
++
++} // namespace ro
++
++#endif
++#ifndef RO_SERVER_H
++#define RO_SERVER_H
++
++namespace ro {
++	namespace server_impl {
++		class client;
++	}
++	struct server
++	{
++	public:
++		server();
++		~server();
++		bool start();
++		void stop();
++		void step();
++
++		void queueEvent(const net::PeerId, net::NetEvent*, const net::ChannelId);
++		void queueEventBroadcast(net::NetEvent*, const net::ChannelId);
++	private:
++		void onServerStarted();
++		void onReceivePacket(const net::PeerId, const void*, const size_t, const net::ChannelId);
++		void onProcessEvent(const net::PeerId, const net::NetEvent&amp;, const net::ChannelId);
++	private:
++		bool									running_;
++		mutable boost::mutex				runningMtx_;
++
++		bool running() const;
++
++		//
++		net::IServerPacketConnection*	conn_;
++		net::INetEventConnection*		evtConn_;
++
++		typedef server_impl::client client;
++
++		typedef std::map&lt;net::PeerId,client*&gt; ClientPtrMap;
++		ClientPtrMap	clients_;
++
++		//@todo put into specialized object &quot;NetEventQueue&quot;
++		struct EventQEntry
++		{
++			net::NetEvent*	evt_;
++			net::PeerId		peerId_;
++			net::ChannelId	channelId_;
++			EventQEntry(const net::PeerId, const net::NetEvent*, const net::ChannelId);
++		};
++		typedef std::deque&lt;EventQEntry&gt; EventQ;
++		EventQ								outEvtQ_;
++		mutable boost::mutex				outEvtQMtx_;
++	};
++
++} // namespace ro
++
++#endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000430.html">[Yake-svn] r1362 - in trunk/yake: src/yake/net/detail yake/net yake/net/detail yake/samples/net/roclient
+</A></li>
+	<LI>Next message: <A HREF="000432.html">[Yake-svn] r1364 - trunk/yake/scripts/msvc8/samples/net
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#431">[ date ]</a>
+              <a href="thread.html#431">[ thread ]</a>
+              <a href="subject.html#431">[ subject ]</a>
+              <a href="author.html#431">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

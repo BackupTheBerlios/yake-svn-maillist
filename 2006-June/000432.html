@@ -1,0 +1,301 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1364 - trunk/yake/scripts/msvc8/samples/net
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1364%20-%20trunk/yake/scripts/msvc8/samples/net&In-Reply-To=%3C200606212206.k5LM6PgJ014427%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000431.html">
+   <LINK REL="Next"  HREF="000433.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1364 - trunk/yake/scripts/msvc8/samples/net</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1364%20-%20trunk/yake/scripts/msvc8/samples/net&In-Reply-To=%3C200606212206.k5LM6PgJ014427%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1364 - trunk/yake/scripts/msvc8/samples/net">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Jun 22 00:06:25 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000431.html">[Yake-svn] r1363 - in trunk/yake: src/yake/net/detail src/yake/samples/net src/yake/samples/net/packet src/yake/samples/net/roclient src/yake/samples/net/roserver yake/net yake/net/detail yake/samples/net yake/samples/net/packet yake/samples/net/roclient yake/samples/net/roserver
+</A></li>
+        <LI>Next message: <A HREF="000433.html">[Yake-svn] r1365 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#432">[ date ]</a>
+              <a href="thread.html#432">[ thread ]</a>
+              <a href="subject.html#432">[ subject ]</a>
+              <a href="author.html#432">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-22 00:06:24 +0200 (Thu, 22 Jun 2006)
+New Revision: 1364
+
+Added:
+   trunk/yake/scripts/msvc8/samples/net/sampleNetPacket.vcproj
+Log:
+added sampleNetPacket
+
+Added: trunk/yake/scripts/msvc8/samples/net/sampleNetPacket.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/net/sampleNetPacket.vcproj	2006-06-21 22:06:02 UTC (rev 1363)
++++ trunk/yake/scripts/msvc8/samples/net/sampleNetPacket.vcproj	2006-06-21 22:06:24 UTC (rev 1364)
+@@ -0,0 +1,225 @@
++&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
++&lt;VisualStudioProject
++	ProjectType=&quot;Visual C++&quot;
++	Version=&quot;8,00&quot;
++	Name=&quot;sampleNetPacket&quot;
++	ProjectGUID=&quot;{5473599B-AB7B-4259-B052-4DDC68CBEA54}&quot;
++	RootNamespace=&quot;sampleDotScene&quot;
++	Keyword=&quot;Win32Proj&quot;
++	&gt;
++	&lt;Platforms&gt;
++		&lt;Platform
++			Name=&quot;Win32&quot;
++		/&gt;
++	&lt;/Platforms&gt;
++	&lt;ToolFiles&gt;
++	&lt;/ToolFiles&gt;
++	&lt;Configurations&gt;
++		&lt;Configuration
++			Name=&quot;Debug|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/debug&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/debug/$(ProjectName)&quot;
++			ConfigurationType=&quot;1&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				Optimization=&quot;0&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/boost/;../../../../dependencies/ttl/&quot;
++				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_CONSOLE&quot;
++				MinimalRebuild=&quot;true&quot;
++				BasicRuntimeChecks=&quot;3&quot;
++				RuntimeLibrary=&quot;3&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/samples/net/packet/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;4&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
++				LinkIncremental=&quot;2&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib;../../../../common/lib/debug;../../../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;1&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++		&lt;Configuration
++			Name=&quot;Release|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/release&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/release/$(ProjectName)&quot;
++			ConfigurationType=&quot;1&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/boost/;../../../../dependencies/ttl/&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE&quot;
++				RuntimeLibrary=&quot;2&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/samples/net/packet/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;3&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
++				LinkIncremental=&quot;1&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib;../../../../common/lib/release;../../../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;false&quot;
++				SubSystem=&quot;1&quot;
++				OptimizeReferences=&quot;2&quot;
++				EnableCOMDATFolding=&quot;2&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++	&lt;/Configurations&gt;
++	&lt;References&gt;
++	&lt;/References&gt;
++	&lt;Files&gt;
++		&lt;Filter
++			Name=&quot;inc&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\yake\samples\net\packet\pch.h&quot;
++				&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++		&lt;Filter
++			Name=&quot;src&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\src\yake\samples\net\packet\demo.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\src\yake\samples\net\packet\pch.cpp&quot;
++				&gt;
++				&lt;FileConfiguration
++					Name=&quot;Debug|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;1&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++				&lt;FileConfiguration
++					Name=&quot;Release|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;1&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++	&lt;/Files&gt;
++	&lt;Globals&gt;
++	&lt;/Globals&gt;
++&lt;/VisualStudioProject&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000431.html">[Yake-svn] r1363 - in trunk/yake: src/yake/net/detail src/yake/samples/net src/yake/samples/net/packet src/yake/samples/net/roclient src/yake/samples/net/roserver yake/net yake/net/detail yake/samples/net yake/samples/net/packet yake/samples/net/roclient yake/samples/net/roserver
+</A></li>
+	<LI>Next message: <A HREF="000433.html">[Yake-svn] r1365 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#432">[ date ]</a>
+              <a href="thread.html#432">[ thread ]</a>
+              <a href="subject.html#432">[ subject ]</a>
+              <a href="author.html#432">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,412 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1408 - trunk/yake/documentation/manual
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1408%20-%20trunk/yake/documentation/manual&In-Reply-To=%3C200607261937.k6QJb4vk032288%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000475.html">
+   <LINK REL="Next"  HREF="000477.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1408 - trunk/yake/documentation/manual</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1408%20-%20trunk/yake/documentation/manual&In-Reply-To=%3C200607261937.k6QJb4vk032288%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1408 - trunk/yake/documentation/manual">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 26 21:37:04 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000475.html">[Yake-svn] r1407 - in trunk/yake: src/yake/samples/model/dotScene	src/yapp/samples/misc/vehicle src/yapp/vehicle yake/model
+</A></li>
+        <LI>Next message: <A HREF="000477.html">[Yake-svn] r1409 - trunk/yake/documentation/manual
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#476">[ date ]</a>
+              <a href="thread.html#476">[ thread ]</a>
+              <a href="subject.html#476">[ subject ]</a>
+              <a href="author.html#476">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-26 21:37:01 +0200 (Wed, 26 Jul 2006)
+New Revision: 1408
+
+Removed:
+   trunk/yake/documentation/manual/YakeManual-Components.xml
+   trunk/yake/documentation/manual/YakeManual-Introduction.xml
+   trunk/yake/documentation/manual/YakeManual-QuickStartGuide.xml
+   trunk/yake/documentation/manual/YakeManual.xml
+Log:
+deprecated (replaced by a seperate project)
+
+Deleted: trunk/yake/documentation/manual/YakeManual-Components.xml
+===================================================================
+--- trunk/yake/documentation/manual/YakeManual-Components.xml	2006-07-26 19:36:09 UTC (rev 1407)
++++ trunk/yake/documentation/manual/YakeManual-Components.xml	2006-07-26 19:37:01 UTC (rev 1408)
+@@ -1,128 +0,0 @@
+-&lt;article&gt;
+-	&lt;title&gt;yake::base&lt;/title&gt;
+-	&lt;articleinfo&gt;
+-		&lt;title&gt;yake::base&lt;/title&gt;
+-	&lt;/articleinfo&gt;
+-	&lt;section&gt;
+-		&lt;title&gt;Overview&lt;/title&gt;
+-		&lt;para&gt;Yake::base is, as the name implies, the basis for everything else that makes up Yake and Yapp.
+-		It provides functionality in a wide range of applications, from templates (Signals, Containers, meta programming helpers, factories etc) to
+-		common base interfaces (Movable etc) or data access (e.g. streams) and more.
+-		&lt;/para&gt;
+-		&lt;para&gt;A few of the more complex concepts will be described in more depth as they are often used and/or essential for
+-		effective use of Yake. For example, abstract factory plugins.
+-		&lt;/para&gt;
+-		&lt;para&gt;[TODO]
+-		&lt;/para&gt;
+-	&lt;/section&gt;
+-&lt;/article&gt;
+-&lt;article&gt;
+-	&lt;title&gt;Components&lt;/title&gt;
+-	&lt;articleinfo&gt;
+-		&lt;title&gt;Components&lt;/title&gt;
+-	&lt;/articleinfo&gt;
+-	&lt;section&gt;
+-		&lt;title&gt;Introduction and Design&lt;/title&gt;
+-		&lt;subtitle&gt;What are components? And what part do they play in the whole?&lt;/subtitle&gt;
+-		&lt;para&gt;Components are the core elements of Yake. Component loosely defines a collection of functionality.
+-		The concrete implementation can be very different. Many components are abstract components, i.e.
+-		they (additionally) provide abstract interfaces so that they are independent of underlying APIs.
+-		&lt;/para&gt;
+-		&lt;para&gt;For example, the graphics component provides interfaces which have to be implemented for a specific
+-		API in order to be usable. Often these implementations reside in dynamic link libraries (i.e. a DLL on windows,
+-		.so on Linux). For example, the graphicsOGRE plugin is an implementation of the graphics interfaces
+-		using OGRE (Object-oriented Graphics Rendering Engine, <A HREF="http://www.ogre3d.org">http://www.ogre3d.org</A>).
+-		&lt;/para&gt;
+-	&lt;/section&gt;
+-	&lt;section&gt;
+-		&lt;title&gt;yake::graphics /todo&lt;/title&gt;
+-		&lt;subtitle&gt;Get seen!&lt;/subtitle&gt;
+-	&lt;/section&gt;
+-	&lt;section&gt;
+-		&lt;title&gt;yake::physics /todo&lt;/title&gt;
+-	&lt;/section&gt;
+-	&lt;section&gt;
+-		&lt;title&gt;yake::vfs /todo&lt;/title&gt;
+-		&lt;subtitle&gt;Virtual File System&lt;/subtitle&gt;
+-	&lt;/section&gt;
+-	&lt;section&gt;
+-		&lt;title&gt;yake::data&lt;/title&gt;
+-		&lt;subtitle&gt;Storage, Parsing, Interpreting&lt;/subtitle&gt;
+-		&lt;para&gt;yake::data is mainly about parsing and interpreting. If you want to know more about data access or transfer please
+-		refer to the documentation of yake::vfs ( virtual file systems, local and remote ), yake::network or yake::base( for basic streams ).
+-		&lt;/para&gt;
+-		&lt;section&gt;
+-			&lt;title&gt;DOM Serializer - yake::data::dom&lt;/title&gt;
+-			&lt;para&gt;The DOM (Document Object Model) serializer interfaces allow serialization (reading/writing) of (typically hierarchically) structured data.
+-			&lt;/para&gt;
+-			&lt;section&gt;
+-				&lt;title&gt;Storage format independence&lt;/title&gt;
+-				&lt;para&gt;Concrete serializer implementations can provide different storage methods. For example,
+-				the yake::data::dom::xml::XmlSerializer provides the means to parse text based XML files.
+-				Other implementations may use a binary storage format or streamed data access.
+-				&lt;/para&gt;
+-				&lt;para&gt;Of course, they can be implemented in plugins and registered to the serializer factory at runtime.
+-				&lt;/para&gt;
+-				&lt;para&gt;Please refer to the Yake API documentation to find out more about the existing core serializers.
+-				&lt;/para&gt;
+-			&lt;/section&gt;
+-		&lt;/section&gt;
+-		&lt;section&gt;
+-			&lt;title&gt;Parser - yake::data::parser&lt;/title&gt;
+-			&lt;para&gt;Parsers create structured data for use with interpreters.
+-			&lt;/para&gt;
+-			&lt;para&gt;For example, the DotSceneParser uses a DOM tree (see yake::data DOM Serializer) to read data using the
+-			dotScene description format. User applications can subscribe to signals and/or query the parser in order to
+-			create the graphical objects that represent the scene (see yake::graphics for more information on the graphics
+-			interfaces).
+-			&lt;/para&gt;
+-		&lt;/section&gt;
+-		&lt;section&gt;
+-			&lt;title&gt;Interpreter&lt;/title&gt;
+-			&lt;para&gt;An interpreter is any kind of code that subscribes to a parser and creates concrete objects from the
+-			logic data provided by the parser.
+-			&lt;/para&gt;
+-			&lt;para&gt;For example, a GraphicsSceneInterpreter may be used to actually create the graphical scene from the data
+-			provided by a dotSceneParser.
+-			&lt;/para&gt;
+-		&lt;/section&gt;
+-	&lt;/section&gt;
+-	&lt;section&gt;
+-		&lt;title&gt;yake::scripting&lt;/title&gt;
+-		&lt;subtitle&gt;Customization/Modding without recompiling your application!&lt;/subtitle&gt;
+-		&lt;section&gt;&lt;title&gt;Virtual Machines&lt;/title&gt;
+-			&lt;para&gt;Virtual machines execute script code. In Yake they are represented by an abstract interface(yake::scripting::IVM)
+-			and they are created by scripting systems (yake::scripting::IScriptingSystem). For each scripting language there needs
+-			to be a specialized scripting system which is capable of creating specialized scripting objects (virtual machines and scripts).
+-			&lt;/para&gt;
+-			&lt;para&gt;Generally it should be possible to create any number of virtual machines.
+-			&lt;/para&gt;
+-		&lt;/section&gt;
+-		&lt;section&gt;&lt;title&gt;Scripts&lt;/title&gt;
+-			&lt;para&gt;Scripts represent the scripting language dependent code that is fed to virtual machine to be executed &gt;:)
+-			For example, for the Lua scripting virtual machines this can either represent source code or precompiled byte code.
+-			&lt;/para&gt;
+-			&lt;para&gt;Possible script types (derived from yake::scripting::IScript) include procedural scripts
+-			(created from a string at runtime, for example) and scripts read from a data source (like from a file).
+-			&lt;/para&gt;
+-		&lt;/section&gt;
+-		&lt;section&gt;&lt;title&gt;Binder&lt;/title&gt;
+-			&lt;para&gt;The binder interface is used to bind objects, classes, functions, variables etc to a scripting virtual machine.
+-				The binder implementation decides what to bind (which classes, objects, free functions etc).
+-				There can be any amount of binders. The application logic has to decide when to use which binder, i.e. what features
+-				it wants to be bound to a specific VM. For example, the VM used to run GUI scripts may not need access to the physics system.
+-				Of course, that's just an example to illustrate the point.
+-			&lt;/para&gt;
+-		&lt;/section&gt;
+-	&lt;/section&gt;
+-	&lt;section&gt;
+-		&lt;title&gt;yake::audio&lt;/title&gt;
+-		&lt;subtitle&gt;Get heard!&lt;/subtitle&gt;
+-		&lt;para&gt;The audio system is pretty straight-forward. Worlds are made up of sources, occluders and listeners.
+-		The exact feature set depends on the implementation (3D support, etc).
+-		&lt;/para&gt;
+-		&lt;para&gt;Sources are any kind of audible objects. Listeners do what their name implies. They often represent the ears
+-		of the player in a game, for example.
+-		&lt;/para&gt;
+-	&lt;/section&gt;
+-&lt;/article&gt;
+\ No newline at end of file
+
+Deleted: trunk/yake/documentation/manual/YakeManual-Introduction.xml
+===================================================================
+--- trunk/yake/documentation/manual/YakeManual-Introduction.xml	2006-07-26 19:36:09 UTC (rev 1407)
++++ trunk/yake/documentation/manual/YakeManual-Introduction.xml	2006-07-26 19:37:01 UTC (rev 1408)
+@@ -1,80 +0,0 @@
+-&lt;article&gt;
+-	&lt;title&gt;Introduction&lt;/title&gt;
+-	&lt;articleinfo&gt;
+-		&lt;title&gt;Introduction&lt;/title&gt;
+-	&lt;/articleinfo&gt;
+-	&lt;toc&gt;&lt;/toc&gt;
+-	&lt;sect1&gt;
+-		&lt;title&gt;Introduction&lt;/title&gt;
+-		&lt;para&gt;Yake is a light-weight and powerful, object-oriented and cross-platform application framework written in C++.  While originally targetted towards games other types of applications can also benefit from Yake.  We, the Yake developers, think that an additional dependency to a project should be as non-intrusive as possible. That approach enables developers to decide at any time whether to use the whole or just a subset of Yake&apos;s functionality.&lt;/para&gt;
+-	&lt;/sect1&gt;
+-	&lt;sect1&gt;
+-		&lt;title&gt;Features&lt;/title&gt;
+-		&lt;para&gt;Yake 0.1 provides functionality in the following areas: &lt;/para&gt;
+-		&lt;itemizedlist&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;functionality for math, containers, signals, factories, ...&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;system interfaces with any amount of pluggable implementations for graphics, physics, scripting and input systems&lt;/para&gt;
+-			&lt;/listitem&gt;
+-		&lt;/itemizedlist&gt;
+-		&lt;para&gt;Yake 0.2 will add the following features:&lt;/para&gt;
+-		&lt;itemizedlist&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;specialized systems for GUI and VFS&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;system interfaces with any amount of pluggable implementations for audio and collision detection systems&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;serialization and persistance&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;room for future optimizations (containers, converters, ...)&lt;/para&gt;
+-			&lt;/listitem&gt;
+-		&lt;/itemizedlist&gt;
+-		&lt;para&gt;Yake 0.3 adds these features:&lt;/para&gt;
+-		&lt;itemizedlist&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;system interfaces with any amount of pluggable implementations for network system&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;resource management&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;reflection (static, dynamic)&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;replication (distributed networked objects)&lt;/para&gt;
+-			&lt;/listitem&gt;
+-		&lt;/itemizedlist&gt;
+-		&lt;para&gt;Currently the following &lt;emphasis role=&quot;bold&quot;&gt;plugins&lt;/emphasis&gt; exist and are maintained by the Yake Team. They can be replaced by other implementations or you can run them in parallel if you really want to.
+-		&lt;/para&gt;
+-		&lt;itemizedlist&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;graphics system: based on OGRE (Object-Oriented Graphics Rendering Engine), a cross-platform  multi-purpose rendering engine.&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;audio system: based on OpenAL++&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;physics system: based on OpenDE (Open Dynamics Engine)&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;scripting system: based on Lua and Luabind&lt;/para&gt;
+-			&lt;/listitem&gt;
+-			&lt;listitem&gt;
+-				&lt;para&gt;input system: based on OGRE&lt;/para&gt;
+-			&lt;/listitem&gt;
+-		&lt;/itemizedlist&gt;
+-	&lt;/sect1&gt;
+-	&lt;sect1&gt;
+-		&lt;title&gt;About this manual&lt;/title&gt;
+-		&lt;para&gt;The latest version of this manual can be found at <A HREF="http://yake.org.&lt;/para">http://yake.org.&lt;/para</A>&gt;
+-		&lt;para&gt;As it is now, this manual is work-in-progress. It is not (yet) intended to document each and  every feature. We started to work on the most pressing things first, mainly Yake&apos;s architecture  and Quick Start Guides to different, often used feature sets.&lt;/para&gt;
+-		&lt;para&gt;This manual is intended to serve as a reference in addition to the Yake API Documentation and the samples  shipping with Yake. &lt;/para&gt;
+-		&lt;para&gt;That said, have fun :)&lt;/para&gt;
+-		&lt;para&gt;The Yake Team&lt;/para&gt;
+-	&lt;/sect1&gt;
+-&lt;/article&gt;
+
+Deleted: trunk/yake/documentation/manual/YakeManual-QuickStartGuide.xml
+===================================================================
+--- trunk/yake/documentation/manual/YakeManual-QuickStartGuide.xml	2006-07-26 19:36:09 UTC (rev 1407)
++++ trunk/yake/documentation/manual/YakeManual-QuickStartGuide.xml	2006-07-26 19:37:01 UTC (rev 1408)
+@@ -1,88 +0,0 @@
+-&lt;article&gt;
+-	&lt;title&gt;Quick Start Guide&lt;/title&gt;
+-	&lt;articleinfo&gt;
+-		&lt;title&gt;Quick Start Guide&lt;/title&gt;
+-	&lt;/articleinfo&gt;
+-	&lt;sect1&gt;
+-		&lt;title&gt;Obtaining the sources&lt;/title&gt;
+-		&lt;para&gt;Please visit <A HREF="http://yake.org">http://yake.org</A> for current information on how to obtain the sources to Yake.
+-		&lt;/para&gt;
+-		&lt;para&gt;In general, there are three possibilities:
+-			&lt;itemizedlist&gt;
+-				&lt;listitem&gt;Major releases (e.g. yake 0.3): Introduces major features, may include major changes. Generally stable code base.&lt;/listitem&gt;
+-				&lt;listitem&gt;Minor releases (e.g. yake 0.3.1): Mainly bug fixes and smaller changes.&lt;/listitem&gt;
+-				&lt;listitem&gt;Unstable snapshots (e.g. yake 0.4-dev): Introduces major features and/or changes but code may still be in experimental stage. No guarantees for anything :)&lt;/listitem&gt;
+-			&lt;/itemizedlist&gt;
+-			The source code is released in archived files on <A HREF="http://yake.org">http://yake.org</A> or can be obtained through CVS. Please visit the website for more detailed information
+-			on how to access the Yake CVS repository.
+-		&lt;/para&gt;
+-	&lt;/sect1&gt;
+-	&lt;sect1&gt;
+-		&lt;title&gt;Dependencies&lt;/title&gt;
+-		&lt;para&gt;The Yake &lt;emphasis role=&quot;bold&quot;&gt;core&lt;/emphasis&gt; libraries (e.g. base, graphics, scripting, ...) depend on the following external libraries/products:
+-			&lt;itemizedlist&gt;
+-				&lt;listitem&gt;boost (headers only): available through <A HREF="http://boost.org&lt;/listitem">http://boost.org&lt;/listitem</A>&gt;
+-				&lt;listitem&gt;ttl (headers only): available through <A HREF="http://tinytl.sourceforge.net&lt;/listitem">http://tinytl.sourceforge.net&lt;/listitem</A>&gt;
+-				&lt;listitem&gt;Loki (headers only) [to be removed as it gets &quot;boostified&quot;]&lt;/listitem&gt;
+-				&lt;listitem&gt;TinyXML: available through <A HREF="http://www.grinninglizard.com/tinyxml&lt;/listitem">http://www.grinninglizard.com/tinyxml&lt;/listitem</A>&gt;
+-			&lt;/itemizedlist&gt;
+-			For each release, at least each major release, a dependency package is available.
+-			This normally includes stripped down versions of the above libraries.
+-		&lt;/para&gt;
+-		&lt;para&gt;Certain &lt;emphasis role=&quot;bold&quot;&gt;plugins&lt;/emphasis&gt; have special requirements regarding external libraries.
+-		For example, the graphicsOGRE plugin requires OGRE (<A HREF="http://www.ogre3d.org">http://www.ogre3d.org</A>).&lt;/para&gt;
+-		&lt;para&gt;The file (YAKEROOT)/dependencies/DEPENDENCIES has more information on how the directory structure is expected to be layed out in order
+-		for those plugins to compile without any modifications to the project/build settings.
+-		&lt;/para&gt;
+-		&lt;para&gt;From time to time we may provide &lt;emphasis role=&quot;bold&quot;&gt;prebuilt&lt;/emphasis&gt; libraries for the dependencies as it can be quite tedious to compile all these
+-		yourself. There are disadvantages to this approach, though: You are dependent on the build environment we used to compile the libraries.
+-		For example, if we build the libraries using VC7.1 + STLport 4.6 you'll have a big problem (not to say it's plain impossible) to use them
+-		in a project that uses either the MS STL or another version of STLport.
+-		&lt;/para&gt;
+-		&lt;para&gt;We certainly won't be able to provide libraries for each and
+-		every combination of compiler and STL and other dependencies. We expect the user attempting to use Yake either adhere to these restrictions or have enough knowledge to compile the dependencies
+-		themselves. All these dependencies are established projects, meaning they come with good to very good documentation and detailed
+-		installation instructions. Furtheremore there are many forums and mailing lists dealing with (nearly) any possible issue that can be encountered during a build.
+-		&lt;/para&gt;
+-	&lt;/sect1&gt;
+-	&lt;sect1&gt;
+-		&lt;title&gt;Building Yake&lt;/title&gt;
+-		&lt;para&gt;Please note that this chapter is just a quick introduction. We expect the developer
+-		attempting to use Yake to know how to use the build tools of his choice.
+-		&lt;/para&gt;
+-		&lt;sect2&gt;
+-			&lt;title&gt;Windows (using VC7.1)&lt;/title&gt;
+-			&lt;orderedlist&gt;
+-				&lt;listitem&gt;Extract the sources into a folder of your choice, let's call it YAKEHOME.&lt;/listitem&gt;
+-				&lt;listitem&gt;Extract the dependencies package into YAKEHOME. Verify correct extraction (mainly that files are in the correct folders)!&lt;/listitem&gt;
+-				&lt;listitem&gt;Open the solution file YAKEHOME/scripts/yake.sln in the VC7.1 IDE.&lt;/listitem&gt;
+-				&lt;listitem&gt;Right-click on the solution in the solution explorer and choose &quot;Build All&quot; or &quot;Batch build&quot;.&lt;/listitem&gt;
+-				&lt;listitem&gt;If the build process was successful you will find the import libraries located in YAKEHOME/common/lib/[debug|release], the dynamic link libraries as well as the sample executables in YAKEHOME/common/bin/[debug|release].&lt;/listitem&gt;
+-			&lt;/orderedlist&gt;
+-		&lt;/sect2&gt;
+-		&lt;sect2&gt;
+-			&lt;title&gt;Windows (using Visual C++ 2003 Toolkit)&lt;/title&gt;
+-			&lt;para&gt;Makefiles are not yet available. We are currently investigating how to support this option. There is a certain amount
+-			of maintenance effort involved. We try to find an automated way to generate makefiles from existing solution files (.sln) (or an alternative build system).
+-			&lt;/para&gt;
+-		&lt;/sect2&gt;
+-		&lt;sect2&gt;
+-			&lt;title&gt;Other platforms (Linux, MacOS X)&lt;/title&gt;
+-			&lt;para&gt;Officially supported build environments for Linux will be available soon.
+-			&lt;/para&gt;
+-			&lt;para&gt;As no member of the Yake team has access to MacOS X we cannot provide ready-to-use build tools for the time being.
+-			Contributions are welcome.
+-			&lt;/para&gt;
+-		&lt;/sect2&gt;
+-	&lt;/sect1&gt;
+-	&lt;sect1&gt;
+-		&lt;title&gt;The Samples&lt;/title&gt;
+-		&lt;para&gt;The samples are mostly short and self-explaining. They are documented in code and we are generally careful to provide
+-		code that is easy to understand. There are a few samples which demonstrate more complicated techniques which
+-		may not be obvious at just a quick glance. At least, it can be easier to grasp with a short amount of documentation to
+-		them.&lt;/para&gt;
+-		&lt;sect2&gt;
+-			&lt;title&gt;Registry Samples /todo&lt;/title&gt;
+-		&lt;/sect2&gt;
+-	&lt;/sect1&gt;
+-&lt;/article&gt;
+
+Deleted: trunk/yake/documentation/manual/YakeManual.xml
+===================================================================
+--- trunk/yake/documentation/manual/YakeManual.xml	2006-07-26 19:36:09 UTC (rev 1407)
++++ trunk/yake/documentation/manual/YakeManual.xml	2006-07-26 19:37:01 UTC (rev 1408)
+@@ -1,17 +0,0 @@
+-&lt;?xml version=&quot;1.0&quot; encoding=&quot;windows-1252&quot;?&gt;
+-&lt;!DOCTYPE article PUBLIC &quot;-//OASIS//DTD DocBook XML V4.2//EN&quot;
+-               &quot;<A HREF="http://www.altova.com/schemas/docbook/docbookx.dtd">http://www.altova.com/schemas/docbook/docbookx.dtd</A>&quot; [
+-               &lt;!ENTITY introduction SYSTEM &quot;YakeManual-Introduction.xml&quot;&gt;
+-               &lt;!ENTITY quickstartguide SYSTEM &quot;YakeManual-QuickStartGuide.xml&quot;&gt;
+-               &lt;!ENTITY components SYSTEM &quot;YakeManual-Components.xml&quot;&gt;
+-]&gt;
+-&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;<A HREF="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl">http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl</A>&quot;?&gt;
+-&lt;book&gt;
+-	&lt;bookinfo&gt;
+-		&lt;title&gt;YAKE Manual&lt;/title&gt;
+-		&lt;subtitle&gt;Cross-platform, lightweight application and game framework&lt;/subtitle&gt;
+-	&lt;/bookinfo&gt;
+-	&introduction;
+-	&quickstartguide;
+-	&components;
+-&lt;/book&gt;
+\ No newline at end of file
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000475.html">[Yake-svn] r1407 - in trunk/yake: src/yake/samples/model/dotScene	src/yapp/samples/misc/vehicle src/yapp/vehicle yake/model
+</A></li>
+	<LI>Next message: <A HREF="000477.html">[Yake-svn] r1409 - trunk/yake/documentation/manual
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#476">[ date ]</a>
+              <a href="thread.html#476">[ thread ]</a>
+              <a href="subject.html#476">[ subject ]</a>
+              <a href="author.html#476">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

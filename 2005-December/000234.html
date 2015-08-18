@@ -1,0 +1,90 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1164 - trunk/yake/src/yake/plugins/graphicsOgre
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-December/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1164%20-%20trunk/yake/src/yake/plugins/graphicsOgre&In-Reply-To=%3C200512072222.jB7MMYGF021784%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000233.html">
+   <LINK REL="Next"  HREF="000235.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1164 - trunk/yake/src/yake/plugins/graphicsOgre</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1164%20-%20trunk/yake/src/yake/plugins/graphicsOgre&In-Reply-To=%3C200512072222.jB7MMYGF021784%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1164 - trunk/yake/src/yake/plugins/graphicsOgre">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Dec  7 23:22:34 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000233.html">[Yake-svn] r1163 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000235.html">[Yake-svn] r1165 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#234">[ date ]</a>
+              <a href="thread.html#234">[ thread ]</a>
+              <a href="subject.html#234">[ subject ]</a>
+              <a href="author.html#234">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-12-07 23:22:33 +0100 (Wed, 07 Dec 2005)
+New Revision: 1164
+
+Modified:
+   trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp
+Log:
+various fixes
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp	2005-12-07 22:19:29 UTC (rev 1163)
++++ trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp	2005-12-07 22:22:33 UTC (rev 1164)
+@@ -119,6 +119,14 @@
+ 	}
+ 	
+ 	//-----------------------------------------------------
++	Ogre::SceneManager* GraphicalWorld::getSceneMgr() const
++	{
++		if (!msCore)
++			return 0;
++		return msCore-&gt;getSceneMgr();
++	}
++
++	//-----------------------------------------------------
+ 	ISceneNode* GraphicalWorld::createSceneNode( const String&amp; name )
+ 	{
+ 		if (!mRootNode)
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000233.html">[Yake-svn] r1163 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000235.html">[Yake-svn] r1165 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#234">[ date ]</a>
+              <a href="thread.html#234">[ thread ]</a>
+              <a href="subject.html#234">[ subject ]</a>
+              <a href="author.html#234">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

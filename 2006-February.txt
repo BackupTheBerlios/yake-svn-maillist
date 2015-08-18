@@ -1,0 +1,3631 @@
+From codeandroid at berlios.de  Sun Feb  5 11:01:46 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 5 Feb 2006 11:01:46 +0100
+Subject: [Yake-svn] r1198 - trunk/yake/scripts/msvc8
+Message-ID: <200602051001.k15A1kIH030080@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-02-05 11:01:46 +0100 (Sun, 05 Feb 2006)
+New Revision: 1198
+
+Added:
+   trunk/yake/scripts/msvc8/net.vcproj
+Log:
+initial revision
+
+Added: trunk/yake/scripts/msvc8/net.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/net.vcproj	2006-01-30 20:09:35 UTC (rev 1197)
++++ trunk/yake/scripts/msvc8/net.vcproj	2006-02-05 10:01:46 UTC (rev 1198)
+@@ -0,0 +1,407 @@
++<?xml version="1.0" encoding="Windows-1252"?>
++<VisualStudioProject
++	ProjectType="Visual C++"
++	Version="8,00"
++	Name="net"
++	ProjectGUID="{90688422-B178-44F3-824A-C8CD6F3BD86F}"
++	RootNamespace="net"
++	Keyword="Win32Proj"
++	>
++	<Platforms>
++		<Platform
++			Name="Win32"
++		/>
++	</Platforms>
++	<ToolFiles>
++	</ToolFiles>
++	<Configurations>
++		<Configuration
++			Name="Debug|Win32"
++			OutputDirectory="../../common/bin/debug"
++			IntermediateDirectory="../../common/obj/debug/$(ProjectName)"
++			ConfigurationType="2"
++			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
++			CharacterSet="2"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				Optimization="0"
++				AdditionalIncludeDirectories="../../;../../dependencies/enet/include;../../dependencies/boost/;../../dependencies/ttl/;..dependencies/tinyxml"
++				PreprocessorDefinitions="_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKE_NET_EXPORTS"
++				MinimalRebuild="true"
++				BasicRuntimeChecks="3"
++				RuntimeLibrary="3"
++				RuntimeTypeInfo="true"
++				UsePrecompiledHeader="2"
++				PrecompiledHeaderThrough="yake/net/pch.h"
++				WarningLevel="3"
++				Detect64BitPortabilityProblems="true"
++				DebugInformationFormat="4"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalDependencies="ws2_32.lib winmm.lib"
++				OutputFile="$(OutDir)/$(ProjectName).dll"
++				LinkIncremental="2"
++				AdditionalLibraryDirectories="../../common/lib/debug;../../dependencies/lib"
++				GenerateDebugInformation="true"
++				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
++				SubSystem="2"
++				ImportLibrary="../../common/lib/debug/$(TargetName)_d.lib"
++				TargetMachine="1"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCManifestTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++			/>
++			<Tool
++				Name="VCFxCopTool"
++			/>
++			<Tool
++				Name="VCAppVerifierTool"
++			/>
++			<Tool
++				Name="VCWebDeploymentTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++		</Configuration>
++		<Configuration
++			Name="Release|Win32"
++			OutputDirectory="../../common/bin/release"
++			IntermediateDirectory="../../common/obj/release/$(ProjectName)"
++			ConfigurationType="2"
++			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
++			CharacterSet="2"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				AdditionalIncludeDirectories="../../;../../dependencies/boost/;../../dependencies/ttl/;..dependencies/tinyxml"
++				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_NET_EXPORTS"
++				RuntimeLibrary="2"
++				RuntimeTypeInfo="true"
++				UsePrecompiledHeader="2"
++				PrecompiledHeaderThrough="yake/net/pch.h"
++				WarningLevel="3"
++				Detect64BitPortabilityProblems="true"
++				DebugInformationFormat="3"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalDependencies="ws2_32.lib winmm.lib"
++				OutputFile="$(OutDir)/$(ProjectName).dll"
++				LinkIncremental="1"
++				AdditionalLibraryDirectories="../../common/lib/release;../../dependencies/lib"
++				GenerateDebugInformation="false"
++				SubSystem="1"
++				OptimizeReferences="2"
++				EnableCOMDATFolding="2"
++				ImportLibrary="../../common/lib/release/$(TargetName).lib"
++				TargetMachine="1"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCManifestTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++			/>
++			<Tool
++				Name="VCFxCopTool"
++			/>
++			<Tool
++				Name="VCAppVerifierTool"
++			/>
++			<Tool
++				Name="VCWebDeploymentTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++		</Configuration>
++	</Configurations>
++	<References>
++	</References>
++	<Files>
++		<Filter
++			Name="src"
++			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
++			UniqueIdentifier="{0D71D256-4EEF-446d-BBB9-CCA1E8DCC8CB}"
++			>
++			<File
++				RelativePath="..\..\src\yake\net\net.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yake\net\pch.cpp"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="1"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="1"
++					/>
++				</FileConfiguration>
++			</File>
++			<Filter
++				Name="detail"
++				>
++				<File
++					RelativePath="..\..\src\yake\net\detail\netCommon.cpp"
++					>
++				</File>
++				<File
++					RelativePath="..\..\src\yake\net\detail\netEnetClientPacketConnection.cpp"
++					>
++				</File>
++				<File
++					RelativePath="..\..\src\yake\net\detail\netEnetServerPacketConnection.cpp"
++					>
++				</File>
++				<File
++					RelativePath="..\..\src\yake\net\detail\netEventConnection.cpp"
++					>
++				</File>
++				<File
++					RelativePath="..\..\src\yake\net\detail\netInternal.cpp"
++					>
++				</File>
++			</Filter>
++			<Filter
++				Name="enet"
++				>
++				<File
++					RelativePath="..\..\dependencies\enet\callbacks.c"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++				<File
++					RelativePath="..\..\dependencies\enet\host.c"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++				<File
++					RelativePath="..\..\dependencies\enet\list.c"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++				<File
++					RelativePath="..\..\dependencies\enet\packet.c"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++				<File
++					RelativePath="..\..\dependencies\enet\peer.c"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++				<File
++					RelativePath="..\..\dependencies\enet\protocol.c"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++				<File
++					RelativePath="..\..\dependencies\enet\win32.c"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++					<FileConfiguration
++						Name="Release|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++			</Filter>
++		</Filter>
++		<Filter
++			Name="inc"
++			Filter="h;hpp;hxx;hm;inl;inc;xsd"
++			UniqueIdentifier="{7EE1456A-69C2-4d63-B2FA-0C9082417A39}"
++			>
++			<File
++				RelativePath="..\..\yake\net\net.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yake\net\netBitstream.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yake\net\netBitstream.inl"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yake\net\netBitstreamAdapters.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yake\net\netCommon.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yake\net\netEvent.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yake\net\netPacket.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yake\net\netPrerequisites.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yake\net\netTypes.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yake\net\pch.h"
++				>
++			</File>
++			<Filter
++				Name="detail"
++				>
++				<File
++					RelativePath="..\..\yake\net\detail\netEnetClientPacketConnection.h"
++					>
++				</File>
++				<File
++					RelativePath="..\..\yake\net\detail\netEnetServerPacketConnection.h"
++					>
++				</File>
++				<File
++					RelativePath="..\..\yake\net\detail\netEventConnection.h"
++					>
++				</File>
++				<File
++					RelativePath="..\..\yake\net\detail\netInternal.h"
++					>
++				</File>
++			</Filter>
++		</Filter>
++	</Files>
++	<Globals>
++	</Globals>
++</VisualStudioProject>
+
+
+
+From codeandroid at berlios.de  Sun Feb  5 23:53:00 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 5 Feb 2006 23:53:00 +0100
+Subject: [Yake-svn] r1199 - in trunk/yake/yake/net: . detail
+Message-ID: <200602052253.k15Mr0c8029019@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-02-05 23:52:59 +0100 (Sun, 05 Feb 2006)
+New Revision: 1199
+
+Modified:
+   trunk/yake/yake/net/detail/netEnetClientPacketConnection.h
+   trunk/yake/yake/net/detail/netEnetServerPacketConnection.h
+   trunk/yake/yake/net/detail/netEventConnection.h
+   trunk/yake/yake/net/netEvent.h
+   trunk/yake/yake/net/netPacket.h
+Log:
+interface improvements
+
+Modified: trunk/yake/yake/net/detail/netEnetClientPacketConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEnetClientPacketConnection.h	2006-02-05 10:01:46 UTC (rev 1198)
++++ trunk/yake/yake/net/detail/netEnetClientPacketConnection.h	2006-02-05 22:52:59 UTC (rev 1199)
+@@ -18,8 +18,17 @@
+ 		virtual void send(const PeerId, const void*, const size_t, const SendOptions& opt = SendOptions());
+ 
+ 		virtual void addStartedCallback(const OnStartedFn&);
+-		virtual void addPacketReceivedCallback( const OnPacketReceivedFn&);
++		virtual CallbackConnection addPacketReceivedCallback( const OnPacketReceivedFn&);
+ 		virtual void addTimeOutCallback(const OnTimeOutFn&);
++
++		void disconnectPacketReceivedCallback(const CallbackHandle h)
++		{
++			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++			OnPacketReceivedFnList::iterator it = packetReceivedFnList_.find(h);
++			if (it == packetReceivedFnList_.end())
++				return;
++			packetReceivedFnList_.erase( it );
++		}
+ 	private:
+ 		void sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
+ 		void sendBroadcast(const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
+@@ -35,7 +44,7 @@
+ 		{
+ 			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
+ 			for (OnPacketReceivedFnList::const_iterator it = packetReceivedFnList_.begin(); it != packetReceivedFnList_.end(); ++it)
+-				(*it)(peerId,data,dataLen,channel);
++				(it->second)(peerId,data,dataLen,channel);
+ 		}
+ 		void fireCallback_TimeOut()
+ 		{
+@@ -44,12 +53,13 @@
+ 		}
+ 	private:
+ 		typedef std::deque<OnStartedFn> OnStartedFnList;
+-		typedef std::deque<OnPacketReceivedFn> OnPacketReceivedFnList;
++		typedef std::map<CallbackHandle,OnPacketReceivedFn> OnPacketReceivedFnList;
+ 		typedef std::deque<OnTimeOutFn> OnTimeOutFnList;
+ 		OnStartedFnList					startedFnList_;
+ 		OnPacketReceivedFnList			packetReceivedFnList_;
+-		boost::mutex					packetReceivedFnListMtx_;
++		boost::mutex						packetReceivedFnListMtx_;
+ 		OnTimeOutFnList					timeOutFnList_;
++		CallbackHandle						lastPacketReceivedCbHandle_;
+ 
+ 	private:
+ 		ENetAddress		m_address;
+
+Modified: trunk/yake/yake/net/detail/netEnetServerPacketConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEnetServerPacketConnection.h	2006-02-05 10:01:46 UTC (rev 1198)
++++ trunk/yake/yake/net/detail/netEnetServerPacketConnection.h	2006-02-05 22:52:59 UTC (rev 1199)
+@@ -24,7 +24,15 @@
+ 		virtual void addStartedCallback(const OnStartedFn&);
+ 		virtual void addClientConnectedCallback(const OnClientConnectedFn&);
+ 		virtual void addClientDisconnectedCallback(const OnClientDisconnectedFn&);
+-		virtual void addPacketReceivedCallback( const OnPacketReceivedFn&);
++		virtual CallbackConnection addPacketReceivedCallback( const OnPacketReceivedFn&);
++
++		void disconnectPacketReceivedCallback(const CallbackHandle h)
++		{
++			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++			OnPacketReceivedFnList::iterator it = packetReceivedFnList_.find( h );
++			if (it != packetReceivedFnList_.end())
++				packetReceivedFnList_.erase( it );
++		}
+ 	private:
+ 		void sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
+ 		void sendBroadcast(const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
+@@ -52,18 +60,19 @@
+ 		{
+ 			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
+ 			for (OnPacketReceivedFnList::const_iterator it = packetReceivedFnList_.begin(); it != packetReceivedFnList_.end(); ++it)
+-				(*it)(peerId,data,dataLen,channel);
++				(it->second)(peerId,data,dataLen,channel);
+ 		}
+ 	private:
+ 		typedef std::deque<OnStartedFn> OnStartedFnList;
+ 		typedef std::deque<OnClientConnectedFn> OnClientConnectedFnList;
+ 		typedef std::deque<OnClientDisconnectedFn> OnClientDisconnectedFnList;
+-		typedef std::deque<OnPacketReceivedFn> OnPacketReceivedFnList;
++		typedef std::map<CallbackHandle,OnPacketReceivedFn> OnPacketReceivedFnList;
+ 		OnStartedFnList					startedFnList_;
+ 		OnClientConnectedFnList			clientConnectedFnList_;
+ 		OnClientDisconnectedFnList		clientDisconnectedFnList_;
+ 		OnPacketReceivedFnList			packetReceivedFnList_;
+-		boost::mutex					packetReceivedFnListMtx_;
++		CallbackHandle						lastPacketReceivedCbHandle_;
++		boost::mutex						packetReceivedFnListMtx_;
+ 
+ 	private:
+ 		enum State {
+
+Modified: trunk/yake/yake/net/detail/netEventConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEventConnection.h	2006-02-05 10:01:46 UTC (rev 1198)
++++ trunk/yake/yake/net/detail/netEventConnection.h	2006-02-05 22:52:59 UTC (rev 1199)
+@@ -15,6 +15,9 @@
+ 		virtual void setPacketConnection(IPacketConnection*,const NetEvent::Direction);
+ 		virtual void setMaxEventErrors(const size_t);
+ 
++		virtual bool start();
++		virtual void stop();
++
+ 		virtual void registerEvent(const NetEvent::id_type, const NetEvent::Direction,
+ 									const CreateEventFn& fnCreate, const DestroyEventFn& fnDestroy);
+ 		virtual void sendEvent(const NetEvent&, const SendOptions& opt = SendOptions());
+@@ -22,44 +25,61 @@
+ 		virtual void setAllowedIncomingEventIds(const std::vector<NetEvent::id_type>&);
+ 
+ 		virtual void setProcessEventCallback(const EvtProcessEventFn&);
+-		//virtual void removeProcessEventCallback(const EvtProcessEventFn&);
+ 		virtual void setDisconnectCallback(const EvtDisconnectFn&);
+-	private:
++
++		virtual void setPolling(const bool manualPolling = false);
++		virtual void poll();
++
+ 		void onReceivePacket(const PeerId, const void*, const size_t, const ChannelId);
+ 	private:
+-		//typedef std::deque<EvtProcessEventFn> EvtProcessEventFnList;
+-		//EvtProcessEventFnList	processEventFns_;
+-		EvtProcessEventFn processEventFn_;
+-		void fireCallbacks_ProcessEvent(const PeerId peerId, const NetEvent& evt, const ChannelId channel)
+-		{
+-			if (!processEventFn_.empty())
+-				processEventFn_(peerId,evt,channel);
++		mutable EvtProcessEventFn	processEventFn_;
++		boost::mutex					processEventFnMtx_;
+ 
+-			//EvtProcessEventFnList fns = processEventFns_; // Use a copy as the original container may be modified during the callbacks!
+-			//for (EvtProcessEventFnList::const_iterator it = fns.begin(); it != fns.end(); ++it)
+-			//	(*it)(peerId,evt,channel);
+-		}
+-
+-	private:
+ 		typedef NetEvent::id_type event_id;
+ 		typedef NetEvent::Direction event_direction;
+ 
+ 		struct IdEntry
+ 		{
+ 			event_direction		dir;
+-			CreateEventFn		fnCreate;
+-			DestroyEventFn		fnDestroy;
++			CreateEventFn			fnCreate;
++			DestroyEventFn			fnDestroy;
+ 		};
+ 		typedef std::map<event_id,IdEntry> EventIdMap;
+-		EventIdMap				eventIds_;
++		EventIdMap					eventIds_;
+ 
+ 		typedef std::vector<NetEvent::id_type> EventIdVector;
+-		EventIdVector			allowedEventIds_;
+-		mutable boost::mutex	allowedEventIdsMtx_;
++		EventIdVector				allowedEventIds_;
++		mutable boost::mutex		allowedEventIdsMtx_;
+ 
+ 		event_direction			dir_;
+ 		IPacketConnection*		conn_;
+ 
++		struct EvtQItem
++		{
++			PeerId					peerId_;
++			ChannelId				channel_;
++			NetEvent*				evt_;
++			DestroyEventFn			fnDestroy_;
++			EvtQItem(const PeerId peerId, NetEvent* evt, const ChannelId channel, const DestroyEventFn fnDestroy) :
++				peerId_(peerId), evt_(evt), channel_(channel), fnDestroy_(fnDestroy)
++			{}
++			EvtQItem& operator = (const EvtQItem& rhs)
++			{
++				peerId_ = rhs.peerId_;
++				channel_= rhs.channel_;
++				evt_    = rhs.evt_;
++				fnDestroy_ = rhs.fnDestroy_;
++				return *this;
++			}
++		};
++		typedef std::deque<EvtQItem> EvtQ;
++		mutable EvtQ				evtQ_;
++		boost::mutex				evtQMtx_;
++		bool							manualPolling_;
++
++		mutable bool				started_;
++		boost::mutex				startedMtx_;
++
+ 		struct statistics_t
+ 		{
+ 			statistics_t() : 
+
+Modified: trunk/yake/yake/net/netEvent.h
+===================================================================
+--- trunk/yake/yake/net/netEvent.h	2006-02-05 10:01:46 UTC (rev 1198)
++++ trunk/yake/yake/net/netEvent.h	2006-02-05 22:52:59 UTC (rev 1199)
+@@ -38,10 +38,109 @@
+ 
+ 		virtual bool pack(obitstream&) const = 0;
+ 		virtual bool unpack(ibitstream&) = 0;
++
++		//NetEvent* clone();
++		//{
++		//	NetEvent* clone = doClone();
++		//	NET_ASSERT( clone );
++		//	if (clone)
++		//	{
++		//		clone->setId( id_ );
++		//		return clone;
++		//	}
++		//	return 0;
++		//}
++	protected:
++		//virtual NetEvent* doClone() = 0;
+ 	private:
+ 		id_type		id_;
+ 	};
+ 
++	/*
++	template<typename T>
++	class ResourceManager
++	{
++	public:
++		struct handle
++		{
++			friend class ResourceManager;
++			T* operator ->()
++			{ return px_; }
++			T* operator ->() const
++			{ return px_; }
++			bool empty() const
++			{ return (px_==0); }
++			void destroy()
++			{
++				owner_->destroy(this);
++				owner_ = 0;
++				px_ = 0;
++			}
++			handle& operator=(const handle& rhs)
++			{
++				owner_ = rhs.owner_;
++				px_ = rhs.px_;
++			}
++		protected:
++			~handle()
++			{}
++			handle(const handle& other) : creator_(other.creator_), px_(other.px_)
++			{}
++			handle(ResourceManager<T>* owner, T* px) : owner_(owner), px_(px)
++			{}
++		private:
++			T*							px_;
++			ResourceManager<T>*	owner_;
++		};
++		handle create()
++		{ 
++			return handle(this,onCreate());
++		}
++		void destroy(const handle& h)
++		{
++			onDestroy( h.px_ );
++
++			ptr_list::iterator it = std::find( objs_.begin(), objs_.end() );
++			if (it != objs_.end())
++				objs_.erase( it );
++		}
++		void destroyAll()
++		{
++			ptr_list::iterator itEnd = objs_.end();
++			for (ptr_list::iterator it = objs_.begin(); it != itEnd; ++it)
++				onDestroy( *it );
++			objs_.clear();
++		}
++	protected:
++		virtual void onDestroy(T*) = 0;
++		virtual T* onCreate() = 0;
++	private:
++		typedef std::deque<T*> ptr_list;
++		ptr_list		objs_;
++	};
++	typedef ResourceManager<NetEvent> NetEventManager;
++	typedef NetEventManager::handle NetEventHandle;
++	*/
++	class INetEventConnection;
++	namespace impl { class EventConnection; }
++	struct NET_API NetEventHandle
++	{
++		friend class INetEventConnection;
++		friend class impl::EventConnection;
++		NetEvent* operator ->() const;
++		NetEvent& operator *() const;
++		bool empty() const;
++		void destroy();
++		NetEventHandle& operator=(const NetEventHandle& rhs);
++	protected:
++		~NetEventHandle();
++		NetEventHandle(const NetEventHandle& other);
++		NetEventHandle(impl::EventConnection* owner, NetEvent* px);
++	private:
++		NetEvent*					px_;
++		impl::EventConnection*	owner_;
++	};
++
+ 	class NET_API INetEventConnection
+ 	{
+ 	public:
+@@ -50,18 +149,26 @@
+ 		virtual void setPacketConnection(IPacketConnection*,const NetEvent::Direction) = 0;
+ 		virtual void setMaxEventErrors(const size_t) = 0;
+ 
++		virtual bool start() = 0;
++		virtual void stop() = 0;
++
+ 		typedef boost::function<NetEvent*(const NetEvent::id_type)> CreateEventFn;
+ 		typedef boost::function<void(NetEvent*)> DestroyEventFn;
+ 
++		/** NB fnCreate and fnDestroy have to be threadsafe when manual polling is used! */
+ 		virtual void registerEvent(const NetEvent::id_type, const NetEvent::Direction,
+ 									const CreateEventFn& fnCreate, const DestroyEventFn& fnDestroy) = 0;
+ 		virtual void sendEvent(const NetEvent&, const SendOptions& opt = SendOptions()) = 0;
+ 		virtual void sendEvent(const PeerId, const NetEvent&, const SendOptions& opt = SendOptions()) = 0;
+ 		virtual void setAllowedIncomingEventIds(const std::vector<NetEvent::id_type>&) = 0;
+ 
++		virtual void setPolling(const bool manualPolling = false) = 0;
++		virtual void poll() = 0;
++
+ 		typedef boost::function<void(const PeerId, const NetEvent&, const ChannelId)> EvtProcessEventFn;
+ 		typedef boost::function<void(void)> EvtDisconnectFn;
+ 
++		/** Pass 0 to disable. */
+ 		virtual void setProcessEventCallback(const EvtProcessEventFn&) = 0;
+ 		virtual void setDisconnectCallback(const EvtDisconnectFn&) = 0;
+ 	};
+
+Modified: trunk/yake/yake/net/netPacket.h
+===================================================================
+--- trunk/yake/yake/net/netPacket.h	2006-02-05 10:01:46 UTC (rev 1198)
++++ trunk/yake/yake/net/netPacket.h	2006-02-05 22:52:59 UTC (rev 1199)
+@@ -13,13 +13,31 @@
+ 		virtual void send(const PeerId, const void*, const size_t, const SendOptions& opt = SendOptions()) = 0;
+ 	};
+ 
++#pragma warning(push)
++#pragma warning(disable: 4251) // class 'X' needs to have dll-interface to be used by clients of struct 'net::CallbackConnection'
++	typedef uint32 CallbackHandle;
++	struct NET_API CallbackConnection
++	{
++	public:
++		typedef boost::function<void(const CallbackHandle)> DisconnectFn;
++		CallbackConnection(const CallbackHandle h, const DisconnectFn& fn);
++		CallbackConnection(const CallbackConnection&);
++		CallbackConnection& operator=(const CallbackConnection&);
++		~CallbackConnection(); // does nothing!
++		void disconnect();
++	private:
++		DisconnectFn	disconnectFn_;
++		CallbackHandle	handle_;
++	};
++#pragma warning(pop)
++
+ 	class NET_API IPacketReceiver
+ 	{
+ 	public:
+ 		virtual ~IPacketReceiver() {}
+ 
+ 		typedef boost::function<void(const PeerId, const void*, const size_t, const ChannelId)> OnPacketReceivedFn;
+-		virtual void addPacketReceivedCallback( const OnPacketReceivedFn&) = 0;
++		virtual CallbackConnection addPacketReceivedCallback( const OnPacketReceivedFn&) = 0;
+ 	};
+ 
+ 	class NET_API IPacketConnection : public IPacketSender, public IPacketReceiver
+
+
+
+From codeandroid at berlios.de  Sun Feb  5 23:53:37 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 5 Feb 2006 23:53:37 +0100
+Subject: [Yake-svn] r1200 - trunk/yake/yake/object
+Message-ID: <200602052253.k15MrbPW029107@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-02-05 23:53:37 +0100 (Sun, 05 Feb 2006)
+New Revision: 1200
+
+Modified:
+   trunk/yake/yake/object/ClassAndObjectIdManager.h
+Log:
+interface improvements
+
+Modified: trunk/yake/yake/object/ClassAndObjectIdManager.h
+===================================================================
+--- trunk/yake/yake/object/ClassAndObjectIdManager.h	2006-02-05 22:52:59 UTC (rev 1199)
++++ trunk/yake/yake/object/ClassAndObjectIdManager.h	2006-02-05 22:53:37 UTC (rev 1200)
+@@ -33,7 +33,7 @@
+ namespace yake {
+ namespace OBJECTS_NAMESPACE {
+ 
+-	template<typename classdata_type,typename objectid_type = ::object::ObjectId<default_objectid_traits> >
++	template<typename classdata_type,typename objectid_type = ::yake::OBJECTS_NAMESPACE::ObjectId<default_objectid_traits> >
+ 	struct ClassEntryT
+ 	{
+ 		// official interface:
+@@ -53,7 +53,7 @@
+ 		classdata_type	data_;
+ 	};
+ 
+-	template<typename classentry_type,typename objectid_type = ::object::ObjectId<default_objectid_traits> >
++	template<typename classentry_type,typename objectid_type = ::yake::OBJECTS_NAMESPACE::ObjectId<default_objectid_traits> >
+ 	struct ClassAndObjectIdManager
+ 	{
+ 	public:
+
+
+
+From codeandroid at berlios.de  Sun Feb  5 23:54:40 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 5 Feb 2006 23:54:40 +0100
+Subject: [Yake-svn] r1201 - in trunk/yake/src/yake: . net net/detail
+Message-ID: <200602052254.k15MseEf029295@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-02-05 23:54:39 +0100 (Sun, 05 Feb 2006)
+New Revision: 1201
+
+Added:
+   trunk/yake/src/yake/net/
+   trunk/yake/src/yake/net/detail/
+   trunk/yake/src/yake/net/detail/netCommon.cpp
+   trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp
+   trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp
+   trunk/yake/src/yake/net/detail/netEventConnection.cpp
+   trunk/yake/src/yake/net/detail/netInternal.cpp
+   trunk/yake/src/yake/net/net.cpp
+   trunk/yake/src/yake/net/pch.cpp
+   trunk/yake/src/yake/object/
+Log:
+initial revision
+
+Added: trunk/yake/src/yake/net/detail/netCommon.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netCommon.cpp	2006-02-05 22:53:37 UTC (rev 1200)
++++ trunk/yake/src/yake/net/detail/netCommon.cpp	2006-02-05 22:54:39 UTC (rev 1201)
+@@ -0,0 +1,259 @@
++#include <yake/net/pch.h>
++#include <sstream>
++#include <yake/net/net.h>
++
++// Modify the following defines if you have to target a platform prior to the ones specified below.
++// Refer to MSDN for the latest info on corresponding values for different platforms.
++#ifndef WINVER				// Allow use of features specific to Windows XP or later.
++#define WINVER 0x0501		// Change this to the appropriate value to target other versions of Windows.
++#endif
++
++#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
++#define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
++#endif						
++
++#ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows 98 or later.
++#define _WIN32_WINDOWS 0x0410 // Change this to the appropriate value to target Windows Me or later.
++#endif
++
++#ifndef _WIN32_IE			// Allow use of features specific to IE 6.0 or later.
++#define _WIN32_IE 0x0600	// Change this to the appropriate value to target other versions of IE.
++#endif
++
++#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
++// Windows Header Files:
++#include <windows.h>
++
++namespace net {
++
++	//-------------------------------------------------------------------------
++	// CallbackConnection
++	//-------------------------------------------------------------------------
++
++	CallbackConnection::CallbackConnection(const CallbackHandle h, const DisconnectFn& fn) :
++		handle_(h), disconnectFn_(fn)
++	{
++	}
++		CallbackConnection::CallbackConnection(const CallbackConnection& other) :
++		handle_(other.handle_), disconnectFn_(other.disconnectFn_)
++	{
++	}
++	CallbackConnection& CallbackConnection::operator=(const CallbackConnection& rhs)
++	{
++		if (this == &rhs)
++			return *this;
++		handle_ = rhs.handle_;
++		disconnectFn_ = rhs.disconnectFn_;
++		return *this;
++	}
++	CallbackConnection::~CallbackConnection() {}; // does nothing!
++	void CallbackConnection::disconnect()
++	{
++		if (handle_ != 0 && !disconnectFn_.empty())
++			disconnectFn_(handle_);
++		handle_ = 0;
++	}
++
++	//-------------------------------------------------------------------------
++	// sleep(...)
++	//-------------------------------------------------------------------------
++
++	namespace native {
++		void sleep(const uint32 ms)
++		{
++			::Sleep(ms);
++		}
++	} // namespace native
++
++	//-------------------------------------------------------------------------
++	// ipToString()
++	//-------------------------------------------------------------------------
++
++	std::string ipToString(const uint32 ip)
++	{
++		std::stringstream ips;
++		ips << "" /*is necessary to avoid ambigious overload problem*/ << int(ip&0xff) << "." << int((ip>>8)&0xff) << "." << int((ip>>16)&0xff) << "." << int((ip>>24)&0xff);
++		return ips.str();
++	}
++
++	//-------------------------------------------------------------------------
++	// Address
++	//-------------------------------------------------------------------------
++
++	Address::Address(const uint16 port) : ip_("127.0.0.1"), port_(port)
++	{}
++	Address::Address(const std::string& ip, const uint16 port) : ip_(ip), port_(port)
++	{}
++	Address::Address(const Address& other) : ip_(other.ip_), port_(other.port_)
++	{}
++	Address::~Address()
++	{}
++	Address& Address::operator =(const net::Address& rhs)
++	{
++		if (this == &rhs)
++			return *this;
++		ip_ = rhs.ip_;
++		port_ = rhs.port_;
++		return *this;
++	}
++	void Address::setIp(const std::string& ip)
++	{
++		ip_ = ip;
++	}
++	const std::string& Address::ip() const
++	{
++		return ip_;
++	}
++	void Address::setPort(const uint16 port)
++	{
++		port_ = port;
++	}
++	const uint16 Address::port() const
++	{
++		return port_;
++	}
++
++	//-------------------------------------------------------------------------
++	// Exception
++	//-------------------------------------------------------------------------
++	Exception::Exception(const std::string& msg, const char* file, const int line)
++	{
++		std::stringstream ss;
++		ss << "net exception: '" << msg << "'\n";
++		if (file)
++			ss << "location: " << file << ":" << line << "\n";
++		msg_ = ss.str();
++	}
++	const char* Exception::what() const
++	{
++		return msg_.c_str();
++	}
++
++	//-------------------------------------------------------------------------
++	// SendOptions
++	//-------------------------------------------------------------------------
++	SendOptions::SendOptions() : 
++		peerId(0xffffffff),
++		reliability(R_RELIABLE),
++		ordering(O_ORDERED),
++		channelId(0)
++	{}
++	SendOptions::SendOptions(const SendOptions& other) :
++		peerId(other.peerId),
++		reliability(other.reliability),
++		ordering(other.ordering),
++		channelId(other.channelId)
++	{}
++	SendOptions::~SendOptions()
++	{}
++	SendOptions& SendOptions::operator=(const SendOptions& rhs)
++	{
++		if (this == &rhs)
++			return *this;
++		peerId = rhs.peerId;
++		reliability = rhs.reliability;
++		ordering = rhs.ordering;
++		channelId = rhs.channelId;
++		return *this;
++	}
++	SendOptions& SendOptions::setPeerId(const PeerId id)
++	{
++		peerId = id;
++		return *this;
++	}
++	SendOptions& SendOptions::setReliability(const Reliability rel)
++	{
++		reliability = rel;
++		return *this;
++	}
++	SendOptions& SendOptions::setOrdering(const Ordering ord)
++	{
++		ordering = ord;
++		return *this;
++	}
++	SendOptions& SendOptions::setChannel(const ChannelId id)
++	{
++		channelId = id;
++		return *this;
++	}
++
++	//-------------------------------------------------------------------------
++	// NativeTimer & Timer
++	//-------------------------------------------------------------------------
++	namespace detail {
++		class NativeTimer
++		{
++		public:
++			NativeTimer()
++			{
++				mCurrent = getTime();
++				mLast = mCurrent;
++			}
++			~NativeTimer()  {}
++
++			void tick()
++			{
++				mLast = mCurrent;
++				mCurrent = getTime();
++			}
++
++			double getDiff()
++			{
++				return mCurrent - mLast;
++			}
++
++			double getTime()
++			{
++				QueryPerformanceFrequency( (LARGE_INTEGER*)&freq );
++				QueryPerformanceCounter( (LARGE_INTEGER*)&time );
++				return (double)(time) / (double)freq;
++			}
++
++		private:
++			__int64  time;
++			__int64  freq;
++			double	mLast;
++			double	mCurrent;
++		};
++	} // namespace detail
++	Timer::Timer() : timer_( new detail::NativeTimer() ), start_(0.), paused_(false), time_(0.)
++	{
++	}
++	Timer::~Timer()
++	{
++		if (timer_)
++			delete timer_;
++	}
++	void Timer::start()
++	{
++		start_ = timer_->getTime();
++		time_ = 0.;
++		paused_ = false;
++	}
++	void Timer::stop()
++	{
++		paused_ = true;
++	}
++	void Timer::pause()
++	{
++		paused_ = true;
++	}
++	void Timer::resume()
++	{
++		const double dt = timer_->getTime() - time_;
++		start_ += dt;
++		paused_ = false;
++	}
++	void Timer::reset()
++	{
++		stop();
++		start();
++	}
++	double Timer::getTime() const
++	{
++		if (!paused_)
++			time_ = (timer_->getTime() - start_);
++		return time_;
++	}
++
++} // namespace net
+
+Added: trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp	2006-02-05 22:53:37 UTC (rev 1200)
++++ trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp	2006-02-05 22:54:39 UTC (rev 1201)
+@@ -0,0 +1,221 @@
++#include <yake/net/pch.h>
++#include <enet/enet.h>
++#include <yake/net/net.h>
++#include <yake/net/detail/netInternal.h>
++#include <yake/net/detail/netEnetClientPacketConnection.h>
++
++namespace net {
++	IClientPacketConnection* createClientPacketConnection()
++	{
++		return new impl::EnetClientPacketConnection();
++	}
++namespace impl {
++
++	EnetClientPacketConnection::EnetClientPacketConnection() : m_host(0), m_ready(false), m_id(0), m_waitingForConnect(false),
++			m_peer(0), m_serverPeer(0), lastPacketReceivedCbHandle_(0)
++	{
++	}
++	EnetClientPacketConnection::~EnetClientPacketConnection()
++	{
++		if (m_ready)
++			this->disconnect();
++	}
++	void EnetClientPacketConnection::addStartedCallback(const OnStartedFn& fn)
++	{
++		startedFnList_.push_back( fn );
++	}
++	CallbackConnection EnetClientPacketConnection::addPacketReceivedCallback(const OnPacketReceivedFn& fn)
++	{
++		boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++		packetReceivedFnList_.insert( std::make_pair(++lastPacketReceivedCbHandle_, fn) );
++		return CallbackConnection(lastPacketReceivedCbHandle_,boost::bind(&EnetClientPacketConnection::disconnectPacketReceivedCallback,this,_1));
++	}
++	void EnetClientPacketConnection::addTimeOutCallback(const OnTimeOutFn& fn)
++	{
++		timeOutFnList_.push_back( fn );
++	}
++	void EnetClientPacketConnection::connect(const Address& addr)
++	{
++		NET_ASSERT( !m_ready );
++		if (m_ready)
++			return;
++
++		const std::string ip = (addr.ip() == "localhost") ? "127.0.0.1" : addr.ip();
++
++		NET_ASSERT( !ip.empty() );
++		if (ip.empty())
++		{
++			NET_ERROR("client: Need a valid IP! rIP=" << ip.c_str());
++			NET_EXCEPT("Need a valid IP!");
++		}
++
++		{
++			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			m_host = enet_host_create (			0 /* create a client host */,
++												1 /* only allow 1 outgoing connection */,
++										57600 / 8 /* 56K modem with 56 Kbps downstream bandwidth */,
++										28800 / 8 /* 56K modem with 28 Kbps upstream bandwidth */);
++			if (!m_host)
++			{
++				NET_ERROR("Could not create client!");
++				NET_EXCEPT("Could not create client!");
++			}
++
++			int ret = enet_address_set_host( &m_address, ip.c_str() );
++			NET_ASSERT( ret == 0 );
++			if (ret != 0)
++			{
++				NET_ERROR("Could not set address!");
++				NET_EXCEPT("Could not set address!");
++			}
++			m_address.port = addr.port();
++
++			m_peer = enet_host_connect( m_host, &m_address, 2 /*channel count*/ );
++			if (!m_peer)
++			{
++				NET_ERROR("Could not connect to server!");
++				enet_host_destroy( m_host );
++				m_host = 0;
++				NET_EXCEPT("Could not connect to server!");
++			}
++		}
++		m_waitingForConnect = true;
++
++		m_connTimer.reset();
++		m_id = UpdateThread::instance().add( boost::bind(&EnetClientPacketConnection::update,this) );
++	}
++	void EnetClientPacketConnection::disconnect()
++	{
++		if (m_id)
++		{
++			UpdateThread::instance().remove( m_id );
++			m_id = 0;
++		}
++		if (!m_ready)
++			return;
++		NET_ASSERT( m_host );
++		if (m_host)
++		{
++			if (m_serverPeer)
++			{
++				boost::mutex::scoped_lock enetLock(getEnetMtx());
++				enet_peer_disconnect( m_serverPeer );
++			}
++			Timer timer;
++			timer.start();
++			while (timer.getTime() < 1)
++			{
++				this->update();
++				::Sleep(10);
++			}
++			{
++				boost::mutex::scoped_lock enetLock(getEnetMtx());
++				enet_peer_reset( m_peer );
++				enet_host_destroy( m_host );
++				m_host = 0;
++			}
++		}
++		{
++			m_ready = false;
++			m_serverIp = "";
++		}
++		m_serverPeer = 0;
++	}
++	void EnetClientPacketConnection::update()
++	{
++		if (!m_ready && !m_waitingForConnect)
++			return;
++		ENetEvent event;
++		int ret = 0;
++		{
++			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			ret = enet_host_service(m_host, &event, 5);
++		}
++		if (ret == 0) // no events
++		{
++			if (m_waitingForConnect)
++			{
++				if (m_connTimer.getTime() > 2. )
++				{
++					m_connTimer.stop();
++					m_connTimer.reset();
++					this->fireCallback_TimeOut();
++				}
++			}
++		}
++		else if (ret > 0) // event received
++		{
++			switch(event.type)
++			{
++			case ENET_EVENT_TYPE_CONNECT:
++				NET_ASSERT( event.peer );
++				NET_LOG("net_packet_client: connected to " << ipToString(event.peer->address.host) << ":" << event.peer->address.port << ".");
++				{
++					m_serverPeer = event.peer;
++					m_waitingForConnect = false;
++					m_ready = true;
++
++					const uint32 host = event.peer->address.host;
++					m_serverIp = ipToString( host );
++
++					this->fireCallback_Started();
++				}
++				break;
++			case ENET_EVENT_TYPE_RECEIVE:
++				NET_ASSERT( event.packet );
++				NET_ASSERT( m_serverPeer );
++				NET_ASSERT( event.packet->dataLength > 0 );
++				NET_ASSERT( event.packet->data );
++				if (event.packet)
++				{
++					this->fireCallback_PacketReceived(0,event.packet->data,event.packet->dataLength,ChannelId(event.channelID));
++				}
++				{
++					boost::mutex::scoped_lock enetLock(getEnetMtx());
++					enet_packet_destroy( event.packet );
++				}
++				break;
++			case ENET_EVENT_TYPE_DISCONNECT:
++				NET_LOG("net_packet_client: disconnected.");
++				m_serverPeer = 0;
++				m_serverIp = "";
++				break;
++			default:
++				NET_LOG("net_packet_client: unhandled event.");
++				break;
++			};
++		}
++	}
++	void EnetClientPacketConnection::send( const void* dataPtr, const size_t dataSize, const net::SendOptions& opt )
++	{
++		this->sendBroadcast( dataPtr, dataSize, opt.reliability, opt.ordering, opt.channelId );
++	}
++	void EnetClientPacketConnection::send(const PeerId, const void* dataPtr, const size_t dataSize, const SendOptions& opt )
++	{
++		this->sendBroadcast( dataPtr, dataSize, opt.reliability, opt.ordering, opt.channelId );
++	}
++	void EnetClientPacketConnection::sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering ord, const ChannelId channel)
++	{
++		sendBroadcast(dataPtr,dataSize,rel,ord,channel);
++	}
++	void EnetClientPacketConnection::sendBroadcast(const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel)
++	{
++		NET_ASSERT( m_ready );
++		if (!m_ready)
++			return;
++		NET_ASSERT( dataSize > 0 );
++		NET_ASSERT( dataPtr );
++		NET_ASSERT( m_serverPeer );
++		{
++			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			ENetPacket* packet = enet_packet_create( 
++									dataPtr, dataSize,
++									//rPacket.m_data, 
++									//rPacket.m_size, 
++									(rel == R_RELIABLE) ? ENET_PACKET_FLAG_RELIABLE : 0 );
++			enet_peer_send(m_serverPeer, channel, packet );
++		}
++	}
++
++} // namespace impl
++} // namespace net
+
+Added: trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp	2006-02-05 22:53:37 UTC (rev 1200)
++++ trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp	2006-02-05 22:54:39 UTC (rev 1201)
+@@ -0,0 +1,369 @@
++#include <yake/net/pch.h>
++#include <enet/enet.h>
++#include <yake/net/net.h>
++#include <yake/net/detail/netInternal.h>
++#include <yake/net/detail/netEnetServerPacketConnection.h>
++
++namespace net {
++	IServerPacketConnection* createServerPacketConnection()
++	{
++		return new impl::EnetServerPacketConnection();
++	}
++namespace impl {
++
++	EnetServerPacketConnection::EnetServerPacketConnection() : m_host(0), m_id(0), m_nextPeerId(0)
++	{
++		m_state.set(S_DEAD);
++	}
++	EnetServerPacketConnection::~EnetServerPacketConnection()
++	{
++		if (m_state.get() != S_DEAD)
++			this->stop();
++	}
++	void EnetServerPacketConnection::addStartedCallback(const OnStartedFn& fn)
++	{
++		startedFnList_.push_back( fn );
++	}
++	void EnetServerPacketConnection::addClientConnectedCallback(const OnClientConnectedFn& fn)
++	{
++		clientConnectedFnList_.push_back( fn );
++	}
++	void EnetServerPacketConnection::addClientDisconnectedCallback(const OnClientDisconnectedFn& fn)
++	{
++		clientDisconnectedFnList_.push_back( fn );
++	}
++	CallbackConnection EnetServerPacketConnection::addPacketReceivedCallback( const OnPacketReceivedFn& fn)
++	{
++		boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++		packetReceivedFnList_.insert( std::make_pair(++lastPacketReceivedCbHandle_,fn) );
++		return CallbackConnection(lastPacketReceivedCbHandle_,boost::bind(&EnetServerPacketConnection::disconnectPacketReceivedCallback,this,_1));
++	}
++	void EnetServerPacketConnection::setAllowedClientIps(const std::vector<std::string> &ips)
++	{
++		boost::mutex::scoped_lock ipsLock(m_ipListMtx);
++		m_ipWhiteList = ips;
++	}
++	bool EnetServerPacketConnection::isIpAllowed( const std::string& ip )
++	{
++		boost::mutex::scoped_lock ipsLock(m_ipListMtx);
++		if (m_ipWhiteList.empty() && m_ipBlackList.empty())
++			return true;
++		if (contains(m_ipBlackList,ip))
++			return false;
++		if (m_ipWhiteList.empty())
++			return true;
++		return (contains(m_ipWhiteList,ip));
++	}
++	void EnetServerPacketConnection::start(const Address& addr, const size_t maxClients)
++	{
++		NET_ASSERT( m_state.get() == S_DEAD );
++		if (m_state.get() != S_DEAD)
++		{
++			NET_THROW("Object is not dead. Cannot start!");
++		}
++		m_state.set(S_STARTING);
++		if (maxClients == 0)
++		{
++			m_state.set(S_DEAD);
++			NET_THROW("Maximum number of clients must be larger than 0.");
++			return;
++		}
++		if (addr.ip().empty())
++		{
++			m_address.host = ENET_HOST_ANY;
++		}
++		else
++		{
++			const std::string ip = (addr.ip() == "localhost") ? "127.0.0.1" : addr.ip();
++			int ret = enet_address_set_host( &m_address, ip.c_str() );
++			if (ret != 0)
++			{
++				m_state.set(S_DEAD);
++				NET_THROW("Could not set server IP!");
++				return;
++			}
++		}
++
++		{
++			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			m_address.port = addr.port();
++			m_host = enet_host_create( &m_address,
++										maxClients, // up to 'maxClients' clients
++										0,  // assume any amount of incoming bandwidth
++										0); // assume any amount of outgoing bandwidth
++			if (!m_host)
++			{
++				m_state.set(S_DEAD);
++				NET_THROW("Could not create server!");
++				return;
++			}
++		}
++
++		m_state.set(S_RUNNING);
++		this->fireCallback_Started();
++		m_id = UpdateThread::instance().add( boost::bind(&EnetServerPacketConnection::update,this) );
++	}
++	void EnetServerPacketConnection::stop()
++	{
++		if (m_id)
++		{
++			UpdateThread::instance().remove( m_id );
++			m_id = 0;
++		}
++		if (m_state.get() != S_RUNNING)
++		{
++			if (m_state.get() == S_DEAD)
++				return;
++		}
++		m_state.set(S_STOPPING);
++		{
++			NET_ASSERT( m_host );
++			if (m_host)
++			{
++				if (m_host->peerCount > 0)
++				{
++					{
++						boost::mutex::scoped_lock enetLock(getEnetMtx());
++						// try to gracefully disconnect clients
++						for (size_t i=0; i<m_host->peerCount; ++i)
++							enet_peer_disconnect( &m_host->peers[i] );
++					}
++					Timer timer;
++					timer.start();
++					while (timer.getTime() < 2) // wait 2 seconds for acknowledgement
++					{
++						::Sleep(10);
++						this->update();
++					}
++					// forcefully disconnect remaining clients
++					if (m_host->peerCount > 0)
++					{
++						boost::mutex::scoped_lock enetLock(getEnetMtx());
++						for (size_t i=0; i<m_host->peerCount; ++i)
++							enet_peer_reset( &m_host->peers[i] );
++					}
++				}
++				{
++					boost::mutex::scoped_lock enetLock(getEnetMtx());
++					enet_host_destroy( m_host );
++					m_host = 0;
++				}
++			}
++		}
++		m_ip2string.clear();
++		m_ipWhiteList.clear();
++		{
++			boost::mutex::scoped_lock lockClients(m_clientsMtx);
++			for (PeerToClientMap::iterator it = m_clients.begin(); it != m_clients.end(); ++it)
++				delete it->second;
++			m_clients.clear();
++			m_id2client.clear();
++		}
++		//m_events.clear();
++		m_state.set(S_DEAD);
++	}
++	void EnetServerPacketConnection::disconnect( const PeerId client )
++	{
++		boost::mutex::scoped_lock lockClients(m_clientsMtx);
++		IdToClientMap::iterator itFindClient = m_id2client.find( client );
++		NET_ASSERT( itFindClient != m_id2client.end() );
++		if (itFindClient == m_id2client.end())
++			return;
++		// set client state
++		itFindClient->second->state = CS_DISCONNECTING;
++		// disconnect enet client
++		{
++			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			enet_peer_disconnect( itFindClient->second->peer );
++		}
++	}
++	EnetServerPacketConnection::ClientState EnetServerPacketConnection::getClientState(ENetPeer* peer) const
++	{
++		if (peer == 0)
++			return CS_DEAD;
++
++		boost::mutex::scoped_lock lockClients(m_clientsMtx);
++		PeerToClientMap::const_iterator it = m_clients.find( peer );
++		if (it == m_clients.end())
++			return CS_DEAD;
++		return it->second->state;
++	}
++	std::string EnetServerPacketConnection::ipToStringCached( const uint32 host )
++	{
++		IpToString::const_iterator itFind = m_ip2string.find( host );
++		if (itFind != m_ip2string.end())
++			return itFind->second;
++		const std::string strHost = ipToString(host);
++		m_ip2string.insert( std::make_pair( host, strHost ) );
++		return strHost;
++	}
++	void EnetServerPacketConnection::update()
++	{
++		State state = m_state.get();
++		NET_ASSERT( state == S_RUNNING || state == S_STOPPING  );
++		if (state != S_RUNNING && state != S_STOPPING)
++			return;
++
++		// packet handling
++		ENetEvent event;
++		int ret = 0;
++		{
++			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			ret = enet_host_service(m_host, &event, 5);
++		}
++		if (ret == 0) // no events
++		{}
++		else if (ret > 0) // event received
++		{
++			switch(event.type)
++			{
++			case ENET_EVENT_TYPE_CONNECT:
++				NET_LOG("net_packet_server: new client connected.");
++				NET_ASSERT( event.peer );
++				if (event.peer && state != S_STOPPING)
++				{
++					// white-list / ban checking - @todo it would be better to do this at a lower level!
++					const std::string host = ipToStringCached( event.peer->address.host );
++
++					NET_LOG("net_packet_server: new client attempts to connect: '" << host << ":" << event.peer->address.port << "'.");
++
++					if (!isIpAllowed(host))
++					{
++						NET_LOG("net_packet_server: new client '" << host << "' is NOT ALLOWED to connect. disconnecting.");
++						boost::mutex::scoped_lock enetLock(getEnetMtx());
++						//enet_disconnect_peer( event.peer ); // gracefully
++						enet_peer_reset( event.peer ); // hard!
++					}
++
++					PeerId peerId = 0xffffffff;
++					{
++						boost::mutex::scoped_lock lockClients(m_clientsMtx);
++
++						Client* c = new Client();
++						c->state = CS_CONNECTED;
++						c->peer = event.peer;
++						c->id = m_nextPeerId++;
++						peerId = c->id;
++						c->host = event.peer->address.host;
++						event.peer->data = c; //!
++
++						m_clients.insert( std::make_pair( event.peer, c ) );
++						m_id2client.insert( std::make_pair( c->id, c ) );
++					}
++
++					fireCallback_ClientConnected( peerId, Address(host,event.peer->address.port) );
++				}
++				break;
++			case ENET_EVENT_TYPE_RECEIVE:
++				NET_ASSERT( event.packet );
++				NET_ASSERT( event.peer );
++				NET_ASSERT( event.peer->data );
++				if (getClientState( event.peer ) == CS_CONNECTED
++					&& state != S_STOPPING)
++				{
++					// create packet object
++					NET_ASSERT( event.packet->dataLength > 0 );
++					NET_ASSERT( event.packet->data );
++
++					// get "id"
++					PeerId peerId = 0xffffffff;
++					{
++						boost::mutex::scoped_lock lockClients(m_clientsMtx);
++						peerId = (reinterpret_cast<Client*>(event.peer->data))->id;
++					}
++
++					//Note: The callbacks can take over ownership/destruction of the packet!
++					bool bPacketDeleted = false;
++					fireCallback_PacketReceived(peerId,event.packet->data,event.packet->dataLength,event.channelID);
++				}
++				{
++					// destroy enet packet
++					boost::mutex::scoped_lock enetLock(getEnetMtx());
++					enet_packet_destroy( event.packet );
++				}
++				break;
++			case ENET_EVENT_TYPE_DISCONNECT:
++				{
++					NET_ASSERT( event.peer );
++					uint32 host = event.peer ? event.peer->address.host : 0;
++					PeerId peerId = 0xffffffff;
++					if (event.peer)
++					{
++						boost::mutex::scoped_lock lockClients(m_clientsMtx);
++						Client* c = reinterpret_cast<Client*>(event.peer->data);
++						if (c)
++							peerId = c->id;
++						PeerToClientMap::iterator it = m_clients.find( event.peer );
++						if (it != m_clients.end())
++						{
++							m_id2client.erase( m_id2client.find( it->second->id ) );
++							host = it->second->host;
++							delete it->second;
++							m_clients.erase( it );
++						}
++					}
++					fireCallback_ClientDisconnected(peerId);
++
++					const std::string strHost = host ? ipToStringCached( host ) : "<null host>";
++					NET_LOG("net_packet_server: client '" << strHost << "' disconnected.");
++				}
++				break;
++			default:
++				break;
++			};
++		}
++	}
++	void EnetServerPacketConnection::send( const void* dataPtr, const size_t dataSize, const net::SendOptions& opt )
++	{
++		if (opt.peerId != 0xffffffff)
++			this->sendTo( opt.peerId, dataPtr, dataSize, opt.reliability, opt.ordering, opt.channelId );
++		else
++			this->sendBroadcast( dataPtr, dataSize, opt.reliability, opt.ordering, opt.channelId );
++	}
++	void EnetServerPacketConnection::send(const PeerId peerId, const void* dataPtr, const size_t dataSize, const SendOptions& opt )
++	{
++		SendOptions options = opt;
++		options.setPeerId( peerId );
++		send( dataPtr, dataSize, options );
++	}
++	void EnetServerPacketConnection::sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel)
++	{
++		NET_ASSERT( dataSize > 0 );
++		NET_ASSERT( dataPtr );
++		{
++			NET_ASSERT( m_state.get() == S_RUNNING );
++			if (m_state.get() != S_RUNNING)
++				return;
++		}
++		{
++			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			ENetPacket* packet = enet_packet_create( 
++														dataPtr, dataSize,
++														(rel == R_RELIABLE) ? ENET_PACKET_FLAG_RELIABLE : 0 );
++			// send
++			boost::mutex::scoped_lock clientsLock(m_clientsMtx);
++			IdToClientMap::const_iterator it = m_id2client.find( clientId );
++			NET_ASSERT( it != m_id2client.end() );
++			enet_peer_send( it->second->peer, channel, packet );
++		}
++	}
++	void EnetServerPacketConnection::sendBroadcast(const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel)
++	{
++		NET_ASSERT( dataSize > 0 );
++		NET_ASSERT( dataPtr );
++		{
++			NET_ASSERT( m_state.get() == S_RUNNING );
++			if (m_state.get() != S_RUNNING)
++				return;
++		}
++		{
++			boost::mutex::scoped_lock enetLock(getEnetMtx());
++			ENetPacket* packet = enet_packet_create( 
++														dataPtr, dataSize,
++														(rel == R_RELIABLE) ? ENET_PACKET_FLAG_RELIABLE : 0 );
++			enet_host_broadcast( m_host, channel, packet );
++		}
++	}
++
++} // namespace impl
++} // namespace net
+
+Added: trunk/yake/src/yake/net/detail/netEventConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-02-05 22:53:37 UTC (rev 1200)
++++ trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-02-05 22:54:39 UTC (rev 1201)
+@@ -0,0 +1,269 @@
++#include <yake/net/pch.h>
++#include <boost/signals.hpp>
++#include <enet/enet.h>
++#include <yake/net/net.h>
++#include <yake/net/detail/netInternal.h>
++#include <yake/net/detail/netEventConnection.h>
++
++namespace net {
++	const NetEvent::id_type NetEvent::EVTID_NONE = 0xff;
++	NetEvent::NetEvent(const id_type id) : id_(id)
++	{
++	}
++	NetEvent::id_type NetEvent::id() const
++	{
++		return id_;
++	}
++	void NetEvent::setId(const id_type id)
++	{
++		id_ = id;
++	}
++	INetEventConnection::~INetEventConnection()
++	{
++	}
++	INetEventConnection* createEventConnection()
++	{
++		return new impl::EventConnection();
++	}
++namespace impl {
++
++	EventConnection::EventConnection() : conn_(0), dir_(NetEvent::DIR_ANY), maxErrors_(0), manualPolling_(false), started_(false)
++	{
++	}
++	EventConnection::~EventConnection()
++	{
++		stop();
++#ifdef _DEBUG
++		std::cout << "\nnet::EventConnection statistics:\n";
++		std::cout << "   total errors           : " << stats_.totalErrors() << "\n";
++		std::cout << "   total events processed : " << stats_.numEventsProcessed << "\n";
++		std::cout << "   blocked event ids      : " << stats_.numBlockedEventIds << "\n";
++		std::cout << "   invalid packets        : " << stats_.numInvalidPackets << "\n";
++		std::cout << "   invalid events         : " << stats_.numInvalidEvents << "\n";
++		std::cout << "   invalid event ids      : " << stats_.numInvalidEventIds << "\n";
++		std::cout << "   unregistered event ids : " << stats_.numUnregisteredEventIds << "\n";
++		std::cout << "   wrong direction        : " << stats_.numWrongEventDirection << "\n";
++		std::cout << "\n";
++#endif
++	}
++	void EventConnection::setMaxEventErrors(const size_t maxErrors)
++	{
++		maxErrors_ = maxErrors;
++	}
++	void EventConnection::setProcessEventCallback(const EvtProcessEventFn& fn)
++	{
++		boost::mutex::scoped_lock lockFn(processEventFnMtx_);
++		processEventFn_ = fn;
++	}
++/*	void EventConnection::addProcessEventCallback(const EvtProcessEventFn& fn)
++	{
++		NET_ASSERT( !fn.empty() );
++		if (fn.empty())
++			return;
++		processEventFns_.connect( fn );
++	}
++*/
++	void EventConnection::setDisconnectCallback(const EvtDisconnectFn&)
++	{
++		NET_ASSERT( 0 && "NOT IMPLEMENTED" );
++	}
++	void EventConnection::setAllowedIncomingEventIds(const std::vector<NetEvent::id_type>& ids)
++	{
++		boost::mutex::scoped_lock lck(allowedEventIdsMtx_);
++		allowedEventIds_ = ids;
++	}
++	void EventConnection::setPacketConnection(IPacketConnection* conn,const NetEvent::Direction dir)
++	{
++		boost::mutex::scoped_lock lck(startedMtx_);
++		NET_ASSERT( !started_ );
++		if (started_)
++			return;
++		if (conn_)
++		{
++			//@FIXME unsubscribe handlers!
++		}
++		conn_ = conn;
++		dir_ = dir;
++		started_ = false;
++	}
++	bool EventConnection::start()
++	{
++		boost::mutex::scoped_lock lck(startedMtx_);
++		NET_ASSERT( !started_ );
++		if (conn_)
++		{
++			conn_->addPacketReceivedCallback( boost::bind(&EventConnection::onReceivePacket,this,_1,_2,_3,_4) );
++			started_ = true;
++		}
++		return started_;
++	}
++	void EventConnection::stop()
++	{
++		boost::mutex::scoped_lock lck(startedMtx_);
++		NET_ASSERT( started_ );
++		NET_ASSERT( conn_ );
++		if (conn_)
++		{
++			//@todo fixme unsubscribe from packet connection 'conn_'
++			conn_ = 0;
++			started_ = false;
++		}
++	}
++	void EventConnection::registerEvent(const NetEvent::id_type id, const NetEvent::Direction dir, const CreateEventFn& fnCreate, const DestroyEventFn& fnDestroy)
++	{
++		NET_ASSERT( !fnCreate.empty() );
++		if (fnCreate.empty())
++			return;
++		NET_ASSERT( !fnDestroy.empty() );
++		if (fnDestroy.empty())
++			return;
++		NET_ASSERT( !map_contains(eventIds_,id) );
++		if (map_contains(eventIds_,id))
++			return;
++		IdEntry entry;
++		entry.dir = dir;
++		entry.fnCreate = fnCreate;
++		entry.fnDestroy = fnDestroy;
++		eventIds_.insert( std::make_pair(id,entry) );
++	}
++	void EventConnection::sendEvent(const PeerId peerId, const NetEvent& evt, const SendOptions& opt)
++	{
++		SendOptions options = opt;
++		options.setPeerId(peerId);
++		this->sendEvent( evt, options );
++	}
++	void EventConnection::sendEvent(const NetEvent& evt, const SendOptions& opt)
++	{
++		NET_ASSERT( conn_ );
++		if (!conn_)
++			return;
++
++		bitstream_data data; // data container
++		bitstream_sink dataSink(data); // sink adapter
++		obitstream out(&dataSink); // stream interface
++
++		out.write( evt.id(), sizeof(NetEvent::id_type)*8 ) ;
++		if (!evt.pack( out ))
++			return; //@FIXME: inform user
++
++		out.flush();
++		conn_->send( &data.front(), data.size(), opt );
++	}
++	void EventConnection::onReceivePacket(const PeerId peerId, const void* dataPtr, const size_t dataLen, const ChannelId channel)
++	{
++		NET_ASSERT( dataPtr && dataLen > 0 );
++		NET_ASSERT( dataLen >= sizeof(event_id) );
++		if (dataLen < sizeof(event_id))
++		{
++			++stats_.numInvalidPackets;
++			return; //@FIXME increase error count !?
++		}
++
++		// copy data
++		bitstream_data data;
++		data.resize( dataLen );
++		for (size_t i=0; i<dataLen; ++i)
++			data[i] = ((const uint8*)(dataPtr))[i];
++
++		// attach stream
++		bitstream_source dataSource(data);
++		ibitstream in(&dataSource);
++
++		// extract event id
++		event_id evtId = NetEvent::EVTID_NONE;
++		in.read( evtId, sizeof(NetEvent::id_type)*8 );
++
++		// check event id
++		EventIdMap::const_iterator it = eventIds_.find( evtId );
++		if (it == eventIds_.end())
++		{
++			++stats_.numUnregisteredEventIds;
++			return;
++		}
++		if (evtId == NetEvent::EVTID_NONE)
++		{
++			++stats_.numInvalidEventIds;
++			return;
++		}
++		{
++			boost::mutex::scoped_lock lck(allowedEventIdsMtx_);
++			if (!allowedEventIds_.empty())
++			{
++				if (!contains(allowedEventIds_,evtId))
++				{
++					++stats_.numBlockedEventIds;
++					return;
++				}
++			}
++		}
++		// check event direction
++		const IdEntry& idEntry = it->second;
++		const event_direction evtDir = idEntry.dir;
++		if (evtDir != NetEvent::DIR_ANY)
++		{
++			if (dir_ == evtDir)
++			{
++				++stats_.numWrongEventDirection;
++				return;
++			}
++		}
++		// create event
++		const CreateEventFn& fnCreate = idEntry.fnCreate;
++		NET_ASSERT( !fnCreate.empty() );
++		const DestroyEventFn& fnDestroy = idEntry.fnDestroy;
++		NET_ASSERT( !fnDestroy.empty() );
++
++		NetEvent* evt = fnCreate(evtId);
++
++		// deserialize
++		if (!evt->unpack(in))
++		{
++			fnDestroy(evt);
++			++stats_.numInvalidEvents;
++			return;
++		}
++
++		// notify callbacks
++		if (manualPolling_)
++		{
++			// queue
++			boost::mutex::scoped_lock lck(evtQMtx_);
++			evtQ_.push_back(EvtQItem(peerId,evt,channel,fnDestroy));
++		}
++		else
++		{
++			// process immediately
++			++stats_.numEventsProcessed;
++			{
++				boost::mutex::scoped_lock lockFn(processEventFnMtx_);
++				if (!processEventFn_.empty())
++				{
++					processEventFn_(peerId,*evt,channel);
++				}
++			}
++			fnDestroy(evt);
++		}
++	}
++	void EventConnection::setPolling(const bool manualPolling)
++	{
++		manualPolling_ = manualPolling;
++	}
++	void EventConnection::poll()
++	{
++		NET_ASSERT( manualPolling_ );
++		EvtQ evtq;
++		{
++			boost::mutex::scoped_lock lck(evtQMtx_);
++			evtq = evtQ_;
++			evtQ_.clear();
++		}
++		boost::mutex::scoped_lock lockFn(processEventFnMtx_);
++		for (EvtQ::const_iterator it = evtq.begin(); it != evtq.end(); ++it)
++		{
++			if (!processEventFn_.empty())
++				processEventFn_( it->peerId_, *it->evt_, it->channel_ );
++			it->fnDestroy_( it->evt_ );
++		}
++	}
++} // namespace impl
++} // namespace net
+
+Added: trunk/yake/src/yake/net/detail/netInternal.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netInternal.cpp	2006-02-05 22:53:37 UTC (rev 1200)
++++ trunk/yake/src/yake/net/detail/netInternal.cpp	2006-02-05 22:54:39 UTC (rev 1201)
+@@ -0,0 +1,114 @@
++#include <yake/net/pch.h>
++#include <yake/net/net.h>
++#include <yake/net/detail/netInternal.h>
++
++namespace net {
++namespace impl {
++
++	//--------------------------------------------------------------------------
++	UpdateThread* UpdateThread::instance_ = 0;
++	bool UpdateThread::create()
++	{
++		if (!instance_)
++			instance_ = new UpdateThread();
++		return (instance_ != 0);
++	}
++	void UpdateThread::destroy()
++	{
++		if (instance_)
++		{
++			instance_->requestQuit();
++			while (!instance_->dead())
++				native::sleep(10);
++			delete instance_;
++			instance_ = 0;
++		}
++	}
++	UpdateThread& UpdateThread::instance()
++	{
++		NET_ASSERT( instance_ );
++		return *instance_;
++	}
++	UpdateThread::UpdateThread() : nextId_(1), thread_(0), quitRequested_(false), dead_(false)
++	{
++		thread_ = new boost::thread( boost::bind(&UpdateThread::callFns,this) );
++	}
++	UpdateThread::~UpdateThread()
++	{
++		if (thread_)
++		{
++			thread_->join();
++			delete thread_;
++			thread_ = 0;
++		}
++		fns_.clear();
++	}
++	void UpdateThread::requestQuit()
++	{
++		boost::mutex::scoped_lock lock(mtx_);
++		quitRequested_ = true;
++	}
++	bool UpdateThread::dead() const
++	{
++		boost::mutex::scoped_lock lock(deadMtx_);
++		return dead_;
++	}
++	void UpdateThread::callFns()
++	{
++		while (true)
++		{
++			{
++				boost::mutex::scoped_lock lock(mtx_);
++
++				if (quitRequested_)
++				{
++					boost::mutex::scoped_lock lock(deadMtx_);
++					fns_.clear();
++					dead_ = true;
++					return;
++				}
++
++				for (UpdateFnMap::iterator it = fns_.begin(); it != fns_.end(); ++it)
++				{
++					it->second();
++				}
++			}
++			native::sleep(10);
++		}
++	}
++	uint32 UpdateThread::add( const UpdateFn& fn )
++	{
++		boost::mutex::scoped_lock lock(mtx_);
++		std::cout << "UpdateThread::add()\n";
++		fns_[ nextId_++ ] = fn;
++		return nextId_-1;
++	}
++	void UpdateThread::remove( const uint32 id )
++	{
++		boost::mutex::scoped_lock lock(mtx_);
++		std::cout << "UpdateThread::remove()\n";
++		UpdateFnMap::iterator it = fns_.find( id );
++		if (it != fns_.end())
++			fns_.erase( it );
++	}
++	//void UpdateThread::remove( const UpdateFn& fn )
++	//{
++	//	boost::mutex::scoped_lock lock(mtx_);
++	//	for (UpdateFnMap::iterator it = fns_.begin(); it != fns_.end(); ++it)
++	//	{
++	//		if (it->second == fn)
++	//		{
++	//			fns_.erase( it );
++	//			return;
++	//		}
++	//	}
++	//}
++
++	boost::mutex& getEnetMtx()
++	{
++		static boost::mutex mtx;
++		return mtx;
++	}
++
++} // namespace impl
++} // namespace net
+
+Added: trunk/yake/src/yake/net/net.cpp
+===================================================================
+--- trunk/yake/src/yake/net/net.cpp	2006-02-05 22:53:37 UTC (rev 1200)
++++ trunk/yake/src/yake/net/net.cpp	2006-02-05 22:54:39 UTC (rev 1201)
+@@ -0,0 +1,48 @@
++#include <yake/net/pch.h>
++#include <enet/enet.h>
++#include <yake/net/net.h>
++#include <yake/net/detail/netInternal.h>
++
++#ifdef _MANAGED
++#pragma managed(push, off)
++#endif
++
++BOOL APIENTRY DllMain( HMODULE hModule,
++                       DWORD  ul_reason_for_call,
++                       LPVOID lpReserved
++					 )
++{
++	switch (ul_reason_for_call)
++	{
++	case DLL_PROCESS_ATTACH:
++	case DLL_THREAD_ATTACH:
++	case DLL_THREAD_DETACH:
++	case DLL_PROCESS_DETACH:
++		break;
++	}
++    return TRUE;
++}
++
++#ifdef _MANAGED
++#pragma managed(pop)
++#endif
++
++namespace net {
++
++	bool initialize()
++	{
++		if (enet_initialize() < 0)
++		{
++			fprintf(stderr, "An error occurred while initializing ENet.\n");
++			return false;
++		}
++		impl::UpdateThread::create();
++		return true;
++	}
++	void shutdown()
++	{
++		impl::UpdateThread::destroy();
++		enet_deinitialize();
++	}
++
++} // namespace net
+
+Added: trunk/yake/src/yake/net/pch.cpp
+===================================================================
+--- trunk/yake/src/yake/net/pch.cpp	2006-02-05 22:53:37 UTC (rev 1200)
++++ trunk/yake/src/yake/net/pch.cpp	2006-02-05 22:54:39 UTC (rev 1201)
+@@ -0,0 +1 @@
++#include <yake/net/pch.h>
+
+
+
+From codeandroid at berlios.de  Sun Feb  5 23:56:24 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 5 Feb 2006 23:56:24 +0100
+Subject: [Yake-svn] r1202 - trunk/yake/scripts/msvc8
+Message-ID: <200602052256.k15MuOom029618@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-02-05 23:56:23 +0100 (Sun, 05 Feb 2006)
+New Revision: 1202
+
+Added:
+   trunk/yake/scripts/msvc8/yapp.vcproj
+Modified:
+   trunk/yake/scripts/msvc8/ent.vcproj
+Log:
+
+
+Modified: trunk/yake/scripts/msvc8/ent.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/ent.vcproj	2006-02-05 22:54:39 UTC (rev 1201)
++++ trunk/yake/scripts/msvc8/ent.vcproj	2006-02-05 22:56:23 UTC (rev 1202)
+@@ -196,6 +196,10 @@
+ 				>
+ 			</File>
+ 			<File
++				RelativePath="..\..\src\yapp\ent\yakeDemo.cpp"
++				>
++			</File>
++			<File
+ 				RelativePath="..\..\src\yapp\ent\yakeEnt.cpp"
+ 				>
+ 			</File>
+
+Added: trunk/yake/scripts/msvc8/yapp.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/yapp.vcproj	2006-02-05 22:54:39 UTC (rev 1201)
++++ trunk/yake/scripts/msvc8/yapp.vcproj	2006-02-05 22:56:23 UTC (rev 1202)
+@@ -0,0 +1,704 @@
++<?xml version="1.0" encoding="Windows-1252"?>
++<VisualStudioProject
++	ProjectType="Visual C++"
++	Version="8,00"
++	Name="yapp"
++	ProjectGUID="{F1116FDF-65C1-4788-AC1F-F339279B937A}"
++	RootNamespace="yapp"
++	Keyword="Win32Proj"
++	>
++	<Platforms>
++		<Platform
++			Name="Win32"
++		/>
++	</Platforms>
++	<ToolFiles>
++	</ToolFiles>
++	<Configurations>
++		<Configuration
++			Name="Debug|Win32"
++			OutputDirectory="../../common/bin/$(ConfigurationName)"
++			IntermediateDirectory="../../common/obj/$(ConfigurationName)/$(ProjectName)"
++			ConfigurationType="2"
++			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
++			CharacterSet="2"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				Optimization="0"
++				AdditionalIncludeDirectories="../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl"
++				PreprocessorDefinitions="_STLP_DEBUG;WIN32;_DEBUG;_CONSOLE;YAPP_BASE_EXPORTS;YAPP_GUI_EXPORTS"
++				MinimalRebuild="true"
++				BasicRuntimeChecks="3"
++				RuntimeLibrary="3"
++				RuntimeTypeInfo="true"
++				UsePrecompiledHeader="2"
++				PrecompiledHeaderThrough="yapp/base/yappPCH.h"
++				WarningLevel="3"
++				Detect64BitPortabilityProblems="true"
++				DebugInformationFormat="4"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalDependencies="base.lib physics.lib data.lib"
++				OutputFile="$(OutDir)/$(ProjectName).dll"
++				LinkIncremental="2"
++				AdditionalLibraryDirectories="../../common/lib/$(ConfigurationName);../../dependencies/lib"
++				GenerateDebugInformation="true"
++				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
++				SubSystem="1"
++				ImportLibrary="../../common/lib/$(ConfigurationName)/$(ProjectName).lib"
++				TargetMachine="1"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCManifestTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++			/>
++			<Tool
++				Name="VCFxCopTool"
++			/>
++			<Tool
++				Name="VCAppVerifierTool"
++			/>
++			<Tool
++				Name="VCWebDeploymentTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++		</Configuration>
++		<Configuration
++			Name="Release|Win32"
++			OutputDirectory="../../common/bin/$(ConfigurationName)"
++			IntermediateDirectory="../../common/obj/$(ConfigurationName)/$(ProjectName)"
++			ConfigurationType="2"
++			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
++			CharacterSet="2"
++			>
++			<Tool
++				Name="VCPreBuildEventTool"
++			/>
++			<Tool
++				Name="VCCustomBuildTool"
++			/>
++			<Tool
++				Name="VCXMLDataGeneratorTool"
++			/>
++			<Tool
++				Name="VCWebServiceProxyGeneratorTool"
++			/>
++			<Tool
++				Name="VCMIDLTool"
++			/>
++			<Tool
++				Name="VCCLCompilerTool"
++				AdditionalIncludeDirectories="../../;../../dependencies;../../dependencies/boost;../../dependencies/ttl"
++				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;YAPP_BASE_EXPORTS;YAPP_GUI_EXPORTS"
++				RuntimeLibrary="2"
++				RuntimeTypeInfo="true"
++				UsePrecompiledHeader="2"
++				PrecompiledHeaderThrough="yapp/base/yappPCH.h"
++				WarningLevel="3"
++				Detect64BitPortabilityProblems="true"
++				DebugInformationFormat="3"
++			/>
++			<Tool
++				Name="VCManagedResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCResourceCompilerTool"
++			/>
++			<Tool
++				Name="VCPreLinkEventTool"
++			/>
++			<Tool
++				Name="VCLinkerTool"
++				AdditionalDependencies="base.lib physics.lib data.lib"
++				OutputFile="$(OutDir)/$(ProjectName).dll"
++				LinkIncremental="1"
++				AdditionalLibraryDirectories="../../common/lib/$(ConfigurationName);../../dependencies/lib"
++				GenerateDebugInformation="true"
++				ProgramDatabaseFile="$(OutDir)/$(ProjectName).pdb"
++				SubSystem="1"
++				OptimizeReferences="2"
++				EnableCOMDATFolding="2"
++				ImportLibrary="../../common/lib/$(ConfigurationName)/$(ProjectName).lib"
++				TargetMachine="1"
++			/>
++			<Tool
++				Name="VCALinkTool"
++			/>
++			<Tool
++				Name="VCManifestTool"
++			/>
++			<Tool
++				Name="VCXDCMakeTool"
++			/>
++			<Tool
++				Name="VCBscMakeTool"
++			/>
++			<Tool
++				Name="VCFxCopTool"
++			/>
++			<Tool
++				Name="VCAppVerifierTool"
++			/>
++			<Tool
++				Name="VCWebDeploymentTool"
++			/>
++			<Tool
++				Name="VCPostBuildEventTool"
++			/>
++		</Configuration>
++	</Configurations>
++	<References>
++	</References>
++	<Files>
++		<Filter
++			Name="src"
++			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx"
++			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
++			>
++			<File
++				RelativePath="..\..\src\yapp\base\yakeTask.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\base\yapp.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\base\yappPCH.cpp"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="1"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++						UsePrecompiledHeader="1"
++					/>
++				</FileConfiguration>
++			</File>
++		</Filter>
++		<Filter
++			Name="inc"
++			Filter="h;hpp;hxx;hm;inl;inc;xsd"
++			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
++			>
++			<File
++				RelativePath="..\..\yapp\base\yakeTask.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\base\yapp.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\base\yappPCH.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\base\yappPrerequisites.h"
++				>
++			</File>
++		</Filter>
++		<Filter
++			Name="gui"
++			>
++			<File
++				RelativePath="..\inc\gui\yappButton.h"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\src\gui\yappContainer.cpp"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\inc\gui\yappContainer.h"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\inc\gui\yappGeometry.h"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\src\gui\yappGUI.cpp"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\inc\gui\yappGUI.h"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\src\gui\yappGUIVisual.cpp"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\inc\gui\yappGUIVisual.h"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\inc\gui\yappIntersectionManager.h"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\inc\gui\yappMiscWidgets.h"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\src\gui\yappWidget.cpp"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCLCompilerTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\inc\gui\yappWidget.h"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++			</File>
++			<File
++				RelativePath="..\inc\gui\yappWidgetRep.h"
++				>
++				<FileConfiguration
++					Name="Debug|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++				<FileConfiguration
++					Name="Release|Win32"
++					ExcludedFromBuild="true"
++					>
++					<Tool
++						Name="VCCustomBuildTool"
++					/>
++				</FileConfiguration>
++			</File>
++		</Filter>
++		<Filter
++			Name="model"
++			>
++			<File
++				RelativePath="..\..\src\yapp\model\yakeActor.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakeActor.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\model\yakeComplexModel.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakeComplexModel.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\model\yakeGraphical.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakeGraphical.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\model\yakeGraphicalDataImporter.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakeGraphicalDataImporter.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakeModel.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\model\yakeModelLink.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakeModelLink.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\model\yakeModelMovableLink.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakeModelMovableLink.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\model\yakeMountable.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakeMountable.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\model\yakePhysical.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakePhysical.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\model\yakePhysicalDataImporter.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakePhysicalDataImporter.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\model\yakeUpdaters.h"
++				>
++			</File>
++		</Filter>
++		<Filter
++			Name="messaging"
++			>
++			<File
++				RelativePath="..\..\yapp\base\event\yakeEvent.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\base\event\yakeMessageId.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\base\event\yakeMessageId.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\base\event\yakeMessageInstance.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\base\event\yakeMessageInstance.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\base\event\yakeMessageListener.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\base\event\yakeMessageManager.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\base\event\yakeMessageManager.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\base\event\yakeMessageQ.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\base\event\yakeMessageQ.h"
++				>
++			</File>
++		</Filter>
++		<Filter
++			Name="loader"
++			>
++			<File
++				RelativePath="..\..\src\yapp\loader\yakeDotLinkLoader.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\loader\yakeDotLinkLoader.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\loader\yakeDotScene.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\loader\yakeDotScene.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\loader\yakeModelLinkCreator.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\loader\yakeModelLinkCreator.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\loader\yakeModelMovableLinkCreator.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\loader\yakeModelMovableLinkCreator.h"
++				>
++			</File>
++			<File
++				RelativePath="..\..\src\yapp\loader\yakeXODEParser.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\loader\yakeXODEParser.h"
++				>
++			</File>
++		</Filter>
++		<Filter
++			Name="statemachine"
++			>
++			<File
++				RelativePath="..\..\src\yapp\statemachine\yakeFiniteStateMachine.cpp"
++				>
++			</File>
++			<File
++				RelativePath="..\..\yapp\statemachine\yakeFiniteStateMachine.h"
++				>
++			</File>
++		</Filter>
++		<Filter
++			Name="trigger"
++			>
++			<File
++				RelativePath="..\..\yapp\trigger\yakeTrigger.h"
++				>
++			</File>
++		</Filter>
++	</Files>
++	<Globals>
++	</Globals>
++</VisualStudioProject>
+
+
+
+From codeandroid at berlios.de  Sun Feb 12 17:04:24 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 12 Feb 2006 17:04:24 +0100
+Subject: [Yake-svn] r1203 - trunk/yake/src/yake/plugins/graphicsOgre
+Message-ID: <200602121604.k1CG4OY4026171@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-02-12 17:04:23 +0100 (Sun, 12 Feb 2006)
+New Revision: 1203
+
+Modified:
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp
+Log:
+added support for post-processing externally loaded ogre objects.
+added support for OSM.
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp	2006-02-05 22:56:23 UTC (rev 1202)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp	2006-02-12 16:04:23 UTC (rev 1203)
+@@ -50,6 +50,13 @@
+ 	}
+ 
+ 	//------------------------------------------------------
++	OgreCamera::OgreCamera( Ogre::Camera* cam, Ogre::SceneManager * sceneMgr ) : mSceneMgr( sceneMgr ), mCam( cam )
++	{
++		YAKE_ASSERT( sceneMgr ).debug("need a scene manager!");
++		YAKE_ASSERT( mCam ).warning("Couldn't create a camera!");
++	}
++
++	//------------------------------------------------------
+ 	OgreCamera::~OgreCamera()
+ 	{
+ 	    if ( mCam )
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp	2006-02-05 22:56:23 UTC (rev 1202)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp	2006-02-12 16:04:23 UTC (rev 1203)
+@@ -42,8 +42,17 @@
+ 		YAKE_CATCH_OGRE_RETHROW
+ 		//YAKE_LOG(String("gfx: new entity '") << this->getName() << "'(" << String(mEntity->getName().c_str()) << ")");
+ 	}
+-
+ 	//------------------------------------------------------
++	OgreEntity::OgreEntity( ::Ogre::Entity* ent, ::Ogre::SceneManager* sceneMgr ) : mSceneMgr( sceneMgr ), mEntity( ent )
++	{
++		YAKE_ASSERT( mSceneMgr ).debug("need a scene manager!");
++		YAKE_ASSERT( ent );
++		YAKE_TRY
++			mEntity = ent;
++		YAKE_CATCH_OGRE_RETHROW
++		//YAKE_LOG(String("gfx: new entity '") << this->getName() << "'(" << String(mEntity->getName().c_str()) << ")");
++	}
++	//------------------------------------------------------
+ 	OgreEntity::~OgreEntity()
+ 	{
+ 		//YAKE_LOG(String("gfx: entity d'tor '") << this->getName() << "'");
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp	2006-02-05 22:56:23 UTC (rev 1202)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp	2006-02-12 16:04:23 UTC (rev 1203)
+@@ -43,6 +43,15 @@
+ 	}
+ 
+ 	//------------------------------------------------------
++	OgreLight::OgreLight( Ogre::Light* lt, Ogre::SceneManager* pSceneMgr ) : 
++		mSceneMgr( pSceneMgr ), mLight( lt )
++	{
++		YAKE_ASSERT( mSceneMgr ).debug("need a scene manager!");
++		YAKE_ASSERT( mLight ).warning("Couldn't create a light!");
++		//YAKE_LOG(String("gfx: new light '") << this->getName() << "'(" << String(mLight->getName().c_str()) << ")");
++	}
++
++	//------------------------------------------------------
+ 	OgreLight::~OgreLight()
+ 	{
+ 		//YAKE_LOG(String("gfx: light d'tor '") << this->getName() << "'");
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp	2006-02-05 22:56:23 UTC (rev 1202)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp	2006-02-12 16:04:23 UTC (rev 1203)
+@@ -54,6 +54,22 @@
+ 	}
+ 
+ 	//------------------------------------------------------
++	OgreNode::OgreNode( Ogre::SceneNode * node, GraphicalWorld& owningWorld, Ogre::SceneManager * sceneMgr ) :
++			mWorld( owningWorld ),
++			mSceneNode( 0 ) ,mSceneMgr( sceneMgr ), mParentNode(0)
++	{
++		YAKE_ASSERT( node ).debug("Couldn't use scene node (is null)!");
++		YAKE_ASSERT( sceneMgr ).debug("need a scene manager!");
++		String ogreid = node->getName();
++		if (ogreid.empty())
++			ogreid = uniqueName::create("sn__");
++		mName = ogreid;
++
++		mSceneNode = node;
++		mWorld.reg( this );
++	}
++
++	//------------------------------------------------------
+ 	template<class Ctr>
+ 	void destroyPtrContainer(Ctr& ctr)
+ 	{
+@@ -251,7 +267,13 @@
+ 			return;
+ 		
+ 		OgreCamera* pCam = static_cast<OgreCamera*>( pCamera );
+-		mSceneNode->attachObject( pCam->getCamera_() );
++		try {
++			mSceneNode->getAttachedObject( pCam->getCamera_()->getName() );
++		}
++		catch (...)
++		{
++			mSceneNode->attachObject( pCam->getCamera_() );
++		}
+ 		mCameras.push_back( pCamera );
+ 	}
+ 
+@@ -265,7 +287,13 @@
+ 			return;
+ 		
+ 		OgreLight* pL = static_cast<OgreLight*>( pLight );
+-		mSceneNode->attachObject( pL->getLight_() );
++		try {
++			mSceneNode->getAttachedObject( pL->getLight_()->getName() );
++		}
++		catch (...)
++		{
++			mSceneNode->attachObject( pL->getLight_() );
++		}
+ 		mLights.push_back( pLight );
+ 	}
+ 
+@@ -279,8 +307,13 @@
+ 			return;
+ 
+ 		OgreEntity* pE = static_cast<OgreEntity*>( pEntity );
+-		//YAKE_LOG(String("gfx node '") << this->getName() << "'): attachEntity '" << pE->getName() << "'");
+-		mSceneNode->attachObject( static_cast<OgreEntity*>(pEntity)->getEntity_() );
++		try {
++			mSceneNode->getAttachedObject( pE->getEntity_()->getName() );
++		}
++		catch (...)
++		{
++			mSceneNode->attachObject( pE->getEntity_() );
++		}
+ 		mEntities.push_back( pEntity );
+ 	}
+ 
+@@ -326,10 +359,11 @@
+ 		YAKE_ASSERT( pChildSN );
+ 
+ 		// in case pChildSN is a child of the OGRE scene manager's root node...
+-		if (pChildSN->getParent())
+-			pChildSN->getParent()->removeChild( pChildSN );
+-
+-		mSceneNode->addChild( pChildSN );
++		Ogre::SceneNode* parent = static_cast<Ogre::SceneNode*>(pChildSN->getParent());
++		if (parent && parent!=mSceneNode)
++			parent->removeChild( pChildSN );
++		if (parent!=mSceneNode)
++			mSceneNode->addChild( pChildSN );
+ 		mChildren.push_back( pNode );
+ 		pN->_setParent( this );
+ 	}
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp	2006-02-05 22:56:23 UTC (rev 1202)
++++ trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp	2006-02-12 16:04:23 UTC (rev 1203)
+@@ -41,6 +41,10 @@
+ #include <yake/plugins/graphicsOgre/graphicsOgreCore.h>
+ #include <yake/plugins/graphicsOgre/graphicsOgreParticleSystem.h>
+ #include <yake/plugins/graphicsOgre/graphicsOgreGeometryAccess.h>
++#define YAKE_USE_OSM
++#ifdef YAKE_USE_OSM
++#include "OgreOSMScene.h"
++#endif
+ 
+ //============================================================================
+ //    INTERFACE STRUCTURES / UTILITY CLASSES
+@@ -100,6 +104,12 @@
+ 		params["far_distance"] = "75";
+ 		params["directional_light_extrusion_distance"] = "500";
+ 		selectShadowTechnique("texture_modulative", params);
++
++		if (!mRootNode)
++		{
++			mRootNode = new OgreNode( *this, msCore->getSceneMgr(), uniqueName::create("rootSn") );
++			YAKE_ASSERT( mRootNode );
++		}
+ 	}
+ 
+ 	GraphicalWorld::~GraphicalWorld()
+@@ -129,11 +139,7 @@
+ 	//-----------------------------------------------------
+ 	ISceneNode* GraphicalWorld::createSceneNode( const String& name )
+ 	{
+-		if (!mRootNode)
+-		{
+-			mRootNode = new OgreNode( *this, msCore->getSceneMgr(), uniqueName::create("rootSn") );
+-			YAKE_ASSERT( mRootNode );
+-		}
++		YAKE_ASSERT( mRootNode );
+ 		YAKE_ASSERT( msCore ).debug("need a core!");
+ 		return mRootNode->createChildNode(name);
+ 	}
+@@ -381,8 +387,110 @@
+ 		}
+ 		return 0;
+ 	}
++	//-----------------------------------------------------
++#ifdef YAKE_USE_OSM
++	// Callback handler to post-process created objects loaded by the OSM loader.
++	// We create our graphicsOGRE wrapper objects here.
++	class oSceneCallback : public OSMSceneCallbacks {
++	public:
++		GraphicalWorld&		world_;
++		Ogre::SceneManager*	sceneMgr_;
++		OgreNode*				currNode_;
++		typedef std::map<Ogre::Node*,OgreNode*> NodeMap;
++		NodeMap					nodeMap_;
++		oSceneCallback(GraphicalWorld& world, Ogre::SceneManager* sceneMgr, OgreNode* root) : 
++			world_(world), sceneMgr_(sceneMgr), currNode_(0)
++		{
++			nodeMap_[ root->getSceneNode_() ] = root;
++		}
++		// Called when a node has been created
++		virtual void OnNodeCreate(Ogre::SceneNode *pNode, TiXmlElement* pNodeDesc)
++		{
++			std::cout << "osm node '" << pNode->getName().c_str() << "'\n";
++			currNode_= new OgreNode( pNode, world_, sceneMgr_ );
++			YAKE_ASSERT( 0 == pNode->numAttachedObjects() );
+ 
++			nodeMap_[ pNode ] = currNode_;
+ 
++			nodeMap_[ pNode->getParent() ]->addChildNode(currNode_);
++		}
++
++		// Called when an entity has been created
++		virtual void OnEntityCreate(Ogre::Entity *pEntity, TiXmlElement* pEntityDesc)
++		{
++			std::cout << "osm entity '" << pEntity->getName().c_str() << "'\n";
++			YAKE_ASSERT( currNode_ );
++			if (!currNode_)
++				return;
++			OgreEntity* ent = new OgreEntity( pEntity, sceneMgr_ );
++			currNode_->attachEntity( ent ); //<= this is safe even though pEntity is already
++												// attached to the underlying Ogre::SceneNode of
++												// currNode_.
++		}
++
++		// Called when a camera has been created
++		virtual void OnCameraCreate(Ogre::Camera *pCamera, TiXmlElement* pCameraDesc)
++		{
++			std::cout << "osm camera '" << pCamera->getName().c_str() << "'\n";
++			YAKE_ASSERT( pCamera );
++			if (!pCamera)
++				return;
++			OgreCamera* cam = new OgreCamera( pCamera, sceneMgr_ );
++			if (currNode_)
++			{
++				currNode_->attachCamera( cam ); // Is safe even if cam is already attached.
++			}
++			else
++			{
++			}
++		}
++
++		// Called when a light has been created
++		virtual void OnLightCreate(Ogre::Light *pLight, TiXmlElement* pLightDesc)
++		{
++			std::cout << "osm light '" << pLight->getName().c_str() << "'\n";
++			YAKE_ASSERT( pLight );
++			if (!pLight)
++				return;
++			OgreLight* light = new OgreLight( pLight, sceneMgr_ );
++			if (currNode_)
++			{
++				currNode_->attachLight( light ); // Is safe even if light is already attached.
++			}
++			else
++			{
++			}
++		}
++	};
++#endif
++	//-----------------------------------------------------
++	bool GraphicalWorld::load(const String& type, const String& file)
++	{
++		if (type.empty())
++			return false;
++		if (file.empty())
++			return false;
++#ifdef YAKE_USE_OSM
++		if (type == "osm")
++		{
++			YAKE_ASSERT( msCore );
++			if (!msCore)
++				return false;
++			// create oscene parser
++			OgreNode* root = mRootNode;
++			OSMScene oScene(msCore->getSceneMgr(), msCore->getRenderWindow());
++			oSceneCallback oe_Callback(*this, msCore->getSceneMgr(), root); // creates wrappers
++			if (!oScene.initialise(file.c_str(), &oe_Callback))
++				return false;
++			YAKE_ASSERT( mRootNode );
++			if (!oScene.createScene(root->getSceneNode_()))
++				return false;
++			return true;
++		}
++#endif
++		return false;
++	}
++
+ } // ogre3d
+ } // graphics
+ } // yake
+
+
+
+From codeandroid at berlios.de  Sun Feb 12 17:05:34 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 12 Feb 2006 17:05:34 +0100
+Subject: [Yake-svn] r1204 - trunk/yake/yake/graphics
+Message-ID: <200602121605.k1CG5Y46026323@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-02-12 17:05:34 +0100 (Sun, 12 Feb 2006)
+New Revision: 1204
+
+Modified:
+   trunk/yake/yake/graphics/yakeGraphicalWorld.h
+Log:
+added generic load() for loading scenes.
+
+Modified: trunk/yake/yake/graphics/yakeGraphicalWorld.h
+===================================================================
+--- trunk/yake/yake/graphics/yakeGraphicalWorld.h	2006-02-12 16:04:23 UTC (rev 1203)
++++ trunk/yake/yake/graphics/yakeGraphicalWorld.h	2006-02-12 16:05:34 UTC (rev 1204)
+@@ -411,6 +411,8 @@
+ 	public:
+ 		virtual ~IWorld();
+ 
++		virtual bool load(const String& type, const String& file) = 0;
++
+ 		virtual void setSkyBox( const String& name ) = 0;
+ 
+ 		virtual ILight* createLight() = 0;
+
+
+
+From codeandroid at berlios.de  Sun Feb 12 17:06:04 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 12 Feb 2006 17:06:04 +0100
+Subject: [Yake-svn] r1205 - trunk/yake/yake/plugins/graphicsOgre
+Message-ID: <200602121606.k1CG64CB026539@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-02-12 17:06:01 +0100 (Sun, 12 Feb 2006)
+New Revision: 1205
+
+Modified:
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h
+   trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h
+   trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h
+Log:
+added support for post-processing externally loaded ogre objects.
+added support for OSM.
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h	2006-02-12 16:05:34 UTC (rev 1204)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreCamera.h	2006-02-12 16:06:01 UTC (rev 1205)
+@@ -37,6 +37,7 @@
+ 		OgreCamera( const OgreCamera & );
+ 	public:
+ 		OgreCamera( Ogre::SceneManager * sceneMgr );
++		OgreCamera( Ogre::Camera*, Ogre::SceneManager * sceneMgr );
+ 		virtual ~OgreCamera();
+ 
+ 		// Movable
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h	2006-02-12 16:05:34 UTC (rev 1204)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreEntity.h	2006-02-12 16:06:01 UTC (rev 1205)
+@@ -38,6 +38,7 @@
+ 		OgreEntity( const OgreEntity& );
+ 	public:
+ 		OgreEntity( ::Ogre::SceneManager* sceneMgr, const String& mesh );
++		OgreEntity( ::Ogre::Entity* ent, ::Ogre::SceneManager* sceneMgr );
+ 		virtual ~OgreEntity();
+ 
+ 		virtual ISkeleton* getSkeleton() const;
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h	2006-02-12 16:05:34 UTC (rev 1204)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreLight.h	2006-02-12 16:06:01 UTC (rev 1205)
+@@ -35,6 +35,7 @@
+ 	{
+ 	public:
+ 		OgreLight( Ogre::SceneManager* sceneMgr );
++		OgreLight( Ogre::Light*, Ogre::SceneManager* sceneMgr );
+ 		virtual ~OgreLight();
+ 
+ 		virtual void setType( const LightType type );
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h	2006-02-12 16:05:34 UTC (rev 1204)
++++ trunk/yake/yake/plugins/graphicsOgre/graphicsOgreNode.h	2006-02-12 16:06:01 UTC (rev 1205)
+@@ -37,6 +37,8 @@
+ 	{
+ 	public:
+ 		OgreNode( GraphicalWorld& owningWorld, Ogre::SceneManager * sceneMgr, const String& name = "" );
++		//For wrapping existing OGRE scene nodes (e.g. created by OSM loader):
++		OgreNode( Ogre::SceneNode * node, GraphicalWorld& owningWorld, Ogre::SceneManager * sceneMgr );
+ 		virtual ~OgreNode();
+ 
+ 		virtual void setPosition( const Vector3 & position );
+@@ -82,15 +84,15 @@
+ 		OgreNode* _getParent() const;
+ 	protected:
+ 		typedef SceneNodePtrList NodeList;
+-		NodeList			mChildren;
+-		EntityPtrList		mEntities;
+-		LightPtrList		mLights;
+-		CameraPtrList		mCameras;
++		NodeList					mChildren;
++		EntityPtrList			mEntities;
++		LightPtrList			mLights;
++		CameraPtrList			mCameras;
+ 		ParticleSystemPtrList	mParticleSystems;
+ 
+-		Ogre::SceneNode* 	mSceneNode;
++		Ogre::SceneNode* 		mSceneNode;
+ 		Ogre::SceneManager*	mSceneMgr;
+-		OgreNode*			mParentNode;
++		OgreNode*				mParentNode;
+ 		GraphicalWorld&		mWorld;
+ 	};
+ 
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h	2006-02-12 16:05:34 UTC (rev 1204)
++++ trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsWorld.h	2006-02-12 16:06:01 UTC (rev 1205)
+@@ -69,6 +69,8 @@
+ 		/** Render a single frame. */
+ 		void render( real timeElapsed );
+ 
++		virtual bool load(const String& type, const String& file);
++
+ 		virtual void setSkyBox( const String& name );
+ 
+ 		virtual ISceneNode* createSceneNode( const String& tag = "" );
+
+
+
+From codeandroid at berlios.de  Sun Feb 12 17:07:06 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 12 Feb 2006 17:07:06 +0100
+Subject: [Yake-svn] r1206 - trunk/yake/src/yake/net/detail
+Message-ID: <200602121607.k1CG767K026844@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-02-12 17:07:05 +0100 (Sun, 12 Feb 2006)
+New Revision: 1206
+
+Modified:
+   trunk/yake/src/yake/net/detail/netEventConnection.cpp
+Log:
+return immediately from start() when already running
+
+Modified: trunk/yake/src/yake/net/detail/netEventConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-02-12 16:06:01 UTC (rev 1205)
++++ trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-02-12 16:07:05 UTC (rev 1206)
+@@ -90,6 +90,11 @@
+ 	{
+ 		boost::mutex::scoped_lock lck(startedMtx_);
+ 		NET_ASSERT( !started_ );
++		if (started_)
++		{
++			NET_ASSERT( conn_ );
++			return false;
++		}
+ 		if (conn_)
+ 		{
+ 			conn_->addPacketReceivedCallback( boost::bind(&EventConnection::onReceivePacket,this,_1,_2,_3,_4) );
+
+
+
+From codeandroid at berlios.de  Sun Feb 12 17:08:16 2006
+From: codeandroid at berlios.de (codeandroid at BerliOS)
+Date: Sun, 12 Feb 2006 17:08:16 +0100
+Subject: [Yake-svn] r1207 - trunk/yake/scripts/msvc8/plugins/graphics
+Message-ID: <200602121608.k1CG8G8n027140@sheep.berlios.de>
+
+Author: codeandroid
+Date: 2006-02-12 17:08:15 +0100 (Sun, 12 Feb 2006)
+New Revision: 1207
+
+Modified:
+   trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj
+Log:
+added support for OSM
+
+Modified: trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj	2006-02-12 16:07:05 UTC (rev 1206)
++++ trunk/yake/scripts/msvc8/plugins/graphics/graphicsOgre.vcproj	2006-02-12 16:08:15 UTC (rev 1207)
+@@ -41,7 +41,7 @@
+ 				Name="VCCLCompilerTool"
+ 				AdditionalOptions="/Zm150"
+ 				Optimization="0"
+-				AdditionalIncludeDirectories="../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ogrenew/OgreMain/include"
++				AdditionalIncludeDirectories="../../../../dependencies/oSceneLoaderLib/TinyXML;../../../../dependencies/oSceneLoaderLib/include;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ogrenew/OgreMain/include"
+ 				PreprocessorDefinitions="_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKE_GRAPHICSCONCRETEAPI_EXPORTS"
+ 				MinimalRebuild="true"
+ 				BasicRuntimeChecks="3"
+@@ -125,7 +125,7 @@
+ 			/>
+ 			<Tool
+ 				Name="VCCLCompilerTool"
+-				AdditionalIncludeDirectories="../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ogrenew/OgreMain/include"
++				AdditionalIncludeDirectories="../../../../dependencies/oSceneLoaderLib/TinyXML;../../../../dependencies/oSceneLoaderLib/include;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ogrenew/OgreMain/include"
+ 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKE_GRAPHICSCONCRETEAPI_EXPORTS"
+ 				RuntimeLibrary="2"
+ 				RuntimeTypeInfo="true"
+@@ -276,6 +276,110 @@
+ 					/>
+ 				</FileConfiguration>
+ 			</File>
++			<Filter
++				Name="oSceneLoader"
++				>
++				<File
++					RelativePath="..\..\..\..\dependencies\oSceneLoaderLib\src\OgreOSMScene.cpp"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++					<FileConfiguration
++						Name="Release|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++				<File
++					RelativePath="..\..\..\..\dependencies\oSceneLoaderLib\TinyXML\tinystr.cpp"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++					<FileConfiguration
++						Name="Release|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++				<File
++					RelativePath="..\..\..\..\dependencies\oSceneLoaderLib\TinyXML\tinyxml.cpp"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++					<FileConfiguration
++						Name="Release|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++				<File
++					RelativePath="..\..\..\..\dependencies\oSceneLoaderLib\TinyXML\tinyxmlerror.cpp"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++					<FileConfiguration
++						Name="Release|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++				<File
++					RelativePath="..\..\..\..\dependencies\oSceneLoaderLib\TinyXML\tinyxmlparser.cpp"
++					>
++					<FileConfiguration
++						Name="Debug|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++					<FileConfiguration
++						Name="Release|Win32"
++						>
++						<Tool
++							Name="VCCLCompilerTool"
++							UsePrecompiledHeader="0"
++						/>
++					</FileConfiguration>
++				</File>
++			</Filter>
+ 		</Filter>
+ 		<Filter
+ 			Name="inc"
+@@ -338,6 +442,18 @@
+ 				RelativePath="..\..\..\..\yake\plugins\graphicsOgre\yakePCH.h"
+ 				>
+ 			</File>
++			<Filter
++				Name="oSceneLoader"
++				>
++				<File
++					RelativePath="..\..\..\..\dependencies\oSceneLoaderLib\include\IOSMSceneCallbacks.h"
++					>
++				</File>
++				<File
++					RelativePath="..\..\..\..\dependencies\oSceneLoaderLib\include\OgreOSMScene.h"
++					>
++				</File>
++			</Filter>
+ 		</Filter>
+ 	</Files>
+ 	<Globals>
+
+
+

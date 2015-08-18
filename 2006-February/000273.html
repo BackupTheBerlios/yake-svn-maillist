@@ -1,0 +1,382 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1203 - trunk/yake/src/yake/plugins/graphicsOgre
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-February/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1203%20-%20trunk/yake/src/yake/plugins/graphicsOgre&In-Reply-To=%3C200602121604.k1CG4OY4026171%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000272.html">
+   <LINK REL="Next"  HREF="000274.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1203 - trunk/yake/src/yake/plugins/graphicsOgre</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1203%20-%20trunk/yake/src/yake/plugins/graphicsOgre&In-Reply-To=%3C200602121604.k1CG4OY4026171%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1203 - trunk/yake/src/yake/plugins/graphicsOgre">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Feb 12 17:04:24 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000272.html">[Yake-svn] r1202 - trunk/yake/scripts/msvc8
+</A></li>
+        <LI>Next message: <A HREF="000274.html">[Yake-svn] r1204 - trunk/yake/yake/graphics
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#273">[ date ]</a>
+              <a href="thread.html#273">[ thread ]</a>
+              <a href="subject.html#273">[ subject ]</a>
+              <a href="author.html#273">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-02-12 17:04:23 +0100 (Sun, 12 Feb 2006)
+New Revision: 1203
+
+Modified:
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp
+Log:
+added support for post-processing externally loaded ogre objects.
+added support for OSM.
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp	2006-02-05 22:56:23 UTC (rev 1202)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp	2006-02-12 16:04:23 UTC (rev 1203)
+@@ -50,6 +50,13 @@
+ 	}
+ 
+ 	//------------------------------------------------------
++	OgreCamera::OgreCamera( Ogre::Camera* cam, Ogre::SceneManager * sceneMgr ) : mSceneMgr( sceneMgr ), mCam( cam )
++	{
++		YAKE_ASSERT( sceneMgr ).debug(&quot;need a scene manager!&quot;);
++		YAKE_ASSERT( mCam ).warning(&quot;Couldn't create a camera!&quot;);
++	}
++
++	//------------------------------------------------------
+ 	OgreCamera::~OgreCamera()
+ 	{
+ 	    if ( mCam )
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp	2006-02-05 22:56:23 UTC (rev 1202)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreEntity.cpp	2006-02-12 16:04:23 UTC (rev 1203)
+@@ -42,8 +42,17 @@
+ 		YAKE_CATCH_OGRE_RETHROW
+ 		//YAKE_LOG(String(&quot;gfx: new entity '&quot;) &lt;&lt; this-&gt;getName() &lt;&lt; &quot;'(&quot; &lt;&lt; String(mEntity-&gt;getName().c_str()) &lt;&lt; &quot;)&quot;);
+ 	}
+-
+ 	//------------------------------------------------------
++	OgreEntity::OgreEntity( ::Ogre::Entity* ent, ::Ogre::SceneManager* sceneMgr ) : mSceneMgr( sceneMgr ), mEntity( ent )
++	{
++		YAKE_ASSERT( mSceneMgr ).debug(&quot;need a scene manager!&quot;);
++		YAKE_ASSERT( ent );
++		YAKE_TRY
++			mEntity = ent;
++		YAKE_CATCH_OGRE_RETHROW
++		//YAKE_LOG(String(&quot;gfx: new entity '&quot;) &lt;&lt; this-&gt;getName() &lt;&lt; &quot;'(&quot; &lt;&lt; String(mEntity-&gt;getName().c_str()) &lt;&lt; &quot;)&quot;);
++	}
++	//------------------------------------------------------
+ 	OgreEntity::~OgreEntity()
+ 	{
+ 		//YAKE_LOG(String(&quot;gfx: entity d'tor '&quot;) &lt;&lt; this-&gt;getName() &lt;&lt; &quot;'&quot;);
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp	2006-02-05 22:56:23 UTC (rev 1202)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreLight.cpp	2006-02-12 16:04:23 UTC (rev 1203)
+@@ -43,6 +43,15 @@
+ 	}
+ 
+ 	//------------------------------------------------------
++	OgreLight::OgreLight( Ogre::Light* lt, Ogre::SceneManager* pSceneMgr ) : 
++		mSceneMgr( pSceneMgr ), mLight( lt )
++	{
++		YAKE_ASSERT( mSceneMgr ).debug(&quot;need a scene manager!&quot;);
++		YAKE_ASSERT( mLight ).warning(&quot;Couldn't create a light!&quot;);
++		//YAKE_LOG(String(&quot;gfx: new light '&quot;) &lt;&lt; this-&gt;getName() &lt;&lt; &quot;'(&quot; &lt;&lt; String(mLight-&gt;getName().c_str()) &lt;&lt; &quot;)&quot;);
++	}
++
++	//------------------------------------------------------
+ 	OgreLight::~OgreLight()
+ 	{
+ 		//YAKE_LOG(String(&quot;gfx: light d'tor '&quot;) &lt;&lt; this-&gt;getName() &lt;&lt; &quot;'&quot;);
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp	2006-02-05 22:56:23 UTC (rev 1202)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreNode.cpp	2006-02-12 16:04:23 UTC (rev 1203)
+@@ -54,6 +54,22 @@
+ 	}
+ 
+ 	//------------------------------------------------------
++	OgreNode::OgreNode( Ogre::SceneNode * node, GraphicalWorld&amp; owningWorld, Ogre::SceneManager * sceneMgr ) :
++			mWorld( owningWorld ),
++			mSceneNode( 0 ) ,mSceneMgr( sceneMgr ), mParentNode(0)
++	{
++		YAKE_ASSERT( node ).debug(&quot;Couldn't use scene node (is null)!&quot;);
++		YAKE_ASSERT( sceneMgr ).debug(&quot;need a scene manager!&quot;);
++		String ogreid = node-&gt;getName();
++		if (ogreid.empty())
++			ogreid = uniqueName::create(&quot;sn__&quot;);
++		mName = ogreid;
++
++		mSceneNode = node;
++		mWorld.reg( this );
++	}
++
++	//------------------------------------------------------
+ 	template&lt;class Ctr&gt;
+ 	void destroyPtrContainer(Ctr&amp; ctr)
+ 	{
+@@ -251,7 +267,13 @@
+ 			return;
+ 		
+ 		OgreCamera* pCam = static_cast&lt;OgreCamera*&gt;( pCamera );
+-		mSceneNode-&gt;attachObject( pCam-&gt;getCamera_() );
++		try {
++			mSceneNode-&gt;getAttachedObject( pCam-&gt;getCamera_()-&gt;getName() );
++		}
++		catch (...)
++		{
++			mSceneNode-&gt;attachObject( pCam-&gt;getCamera_() );
++		}
+ 		mCameras.push_back( pCamera );
+ 	}
+ 
+@@ -265,7 +287,13 @@
+ 			return;
+ 		
+ 		OgreLight* pL = static_cast&lt;OgreLight*&gt;( pLight );
+-		mSceneNode-&gt;attachObject( pL-&gt;getLight_() );
++		try {
++			mSceneNode-&gt;getAttachedObject( pL-&gt;getLight_()-&gt;getName() );
++		}
++		catch (...)
++		{
++			mSceneNode-&gt;attachObject( pL-&gt;getLight_() );
++		}
+ 		mLights.push_back( pLight );
+ 	}
+ 
+@@ -279,8 +307,13 @@
+ 			return;
+ 
+ 		OgreEntity* pE = static_cast&lt;OgreEntity*&gt;( pEntity );
+-		//YAKE_LOG(String(&quot;gfx node '&quot;) &lt;&lt; this-&gt;getName() &lt;&lt; &quot;'): attachEntity '&quot; &lt;&lt; pE-&gt;getName() &lt;&lt; &quot;'&quot;);
+-		mSceneNode-&gt;attachObject( static_cast&lt;OgreEntity*&gt;(pEntity)-&gt;getEntity_() );
++		try {
++			mSceneNode-&gt;getAttachedObject( pE-&gt;getEntity_()-&gt;getName() );
++		}
++		catch (...)
++		{
++			mSceneNode-&gt;attachObject( pE-&gt;getEntity_() );
++		}
+ 		mEntities.push_back( pEntity );
+ 	}
+ 
+@@ -326,10 +359,11 @@
+ 		YAKE_ASSERT( pChildSN );
+ 
+ 		// in case pChildSN is a child of the OGRE scene manager's root node...
+-		if (pChildSN-&gt;getParent())
+-			pChildSN-&gt;getParent()-&gt;removeChild( pChildSN );
+-
+-		mSceneNode-&gt;addChild( pChildSN );
++		Ogre::SceneNode* parent = static_cast&lt;Ogre::SceneNode*&gt;(pChildSN-&gt;getParent());
++		if (parent &amp;&amp; parent!=mSceneNode)
++			parent-&gt;removeChild( pChildSN );
++		if (parent!=mSceneNode)
++			mSceneNode-&gt;addChild( pChildSN );
+ 		mChildren.push_back( pNode );
+ 		pN-&gt;_setParent( this );
+ 	}
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp	2006-02-05 22:56:23 UTC (rev 1202)
++++ trunk/yake/src/yake/plugins/graphicsOgre/yakeGraphicsWorld.cpp	2006-02-12 16:04:23 UTC (rev 1203)
+@@ -41,6 +41,10 @@
+ #include &lt;yake/plugins/graphicsOgre/graphicsOgreCore.h&gt;
+ #include &lt;yake/plugins/graphicsOgre/graphicsOgreParticleSystem.h&gt;
+ #include &lt;yake/plugins/graphicsOgre/graphicsOgreGeometryAccess.h&gt;
++#define YAKE_USE_OSM
++#ifdef YAKE_USE_OSM
++#include &quot;OgreOSMScene.h&quot;
++#endif
+ 
+ //============================================================================
+ //    INTERFACE STRUCTURES / UTILITY CLASSES
+@@ -100,6 +104,12 @@
+ 		params[&quot;far_distance&quot;] = &quot;75&quot;;
+ 		params[&quot;directional_light_extrusion_distance&quot;] = &quot;500&quot;;
+ 		selectShadowTechnique(&quot;texture_modulative&quot;, params);
++
++		if (!mRootNode)
++		{
++			mRootNode = new OgreNode( *this, msCore-&gt;getSceneMgr(), uniqueName::create(&quot;rootSn&quot;) );
++			YAKE_ASSERT( mRootNode );
++		}
+ 	}
+ 
+ 	GraphicalWorld::~GraphicalWorld()
+@@ -129,11 +139,7 @@
+ 	//-----------------------------------------------------
+ 	ISceneNode* GraphicalWorld::createSceneNode( const String&amp; name )
+ 	{
+-		if (!mRootNode)
+-		{
+-			mRootNode = new OgreNode( *this, msCore-&gt;getSceneMgr(), uniqueName::create(&quot;rootSn&quot;) );
+-			YAKE_ASSERT( mRootNode );
+-		}
++		YAKE_ASSERT( mRootNode );
+ 		YAKE_ASSERT( msCore ).debug(&quot;need a core!&quot;);
+ 		return mRootNode-&gt;createChildNode(name);
+ 	}
+@@ -381,8 +387,110 @@
+ 		}
+ 		return 0;
+ 	}
++	//-----------------------------------------------------
++#ifdef YAKE_USE_OSM
++	// Callback handler to post-process created objects loaded by the OSM loader.
++	// We create our graphicsOGRE wrapper objects here.
++	class oSceneCallback : public OSMSceneCallbacks {
++	public:
++		GraphicalWorld&amp;		world_;
++		Ogre::SceneManager*	sceneMgr_;
++		OgreNode*				currNode_;
++		typedef std::map&lt;Ogre::Node*,OgreNode*&gt; NodeMap;
++		NodeMap					nodeMap_;
++		oSceneCallback(GraphicalWorld&amp; world, Ogre::SceneManager* sceneMgr, OgreNode* root) : 
++			world_(world), sceneMgr_(sceneMgr), currNode_(0)
++		{
++			nodeMap_[ root-&gt;getSceneNode_() ] = root;
++		}
++		// Called when a node has been created
++		virtual void OnNodeCreate(Ogre::SceneNode *pNode, TiXmlElement* pNodeDesc)
++		{
++			std::cout &lt;&lt; &quot;osm node '&quot; &lt;&lt; pNode-&gt;getName().c_str() &lt;&lt; &quot;'\n&quot;;
++			currNode_= new OgreNode( pNode, world_, sceneMgr_ );
++			YAKE_ASSERT( 0 == pNode-&gt;numAttachedObjects() );
+ 
++			nodeMap_[ pNode ] = currNode_;
+ 
++			nodeMap_[ pNode-&gt;getParent() ]-&gt;addChildNode(currNode_);
++		}
++
++		// Called when an entity has been created
++		virtual void OnEntityCreate(Ogre::Entity *pEntity, TiXmlElement* pEntityDesc)
++		{
++			std::cout &lt;&lt; &quot;osm entity '&quot; &lt;&lt; pEntity-&gt;getName().c_str() &lt;&lt; &quot;'\n&quot;;
++			YAKE_ASSERT( currNode_ );
++			if (!currNode_)
++				return;
++			OgreEntity* ent = new OgreEntity( pEntity, sceneMgr_ );
++			currNode_-&gt;attachEntity( ent ); //&lt;= this is safe even though pEntity is already
++												// attached to the underlying Ogre::SceneNode of
++												// currNode_.
++		}
++
++		// Called when a camera has been created
++		virtual void OnCameraCreate(Ogre::Camera *pCamera, TiXmlElement* pCameraDesc)
++		{
++			std::cout &lt;&lt; &quot;osm camera '&quot; &lt;&lt; pCamera-&gt;getName().c_str() &lt;&lt; &quot;'\n&quot;;
++			YAKE_ASSERT( pCamera );
++			if (!pCamera)
++				return;
++			OgreCamera* cam = new OgreCamera( pCamera, sceneMgr_ );
++			if (currNode_)
++			{
++				currNode_-&gt;attachCamera( cam ); // Is safe even if cam is already attached.
++			}
++			else
++			{
++			}
++		}
++
++		// Called when a light has been created
++		virtual void OnLightCreate(Ogre::Light *pLight, TiXmlElement* pLightDesc)
++		{
++			std::cout &lt;&lt; &quot;osm light '&quot; &lt;&lt; pLight-&gt;getName().c_str() &lt;&lt; &quot;'\n&quot;;
++			YAKE_ASSERT( pLight );
++			if (!pLight)
++				return;
++			OgreLight* light = new OgreLight( pLight, sceneMgr_ );
++			if (currNode_)
++			{
++				currNode_-&gt;attachLight( light ); // Is safe even if light is already attached.
++			}
++			else
++			{
++			}
++		}
++	};
++#endif
++	//-----------------------------------------------------
++	bool GraphicalWorld::load(const String&amp; type, const String&amp; file)
++	{
++		if (type.empty())
++			return false;
++		if (file.empty())
++			return false;
++#ifdef YAKE_USE_OSM
++		if (type == &quot;osm&quot;)
++		{
++			YAKE_ASSERT( msCore );
++			if (!msCore)
++				return false;
++			// create oscene parser
++			OgreNode* root = mRootNode;
++			OSMScene oScene(msCore-&gt;getSceneMgr(), msCore-&gt;getRenderWindow());
++			oSceneCallback oe_Callback(*this, msCore-&gt;getSceneMgr(), root); // creates wrappers
++			if (!oScene.initialise(file.c_str(), &amp;oe_Callback))
++				return false;
++			YAKE_ASSERT( mRootNode );
++			if (!oScene.createScene(root-&gt;getSceneNode_()))
++				return false;
++			return true;
++		}
++#endif
++		return false;
++	}
++
+ } // ogre3d
+ } // graphics
+ } // yake
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000272.html">[Yake-svn] r1202 - trunk/yake/scripts/msvc8
+</A></li>
+	<LI>Next message: <A HREF="000274.html">[Yake-svn] r1204 - trunk/yake/yake/graphics
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#273">[ date ]</a>
+              <a href="thread.html#273">[ thread ]</a>
+              <a href="subject.html#273">[ subject ]</a>
+              <a href="author.html#273">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

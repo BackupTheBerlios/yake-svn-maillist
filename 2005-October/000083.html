@@ -1,0 +1,397 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1012 - trunk/yake/yake/plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1012%20-%20trunk/yake/yake/plugins/physicsODE&In-Reply-To=%3C200510122220.j9CMKVYA013331%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000082.html">
+   <LINK REL="Next"  HREF="000084.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1012 - trunk/yake/yake/plugins/physicsODE</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1012%20-%20trunk/yake/yake/plugins/physicsODE&In-Reply-To=%3C200510122220.j9CMKVYA013331%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1012 - trunk/yake/yake/plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Oct 13 00:20:31 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000082.html">[Yake-svn] r1011 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000084.html">[Yake-svn] r1013 - trunk/yake/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#83">[ date ]</a>
+              <a href="thread.html#83">[ thread ]</a>
+              <a href="subject.html#83">[ subject ]</a>
+              <a href="author.html#83">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-13 00:20:30 +0200 (Thu, 13 Oct 2005)
+New Revision: 1012
+
+Modified:
+   trunk/yake/yake/plugins/physicsODE/OdeActor.h
+   trunk/yake/yake/plugins/physicsODE/OdeBody.h
+   trunk/yake/yake/plugins/physicsODE/OdeJoint.h
+   trunk/yake/yake/plugins/physicsODE/OdeMaterial.h
+   trunk/yake/yake/plugins/physicsODE/OdeShapes.h
+   trunk/yake/yake/plugins/physicsODE/OdeWorld.h
+   trunk/yake/yake/plugins/physicsODE/PhysicsSystemODE.h
+   trunk/yake/yake/plugins/physicsODE/yakePCH.h
+Log:
+improved behaviour (e.g. friction),
+added dll interfaces
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeActor.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeActor.h	2005-10-12 22:19:29 UTC (rev 1011)
++++ trunk/yake/yake/plugins/physicsODE/OdeActor.h	2005-10-12 22:20:30 UTC (rev 1012)
+@@ -1,6 +1,34 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
+ #ifndef ODE_ACTOR_H
+ #define ODE_ACTOR_H
+ 
++#include &lt;yake/plugins/physicsODE/yakePrerequisites.h&gt;
++
+ namespace yake
+ {	
+ namespace physics
+@@ -8,7 +36,7 @@
+ 	class OdeWorld;
+ 	class OdeGeom;
+ 	
+-	class OdeActor : public IActor
++	class YAKE_PHYSICSODE_API OdeActor : public IActor
+ 	{
+ 	public:
+ 		OdeActor( OdeWorld* pOdeWorld, bool bDynamic );
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeBody.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeBody.h	2005-10-12 22:19:29 UTC (rev 1011)
++++ trunk/yake/yake/plugins/physicsODE/OdeBody.h	2005-10-12 22:20:30 UTC (rev 1012)
+@@ -27,12 +27,14 @@
+ #ifndef YAKE_ODEBODY_H
+ #define YAKE_ODEBODY_H
+ 
++#include &lt;yake/plugins/physicsODE/yakePrerequisites.h&gt;
++
+ namespace yake {
+ namespace physics {
+ 
+ 		class OdeActor;
+ 		
+-		class OdeBody : public IBody
++		class YAKE_PHYSICSODE_API OdeBody : public IBody
+ 		{
+ 		public:
+ 			OdeBody( OdeWorld* pWorld, OdeActor&amp; rOwner );
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeJoint.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeJoint.h	2005-10-12 22:19:29 UTC (rev 1011)
++++ trunk/yake/yake/plugins/physicsODE/OdeJoint.h	2005-10-12 22:20:30 UTC (rev 1012)
+@@ -27,16 +27,18 @@
+ #ifndef YAKE_ODEJOINT_H
+ #define YAKE_ODEJOINT_H
+ 
++#include &lt;yake/plugins/physicsODE/yakePrerequisites.h&gt;
++
+ namespace yake {
+ namespace physics {
+ 
+ 		class OdeWorld;
+ 		
+-		class OdeJoint : public IJoint
++		class YAKE_PHYSICSODE_API OdeJoint : public IJoint
+ 		{
+ 		protected:
+-			OdeJoint();
+-			OdeJoint( OdeJoint const&amp; );
++			//OdeJoint();
++			//OdeJoint( OdeJoint const&amp; );
+ 			OdeJoint( OdeWorld* pWorld, JointType type );
+ 		
+ 		public:
+@@ -68,6 +70,9 @@
+ 
+ 			YAKE_MEMBERSIGNAL_VIRTUALIMPL( public, void, OnBreaking )
+ 			YAKE_MEMBERSIGNAL_FIRE_FN0( public, OnBreaking )
++
++			dJoint* _getOdeJoint() const
++			{ return mOdeJoint; }
+ 		protected:
+ 			void _applySpring();
+ 			real _getCFMFromSpring() const;
+@@ -82,7 +87,7 @@
+ 			JointType		mType;
+ 		};
+ 
+-		class OdeHingeJoint : public OdeJoint
++		class YAKE_PHYSICSODE_API OdeHingeJoint : public OdeJoint
+ 		{
+ 		public:
+ 			OdeHingeJoint( OdeWorld* pWorld );
+@@ -104,7 +109,7 @@
+ 			real	mMaxForce0;
+ 		};
+ 
+-		class OdeHinge2Joint : public OdeJoint
++		class YAKE_PHYSICSODE_API OdeHinge2Joint : public OdeJoint
+ 		{
+ 		public:
+ 			OdeHinge2Joint( OdeWorld* pWorld );
+@@ -127,7 +132,7 @@
+ 			real	mMaxForce[2];
+ 		};
+ 
+-		class OdeBallJoint : public OdeJoint
++		class YAKE_PHYSICSODE_API OdeBallJoint : public OdeJoint
+ 		{
+ 		public:
+ 			OdeBallJoint( OdeWorld* pWorld );
+@@ -146,7 +151,7 @@
+ 			virtual void setLimits( size_t axisIndex, real low, real high );
+ 		};
+ 
+-		class OdeFixedJoint : public OdeJoint
++		class YAKE_PHYSICSODE_API OdeFixedJoint : public OdeJoint
+ 		{
+ 		public:
+ 			OdeFixedJoint( OdeWorld* pWorld );
+@@ -167,7 +172,7 @@
+ 			virtual void setLimits( size_t axisIndex, real low, real high );
+ 		};
+ 
+-		class OdeSliderJoint : public OdeJoint
++		class YAKE_PHYSICSODE_API OdeSliderJoint : public OdeJoint
+ 		{
+ 		public:
+ 			OdeSliderJoint( OdeWorld* pWorld );
+@@ -190,7 +195,7 @@
+ 			real	mMaxForce0;
+ 		};
+ 		
+-		class OdeUniversalJoint : public OdeJoint
++		class YAKE_PHYSICSODE_API OdeUniversalJoint : public OdeJoint
+ 		{
+ 		public:
+ 			OdeUniversalJoint( OdeWorld* pWorld );
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeMaterial.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeMaterial.h	2005-10-12 22:19:29 UTC (rev 1011)
++++ trunk/yake/yake/plugins/physicsODE/OdeMaterial.h	2005-10-12 22:20:30 UTC (rev 1012)
+@@ -27,11 +27,13 @@
+ #ifndef ODE_MATERIAL_H
+ #define ODE_MATERIAL_H
+ 
++#include &lt;yake/plugins/physicsODE/yakePrerequisites.h&gt;
++
+ namespace yake
+ {
+ namespace physics
+ {
+-	class OdeMaterial : public IMaterial
++	class YAKE_PHYSICSODE_API OdeMaterial : public IMaterial
+ 	{
+ 	public:
+ 		OdeMaterial();
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeShapes.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeShapes.h	2005-10-12 22:19:29 UTC (rev 1011)
++++ trunk/yake/yake/plugins/physicsODE/OdeShapes.h	2005-10-12 22:20:30 UTC (rev 1012)
+@@ -27,6 +27,7 @@
+ #ifndef YAKE_ODESHAPES_H
+ #define YAKE_ODESHAPES_H
+ 
++#include &lt;yake/plugins/physicsODE/yakePrerequisites.h&gt;
+ #include &lt;yake/plugins/physicsODE/OdeMaterial.h&gt;
+ 
+ namespace yake {
+@@ -34,11 +35,11 @@
+ 
+ 		class OdeActor;
+ 		class OdeTransformGeom;
+-		class OdeGeom : public IShape
++		class YAKE_PHYSICSODE_API OdeGeom : public IShape
+ 		{
+ 			friend class OdeTransformGeom;
+ 			OdeGeom();
+-			OdeGeom(const OdeGeom&amp;);
++			//OdeGeom(const OdeGeom&amp;);
+ 		public:
+ 			OdeGeom(OdeActor* pOwner);
+ 			virtual ~OdeGeom();
+@@ -70,7 +71,7 @@
+ 			OdeActor*			mOwner;
+ 		};
+ 		
+-		class OdeTransformGeom : public OdeGeom
++		class YAKE_PHYSICSODE_API OdeTransformGeom : public OdeGeom
+ 		{
+ 		public:
+ 			OdeTransformGeom( dSpace* pSpace, OdeActor* pOwner );
+@@ -84,7 +85,7 @@
+ 			OdeGeom*	mAttachedGeom;
+ 		};
+ 		
+-		class OdePlane : public OdeGeom
++		class YAKE_PHYSICSODE_API OdePlane : public OdeGeom
+ 		{
+ 		public:
+ 			OdePlane( dSpace* pSpace, OdeActor* pOwner, real a, real b, real c, real d );
+@@ -92,7 +93,7 @@
+ 			virtual ShapeType getType() const;
+ 		};
+ 		
+-		class OdeSphere :  public OdeGeom
++		class YAKE_PHYSICSODE_API OdeSphere :  public OdeGeom
+ 		{
+ 		public:
+ 			OdeSphere::OdeSphere( dSpace* pSpace, OdeActor* pOwner, real radius );
+@@ -100,7 +101,7 @@
+ 			virtual ShapeType getType() const;
+ 		};
+ 		
+-		class OdeBox : public OdeGeom
++		class YAKE_PHYSICSODE_API OdeBox : public OdeGeom
+ 		{
+ 		public:
+ 			OdeBox( dSpace* pSpace, OdeActor* pOwner, real sizex, real sizey, real sizez);
+@@ -108,7 +109,7 @@
+ 			virtual ShapeType getType() const;
+ 		};
+ 		
+-		class OdeCCylinder : public OdeGeom
++		class YAKE_PHYSICSODE_API OdeCCylinder : public OdeGeom
+ 		{
+ 		public:
+ 			OdeCCylinder( dSpace* pSpace, OdeActor* pOwner, real radius, real length );
+@@ -116,7 +117,7 @@
+ 			virtual ShapeType getType() const;
+ 		};
+ 		
+-		class OdeTriMesh : public OdeGeom
++		class YAKE_PHYSICSODE_API OdeTriMesh : public OdeGeom
+ 		{
+ 			public:
+ 
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeWorld.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeWorld.h	2005-10-12 22:19:29 UTC (rev 1011)
++++ trunk/yake/yake/plugins/physicsODE/OdeWorld.h	2005-10-12 22:20:30 UTC (rev 1012)
+@@ -27,6 +27,7 @@
+ #ifndef YAKE_ODEWORLD_H
+ #define YAKE_ODEWORLD_H
+ 
++#include &lt;yake/plugins/physicsODE/yakePrerequisites.h&gt;
+ #include &quot;yake/plugins/physicsODE/OdeShapes.h&quot;
+ 
+ namespace yake {
+@@ -42,7 +43,7 @@
+ 		class OdeAvatar;
+ 		class OdeMaterial;
+ 		
+-		class OdeWorld : public IWorld
++		class YAKE_PHYSICSODE_API OdeWorld : public IWorld
+ 		{
+ 		public:
+ 			OdeWorld();
+@@ -83,7 +84,6 @@
+ 			YAKE_MEMBERSIGNAL_FIRE_FN1( public, PreStepInternal, const real dt, dt )
+ 		public:
+ 
+-			///TODO what are these for?
+ 			// helpers
+ 			dWorldID _getOdeID() const;
+ 			dJointGroup* _getOdeContactJointGroup() const 
+
+Modified: trunk/yake/yake/plugins/physicsODE/PhysicsSystemODE.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/PhysicsSystemODE.h	2005-10-12 22:19:29 UTC (rev 1011)
++++ trunk/yake/yake/plugins/physicsODE/PhysicsSystemODE.h	2005-10-12 22:20:30 UTC (rev 1012)
+@@ -27,6 +27,8 @@
+ #ifndef YAKE_PHYSICSSYSTEMODE_H
+ #define YAKE_PHYSICSSYSTEMODE_H
+ 
++#include &lt;yake/plugins/physicsODE/yakePrerequisites.h&gt;
++
+ namespace yake {
+ namespace physics {
+ 
+
+Modified: trunk/yake/yake/plugins/physicsODE/yakePCH.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/yakePCH.h	2005-10-12 22:19:29 UTC (rev 1011)
++++ trunk/yake/yake/plugins/physicsODE/yakePCH.h	2005-10-12 22:20:30 UTC (rev 1012)
+@@ -35,6 +35,7 @@
+ 
+ #include &lt;yake/base/yake.h&gt;
+ #include &lt;yake/physics/yakePhysics.h&gt;
++#include &lt;yake/plugins/physicsODE/yakePrerequisites.h&gt;
+ 
+ //@todo fix these macros
+ #define VEC_YAKE2ODE( YV ) ::Ogre::Vector3( YV.x, YV.y, YV.z )
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000082.html">[Yake-svn] r1011 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000084.html">[Yake-svn] r1013 - trunk/yake/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#83">[ date ]</a>
+              <a href="thread.html#83">[ thread ]</a>
+              <a href="subject.html#83">[ subject ]</a>
+              <a href="author.html#83">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

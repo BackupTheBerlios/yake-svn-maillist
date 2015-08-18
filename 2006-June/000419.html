@@ -1,0 +1,249 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1351 - trunk/yake/yake/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1351%20-%20trunk/yake/yake/model&In-Reply-To=%3C200606201959.k5KJxf1O023525%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000418.html">
+   <LINK REL="Next"  HREF="000420.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1351 - trunk/yake/yake/model</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1351%20-%20trunk/yake/yake/model&In-Reply-To=%3C200606201959.k5KJxf1O023525%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1351 - trunk/yake/yake/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Jun 20 21:59:41 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000418.html">[Yake-svn] r1350 - trunk/yake/yake/model
+</A></li>
+        <LI>Next message: <A HREF="000420.html">[Yake-svn] r1352 - trunk/yake/src/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#419">[ date ]</a>
+              <a href="thread.html#419">[ thread ]</a>
+              <a href="subject.html#419">[ subject ]</a>
+              <a href="author.html#419">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-20 21:59:40 +0200 (Tue, 20 Jun 2006)
+New Revision: 1351
+
+Added:
+   trunk/yake/yake/model/model_dotmodel_parser.h
+Modified:
+   trunk/yake/yake/model/model.h
+Log:
+added dotModel templates
+
+Modified: trunk/yake/yake/model/model.h
+===================================================================
+--- trunk/yake/yake/model/model.h	2006-06-20 18:19:14 UTC (rev 1350)
++++ trunk/yake/yake/model/model.h	2006-06-20 19:59:40 UTC (rev 1351)
+@@ -137,10 +137,13 @@
+ 		ModelManager();
+ 		~ModelManager();
+ 
+-		Model* createFromTemplate(const ModelTemplate&amp;);
+-		Model* createFromDotModel(const String&amp; modelName, const String&amp; fn, const String&amp; tplName);
++		bool loadTemplatesFromDotModel(const String&amp; fn);
++
++		Model* createModelFromTemplate(const String&amp; modelName, const String&amp; tplName);
++
+ 		Model* createModel(const String&amp; modelName, const ModelComponentDescList&amp;);
+ 		Model* createModel(const String&amp; modelName, const String&amp; def);
++
+ 		void clear();
+ 
+ 		/** @name Model/Component creation context manipulation */
+@@ -183,13 +186,17 @@
+ 		PreCreateModelComponent		sigPreCreateModelComponent_;
+ 		PostCreateModelComponent	sigPostCreateModelComponent_;
+ 		ModelInitializedSignal		sigModelInitializedSignal_;
++
++		typedef AssocVector&lt;String,SharedPtr&lt;ModelTemplate&gt; &gt; ModelTemplateList;
++		ModelTemplateList			modelTemplates_;
+ 	};
++	/*
+ 	struct ModelTemplateManager
+ 	{
+ 		ModelTemplateManager();
+ 		~ModelTemplateManager();
+ 
+-		bool loadTemplatesFromDotLink(const String&amp; fn);
++		bool loadTemplatesFromDotModel(const String&amp; fn);
+ 		ModelTemplate* getTemplate(const String&amp;) const;
+ 		void destroyTemplate(const String&amp;);
+ 	private:
+@@ -199,6 +206,7 @@
+ 		typedef AssocVector&lt;String,SharedPtr&lt;ModelTemplate&gt; &gt; ModelTemplateList;
+ 		ModelTemplateList	tplMap_;
+ 	};
++	*/
+ 	/**@todo Move into private impl file. */
+ 	struct ModelTemplate
+ 	{
+
+Added: trunk/yake/yake/model/model_dotmodel_parser.h
+===================================================================
+--- trunk/yake/yake/model/model_dotmodel_parser.h	2006-06-20 18:19:14 UTC (rev 1350)
++++ trunk/yake/yake/model/model_dotmodel_parser.h	2006-06-20 19:59:40 UTC (rev 1351)
+@@ -0,0 +1,123 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MODEL_DOTMODELPARSER_H
++#define YAKE_MODEL_DOTMODELPARSER_H
++
++#include &lt;yake/model/prerequisites.h&gt;
++#include &lt;yake/data/yakeData.h&gt;
++#include &lt;yake/model/model_component.h&gt;
++
++namespace yake {
++namespace data {
++namespace parser {
++namespace dotmodel {
++
++	/** DotModelParser base class providing default implementation.
++	*/
++	class YAKE_MODEL_API DotModelParser
++	{
++	public:
++		typedef SharedPtr&lt;dom::INode&gt; NodeSharedPtr;
++		typedef dom::NodeList::const_iterator NodeListIter;
++
++		
++		DotModelParser();
++		virtual ~DotModelParser() {}
++
++		String getName() const
++		{ 
++			return &quot;yake.data.dotModel&quot;;
++		}
++
++		virtual Version getVersion() const = 0;
++
++		/** Build physics model from DOM!
++			\param file 
++			\return 
++		*/
++		virtual bool load( const NodeSharedPtr docNode );
++
++		/** Prepare for next run of load/store.
++		*/
++		virtual void reset();
++
++		typedef model::ModelComponent::Desc ModelComponentDesc;
++		struct ModelDesc
++		{
++			String	name_;
++		};
++
++		typedef SignalX&lt; void( const ModelDesc&amp; ) &gt; ModelSignal;
++		typedef ModelSignal ModelFinishedSignal;
++		typedef SignalX&lt; void( const ModelComponentDesc&amp; ) &gt; ModelComponentSignal;
++		typedef SignalX&lt; void ( void ) &gt; EventSignal; // special event handler type
++	
++		SignalConnection subscribeToModelSignal( const ModelSignal::slot_type&amp; slot )
++		{ return sigModel_.connect(slot); } 
++		SignalConnection subscribeToModelComponentSignal( const ModelComponentSignal::slot_type&amp; slot )
++		{ return sigModelComponent_.connect(slot); } 
++		SignalConnection subscribeToModelFinishedSignal( const ModelFinishedSignal::slot_type&amp; slot )
++		{ return sigModelFinished_.connect(slot); } 
++
++		SignalConnection subscribeToParseEndedSignal( const EventSignal::slot_type&amp; slot )
++		{ return sigParseEnded_.connect( slot ); } 
++
++	protected:
++		ModelSignal				sigModel_;
++		ModelFinishedSignal		sigModelFinished_;
++		ModelComponentSignal	sigModelComponent_;
++		EventSignal				sigParseEnded_;
++	
++		/// Default implementations for common functions.
++		virtual void readDotModel( const NodeSharedPtr pNode );
++		virtual void readModels( const NodeSharedPtr pModelsNode );
++		virtual void readModel( const NodeSharedPtr pModelNode );
++		virtual void readModelComponent( const NodeSharedPtr pCompNode, ModelDesc&amp; modelDesc );
++		virtual void readModelComponentParameter( const NodeSharedPtr pParamNode, String&amp; name, String&amp; value );
++
++	private:
++		NodeSharedPtr		mDocNode;
++	};
++	
++	class YAKE_MODEL_API DotModelParserV1 : public DotModelParser
++	{
++	public:
++		virtual ~DotModelParserV1() {}
++		
++		virtual Version getVersion() const
++		{ 
++			return Version( 1, 0, 0 );
++		}
++	};
++
++} // xode
++} // parser
++} // data
++} // yake
++
++#endif
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000418.html">[Yake-svn] r1350 - trunk/yake/yake/model
+</A></li>
+	<LI>Next message: <A HREF="000420.html">[Yake-svn] r1352 - trunk/yake/src/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#419">[ date ]</a>
+              <a href="thread.html#419">[ thread ]</a>
+              <a href="subject.html#419">[ subject ]</a>
+              <a href="author.html#419">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

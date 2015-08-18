@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1032 - in trunk/yake/common/media: . graphics.delorean vehicles
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1032%20-%20in%20trunk/yake/common/media%3A%20.%20graphics.delorean%20vehicles&In-Reply-To=%3C200510192301.j9JN1c56020508%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000102.html">
+   <LINK REL="Next"  HREF="000104.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1032 - in trunk/yake/common/media: . graphics.delorean vehicles</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1032%20-%20in%20trunk/yake/common/media%3A%20.%20graphics.delorean%20vehicles&In-Reply-To=%3C200510192301.j9JN1c56020508%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1032 - in trunk/yake/common/media: . graphics.delorean vehicles">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Oct 20 01:01:38 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000102.html">[Yake-svn] r1031 - trunk/yake/common/media/graphics.materials/scripts
+</A></li>
+        <LI>Next message: <A HREF="000104.html">[Yake-svn] r1033 - in trunk/yake/common/bin: debug release
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#103">[ date ]</a>
+              <a href="thread.html#103">[ thread ]</a>
+              <a href="subject.html#103">[ subject ]</a>
+              <a href="author.html#103">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-20 01:01:35 +0200 (Thu, 20 Oct 2005)
+New Revision: 1032
+
+Added:
+   trunk/yake/common/media/graphics.delorean/
+   trunk/yake/common/media/graphics.delorean/DELOREAN.mesh
+   trunk/yake/common/media/graphics.delorean/LICENSE
+   trunk/yake/common/media/graphics.delorean/delorean.material
+   trunk/yake/common/media/graphics.delorean/wheel1.mesh
+   trunk/yake/common/media/vehicles/delorean.xml
+Log:
+initial revision
+
+Added: trunk/yake/common/media/graphics.delorean/DELOREAN.mesh
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/yake/common/media/graphics.delorean/DELOREAN.mesh
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Added: trunk/yake/common/media/graphics.delorean/LICENSE
+===================================================================
+--- trunk/yake/common/media/graphics.delorean/LICENSE	2005-10-19 21:03:11 UTC (rev 1031)
++++ trunk/yake/common/media/graphics.delorean/LICENSE	2005-10-19 23:01:35 UTC (rev 1032)
+@@ -0,0 +1,8 @@
++
++All the meshes and materials in this file are protected by copyright.
++
++The YAKE Team is *not* the creator!
++
++Unfortunately, we cannot provide the information on the author at the moment.
++
++Do *not* distribute these files until this is solved.
+\ No newline at end of file
+
+Added: trunk/yake/common/media/graphics.delorean/delorean.material
+===================================================================
+--- trunk/yake/common/media/graphics.delorean/delorean.material	2005-10-19 21:03:11 UTC (rev 1031)
++++ trunk/yake/common/media/graphics.delorean/delorean.material	2005-10-19 23:01:35 UTC (rev 1032)
+@@ -0,0 +1,13 @@
++material delorean
++{
++	technique
++	{
++		pass
++		{
++			texture_unit
++			{
++				texture delorean.tga
++			}
++		}
++	}
++}
+
+Added: trunk/yake/common/media/graphics.delorean/wheel1.mesh
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/yake/common/media/graphics.delorean/wheel1.mesh
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Added: trunk/yake/common/media/vehicles/delorean.xml
+===================================================================
+--- trunk/yake/common/media/vehicles/delorean.xml	2005-10-19 21:03:11 UTC (rev 1031)
++++ trunk/yake/common/media/vehicles/delorean.xml	2005-10-19 23:01:35 UTC (rev 1032)
+@@ -0,0 +1,49 @@
++&lt;dotvehicle&gt;
++	&lt;vehicleTemplate name=&quot;delorean&quot;&gt;
++		&lt;!-- chassis --&gt;
++		&lt;chassis&gt;
++			&lt;body totalMass=&quot;1.5&quot; /&gt;
++			&lt;shapeSet&gt;
++				&lt;box x=&quot;1.70&quot; y=&quot;0.6&quot; z=&quot;4&quot;&gt;
++					&lt;material ref=&quot;chassis&quot; /&gt;
++					&lt;material inheritsFrom=&quot;default&quot; friction=&quot;0.07&quot; /&gt;
++					&lt;position x=&quot;0&quot; y=&quot;0.4&quot; z=&quot;0&quot; /&gt;
++				&lt;/box&gt;
++			&lt;/shapeSet&gt;
++		&lt;/chassis&gt;
++		&lt;!-- two axles --&gt;
++		&lt;axle name=&quot;front&quot; /&gt;
++		&lt;axle name=&quot;rear&quot; /&gt;
++		&lt;!-- engine --&gt;
++		&lt;engine name=&quot;main&quot; type=&quot;CarEngine&quot; axle=&quot;rear&quot;&gt;
++			&lt;rpm min=&quot;300&quot; max=&quot;6000&quot; redline=&quot;5000&quot; /&gt;
++			&lt;curves&gt;
++				&lt;curve name=&quot;max_torque&quot;&gt;
++				&lt;/curve&gt;
++			&lt;/curves&gt;
++			&lt;gearBox&gt;
++				&lt;gear id=&quot;0&quot; mode=&quot;reverse&quot; ratio=&quot;-2.90&quot; /&gt;
++				&lt;gear id=&quot;1&quot; mode=&quot;neutral&quot; /&gt;
++				&lt;gear id=&quot;2&quot; mode=&quot;forward&quot; ratio=&quot;2.66&quot; /&gt;
++				&lt;gear id=&quot;3&quot; mode=&quot;forward&quot; ratio=&quot;1.78&quot; /&gt;
++				&lt;gear id=&quot;4&quot; mode=&quot;forward&quot; ratio=&quot;1.30&quot; /&gt;
++				&lt;gear id=&quot;5&quot; mode=&quot;forward&quot; ratio=&quot;0.74&quot; /&gt;
++				&lt;gear id=&quot;6&quot; mode=&quot;forward&quot; ratio=&quot;0.50&quot; /&gt;
++			&lt;/gearBox&gt;
++		&lt;/engine&gt;
++		&lt;!-- wheels --&gt;
++		&lt;steeringGroup index=&quot;0&quot; /&gt;
++		&lt;wheel name=&quot;leftFrontWheel&quot; axle=&quot;front&quot; steeringGroup=&quot;0&quot; radius=&quot;0.275&quot; mass=&quot;0.018&quot; massIsRelativeToChassis=&quot;yes&quot; suspensionSpring=&quot;30&quot; suspensionDamping=&quot;3&quot;&gt;
++			&lt;position x=&quot;-0.78&quot; y=&quot;-0.4&quot; z=&quot;1.18&quot; /&gt;
++		&lt;/wheel&gt;
++		&lt;wheel name=&quot;rightFrontWheel&quot; axle=&quot;front&quot; steeringGroup=&quot;0&quot; radius=&quot;0.275&quot; mass=&quot;0.018&quot; massIsRelativeToChassis=&quot;yes&quot; suspensionSpring=&quot;30&quot; suspensionDamping=&quot;3&quot;&gt;
++			&lt;position x=&quot;0.78&quot; y=&quot;-0.4&quot; z=&quot;1.18&quot; /&gt;
++		&lt;/wheel&gt;
++		&lt;wheel name=&quot;leftRearWheel&quot; axle=&quot;rear&quot; radius=&quot;0.275&quot; mass=&quot;0.018&quot; massIsRelativeToChassis=&quot;yes&quot; suspensionSpring=&quot;30&quot; suspensionDamping=&quot;3&quot;&gt;
++			&lt;position x=&quot;-0.78&quot; y=&quot;-0.4&quot; z=&quot;-1.1&quot; /&gt;
++		&lt;/wheel&gt;
++		&lt;wheel name=&quot;rightRearWheel&quot; axle=&quot;rear&quot; radius=&quot;0.275&quot; mass=&quot;0.018&quot; massIsRelativeToChassis=&quot;yes&quot; suspensionSpring=&quot;30&quot; suspensionDamping=&quot;3&quot;&gt;
++			&lt;position x=&quot;0.78&quot; y=&quot;-0.4&quot; z=&quot;-1.1&quot; /&gt;
++		&lt;/wheel&gt;
++	&lt;/vehicleTemplate&gt;
++&lt;/dotvehicle&gt;
+\ No newline at end of file
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000102.html">[Yake-svn] r1031 - trunk/yake/common/media/graphics.materials/scripts
+</A></li>
+	<LI>Next message: <A HREF="000104.html">[Yake-svn] r1033 - in trunk/yake/common/bin: debug release
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#103">[ date ]</a>
+              <a href="thread.html#103">[ thread ]</a>
+              <a href="subject.html#103">[ subject ]</a>
+              <a href="author.html#103">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

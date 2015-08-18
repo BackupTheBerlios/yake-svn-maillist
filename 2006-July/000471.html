@@ -1,0 +1,196 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1403 - trunk/yake/yake/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1403%20-%20trunk/yake/yake/model&In-Reply-To=%3C200607261902.k6QJ24pA008873%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000470.html">
+   <LINK REL="Next"  HREF="000472.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1403 - trunk/yake/yake/model</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1403%20-%20trunk/yake/yake/model&In-Reply-To=%3C200607261902.k6QJ24pA008873%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1403 - trunk/yake/yake/model">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 26 21:02:04 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000470.html">[Yake-svn] r1402 - trunk/yake/src/yake/model
+</A></li>
+        <LI>Next message: <A HREF="000472.html">[Yake-svn] r1404 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#471">[ date ]</a>
+              <a href="thread.html#471">[ thread ]</a>
+              <a href="subject.html#471">[ subject ]</a>
+              <a href="author.html#471">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-26 21:00:43 +0200 (Wed, 26 Jul 2006)
+New Revision: 1403
+
+Modified:
+   trunk/yake/yake/model/model.h
+   trunk/yake/yake/model/model_component.h
+Log:
+cleaned up interfaces for model and component creation contexts
+
+Modified: trunk/yake/yake/model/model.h
+===================================================================
+--- trunk/yake/yake/model/model.h	2006-07-26 18:56:00 UTC (rev 1402)
++++ trunk/yake/yake/model/model.h	2006-07-26 19:00:43 UTC (rev 1403)
+@@ -158,19 +158,19 @@
+ 
+ 		/** @name Signals (in order that they are called in) */
+ 		//@{
+-		typedef Signal2&lt;void(Model&amp;,const ComponentCreationContext&amp;)&gt; ModelCreatedSignal;
++		typedef Signal2&lt;void(Model&amp;,const ModelCreationContext&amp;)&gt; ModelCreatedSignal;
+ 		typedef Signal3&lt;void(Model&amp;,const ComponentCreationContext&amp;,const String&amp;)&gt; PreCreateModelComponent;
++		typedef ModelCreationContext::ComponentPreInitializeSignal PreInitializeComponentSignal;
++		typedef ModelCreationContext::ComponentPostInitializeSignal PostInitializeComponentSignal;
+ 		typedef Signal3&lt;void(Model&amp;,const ComponentCreationContext&amp;,const String&amp;)&gt; PostCreateModelComponent;
+-		typedef Signal2&lt;void(Model&amp;,const ComponentCreationContext&amp;)&gt; ModelInitializedSignal;
++		typedef Signal2&lt;void(Model&amp;,const ModelCreationContext&amp;)&gt; ModelInitializedSignal;
++
+ 		SignalConnection subscribeToModelCreatedSignal(const ModelCreatedSignal::slot_type&amp;);
+-		SignalConnection subscribeToPreCreateModelComponent(const PreCreateModelComponent::slot_type&amp;);
+-		SignalConnection subscribeToPostCreateModelComponent(const PostCreateModelComponent::slot_type&amp;);
++		 SignalConnection subscribeToPreCreateComponent(const PreCreateModelComponent::slot_type&amp;);
++		  SignalConnection subscribeToPreInitializeComponentSignal(const PreInitializeComponentSignal::slot_type&amp;);
++		  SignalConnection subscribeToPostInitializeComponentSignal(const PostInitializeComponentSignal::slot_type&amp;);
++		 SignalConnection subscribeToPostCreateComponent(const PostCreateModelComponent::slot_type&amp;);
+ 		SignalConnection subscribeToModelInitializedSignal(const ModelInitializedSignal::slot_type&amp;);
+-
+-		typedef ComponentCreationContext::ComponentPreInitializeSignal ComponentPreInitializeSignal;
+-		typedef ComponentCreationContext::ComponentPostInitializeSignal ComponentPostInitializeSignal;
+-		SignalConnection subscribeToComponentPreInitializeSignal(const ComponentPreInitializeSignal::slot_type&amp;);
+-		SignalConnection subscribeToComponentPostInitializeSignal(const ComponentPostInitializeSignal::slot_type&amp;);
+ 		//@}
+ 
+ 	private:
+@@ -178,7 +178,7 @@
+ 		ModelManager&amp; operator=(const ModelManager&amp;);
+ 	private:
+ 		ComponentCreatorManager		creatorMgr_;
+-		ComponentCreationContext	ctx_;
++		ModelCreationContext		modelCtx_;
+ 
+ 		typedef AssocVector&lt;String,SharedPtr&lt;Model&gt; &gt; ModelList;
+ 		ModelList					models_;
+
+Modified: trunk/yake/yake/model/model_component.h
+===================================================================
+--- trunk/yake/yake/model/model_component.h	2006-07-26 18:56:00 UTC (rev 1402)
++++ trunk/yake/yake/model/model_component.h	2006-07-26 19:00:43 UTC (rev 1403)
+@@ -43,10 +43,13 @@
+ namespace model {
+ 	//@todo move into private header:
+ 	struct CentralControllerBase;
++
++	struct ComponentCreationContext;
+ 	/** @remarks Do *NOT* rely on the existence of the members of this structure!
+ 				Always access them through ModelManager!
++		@todo Clear this up. Hide it!
+ 	*/
+-	struct ComponentCreationContext
++	struct ModelCreationContext
+ 	{
+ 		Model*					model_;
+ 		graphics::IWorld*		gworld_;
+@@ -62,10 +65,10 @@
+ 
+ 		typedef Signal2&lt;void(const ComponentCreationContext&amp;,ModelComponent&amp;)&gt; ComponentPreInitializeSignal;
+ 		typedef ComponentPreInitializeSignal ComponentPostInitializeSignal;
+-		ComponentPreInitializeSignal	sigPreInit_;
+-		ComponentPostInitializeSignal	sigPostInit_;
++		ComponentPreInitializeSignal	sigPreInitComponent_;
++		ComponentPostInitializeSignal	sigPostInitComponent_;
+ 
+-		ComponentCreationContext() : 
++		ModelCreationContext() : 
+ 			model_(0),
+ 			gworld_(0),
+ 			pworld_(0),
+@@ -75,6 +78,47 @@
+ 		{}
+ 	};
+ 
++	/** Contextual information on component creation time.
++	*/
++	struct ComponentCreationContext
++	{
++		ComponentCreationContext(ModelCreationContext&amp; modelCtx, const String&amp; name = &quot;&quot;);
++
++		const String&amp; getName() const;
++
++		Model&amp; getModel() const;
++		graphics::IWorld* getGraphicalWorld() const;
++		physics::IWorld* getPhysicalWorld() const;
++		CentralControllerBase* getCentralController() const;
++
++		data::parser::dotscene::DotSceneParser* getDotSceneParser() const;
++		data::parser::xode::XODEParser* getXODEParser() const;
++
++		bool getParamValue(const String&amp;,boost::any&amp;) const;
++
++		template&lt;typename OutT&gt;
++		bool getParamValueAs(const String&amp;,OutT&amp;) const
++		{
++			ModelCreationContext::ParamMap::const_iterator it = modelCtx_.params_.find(key);
++			if (it == modelCtx_.params_.end())
++				return false;
++			try {
++				out = boost::any_cast&lt;OutT&gt;(it-&gt;second);
++			}
++			catch (boost::bad_any_cast&amp;)
++			{
++				return false;
++			}
++			return true;
++		}
++
++		void sigPreInit(const ComponentCreationContext&amp;,ModelComponent&amp;) const;
++		void sigPostInit(const ComponentCreationContext&amp;,ModelComponent&amp;) const;
++	private:
++		ModelCreationContext&amp;			modelCtx_;
++		String							name_;
++	};
++
+ 	struct YAKE_MODEL_API ModelComponent //: public Clonable&lt;ModelComponent&gt;
+ 	{
+ 		ModelComponent() {}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000470.html">[Yake-svn] r1402 - trunk/yake/src/yake/model
+</A></li>
+	<LI>Next message: <A HREF="000472.html">[Yake-svn] r1404 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#471">[ date ]</a>
+              <a href="thread.html#471">[ thread ]</a>
+              <a href="subject.html#471">[ subject ]</a>
+              <a href="author.html#471">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

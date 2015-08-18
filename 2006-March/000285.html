@@ -1,0 +1,345 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1213 - in trunk/yake/src/yake: . ent
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1213%20-%20in%20trunk/yake/src/yake%3A%20.%20ent&In-Reply-To=%3C200603051830.k25IUUAD026956%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000282.html">
+   <LINK REL="Next"  HREF="000286.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1213 - in trunk/yake/src/yake: . ent</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1213%20-%20in%20trunk/yake/src/yake%3A%20.%20ent&In-Reply-To=%3C200603051830.k25IUUAD026956%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1213 - in trunk/yake/src/yake: . ent">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar  5 19:30:30 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000282.html">[Yake-svn] r1212 - in trunk/yake/src/yake/samples: . ent ent/sampleEntFsm
+</A></li>
+        <LI>Next message: <A HREF="000286.html">[Yake-svn] r1214 - in trunk/yake/src/yake/plugins: . entLua
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#285">[ date ]</a>
+              <a href="thread.html#285">[ thread ]</a>
+              <a href="subject.html#285">[ subject ]</a>
+              <a href="author.html#285">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-05 19:30:24 +0100 (Sun, 05 Mar 2006)
+New Revision: 1213
+
+Added:
+   trunk/yake/src/yake/ent/
+   trunk/yake/src/yake/ent/component.cpp
+   trunk/yake/src/yake/ent/component_holder.cpp
+   trunk/yake/src/yake/ent/object.cpp
+   trunk/yake/src/yake/ent/object_listener.cpp
+   trunk/yake/src/yake/ent/object_mgr.cpp
+   trunk/yake/src/yake/ent/object_mgr_listener.cpp
+   trunk/yake/src/yake/ent/pch.cpp
+   trunk/yake/src/yake/ent/vm_holder.cpp
+Log:
+initial revision
+
+Added: trunk/yake/src/yake/ent/component.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/component.cpp	2006-03-05 18:29:22 UTC (rev 1212)
++++ trunk/yake/src/yake/ent/component.cpp	2006-03-05 18:30:24 UTC (rev 1213)
+@@ -0,0 +1,10 @@
++#include &quot;yake/ent/pch.h&quot;
++#include &quot;yake/ent/ent.h&quot;
++
++namespace yake {
++namespace object {
++
++	IMPL_CLASS_RTTI(Co)
++} // namespace object
++} // namespace yake
++
+
+Added: trunk/yake/src/yake/ent/component_holder.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/component_holder.cpp	2006-03-05 18:29:22 UTC (rev 1212)
++++ trunk/yake/src/yake/ent/component_holder.cpp	2006-03-05 18:30:24 UTC (rev 1213)
+@@ -0,0 +1,21 @@
++#include &quot;yake/ent/pch.h&quot;
++#include &quot;yake/ent/ent.h&quot;
++
++namespace yake {
++namespace object {
++
++	void CoHolder::addCo(const CoTag&amp; tag, Co* co)
++	{
++		if (getCo(tag))
++			return; //@todo throw instead?
++		components_.insert( std::make_pair(tag, co) );
++	}
++	Co* CoHolder::getCo(const CoTag&amp; tag) const
++	{
++		TagCoMap::const_iterator itFind = components_.find(tag);
++		return ((itFind == components_.end()) ? 0 : itFind-&gt;second);
++	}
++
++} // namespace object
++} // namespace yake
++
+
+Added: trunk/yake/src/yake/ent/object.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object.cpp	2006-03-05 18:29:22 UTC (rev 1212)
++++ trunk/yake/src/yake/ent/object.cpp	2006-03-05 18:30:24 UTC (rev 1213)
+@@ -0,0 +1,38 @@
++#include &quot;yake/ent/pch.h&quot;
++#include &quot;yake/ent/ent.h&quot;
++
++namespace yake {
++namespace object {
++
++	IMPL_CLASS_RTTI(Object)
++
++	void Object::processFsmEvent(const fsm_event_type&amp; evt)
++	{
++		m_.processEventCb(evt,boost::bind(&amp;Object::onEnter,this,_1,_2),boost::bind(&amp;Object::onExit,this,_1,_2));
++		listeners_fsmEventHandled(*this,m_,evt);
++	}
++	void Object::addFsmState(const fsm_state_type&amp; state)
++	{
++		m_.addState(state);
++	}
++	void Object::addFsmTransition(const fsm_state_type&amp; from, const fsm_event_type&amp; evt, const fsm_state_type&amp; to)
++	{
++		m_.addTransition(from,evt,to);
++	}
++	void Object::setFsmState(const fsm_state_type&amp; state)
++	{
++		m_.setState(state);
++	}
++	void Object::onEnter(const object_fsm&amp; fsm, const object_fsm::state_type&amp; state)
++	{
++		//std::cout &lt;&lt; &quot;object.state.enter '&quot; &lt;&lt; state &lt;&lt; &quot;'\n&quot;;
++		listeners_fsmEnterState(*this,fsm,state);
++	}
++	void Object::onExit(const object_fsm&amp; fsm, const object_fsm::state_type&amp; state)
++	{
++		//std::cout &lt;&lt; &quot;object.state.exit '&quot; &lt;&lt; state &lt;&lt; &quot;'\n&quot;;
++		listeners_fsmExitState(*this,fsm,state);
++	}
++
++}
++}
+\ No newline at end of file
+
+Added: trunk/yake/src/yake/ent/object_listener.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_listener.cpp	2006-03-05 18:29:22 UTC (rev 1212)
++++ trunk/yake/src/yake/ent/object_listener.cpp	2006-03-05 18:30:24 UTC (rev 1213)
+@@ -0,0 +1,8 @@
++#include &quot;yake/ent/pch.h&quot;
++#include &quot;yake/ent/ent.h&quot;
++
++namespace yake {
++namespace object {
++
++}
++}
+\ No newline at end of file
+
+Added: trunk/yake/src/yake/ent/object_mgr.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_mgr.cpp	2006-03-05 18:29:22 UTC (rev 1212)
++++ trunk/yake/src/yake/ent/object_mgr.cpp	2006-03-05 18:30:24 UTC (rev 1213)
+@@ -0,0 +1,69 @@
++#include &quot;yake/ent/pch.h&quot;
++#include &quot;yake/ent/ent.h&quot;
++
++namespace yake {
++namespace object {
++
++	Object* ObjectManager::makeObject()
++	{
++		Object* obj = new Object();
++		assert( obj );
++		objs_.push_back( obj );
++
++		listeners_onObjectCreated(obj);
++
++		obj-&gt;init();
++
++		listeners_onObjectInitialized(obj);
++
++		return obj;
++	}
++	void ObjectManager::destroyObject(Object* obj)
++	{
++		assert( obj );
++
++		listeners_onDestroyObject( obj );
++		//obj-&gt;shutdown();
++
++		object_ptr_list::iterator it = std::find(objs_.begin(),objs_.end(),obj);
++		if (it != objs_.end())
++			objs_.erase( it );
++
++		delete obj;
++	}
++	void ObjectManager::tick()
++	{
++		yake::ConstVectorIterator&lt;object_ptr_list&gt; it(objs_);
++		while (it.hasMoreElements())
++			it.getNext()-&gt;tick();
++	}
++	void ObjectManager::listeners_onObjectCreated(Object* obj)
++	{
++		assert( obj );
++		if (!obj)
++			return;
++		yake::ConstVectorIterator&lt;listener_mgr_type::listener_list&gt; it(listeners_);
++		while (it.hasMoreElements())
++			it.getNext().first-&gt;onObjectCreated(obj);
++	}
++	void ObjectManager::listeners_onObjectInitialized(Object* obj)
++	{
++		assert( obj );
++		if (!obj)
++			return;
++		yake::ConstVectorIterator&lt;listener_mgr_type::listener_list&gt; it(listeners_);
++		while (it.hasMoreElements())
++			it.getNext().first-&gt;onObjectInitialized(obj);
++	}
++	void ObjectManager::listeners_onDestroyObject(Object* obj)
++	{
++		assert( obj );
++		if (!obj)
++			return;
++		yake::ConstVectorIterator&lt;listener_mgr_type::listener_list&gt; it(listeners_);
++		while (it.hasMoreElements())
++			it.getNext().first-&gt;onDestroyObject(obj);
++	}
++
++}
++}
+\ No newline at end of file
+
+Added: trunk/yake/src/yake/ent/object_mgr_listener.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_mgr_listener.cpp	2006-03-05 18:29:22 UTC (rev 1212)
++++ trunk/yake/src/yake/ent/object_mgr_listener.cpp	2006-03-05 18:30:24 UTC (rev 1213)
+@@ -0,0 +1,8 @@
++#include &quot;yake/ent/pch.h&quot;
++#include &quot;yake/ent/ent.h&quot;
++
++namespace yake {
++namespace object {
++
++}
++}
+\ No newline at end of file
+
+Added: trunk/yake/src/yake/ent/pch.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/pch.cpp	2006-03-05 18:29:22 UTC (rev 1212)
++++ trunk/yake/src/yake/ent/pch.cpp	2006-03-05 18:30:24 UTC (rev 1213)
+@@ -0,0 +1 @@
++#include &quot;yake/ent/pch.h&quot;
+
+Added: trunk/yake/src/yake/ent/vm_holder.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/vm_holder.cpp	2006-03-05 18:29:22 UTC (rev 1212)
++++ trunk/yake/src/yake/ent/vm_holder.cpp	2006-03-05 18:30:24 UTC (rev 1213)
+@@ -0,0 +1,59 @@
++#include &quot;yake/ent/pch.h&quot;
++#include &quot;yake/ent/ent.h&quot;
++
++namespace yake {
++namespace object {
++
++	VMHolder::~VMHolder()
++	{
++		ConstVectorIterator&lt;VmMap&gt; it(vms_);
++		while (it.hasMoreElements())
++		{
++			VmMap::value_type&amp; v = it.getNext();
++			if (v.second)
++				delete v.second;
++		}
++		vms_.clear();
++	}
++	bool VMHolder::attachVM(scripting::IVM* vm,const std::string&amp; tag)
++	{
++		YAKE_ASSERT(vm)(tag).debug(&quot;null vm&quot;);
++		if (!vm)
++			return false;
++		YAKE_ASSERT( !tag.empty() )(tag).debug(&quot;invalid tag&quot;);
++		if (tag.empty())
++			return false;
++		VmMap::const_iterator it = vms_.find(tag);
++		YAKE_ASSERT( it == vms_.end() )(tag).debug(&quot;tag already used.&quot;);
++		if (vms_.end() != it)
++			return false;
++		vms_.insert( VmMap::value_type(tag,vm) );
++		return true;
++	}
++	scripting::IVM* VMHolder::detachVM(const std::string &amp;tag)
++	{
++		YAKE_ASSERT( !tag.empty() )(tag).debug(&quot;invalid tag&quot;);
++		if (tag.empty())
++			return 0;
++		VmMap::iterator it = vms_.find(tag);
++		YAKE_ASSERT( it != vms_.end() )(tag).debug(&quot;tag not found.&quot;);
++		if (vms_.end() == it)
++			return 0;
++		scripting::IVM* vm = it-&gt;second;
++		vms_.erase(tag);
++		return vm;
++	}
++	scripting::IVM* VMHolder::getVM(const std::string &amp;tag) const
++	{
++		YAKE_ASSERT( !tag.empty() )(tag).debug(&quot;invalid tag&quot;);
++		if (tag.empty())
++			return 0;
++		VmMap::const_iterator it = vms_.find(tag);
++		YAKE_ASSERT( it != vms_.end() )(tag).debug(&quot;tag not found.&quot;);
++		if (vms_.end() == it)
++			return 0;
++		return it-&gt;second;
++	}
++
++}
++}
+\ No newline at end of file
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000282.html">[Yake-svn] r1212 - in trunk/yake/src/yake/samples: . ent ent/sampleEntFsm
+</A></li>
+	<LI>Next message: <A HREF="000286.html">[Yake-svn] r1214 - in trunk/yake/src/yake/plugins: . entLua
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#285">[ date ]</a>
+              <a href="thread.html#285">[ thread ]</a>
+              <a href="subject.html#285">[ subject ]</a>
+              <a href="author.html#285">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,425 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1352 - trunk/yake/src/yake/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1352%20-%20trunk/yake/src/yake/model&In-Reply-To=%3C200606202000.k5KK08tK023717%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000419.html">
+   <LINK REL="Next"  HREF="000421.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1352 - trunk/yake/src/yake/model</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1352%20-%20trunk/yake/src/yake/model&In-Reply-To=%3C200606202000.k5KK08tK023717%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1352 - trunk/yake/src/yake/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Jun 20 22:00:08 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000419.html">[Yake-svn] r1351 - trunk/yake/yake/model
+</A></li>
+        <LI>Next message: <A HREF="000421.html">[Yake-svn] r1353 - trunk/yake/src/yake/data
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#420">[ date ]</a>
+              <a href="thread.html#420">[ thread ]</a>
+              <a href="subject.html#420">[ subject ]</a>
+              <a href="author.html#420">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-20 22:00:02 +0200 (Tue, 20 Jun 2006)
+New Revision: 1352
+
+Added:
+   trunk/yake/src/yake/model/yakeDotModelParser.cpp
+   trunk/yake/src/yake/model/yakeModelTemplate.cpp
+   trunk/yake/src/yake/model/yakeModelTemplateManager.cpp
+Log:
+added dotModel templates
+
+Added: trunk/yake/src/yake/model/yakeDotModelParser.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeDotModelParser.cpp	2006-06-20 19:59:40 UTC (rev 1351)
++++ trunk/yake/src/yake/model/yakeDotModelParser.cpp	2006-06-20 20:00:02 UTC (rev 1352)
+@@ -0,0 +1,150 @@
++/*
++	 ------------------------------------------------------------------------------------
++	 This file is part of YAKE
++	 Copyright	2004 The YAKE Team
++	 For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++	 ------------------------------------------------------------------------------------
++	 This program is free software; you can redistribute it and/or modify it under
++	 the terms of the GNU Lesser General Public License as published by the Free Software
++	 Foundation; either version 2 of the License, or (at your option) any later
++	 version.
++ 
++	 This program is distributed in the hope that it will be useful, but WITHOUT
++	 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++	 FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++ 
++	 You should have received a copy of the GNU Lesser General Public License along with
++	 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++	 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++	 <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++	 ------------------------------------------------------------------------------------
++	 If you are interested in another license model contact the Yake Team via
++	 E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++	 For more information see the LICENSE file in the root directory of the
++	 source code distribution.
++	 ------------------------------------------------------------------------------------
++*/
++#include &lt;yake/model/pch.h&gt;
++#include &lt;yake/model/model.h&gt;
++#include &lt;yake/model/model_dotmodel_parser.h&gt;
++
++namespace yake {
++namespace data {
++namespace parser {
++namespace dotmodel {
++
++    //------------------------------------------------------
++	DotModelParser::DotModelParser()
++    {}
++
++    //------------------------------------------------------
++    bool DotModelParser::load( const NodeSharedPtr docNode )
++    {
++		YAKE_LOG( &quot;dotModel: load()&quot; );
++
++		YAKE_ASSERT( docNode.get() );
++
++		mDocNode = docNode;
++
++		YAKE_LOG( &quot;***********************&quot; );
++		YAKE_LOG( &quot;* Parsing dotModel... *&quot; );
++		YAKE_LOG( &quot;***********************&quot; );
++
++		readDotModel( mDocNode );
++
++		return true;
++    }
++
++    //------------------------------------------------------
++    void DotModelParser::readDotModel( const NodeSharedPtr pNode )
++    {
++		YAKE_ASSERT( pNode.get() );
++
++		readModels( pNode );
++
++		// parse completed. Firing signal!
++		sigParseEnded_();
++    }
++
++    //------------------------------------------------------
++    void DotModelParser::readModels( const NodeSharedPtr pModelsNode )
++    {
++		const dom::NodeList&amp; nodes = pModelsNode-&gt;getNodes();
++		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
++		{
++			readModel( *it );
++		}
++    }
++
++    //------------------------------------------------------
++    void DotModelParser::readModel( const NodeSharedPtr pModelNode )
++    {
++		ModelDesc desc;
++		desc.name_ = yake::StringUtil::toLowerCase( pModelNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;name&quot;) );
++		YAKE_LOG(&quot;xode: model '&quot; &lt;&lt; desc.name_ &lt;&lt; &quot;' found!&quot;);
++
++		this-&gt;sigModel_( desc );
++
++		const dom::NodeList&amp; nodes = pModelNode-&gt;getNodes();
++		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
++		{
++			const String name = yake::StringUtil::toLowerCase( (*it)-&gt;getName() );
++			YAKE_LOG(&quot;xode: item '&quot; &lt;&lt; name &lt;&lt; &quot;' found!&quot;);
++			if (name == &quot;component&quot;)
++			{
++				this-&gt;readModelComponent( *it, desc );
++			}
++			else
++				YAKE_LOG_WARNING(&quot;xode: unhandled item '&quot; &lt;&lt; name &lt;&lt; &quot;'!&quot;);
++		}
++
++		this-&gt;sigModelFinished_( desc );
++    }
++
++    //------------------------------------------------------
++	void DotModelParser::readModelComponent( const NodeSharedPtr pCompNode, ModelDesc&amp; modelDesc )
++	{
++		ModelComponentDesc desc;
++		desc.name = pCompNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;name&quot;);
++		desc.type = pCompNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;type&quot;);
++
++		const dom::NodeList&amp; nodes = pCompNode-&gt;getNodes();
++		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
++		{
++			const String name = yake::StringUtil::toLowerCase( (*it)-&gt;getName() );
++			YAKE_LOG(&quot;xode: item '&quot; &lt;&lt; name &lt;&lt; &quot;' found!&quot;);
++			if (name == &quot;parameter&quot;)
++			{
++				String name;
++				String value;
++				this-&gt;readModelComponentParameter( *it, name, value );
++				desc.params[name] = value;
++			}
++			else
++				YAKE_LOG_WARNING(&quot;xode: unhandled item '&quot; &lt;&lt; name &lt;&lt; &quot;'!&quot;);
++		}
++
++		desc.params[&quot;name&quot;] = desc.name;
++		desc.params[&quot;type&quot;] = desc.type;
++		this-&gt;sigModelComponent_(desc);
++	}
++
++    //------------------------------------------------------
++	void DotModelParser::readModelComponentParameter( const NodeSharedPtr pParamNode, String&amp; name, String&amp; value )
++	{
++		name = pParamNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;name&quot;);
++		value = pParamNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;value&quot;);
++	}
++
++	//------------------------------------------------------
++    void DotModelParser::reset()
++    {
++		//TODO is this really needed?
++		mDocNode.reset();
++    }
++
++} //xode
++} //parser
++} //data
++} //yake
++
+
+Added: trunk/yake/src/yake/model/yakeModelTemplate.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelTemplate.cpp	2006-06-20 19:59:40 UTC (rev 1351)
++++ trunk/yake/src/yake/model/yakeModelTemplate.cpp	2006-06-20 20:00:02 UTC (rev 1352)
+@@ -0,0 +1,50 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++
++	ModelTemplate::ModelTemplate()
++	{
++	}
++	ModelTemplate::~ModelTemplate()
++	{
++	}
++	void ModelTemplate::addComponentDesc(const ModelComponent::Desc&amp; desc)
++	{
++		compDescList_.push_back( desc );
++	}
++	const ModelComponentDescList&amp; ModelTemplate::getComponentDescriptions() const
++	{
++		return compDescList_;
++	}
++
++} // namespace model
++} // namespace yake
+
+Added: trunk/yake/src/yake/model/yakeModelTemplateManager.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelTemplateManager.cpp	2006-06-20 19:59:40 UTC (rev 1351)
++++ trunk/yake/src/yake/model/yakeModelTemplateManager.cpp	2006-06-20 20:00:02 UTC (rev 1352)
+@@ -0,0 +1,135 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++#include &quot;yake/model/model_dotmodel_parser.h&quot;
++
++namespace yake {
++namespace model {
++
++	namespace detail {
++		struct DotModelListener
++		{
++			DotModelListener() : currTpl_(0)
++			{
++			}
++			void onBeginModel(const data::parser::dotmodel::DotModelParser::ModelDesc&amp; desc)
++			{
++				YAKE_ASSERT( !desc.name_.empty() );
++				currTpl_ = new ModelTemplate();
++				tpls_.insert( std::make_pair(desc.name_,currTpl_) );
++			}
++			void onModelComponent(const data::parser::dotmodel::DotModelParser::ModelComponentDesc&amp; desc)
++			{
++				YAKE_ASSERT( currTpl_ );
++				currTpl_-&gt;addComponentDesc( desc );
++			}
++			void onEndModel(const data::parser::dotmodel::DotModelParser::ModelDesc&amp;)
++			{
++				currTpl_ = 0;
++			}
++
++			typedef std::map&lt;String,ModelTemplate*&gt; TplList;
++			TplList&amp; getTemplates()
++			{ 
++				return tpls_; 
++			}
++			void reset()
++			{
++				currTpl_ = 0;
++				tpls_.clear();
++			}
++			void destroyTemplates()
++			{
++				ConstVectorIterator&lt;TplList&gt; it(tpls_);
++				while (it.hasMoreElements())
++					delete it.getNextRef().second;
++				tpls_.clear();
++			}
++		private:
++			TplList			tpls_;
++			ModelTemplate*	currTpl_;
++		};
++	} // namespace detail
++
++	bool ModelManager::loadTemplatesFromDotModel(const String&amp; fn)
++	{
++		// Read dotscene file into DOM
++
++		yake::data::dom::xml::XmlSerializer ser;
++		ser.parse( fn, false );
++		YAKE_ASSERT( ser.getDocumentNode() )( fn ).error(&quot;Could not parse dotModel document!&quot;);
++
++		// Parse DOM and create objects
++
++		data::parser::dotmodel::DotModelParserV1 parser;
++
++		detail::DotModelListener listener;
++
++		parser.subscribeToModelSignal( Bind1( &amp;detail::DotModelListener::onBeginModel,&amp;listener ) );
++		parser.subscribeToModelComponentSignal( Bind1( &amp;detail::DotModelListener::onModelComponent,&amp;listener ) );
++		parser.subscribeToModelFinishedSignal( Bind1( &amp;detail::DotModelListener::onEndModel,&amp;listener ) );
++
++		if (!parser.load( ser.getDocumentNode() ))
++		{
++			listener.destroyTemplates();
++			return false;
++		}
++
++		// store templates
++		detail::DotModelListener::TplList&amp; tpls = listener.getTemplates();
++		VectorIterator&lt;detail::DotModelListener::TplList&gt; itTpl(tpls);
++		while (itTpl.hasMoreElements())
++		{
++			detail::DotModelListener::TplList::value_type tpl = itTpl.getNext();
++			this-&gt;modelTemplates_[tpl.first] = SharedPtr&lt;ModelTemplate&gt;(tpl.second);
++		}
++		listener.reset();
++
++		return true;
++	}
++	Model* ModelManager::createModelFromTemplate(const String&amp; modelName, const String&amp; tplName)
++	{
++		YAKE_ASSERT( !modelName.empty() )(modelName)(tplName);
++		YAKE_ASSERT( !tplName.empty() )(modelName)(tplName);
++
++		// lookup template
++		ModelTemplateList::const_iterator it = this-&gt;modelTemplates_.find( tplName );
++		YAKE_ASSERT( it != this-&gt;modelTemplates_.end() )(modelName)(tplName);
++
++		// bail out if template could not be found
++		if (it == this-&gt;modelTemplates_.end())
++			return 0;
++
++		// create model using template
++		YAKE_ASSERT( it-&gt;second.get() )(modelName)(tplName);
++		return this-&gt;createModel(modelName, it-&gt;second-&gt;getComponentDescriptions());
++	}
++
++} // namespace model
++} // namespace yake
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000419.html">[Yake-svn] r1351 - trunk/yake/yake/model
+</A></li>
+	<LI>Next message: <A HREF="000421.html">[Yake-svn] r1353 - trunk/yake/src/yake/data
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#420">[ date ]</a>
+              <a href="thread.html#420">[ thread ]</a>
+              <a href="subject.html#420">[ subject ]</a>
+              <a href="author.html#420">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

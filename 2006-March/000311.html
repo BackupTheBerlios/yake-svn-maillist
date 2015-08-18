@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1241 - trunk/yake/src/yake/samples/ent/sampleEntFsm
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1241%20-%20trunk/yake/src/yake/samples/ent/sampleEntFsm&In-Reply-To=%3C200603121857.k2CIvja7023040%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000310.html">
+   <LINK REL="Next"  HREF="000312.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1241 - trunk/yake/src/yake/samples/ent/sampleEntFsm</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1241%20-%20trunk/yake/src/yake/samples/ent/sampleEntFsm&In-Reply-To=%3C200603121857.k2CIvja7023040%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1241 - trunk/yake/src/yake/samples/ent/sampleEntFsm">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 12 19:57:45 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000310.html">[Yake-svn] r1240 - in trunk/yake/yake: graphics input physics
+</A></li>
+        <LI>Next message: <A HREF="000312.html">[Yake-svn] r1242 - trunk/yake/yake/object
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#311">[ date ]</a>
+              <a href="thread.html#311">[ thread ]</a>
+              <a href="subject.html#311">[ subject ]</a>
+              <a href="author.html#311">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-12 19:57:42 +0100 (Sun, 12 Mar 2006)
+New Revision: 1241
+
+Modified:
+   trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp
+Log:
+added object/entity class registration,
+split Object into Object and Entity
+
+Modified: trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp	2006-03-12 18:56:50 UTC (rev 1240)
++++ trunk/yake/src/yake/samples/ent/sampleEntFsm/demo.cpp	2006-03-12 18:57:42 UTC (rev 1241)
+@@ -1,7 +1,7 @@
+ //#include &quot;yake/base/yakePrerequisites.h&quot;
+ #include &quot;yake/base/yake.h&quot;
+ #include &quot;yake/ent/ent.h&quot;
+-#include &quot;yake/plugins//entLua/entLua.h&quot;
++#include &quot;yake/plugins/entLua/entLua.h&quot;
+ 
+ using namespace yake;
+ 
+@@ -14,37 +14,55 @@
+ 	/** Listens to object manager and initializes newly created objects by adding
+ 		a Lua VM, adding default states and transitions to the state machine etc.
+ 	*/
+-	struct ExampleAppObjectMgrListener : public object::ObjectManagerListener
++	struct ExampleAppObjectMgrListener : public ent::ObjectManagerListener
+ 	{
+ 		ExampleAppObjectMgrListener(scripting::IScriptingSystem&amp; scriptingSys) : scriptingSys_(scriptingSys)
+ 		{}
+-		virtual void onObjectCreated(object::Object* obj)
++		virtual void onObjectCreated(ent::Object* obj)
+ 		{
+ 			scripting::IVM* vm = scriptingSys_.createVM();
+ 			YAKE_ASSERT( vm );
+ 
+-			obj-&gt;attachVM(vm,&quot;main&quot;);
++			ent::Entity* ent = ent::Entity::cast(obj);
++			YAKE_ASSERT( ent );
++			ent-&gt;attachVM(vm,&quot;main&quot;);
+ 		}
+-		virtual void onDestroyObject(object::Object* obj)
++		virtual void onDestroyObject(ent::Object* obj)
+ 		{
+-			scripting::IVM* vm = obj-&gt;detachVM(&quot;main&quot;);
++			ent::Entity* ent = ent::Entity::cast(obj);
++			YAKE_ASSERT( ent );
++
++			scripting::IVM* vm = ent-&gt;detachVM(&quot;main&quot;);
+ 			YAKE_ASSERT( vm );
+ 			delete vm;
+ 		}
+-		virtual void onObjectInitialized(object::Object* obj)
++		virtual void onObjectInitialized(ent::Object* obj)
+ 		{
+-			obj-&gt;addFsmState(ksAwakening);
+-			obj-&gt;addFsmState(ksAlive);
+-			obj-&gt;addFsmState(ksDead);
++			ent::Entity* ent = ent::Entity::cast(obj);
++			YAKE_ASSERT( ent );
+ 
+-			obj-&gt;addFsmTransition(ksAwakening,&quot;spawn&quot;,ksAlive);
+-			obj-&gt;addFsmTransition(ksAlive,&quot;die&quot;,ksDead);
++			// Add default FSM states and transitions:
+ 
+-			obj-&gt;setFsmState(ksAwakening);
++			ent-&gt;addFsmState(ksAwakening);
++			ent-&gt;addFsmState(ksAlive);
++			ent-&gt;addFsmState(ksDead);
++
++			ent-&gt;addFsmTransition(ksAwakening,&quot;spawn&quot;,ksAlive);
++			ent-&gt;addFsmTransition(ksAlive,&quot;die&quot;,ksDead);
++
++			// Set initial state:
++
++			ent-&gt;setFsmState(ksAwakening);
+ 		}
+ 	private:
+ 		scripting::IScriptingSystem&amp;	scriptingSys_;
+ 	};
++
++	struct SimpleGraphicsCo : public ent::Co
++	{
++		DECL_CO(SimpleGraphicsCo,&quot;SimpleGraphicsCo&quot;)
++	};
++	IMPL_CO_1(SimpleGraphicsCo,&quot;Co&quot;)
+ } // namespace exapp
+ 
+ int main(int argc, char* argv[])
+@@ -55,32 +73,59 @@
+ 	YAKE_ASSERT( luaSys.get() );
+ 
+ 	// Create an object manager which manages creation, initialization and destruction of objects.
+-	object::ObjectManager objMgr;
++	ent::ObjectManager objMgr;
+ 
+ 	// Create &amp; attach the listener which handles the connection to the Lua VM and the bindings.
+-	object::LuaObjectManagerListener luaFmsObjListener(*luaSys);
+-	objMgr.attachListener( &amp;luaFmsObjListener, &quot;luaFsm&quot;, object::ObjectManager::kKeepOwnership );
++	ent::LuaObjectManagerListener luaFmsObjListener(*luaSys);
++	objMgr.attachListener( &amp;luaFmsObjListener, &quot;luaFsm&quot;, ent::ObjectManager::kKeepOwnership );
+ 
+ 	// Example listener which sets the objects up for our example application :)
+ 	// The listener adds default states and transitions to the object's state machine, for example.
+ 	SharedPtr&lt;exapp::ExampleAppObjectMgrListener&gt; exappObjInitializer( new exapp::ExampleAppObjectMgrListener(*luaSys) );
+-	objMgr.attachListener( exappObjInitializer.get(), &quot;exapp_listener&quot;, object::ObjectManager::kKeepOwnership );
++	objMgr.attachListener( exappObjInitializer.get(), &quot;exapp_listener&quot;, ent::ObjectManager::kKeepOwnership );
+ 
++	// Register object class
++	ent::RegistrationResult ret = objMgr.registerClass&lt;ent::Entity&gt;(&quot;Entity&quot;);
++	YAKE_ASSERT( ret.first == object::RC_OK );
++
+ 	// Let's create an object.
+-	object::Object* o = objMgr.makeObject();
++	//ent::Object* o = objMgr.makeObject(ret.second); // create by ClassId
++	ent::Object* o = objMgr.makeObject(&quot;Entity&quot;); // create by class name
+ 	YAKE_ASSERT( o );
++	ent::Entity* e = ent::Entity::cast(o); // cast to Entity*
++	YAKE_ASSERT( e );
+ 
+-	// NB At this point the FSM is set up by the exapp listener!
++	// NB At this point the FSM has been set up by the exapp listener!
+ 
+-	// Do some processing:
+-	o-&gt;processFsmEvent(&quot;spawn&quot;);
++	// Do some FSM event processing:
++	e-&gt;processFsmEvent(&quot;spawn&quot;);
+ 	objMgr.tick(); // triggers o-&gt;tick()
+ 	objMgr.tick();
+-	o-&gt;processFsmEvent(&quot;die&quot;);
++	e-&gt;processFsmEvent(&quot;die&quot;);
+ 
+ 	//@todo use scheduler for yield/resume functionality. (code in prototype is in fsm2_lua.cpp)
+-	//o-&gt;getVM().resume();
++	//e-&gt;getVM().resume();
+ 
++	// Let's have some fun with components
++	/*
++	RttiClassMgr clsMgr;
++	clsMgr.insert( ent::Object::cls() );
++	clsMgr.insert( ent::Co::cls() );
++	exapp::SimpleGraphicsCo::cls()-&gt;add( PropDef(&quot;position&quot;,&quot;position&quot;,Vector3(0,0,0)) );
++	clsMgr.insert( exapp::SimpleGraphicsCo::cls() );
++
++	e-&gt;addCo(&quot;gfx&quot;,new exapp::SimpleGraphicsCo());
++	e-&gt;getCo(&quot;gfx&quot;)-&gt;init();
++	if (!e-&gt;getCo(&quot;gfx&quot;)-&gt;setValue(&quot;position&quot;,Vector3(10,0,0)))
++		std::cerr &lt;&lt; &quot;could not set position\n&quot;;
++	Vector3 pos(0,0,0);
++	if (e-&gt;getCo(&quot;gfx&quot;)-&gt;getValue&lt;Vector3&gt;(&quot;position&quot;,pos))
++		std::cout &lt;&lt; &quot;position=&quot; &lt;&lt; pos &lt;&lt; &quot;\n&quot;;
++	else
++		std::cerr &lt;&lt; &quot;could not get position\n&quot;;
++	*/
++	// clean up
++
+ 	exappObjInitializer.reset();
+ 	luaSys.reset();
+ }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000310.html">[Yake-svn] r1240 - in trunk/yake/yake: graphics input physics
+</A></li>
+	<LI>Next message: <A HREF="000312.html">[Yake-svn] r1242 - trunk/yake/yake/object
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#311">[ date ]</a>
+              <a href="thread.html#311">[ thread ]</a>
+              <a href="subject.html#311">[ subject ]</a>
+              <a href="author.html#311">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

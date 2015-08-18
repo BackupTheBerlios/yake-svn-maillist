@@ -1,0 +1,606 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1040 - in trunk/yake/src/yake/plugins: physicsNX physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1040%20-%20in%20trunk/yake/src/yake/plugins%3A%20physicsNX%20physicsODE&In-Reply-To=%3C200510292222.j9TMMtoC020259%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000110.html">
+   <LINK REL="Next"  HREF="000112.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1040 - in trunk/yake/src/yake/plugins: physicsNX physicsODE</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1040%20-%20in%20trunk/yake/src/yake/plugins%3A%20physicsNX%20physicsODE&In-Reply-To=%3C200510292222.j9TMMtoC020259%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1040 - in trunk/yake/src/yake/plugins: physicsNX physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Oct 30 00:22:55 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000110.html">[Yake-svn] r1039 - trunk/yake/yake/base
+</A></li>
+        <LI>Next message: <A HREF="000112.html">[Yake-svn] r1041 - in trunk/yake/yake/plugins: physicsNX physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#111">[ date ]</a>
+              <a href="thread.html#111">[ thread ]</a>
+              <a href="subject.html#111">[ subject ]</a>
+              <a href="author.html#111">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-30 00:22:54 +0200 (Sun, 30 Oct 2005)
+New Revision: 1040
+
+Modified:
+   trunk/yake/src/yake/plugins/physicsNX/yakeActorNx.cpp
+   trunk/yake/src/yake/plugins/physicsNX/yakeMaterialNx.cpp
+   trunk/yake/src/yake/plugins/physicsNX/yakeShapeNx.cpp
+   trunk/yake/src/yake/plugins/physicsNX/yakeWorldNx.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+Log:
+materials can now be named,
+shapes' properties can be queried
+
+Modified: trunk/yake/src/yake/plugins/physicsNX/yakeActorNx.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsNX/yakeActorNx.cpp	2005-10-29 22:22:00 UTC (rev 1039)
++++ trunk/yake/src/yake/plugins/physicsNX/yakeActorNx.cpp	2005-10-29 22:22:54 UTC (rev 1040)
+@@ -160,12 +160,7 @@
+ 		if (!mpNxActor)
+ 			return 0;
+ 
+-		MaterialNx* pMaterial = 0;
+-		if (rkShapeDesc.pMaterial)
+-		{
+-			pMaterial = dynamic_cast&lt;MaterialNx*&gt;(rkShapeDesc.pMaterial);
+-			YAKE_ASSERT( pMaterial ).debug(&quot;Specified material is invalid! =&gt; using default material!&quot;);
+-		}
++		MaterialNx* pMaterial = static_cast&lt;MaterialNx*&gt;(this-&gt;mWorld.getMaterial(rkShapeDesc.material));
+ 		YAKE_ASSERT( pMaterial ).warning(&quot;No material specified =&gt; using default material!&quot;);
+ 
+ 		ShapeNx* pShape = new ShapeNx( mpNxActor, this, pMaterial );
+
+Modified: trunk/yake/src/yake/plugins/physicsNX/yakeMaterialNx.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsNX/yakeMaterialNx.cpp	2005-10-29 22:22:00 UTC (rev 1039)
++++ trunk/yake/src/yake/plugins/physicsNX/yakeMaterialNx.cpp	2005-10-29 22:22:54 UTC (rev 1040)
+@@ -33,8 +33,9 @@
+ 	using namespace math;
+ namespace physics {
+ 
+-	MaterialNx::MaterialNx( const NxMaterialIndex index ) :
+-		mNxMatIndex( index )
++	MaterialNx::MaterialNx( const NxMaterialIndex index, const String&amp; id ) :
++		mNxMatIndex( index ),
++		mId(id)
+ 	{
+ 	}
+ 	MaterialNx::MaterialNx() :
+
+Modified: trunk/yake/src/yake/plugins/physicsNX/yakeShapeNx.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsNX/yakeShapeNx.cpp	2005-10-29 22:22:00 UTC (rev 1039)
++++ trunk/yake/src/yake/plugins/physicsNX/yakeShapeNx.cpp	2005-10-29 22:22:54 UTC (rev 1040)
+@@ -110,6 +110,8 @@
+ 		YAKE_ASSERT( desc.isValid() );
+ 
+ 		attachAndCreate_(desc);
++
++		mProps[&quot;radius&quot;] = radius;
+ 	}
+ 	void ShapeNx::createAsBox_( const Vector3 &amp; rkDimensions )
+ 	{
+@@ -121,6 +123,8 @@
+ 		YAKE_ASSERT( desc.isValid() );
+ 
+ 		attachAndCreate_(desc);
++
++		mProps[&quot;dimensions&quot;] = rkDimensions;
+ 	}
+ 	void ShapeNx::createAsPlane_( const Vector3 &amp; rkNormal, const real d )
+ 	{
+@@ -133,6 +137,9 @@
+ 		YAKE_ASSERT( desc.isValid() );
+ 
+ 		attachAndCreate_(desc);
++
++		mProps[&quot;normal&quot;] = rkNormal;
++		mProps[&quot;d&quot;] = d;
+ 	}
+ 	void ShapeNx::createAsCapsule_( const real height, const real radius )
+ 	{
+@@ -145,6 +152,9 @@
+ 		YAKE_ASSERT( desc.isValid() );
+ 
+ 		attachAndCreate_(desc);
++
++		mProps[&quot;height&quot;] = height;
++		mProps[&quot;radius&quot;] = radius;
+ 	}
+ 	void ShapeNx::createAsMesh_( const TriangleMeshId id )
+ 	{
+@@ -183,6 +193,22 @@
+ 		YAKE_ASSERT( mpNxShape ).error(&quot;Cannot access property as long as object isn't finalized!&quot;);
+ 		return fromNx( mpNxShape-&gt;getLocalOrientation() );
+ 	}
++	Vector3 ShapeNx::getPropertyVector3(const String&amp; id) const
++	{
++		PropMap::const_iterator itFind = mProps.find( id );
++		YAKE_ASSERT(itFind != mProps.end());
++		if (itFind == mProps.end())
++			return Vector3();
++		return boost::any_cast&lt;Vector3&gt;(itFind-&gt;second);
++	}
++	real ShapeNx::getPropertyReal(const String&amp; id) const
++	{
++		PropMap::const_iterator itFind = mProps.find( id );
++		YAKE_ASSERT(itFind != mProps.end());
++		if (itFind == mProps.end())
++			return real(0.);
++		return boost::any_cast&lt;real&gt;(itFind-&gt;second);
++	}
+ 
+ }
+ }
+\ No newline at end of file
+
+Modified: trunk/yake/src/yake/plugins/physicsNX/yakeWorldNx.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsNX/yakeWorldNx.cpp	2005-10-29 22:22:00 UTC (rev 1039)
++++ trunk/yake/src/yake/plugins/physicsNX/yakeWorldNx.cpp	2005-10-29 22:22:54 UTC (rev 1040)
+@@ -53,7 +53,9 @@
+ 		std::for_each( mJoints.begin(), mJoints.end(), Deleter&lt;JointNxVector&gt;() );
+ 		mJoints.clear();
+ 
+-		std::for_each( mMaterials.begin(), mMaterials.end(), Deleter&lt;MaterialNxVector&gt;() );
++		ConstVectorIterator&lt; MaterialNxVector &gt; itMat( mMaterials );
++		while (itMat.hasMoreElements())
++			delete itMat.getNext().second;
+ 		mMaterials.clear();
+ 
+ 		TrimeshNxManager::destroyAll();
+@@ -282,7 +284,7 @@
+ 		mMaterials.erase( std::find(mMaterials.begin(), mMaterials.end(), rMaterial.lock() ) );
+ 	}
+ 	*/
+-	IMaterialPtr WorldNx::createMaterial( const IMaterial::Desc &amp; rkMatDesc )
++	IMaterialPtr WorldNx::createMaterial( const IMaterial::Desc &amp; rkMatDesc, const String&amp; id /*= &quot;&quot;*/ )
+ 	{
+ 		MaterialNx* pMaterial = new MaterialNx();
+ 		YAKE_ASSERT( pMaterial );
+@@ -290,9 +292,17 @@
+ 			return 0;
+ 		pMaterial-&gt;_createFromDesc( rkMatDesc, mpScene );
+ 
+-		mMaterials.push_back( pMaterial );
++		const String matId = (id.empty()) ? uniqueName::create(&quot;ode_mat_&quot;) : id;
++		mMaterials.insert( std::make_pair(matId,pMaterial) );
+ 		return pMaterial;
+ 	}
++	IMaterialPtr WorldNx::getMaterial( const String&amp; id ) const
++	{
++		MaterialNxVector::const_iterator itFind = mMaterials.find( id );
++		if (itFind == mMaterials.end())
++			return 0;
++		return itFind-&gt;second;
++	}
+ 	IJointPtr WorldNx::createJoint( const IJoint::DescBase &amp; rkJointDesc )
+ 	{
+ 		YAKE_ASSERT( mpScene );
+@@ -382,7 +392,10 @@
+ 	void WorldNx::destroyMaterial( IMaterialPtr pMaterial )
+ 	{
+ 		YAKE_ASSERT( pMaterial );
+-		mMaterials.remove( static_cast&lt;MaterialNx*&gt;(pMaterial) );
++		MaterialNxVector::iterator itFind = mMaterials.find( static_cast&lt;MaterialNx*&gt;(pMaterial)-&gt;getId() );
++		if (itFind == mMaterials.end())
++			return;
++		mMaterials.erase( itFind );
+ 		delete pMaterial;
+ 	}
+ 	TriangleMeshId WorldNx::createTriangleMesh( const TriangleMeshDesc &amp; rkTrimeshDesc )
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-10-29 22:22:00 UTC (rev 1039)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-10-29 22:22:54 UTC (rev 1040)
+@@ -86,8 +86,8 @@
+ 														const Vector3&amp; rOffset,
+ 														const Quaternion&amp; rRelOrientation )
+ 	{
+-		if ( rOffset == Vector3::kZero &amp;&amp; rRelOrientation == Quaternion::kIdentity )
+-			return pGeom;
++		//if ( rOffset == Vector3::kZero &amp;&amp; rRelOrientation == Quaternion::kIdentity )
++		//	return pGeom;
+ 			
+ 		OdeTransformGeom* pTrans = new OdeTransformGeom( mOdeWorld-&gt;_getOdeSpace(), this );
+ 		pTrans-&gt;attachGeom( pGeom );
+@@ -103,11 +103,11 @@
+ 	{
+ 		IShape::Desc* pShapeDesc = &amp;const_cast&lt;IShape::Desc&amp;&gt;( rShapeDesc );
+ 		
+-		IMaterial* pMaterial = pShapeDesc-&gt;pMaterial;
+-		OdeMaterial* pOdeMaterial = 0;
+-		
+-		if (pMaterial)
+-			pOdeMaterial = dynamic_cast&lt;OdeMaterial*&gt;( pMaterial );
++		IMaterial* pMaterial = this-&gt;getCreator()-&gt;getMaterial( pShapeDesc-&gt;material );
++		if ( !pMaterial )
++			pMaterial = this-&gt;getCreator()-&gt;getMaterial(&quot;default&quot;);
++
++		YAKE_ASSERT( pMaterial );
+ 	
+ 		OdeGeom* result = 0;
+ 		
+@@ -165,11 +165,19 @@
+ 		YAKE_ASSERT( result != 0 ).error( &quot;Unsupported shape type!&quot; );
+ 	
+ 		/// setting material if any
+-		if ( pOdeMaterial != 0 )
+-			result-&gt;setMaterial( *pOdeMaterial );
+ 
++		YAKE_ASSERT( pMaterial );
++		result-&gt;setMaterial( static_cast&lt;OdeMaterial*&gt;(pMaterial) );
++
+ 		if (result)
++		{
+ 			mShapes.push_back( SharedPtr&lt;OdeGeom&gt;(result) );
++			if (result-&gt;getType() != ST_PLANE)
++			{
++				result-&gt;setPosition( pShapeDesc-&gt;position );
++				result-&gt;setOrientation( pShapeDesc-&gt;orientation );
++			}
++		}
+ 
+ 		return result;
+ 	}
+@@ -239,8 +247,8 @@
+ 		OdeActor* pActorA = pShapeA-&gt;getOwner();
+ 		OdeActor* pActorB = pShapeB-&gt;getOwner();
+ 
+-		const OdeMaterial&amp; rMatA = pShapeA-&gt;getMaterial();
+-		const OdeMaterial&amp; rMatB = pShapeB-&gt;getMaterial();
++		const OdeMaterial&amp; rMatA = *pShapeA-&gt;getMaterial();
++		const OdeMaterial&amp; rMatB = *pShapeB-&gt;getMaterial();
+ 		
+ 		/// FIXME Implement materials!
+ 		float softness =  rMatA.mSoftness + rMatB.mSoftness; //this-&gt;getSoftness() + pOther-&gt;getSoftness();
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp	2005-10-29 22:22:00 UTC (rev 1039)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp	2005-10-29 22:22:54 UTC (rev 1040)
+@@ -31,16 +31,28 @@
+ namespace physics {
+ 
+ 	//---------------------------------------------------
+-	OdeMaterial::OdeMaterial() : 
++	OdeMaterial::OdeMaterial(const String&amp; name) : 
+ 		mSoftness(0),
+ 		mFriction(10),
+ 		mFriction2(5),
+ 		mLateralSlip(false),
+ 		mSlipNormal(Vector3::kZero),
+ 		mSlipLinearCoeff(0),
+-		mSlipAngularCoeff(0)
++		mSlipAngularCoeff(0),
++		mName(name)
+ 	{
+ 	}
++	OdeMaterial::OdeMaterial(const physics::IMaterial::Desc&amp; desc, const String&amp; name) : 
++		mSoftness(desc.mSoftness),
++		mFriction(desc.mFriction),
++		mFriction2(desc.mFriction),
++		mLateralSlip(false),
++		mSlipNormal(Vector3::kZero),
++		mSlipLinearCoeff(0),
++		mSlipAngularCoeff(0),
++		mName(name)
++	{
++	}
+ 	void OdeMaterial::setBounciness(const real bounciness)
+ 	{
+ 		//@todo
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp	2005-10-29 22:22:00 UTC (rev 1039)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeShapes.cpp	2005-10-29 22:22:54 UTC (rev 1040)
+@@ -41,7 +41,8 @@
+ 				mOdeGeomID( 0 ),
+ 				mOdeSpace( 0 ),
+ 				mOdeGeom( 0 ),
+-				mOwner( pOwner )
++				mOwner( pOwner ),
++				mMaterial( 0 )
+ 		{
+ 			YAKE_ASSERT( mOwner );
+ 		}
+@@ -91,15 +92,15 @@
+ 		}
+ 
+ 		//-----------------------------------------------------
+-		const OdeMaterial&amp; OdeGeom::getMaterial() const
++		OdeMaterial* OdeGeom::getMaterial() const
+ 		{
+ 			return mMaterial;
+ 		}
+ 
+ 		//-----------------------------------------------------
+-		void OdeGeom::setMaterial( OdeMaterial const&amp; rMaterial )
++		void OdeGeom::setMaterial( OdeMaterial* pMaterial )
+ 		{
+-			mMaterial = rMaterial;
++			mMaterial = pMaterial;
+ 		}
+ 
+ 		//-----------------------------------------------------
+@@ -141,6 +142,48 @@
+ 		}
+ 
+ 		//-----------------------------------------------------
++		Vector3 OdeGeom::getDerivedPosition() const
++		{
++			dBodyID bodyId = dGeomGetBody( mOdeGeomID );
++			const dReal* pos = dBodyGetPosition( bodyId );
++			return Vector3( real(pos[0]), real(pos[1]), real(pos[2]) );
++		}
++
++		//-----------------------------------------------------
++		Quaternion OdeGeom::getDerivedOrientation() const
++		{
++			dBodyID bodyId = dGeomGetBody( mOdeGeomID );
++			const dReal* q = dBodyGetQuaternion( bodyId );
++			return Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) );
++		}
++
++		//-----------------------------------------------------
++		bool operator == (const std::pair&lt;const String,boost::any&gt;&amp; lhs, const std::pair&lt;const String,boost::any&gt;&amp; rhs)
++		{
++			return (lhs.first == rhs.first);
++		}
++
++		//-----------------------------------------------------
++		Vector3 OdeGeom::getPropertyVector3(const String&amp; id) const
++		{
++			PropMap::const_iterator itFind = mProps.find( id );
++			YAKE_ASSERT(itFind != mProps.end());
++			if (itFind == mProps.end())
++				return Vector3();
++			return boost::any_cast&lt;Vector3&gt;(itFind-&gt;second);
++		}
++
++		//-----------------------------------------------------
++		real OdeGeom::getPropertyReal(const String&amp; id) const
++		{
++			PropMap::const_iterator itFind = mProps.find( id );
++			YAKE_ASSERT(itFind != mProps.end());
++			if (itFind == mProps.end())
++				return real(0.);
++			return boost::any_cast&lt;real&gt;(itFind-&gt;second);
++		}
++
++		//-----------------------------------------------------
+ 		//	OdeTriMesh
+ 		//-----------------------------------------------------
+ 
+@@ -279,6 +322,8 @@
+ 			mOdeGeomID = mOdeGeom-&gt;id();
+ 
+ 			_setData( this );
++
++			mProps[&quot;radius&quot;] = radius;
+ 		}
+ 
+ 		//-----------------------------------------------------
+@@ -307,6 +352,9 @@
+ 			mOdeGeomID = mOdeGeom-&gt;id();
+ 
+ 			_setData( this );
++
++			mProps[&quot;radius&quot;] = radius;
++			mProps[&quot;length&quot;] = length;
+ 		}
+ 
+ 		//-----------------------------------------------------
+@@ -332,6 +380,8 @@
+ 			mOdeGeomID = mOdeGeom-&gt;id();
+ 
+ 			_setData( this );
++
++			mProps[&quot;dimensions&quot;] = Vector3(sizex,sizey,sizez);
+ 		}
+ 
+ 		//-----------------------------------------------------
+@@ -366,6 +416,9 @@
+ 			mOdeGeomID = mOdeGeom-&gt;id();
+ 
+ 			_setData( this );
++
++			mProps[&quot;normal&quot;] = Vector3(a,b,c);
++			mProps[&quot;d&quot;] = d;
+ 		}
+ 
+ 		//-----------------------------------------------------
+@@ -400,7 +453,7 @@
+ 		//-----------------------------------------------------
+ 		ShapeType OdeTransformGeom::getType() const
+ 		{
+-			return ST_OTHER;
++			return mAttachedGeom ? mAttachedGeom-&gt;getType() : ST_OTHER;
+ 		}
+ 
+ 		//-----------------------------------------------------
+@@ -417,6 +470,8 @@
+ 
+ 			pSpace-&gt;remove( mAttachedGeom-&gt;_getOdeGeomID() );
+ 			dGeomTransformSetGeom( mOdeGeomID, mAttachedGeom-&gt;_getOdeGeomID() );
++
++			mProps = mAttachedGeom-&gt;mProps;
+ 		}
+ 
+ 		//-----------------------------------------------------
+@@ -425,6 +480,71 @@
+ 			return mAttachedGeom;
+ 		}
+ 
++		//-----------------------------------------------------
++		Vector3 OdeTransformGeom::getDerivedPosition() const
++		{
++			return (mAttachedGeom ?
++				(getPosition() + getDerivedOrientation() * mAttachedGeom-&gt;getPosition()) :
++				getPosition() );
++		}
++
++		//-----------------------------------------------------
++		Quaternion OdeTransformGeom::getDerivedOrientation() const
++		{
++			return (mAttachedGeom ?
++				mAttachedGeom-&gt;getDerivedOrientation() :
++				getOrientation() );
++		}
++
++		//-----------------------------------------------------
++		void OdeTransformGeom::setPosition( Vector3 const&amp; rPosition )
++		{
++			if (getType() == ST_PLANE)
++				return;
++			YAKE_ASSERT( mAttachedGeom );
++			const dReal* pos = dGeomGetPosition( mOdeGeomID );
++			mAttachedGeom-&gt;setPosition( rPosition - Vector3(real(pos[0]), real(pos[1]), real(pos[2])) );
++			//dGeomSetPosition( mOdeGeomID, rPosition.x, rPosition.y, rPosition.z );
++		}
++
++		//-----------------------------------------------------
++		Vector3 OdeTransformGeom::getPosition() const
++		{
++			if (getType() == ST_PLANE)
++				return Vector3::kZero;
++			YAKE_ASSERT( mAttachedGeom );
++
++			const dReal* pos = dGeomGetPosition( mOdeGeomID );
++			dQuaternion q;
++			dGeomGetQuaternion( mOdeGeomID, q );
++			return Vector3( real(pos[0]), real(pos[1]), real(pos[2]) ) + 
++				Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) ) * mAttachedGeom-&gt;getPosition();
++		}
++
++		//-----------------------------------------------------
++		void OdeTransformGeom::setOrientation( Quaternion const&amp; rOrientation )
++		{
++			if (getType() == ST_PLANE)
++				return;
++			YAKE_ASSERT( mAttachedGeom );
++			const dQuaternion q = { rOrientation.w, rOrientation.x, rOrientation.y, rOrientation.z };
++			dGeomSetQuaternion( mOdeGeomID, q );
++		}
++
++		//-----------------------------------------------------
++		Quaternion OdeTransformGeom::getOrientation() const
++		{
++			if (getType() == ST_PLANE)
++				return Quaternion::kIdentity;
++			YAKE_ASSERT( mAttachedGeom );
++			dQuaternion q;
++			dGeomGetQuaternion( mOdeGeomID, q );
++
++			YAKE_ASSERT( mAttachedGeom );
++
++			return mAttachedGeom-&gt;getOrientation() * Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) );
++		}
++
+ 		// /*		//-----------------------------------------------------
+ 		// 		void OdeCollisionGeomBase::tfAttachGeom( ICollisionGeometry* pGeom )
+ 		// 		{ YAKE_ASSERT(1==0).error(&quot;not implemented&quot;); }
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-10-29 22:22:00 UTC (rev 1039)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-10-29 22:22:54 UTC (rev 1040)
+@@ -65,6 +65,8 @@
+ 			dWorldSetContactSurfaceLayer( mOdeWorld-&gt;id(), 0.025 );
+ 
+ 			mTime = real(0.);
++
++			mMaterials[&quot;default&quot;] = SharedPtr&lt;OdeMaterial&gt;(new OdeMaterial(&quot;default&quot;));
+ 		}
+ 
+ 		//-----------------------------------------------------
+@@ -291,25 +293,33 @@
+ 		}
+ 
+ 		//-----------------------------------------------------
+-		bool operator==(const SharedPtr&lt;OdeMaterial&gt;&amp; lhs, const OdeMaterial* rhs)
+-		{
+-			return (lhs.get() == rhs);
+-		}
+ 		void OdeWorld::destroyMaterial( IMaterialPtr pMaterial )
+ 		{
+ 			YAKE_ASSERT( pMaterial );
+-			mMaterials.erase( std::find(mMaterials.begin(), mMaterials.end(), dynamic_cast&lt;OdeMaterial*&gt;(pMaterial) ) );
++			mMaterials.erase( mMaterials.find( dynamic_cast&lt;OdeMaterial*&gt;(pMaterial)-&gt;mName ) );
+ 		}
+ 
+ 		//-----------------------------------------------------
+-		IMaterialPtr OdeWorld::createMaterial( IMaterial::Desc const&amp; rMatDesc )
++		IMaterialPtr OdeWorld::createMaterial( IMaterial::Desc const&amp; rMatDesc, const String&amp; id /*= &quot;&quot;*/ )
+ 		{
+-			SharedPtr&lt;OdeMaterial&gt; pMat( new OdeMaterial );
+-			mMaterials.push_back( pMat );
++			String matId = id.empty() ? uniqueName::create(&quot;ode.material_&quot;) : id;
++			SharedPtr&lt;OdeMaterial&gt; pMat( new OdeMaterial(rMatDesc,matId) );
++			mMaterials.insert( std::make_pair(matId,pMat) );
+ 			return pMat.get();
+ 		}
+ 
+ 		//-----------------------------------------------------
++		bool operator == (const std::pair&lt;const String,SharedPtr&lt;OdeMaterial&gt; &gt;&amp; lhs, const std::pair&lt;const String,SharedPtr&lt;OdeMaterial&gt; &gt;&amp; rhs)
++		{
++			return lhs.first == rhs.first;
++		}
++		IMaterialPtr OdeWorld::getMaterial( const String&amp; id ) const
++		{
++			OdeMaterialVector::const_iterator itFind = mMaterials.find( id );
++			return (itFind == mMaterials.end()) ? 0 : itFind-&gt;second.get();
++		}
++
++		//-----------------------------------------------------
+ 		void OdeWorld::step( const real timeElapsed )
+ 		{
+ 			static real overflow = 0.;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000110.html">[Yake-svn] r1039 - trunk/yake/yake/base
+</A></li>
+	<LI>Next message: <A HREF="000112.html">[Yake-svn] r1041 - in trunk/yake/yake/plugins: physicsNX physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#111">[ date ]</a>
+              <a href="thread.html#111">[ thread ]</a>
+              <a href="subject.html#111">[ subject ]</a>
+              <a href="author.html#111">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

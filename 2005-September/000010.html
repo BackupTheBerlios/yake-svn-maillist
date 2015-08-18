@@ -1,0 +1,241 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r939 - trunk/yake/yapp/ent
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r939%20-%20trunk/yake/yapp/ent&In-Reply-To=%3C200509261656.j8QGu2mh021319%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000009.html">
+   <LINK REL="Next"  HREF="000011.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r939 - trunk/yake/yapp/ent</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r939%20-%20trunk/yake/yapp/ent&In-Reply-To=%3C200509261656.j8QGu2mh021319%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r939 - trunk/yake/yapp/ent">codeandroid at berlios.de
+       </A><BR>
+    <I>Mon Sep 26 18:56:02 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000009.html">[Yake-svn] r938 - trunk/yake/yapp/ent
+</A></li>
+        <LI>Next message: <A HREF="000011.html">[Yake-svn] r940 - trunk/yake/src/yake/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#10">[ date ]</a>
+              <a href="thread.html#10">[ thread ]</a>
+              <a href="subject.html#10">[ subject ]</a>
+              <a href="author.html#10">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-26 18:56:00 +0200 (Mon, 26 Sep 2005)
+New Revision: 939
+
+Added:
+   trunk/yake/yapp/ent/yakeTrigger.h
+Log:
+initial revision
+
+Added: trunk/yake/yapp/ent/yakeTrigger.h
+===================================================================
+--- trunk/yake/yapp/ent/yakeTrigger.h	2005-09-26 16:55:44 UTC (rev 938)
++++ trunk/yake/yapp/ent/yakeTrigger.h	2005-09-26 16:56:00 UTC (rev 939)
+@@ -0,0 +1,165 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_ENT_TRIGGER_H
++#define YAKE_ENT_TRIGGER_H
++
++namespace yake {
++namespace ent {
++
++	class YAKE_ENT_API TriggerCondition
++	{
++		YAKE_DECLARE_REGISTRY_0( TriggerCondition, String );
++	private:
++	protected:
++		virtual void onFire() {}
++	public:
++		virtual ~TriggerCondition();
++
++		//void fire();
++		// events:
++		//	&quot;onFire()&quot;
++		Event&amp; getEvent_fire();
++
++		bool isToBeExecutedOncePerFrame() const;
++		bool isToBeExecutedOncePerTick() const;
++
++		virtual void onTick() {}
++		virtual void onFrame() {}
++	};
++	class YAKE_ENT_API TimedTriggerCondition : public TriggerCondition
++	{
++		YAKE_DECLARE_CONCRETE( TimedTriggerCondition, &quot;condition.timed&quot; );
++
++	public:
++		void setTargetSimTime( const simtime );
++		void setTargetTime( const real );
++
++		virtual void onTick();
++		virtual void onFrame();
++
++	private:
++		real		mTime;
++	};
++	namespace geom {
++		class Volume
++		{
++			Volume(const Volume&amp;);
++		protected:
++			Volume();
++		public:
++			virtual ~Volume() {}
++			virtual bool contains(const Point3&amp;) const = 0;
++			virtual void translate(const Vector3&amp;) = 0;
++		};
++		class Sphere : public Volume
++		{
++		public:
++			Sphere(const Point3&amp; center, const real radius = real(1.));
++			Sphere(const real radius = real(1.));
++			Sphere(const Sphere&amp;);
++			Sphere&amp; operator = (const Sphere&amp;);
++
++			virtual bool contains(const Point3&amp;) const;
++			virtual void translate(const Vector3&amp;) = 0;
++
++			void setRadius(const real radius);
++			real radius() const;
++			void setCenter(const Point3&amp; center);
++			Point3 center() const;
++			void center(Point3&amp; center) const;
++		private:
++			Point3	mCenter;
++			real	mRadius;
++		};
++		class VolumeSet : public Volume
++		{
++		public:
++			VolumeSet();
++			virtual ~VolumeSet();
++			VolumeSet(const VolumeSet&amp;);
++			VolumeSet&amp; operator = (const VolumeSet&amp;);
++
++			virtual bool contains(const Point3&amp;) const;
++			virtual void translate(const Vector3&amp;);
++
++			void addVolume( Volume* );
++			Volume* removeVolume( Volume* );
++		private:
++			void _removeAndDestroyAllVolumes();
++		private:
++			typedef Deque&lt;Volume*&gt; VolumePtrList;
++			VolumePtrList	mVolumes;
++		};
++	} // namespace geom
++	class YAKE_ENT_API SpatialTriggerCondition : public TriggerCondition
++	{
++		YAKE_DECLARE_CONCRETE( SpatialTriggerCondition, &quot;condition.spatial&quot; );
++		// (additional) events:
++		//	&quot;onFire(Entity*)&quot;
++		//	&quot;onEnterVolume(Entity*)&quot;
++		//	&quot;onExitVolume(Entity*)&quot;
++	public:
++		// PointEnter: good for static point and moving volume trigger.
++		void addPointEnterCondition( geom::Volume*, const Point3&amp; );
++		void addPointExitCondition( geom::Volume*, const Point3&amp; );
++
++		// MoveableEnter: good for testing a movable object against a volume trigger.
++		void addMovableEnterCondition( geom::Volume*, Movable* );
++		void addMovableExitCondition( geom::Volume*, Movable* );
++	private:
++	};
++	class YAKE_ENT_API Trigger : public Entity
++	{
++		YAKE_DECLARE_ENTITY(Trigger)
++	public:
++		OBJECT_PROPS_BEGIN(Trigger)
++			OBJECT_PROP(&quot;position&quot;, Point3, Point3(0,0,0))
++		OBJECT_PROPS_END()
++		//events:
++		//	&quot;onFire(Entity*,TriggerCondition*)&quot;
++
++		SharedPtr&lt;TriggerCondition&gt; addCondition(SharedPtr&lt;TriggerCondition&gt;);
++		SharedPtr&lt;TriggerCondition&gt; removeCondition(SharedPtr&lt;TriggerCondition&gt;);
++
++		void addVolume( geom::Volume* );
++		geom::Volume* removeVolume( geom::Volume* );
++	protected:
++		void onUpdateConditionsOncePerFrame();
++		void onUpdateConditionsOncePerTick();
++	protected:
++		Trigger();
++		virtual ~Trigger();
++		virtual void onTick();
++	private:
++		typedef Deque&lt;SharedPtr&lt;TriggerCondition&gt; &gt; ConditionPtrList;
++		ConditionPtrList	mConds;
++		geom::VolumeSet		mVolume;
++	};
++
++} // namespace yake
++} // namespace ent
++#endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000009.html">[Yake-svn] r938 - trunk/yake/yapp/ent
+</A></li>
+	<LI>Next message: <A HREF="000011.html">[Yake-svn] r940 - trunk/yake/src/yake/base
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#10">[ date ]</a>
+              <a href="thread.html#10">[ thread ]</a>
+              <a href="subject.html#10">[ subject ]</a>
+              <a href="author.html#10">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

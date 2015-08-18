@@ -1,0 +1,103 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1287 - trunk/yake/src/yake/plugins/baseLuaBindings
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1287%20-%20trunk/yake/src/yake/plugins/baseLuaBindings&In-Reply-To=%3C200603152124.k2FLO0si027279%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000356.html">
+   <LINK REL="Next"  HREF="000358.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1287 - trunk/yake/src/yake/plugins/baseLuaBindings</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1287%20-%20trunk/yake/src/yake/plugins/baseLuaBindings&In-Reply-To=%3C200603152124.k2FLO0si027279%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1287 - trunk/yake/src/yake/plugins/baseLuaBindings">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Mar 15 22:24:00 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000356.html">[Yake-svn] r1286 - trunk/yake/yapp/samples/misc/scripted
+</A></li>
+        <LI>Next message: <A HREF="000358.html">[Yake-svn] r1288 - trunk/yake/documentation/api
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#357">[ date ]</a>
+              <a href="thread.html#357">[ thread ]</a>
+              <a href="subject.html#357">[ subject ]</a>
+              <a href="author.html#357">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-15 22:24:00 +0100 (Wed, 15 Mar 2006)
+New Revision: 1287
+
+Modified:
+   trunk/yake/src/yake/plugins/baseLuaBindings/yakeLuaBinder.cpp
+Log:
+more bindings
+
+Modified: trunk/yake/src/yake/plugins/baseLuaBindings/yakeLuaBinder.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/baseLuaBindings/yakeLuaBinder.cpp	2006-03-15 21:03:39 UTC (rev 1286)
++++ trunk/yake/src/yake/plugins/baseLuaBindings/yakeLuaBinder.cpp	2006-03-15 21:24:00 UTC (rev 1287)
+@@ -87,6 +87,13 @@
+ 				    .def( constructor&lt; real, real, real &gt;() )
+ 				    .def( constructor&lt; const real* const &gt;() )
+ 				    .def( constructor&lt; Vector3 const&amp; &gt;() )
++					 .def( &quot;length&quot;, &amp;yake::math::Vector3::length )
++					 .def( &quot;normalise&quot;, &amp;yake::math::Vector3::normalise )
++					 .def( &quot;crossProduct&quot;, &amp;yake::math::Vector3::crossProduct )
++					 .def( &quot;dotProduct&quot;, &amp;yake::math::Vector3::dotProduct )
++					 .def( &quot;reflect&quot;, &amp;yake::math::Vector3::reflect )
++					 .def( &quot;perpendicular&quot;, &amp;yake::math::Vector3::perpendicular )
++					 .def( &quot;getRotationTo&quot;, &amp;yake::math::Vector3::getRotationTo )
+ 				];
+ 
+ 				// Vector4
+@@ -123,8 +130,12 @@
+ 				// RandomNumberGenerator
+ 				module( YAKE_MATH_MODULE )
+ 				[
+-				    class_&lt; RandomNumberGeneratorMT &gt;( &quot;RandomNumberGeneratorMT&quot; )
++				    class_&lt; RandomNumberGeneratorMT &gt;( &quot;RandomNumberGenerator&quot; )
+ 				    .def( constructor&lt;&gt;() )
++					 .def( &quot;setSeed&quot;, &amp;RandomNumberGeneratorMT::setSeed )
++					 .def( &quot;getSeed&quot;, &amp;RandomNumberGeneratorMT::getSeed )
++					 .def( &quot;randInt&quot;, &amp;RandomNumberGeneratorMT::randInt )
++					 .def( &quot;randReal&quot;, &amp;RandomNumberGeneratorMT::randReal )
+ 				];
+ 
+ 			}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000356.html">[Yake-svn] r1286 - trunk/yake/yapp/samples/misc/scripted
+</A></li>
+	<LI>Next message: <A HREF="000358.html">[Yake-svn] r1288 - trunk/yake/documentation/api
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#357">[ date ]</a>
+              <a href="thread.html#357">[ thread ]</a>
+              <a href="subject.html#357">[ subject ]</a>
+              <a href="author.html#357">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

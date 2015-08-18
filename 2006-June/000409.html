@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1341 - trunk/yake/src/yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1341%20-%20trunk/yake/src/yapp/vehicle&In-Reply-To=%3C200606122213.k5CMD5sS028568%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000408.html">
+   <LINK REL="Next"  HREF="000410.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1341 - trunk/yake/src/yapp/vehicle</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1341%20-%20trunk/yake/src/yapp/vehicle&In-Reply-To=%3C200606122213.k5CMD5sS028568%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1341 - trunk/yake/src/yapp/vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Jun 13 00:13:05 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000408.html">[Yake-svn] r1340 - trunk/yake/src/yapp/samples/misc/car
+</A></li>
+        <LI>Next message: <A HREF="000410.html">[Yake-svn] r1342 - trunk/yake/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#409">[ date ]</a>
+              <a href="thread.html#409">[ thread ]</a>
+              <a href="subject.html#409">[ subject ]</a>
+              <a href="author.html#409">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-13 00:13:05 +0200 (Tue, 13 Jun 2006)
+New Revision: 1341
+
+Modified:
+   trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp
+   trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+Log:
+ported to new 'model' component
+
+Modified: trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp	2006-06-12 22:12:51 UTC (rev 1340)
++++ trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp	2006-06-12 22:13:05 UTC (rev 1341)
+@@ -27,6 +27,7 @@
+ #include &lt;yapp/vehicle/yakePCH.h&gt;
+ #include &lt;yapp/vehicle/yakeVehicle.h&gt;
+ #include &lt;yapp/vehicle/yakeDotVehicle.h&gt;
++#include &lt;yake/data/yakeData.h&gt;
+ 
+ namespace yake {
+ namespace vehicle {
+
+Modified: trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2006-06-12 22:12:51 UTC (rev 1340)
++++ trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2006-06-12 22:13:05 UTC (rev 1341)
+@@ -38,7 +38,7 @@
+ #	include &lt;yake/plugins/physicsODE/OdeWorld.h&gt;
+ #	pragma comment(lib, &quot;physicsODE.lib&quot;)
+ #	ifdef YAKE_DEBUG
+-#		pragma comment(lib, &quot;oded.lib&quot;)
++#		pragma comment(lib, &quot;ode.lib&quot;)
+ #	else
+ #		pragma comment(lib, &quot;ode.lib&quot;)
+ #	endif
+@@ -155,12 +155,6 @@
+ 		mSigUpdateEngineSimulation( timeElapsed );
+ 		mSigApplyThrusterToTargets();
+ 		_applyDriveTorqueToAxles( timeElapsed );
+-
+-		if (mDebugModel)
+-		{
+-			mDebugModel-&gt;updatePhysics(timeElapsed);
+-			mDebugModel-&gt;updateGraphics(timeElapsed);
+-		}
+ 	}
+ 	void GenericVehicle::_applyDriveTorqueToAxles( real timeElapsed )
+ 	{
+@@ -275,7 +269,7 @@
+ 		    YAKE_LOG( &quot;External physical body found. Searching provided model for it...&quot; );
+ 
+ 		    // searching for actor in provided model
+-		    physics::IActorPtr actor = physModel.getActorByName( tpl.mChassis.mPhysicsBody );
++		    physics::IActorPtr actor = physModel.getActor( tpl.mChassis.mPhysicsBody );
+ 
+ 		    YAKE_ASSERT( actor != NULL ).error( &quot;Actor '&quot; + tpl.mChassis.mPhysicsBody 
+ 			    +  &quot;' was not found in physical model! Are you sure you provided the right model???&quot; );
+@@ -440,7 +434,7 @@
+ 	void createDebugGeometry(	const physics::IActor&amp; actor, 
+ 								graphics::IWorld&amp; GWorld, 
+ 								model::Graphical&amp; graphical,
+-								model::complex::Model&amp; theModel)
++								model::Model&amp; theModel)
+ 	{
+ 		physics::IShapePtrList shapes = actor.getShapes();
+ 		ConstDequeIterator&lt;physics::IShapePtrList&gt; itShape( shapes );
+@@ -472,13 +466,13 @@
+ 			}
+ 			if (pE)
+ 			{
+-				graphical.addSceneNode( pSN );
++				graphical.addSceneNode( pSN, uniqueName::create(&quot;yake::vehicle_dbg_geom_&quot;) );
+ 
+-				model::ModelMovableLink* pLink = new model::ModelMovableLink();
++				model::ModelMovableLink* pLink = new model::ModelMovableDirectLink();
+ 				pLink-&gt;setSource( pShape );
+ 				pLink-&gt;subscribeToPositionChanged( pSN );
+ 				pLink-&gt;subscribeToOrientationChanged( pSN );
+-				theModel.addGraphicsController( pLink );
++				theModel.addLink( pLink );
+ 			}
+ 			else
+ 				delete pSN;
+@@ -488,10 +482,11 @@
+ 	{
+ 		if (mDebugModel)
+ 			delete mDebugModel;
+-		mDebugModel = new model::complex::Model();
++		mDebugModel = new model::Model();
++		mDebugModel-&gt;setName( uniqueName::create(&quot;yake::vehicle_dbg_&quot;) );
+ 		model::Graphical* pGraphical = new model::Graphical();
+ 		createDebugGeometry( *mpChassis, GWorld, *pGraphical, *mDebugModel );
+-		mDebugModel-&gt;addGraphical( pGraphical );
++		mDebugModel-&gt;addComponent( pGraphical, &quot;gfx&quot; );
+ 	}
+ 	void GenericVehicle::disableDebugGeometry()
+ 	{
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000408.html">[Yake-svn] r1340 - trunk/yake/src/yapp/samples/misc/car
+</A></li>
+	<LI>Next message: <A HREF="000410.html">[Yake-svn] r1342 - trunk/yake/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#409">[ date ]</a>
+              <a href="thread.html#409">[ thread ]</a>
+              <a href="subject.html#409">[ subject ]</a>
+              <a href="author.html#409">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

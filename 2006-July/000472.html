@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1404 - trunk/yake/yake/base/templates
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1404%20-%20trunk/yake/yake/base/templates&In-Reply-To=%3C200607261906.k6QJ6D8r010329%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000471.html">
+   <LINK REL="Next"  HREF="000473.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1404 - trunk/yake/yake/base/templates</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1404%20-%20trunk/yake/yake/base/templates&In-Reply-To=%3C200607261906.k6QJ6D8r010329%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1404 - trunk/yake/yake/base/templates">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 26 21:06:13 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000471.html">[Yake-svn] r1403 - trunk/yake/yake/model
+</A></li>
+        <LI>Next message: <A HREF="000473.html">[Yake-svn] r1405 - trunk/yake/yake/base/native/win32
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#472">[ date ]</a>
+              <a href="thread.html#472">[ thread ]</a>
+              <a href="subject.html#472">[ subject ]</a>
+              <a href="author.html#472">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-26 21:06:11 +0200 (Wed, 26 Jul 2006)
+New Revision: 1404
+
+Modified:
+   trunk/yake/yake/base/templates/yakeSignals.h
+Log:
+added BindX and fixed Bind0 for MSVC8
+
+Modified: trunk/yake/yake/base/templates/yakeSignals.h
+===================================================================
+--- trunk/yake/yake/base/templates/yakeSignals.h	2006-07-26 19:00:43 UTC (rev 1403)
++++ trunk/yake/yake/base/templates/yakeSignals.h	2006-07-26 19:06:11 UTC (rev 1404)
+@@ -63,7 +63,8 @@
+ 
+ #if defined( YAKE_SIGNALS_USE_BOOST )
+ #	pragma message(&quot;Yake signal config: yake.base.templates.signals.boost&quot;)
+-#	if YAKE_COMPILER == COMPILER_MSVC &amp;&amp; YAKE_COMP_VER &gt; 1300
++#	define BindX boost::bind
++#	if YAKE_COMPILER == COMPILER_MSVC &amp;&amp; YAKE_COMP_VER == 1300
+ #		define Bind0( METHOD, OBJECT ) boost::bind( METHOD, OBJECT, _1 )
+ #	else
+ #		define Bind0( METHOD, OBJECT ) boost::bind( METHOD, OBJECT )
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000471.html">[Yake-svn] r1403 - trunk/yake/yake/model
+</A></li>
+	<LI>Next message: <A HREF="000473.html">[Yake-svn] r1405 - trunk/yake/yake/base/native/win32
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#472">[ date ]</a>
+              <a href="thread.html#472">[ thread ]</a>
+              <a href="subject.html#472">[ subject ]</a>
+              <a href="author.html#472">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

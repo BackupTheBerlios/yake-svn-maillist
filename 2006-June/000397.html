@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1329 - in trunk/yake/common/bin: debug release
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1329%20-%20in%20trunk/yake/common/bin%3A%20debug%20release&In-Reply-To=%3C200606092148.k59LmaF6025006%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000396.html">
+   <LINK REL="Next"  HREF="000398.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1329 - in trunk/yake/common/bin: debug release</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1329%20-%20in%20trunk/yake/common/bin%3A%20debug%20release&In-Reply-To=%3C200606092148.k59LmaF6025006%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1329 - in trunk/yake/common/bin: debug release">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Jun  9 23:48:36 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000396.html">[Yake-svn] r1328 - in trunk/yake: scripts/msvc8 scripts/msvc8/plugins/graphics scripts/msvc8/samples/model src/yake src/yake/loader src/yake/model src/yake/plugins/graphicsOgre src/yake/samples src/yake/samples/model src/yake/samples/model/dotScene yake yake/base yake/base/templates yake/graphics yake/loader yake/model yake/physics yake/plugins/graphicsOgre yake/plugins/physicsODE yake/samples yake/samples/model yake/samples/model/dotScene yake/samples/net/common yapp/model
+</A></li>
+        <LI>Next message: <A HREF="000398.html">[Yake-svn] r1330 - in trunk/yake: src/yake/plugins/physicsODE yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#397">[ date ]</a>
+              <a href="thread.html#397">[ thread ]</a>
+              <a href="subject.html#397">[ subject ]</a>
+              <a href="author.html#397">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-09 23:48:35 +0200 (Fri, 09 Jun 2006)
+New Revision: 1329
+
+Modified:
+   trunk/yake/common/bin/debug/yake.graphics.ogre_plugins.cfg
+   trunk/yake/common/bin/release/yake.graphics.ogre_plugins.cfg
+Log:
+disabled D3D7 renderer plugin
+
+Modified: trunk/yake/common/bin/debug/yake.graphics.ogre_plugins.cfg
+===================================================================
+--- trunk/yake/common/bin/debug/yake.graphics.ogre_plugins.cfg	2006-06-09 21:47:29 UTC (rev 1328)
++++ trunk/yake/common/bin/debug/yake.graphics.ogre_plugins.cfg	2006-06-09 21:48:35 UTC (rev 1329)
+@@ -1,6 +1,6 @@
+ PluginFolder=OgrePlugins
+ Plugin=RenderSystem_Direct3D9.dll
+-Plugin=RenderSystem_Direct3D7.dll
++#Plugin=RenderSystem_Direct3D7.dll
+ Plugin=RenderSystem_GL.dll
+ Plugin=Plugin_OctreeSceneManager.dll
+ Plugin=Plugin_ParticleFX.dll
+
+Modified: trunk/yake/common/bin/release/yake.graphics.ogre_plugins.cfg
+===================================================================
+--- trunk/yake/common/bin/release/yake.graphics.ogre_plugins.cfg	2006-06-09 21:47:29 UTC (rev 1328)
++++ trunk/yake/common/bin/release/yake.graphics.ogre_plugins.cfg	2006-06-09 21:48:35 UTC (rev 1329)
+@@ -1,6 +1,6 @@
+ PluginFolder=OgrePlugins
+ Plugin=RenderSystem_Direct3D9.dll
+-Plugin=RenderSystem_Direct3D7.dll
++#Plugin=RenderSystem_Direct3D7.dll
+ Plugin=RenderSystem_GL.dll
+ Plugin=Plugin_OctreeSceneManager.dll
+ Plugin=Plugin_ParticleFX.dll
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000396.html">[Yake-svn] r1328 - in trunk/yake: scripts/msvc8 scripts/msvc8/plugins/graphics scripts/msvc8/samples/model src/yake src/yake/loader src/yake/model src/yake/plugins/graphicsOgre src/yake/samples src/yake/samples/model src/yake/samples/model/dotScene yake yake/base yake/base/templates yake/graphics yake/loader yake/model yake/physics yake/plugins/graphicsOgre yake/plugins/physicsODE yake/samples yake/samples/model yake/samples/model/dotScene yake/samples/net/common yapp/model
+</A></li>
+	<LI>Next message: <A HREF="000398.html">[Yake-svn] r1330 - in trunk/yake: src/yake/plugins/physicsODE yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#397">[ date ]</a>
+              <a href="thread.html#397">[ thread ]</a>
+              <a href="subject.html#397">[ subject ]</a>
+              <a href="author.html#397">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

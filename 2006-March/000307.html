@@ -1,0 +1,466 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1237 - trunk/yake/yake/ent
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1237%20-%20trunk/yake/yake/ent&In-Reply-To=%3C200603121855.k2CItBcE022457%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000306.html">
+   <LINK REL="Next"  HREF="000308.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1237 - trunk/yake/yake/ent</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1237%20-%20trunk/yake/yake/ent&In-Reply-To=%3C200603121855.k2CItBcE022457%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1237 - trunk/yake/yake/ent">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 12 19:55:11 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000306.html">[Yake-svn] r1236 - trunk/yake/yake/audio
+</A></li>
+        <LI>Next message: <A HREF="000308.html">[Yake-svn] r1238 - trunk/yake/src/yake/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#307">[ date ]</a>
+              <a href="thread.html#307">[ thread ]</a>
+              <a href="subject.html#307">[ subject ]</a>
+              <a href="author.html#307">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-12 19:54:42 +0100 (Sun, 12 Mar 2006)
+New Revision: 1237
+
+Modified:
+   trunk/yake/yake/ent/component.h
+   trunk/yake/yake/ent/component_holder.h
+   trunk/yake/yake/ent/object.h
+   trunk/yake/yake/ent/object_listener.h
+   trunk/yake/yake/ent/object_mgr.h
+   trunk/yake/yake/ent/object_mgr_listener.h
+   trunk/yake/yake/ent/pch.h
+   trunk/yake/yake/ent/prerequisites.h
+   trunk/yake/yake/ent/vm_holder.h
+Log:
+renamed namespace,
+next development state
+
+Modified: trunk/yake/yake/ent/component.h
+===================================================================
+--- trunk/yake/yake/ent/component.h	2006-03-12 18:53:07 UTC (rev 1236)
++++ trunk/yake/yake/ent/component.h	2006-03-12 18:54:42 UTC (rev 1237)
+@@ -1,19 +1,25 @@
+-#ifndef YAKE_OBJECT_COMPONENT_H
+-#define YAKE_OBJECT_COMPONENT_H
++#ifndef YAKE_ENT_OBJECT_COMPONENT_H
++#define YAKE_ENT_OBJECT_COMPONENT_H
+ 
+ #include &quot;yake/ent/prerequisites.h&quot;
+ #include &quot;yake/prop/yakeProperty.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+ 	struct Co;
+ 
+ #define DECL_CO(CLASS,DESC) \
+ 	DECL_CLASS_RTTI(CLASS,DESC) \
+ public: \
+-	static CLASS* cast(::yake::object::Co*);
++	static CLASS* cast(::yake::ent::Co*);
+ 
++#define IMPL_CO(CLASS) \
++	IMPL_CLASS_RTTI(CLASS)
++
++#define IMPL_CO_1(CLASS,PARENT1) \
++	IMPL_CLASS_RTTI_1(CLASS,PARENT1)
++
+ 	struct YAKE_ENT_API Co : public PropHolder&lt;Co&gt;
+ 	{
+ 		virtual ~Co() {}
+@@ -22,7 +28,7 @@
+ 	public:
+ 	};
+ 
+-} // namespace object
++} // namespace ent
+ } // namespace yake
+ 
+ #endif
+
+Modified: trunk/yake/yake/ent/component_holder.h
+===================================================================
+--- trunk/yake/yake/ent/component_holder.h	2006-03-12 18:53:07 UTC (rev 1236)
++++ trunk/yake/yake/ent/component_holder.h	2006-03-12 18:54:42 UTC (rev 1237)
+@@ -1,10 +1,10 @@
+-#ifndef YAKE_OBJECT_COMPONENT_HOLDER_H
+-#define YAKE_OBJECT_COMPONENT_HOLDER_H
++#ifndef YAKE_ENT_COMPONENT_HOLDER_H
++#define YAKE_ENT_COMPONENT_HOLDER_H
+ 
+ #include &quot;prerequisites.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+ 	typedef std::string CoTag;
+ 	struct YAKE_ENT_API CoHolder
+@@ -19,7 +19,7 @@
+ 		TagCoMap	components_;
+ 	};
+ 
+-} // namespace object
++} // namespace ent
+ } // namespace yake
+ 
+ #endif
+
+Modified: trunk/yake/yake/ent/object.h
+===================================================================
+--- trunk/yake/yake/ent/object.h	2006-03-12 18:53:07 UTC (rev 1236)
++++ trunk/yake/yake/ent/object.h	2006-03-12 18:54:42 UTC (rev 1237)
+@@ -1,36 +1,77 @@
+-#ifndef YAKE_OBJECT_H
+-#define YAKE_OBJECT_H
++#ifndef YAKE_ENT_OBJECT_H
++#define YAKE_ENT_OBJECT_H
+ 
+ #include &quot;yake/ent/prerequisites.h&quot;
+ #include &quot;yake/ent/object_listener.h&quot;
+ #include &quot;yake/ent/vm_holder.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+-#define DECL_GO(CLASS,DESC) \
++#define DECL_OBJECT(CLASS,DESC) \
+ 	DECL_CLASS_RTTI(CLASS,DESC) \
+ public: \
+-	static CLASS* cast(::yake::object::Co*);
++	static ::yake::ent::Object* create(const ObjectId&amp; id) \
++	{ \
++		::yake::ent::Object* obj = new CLASS(); \
++		obj-&gt;setId(id); \
++		return obj; \
++	} \
++	static void destroy(::yake::ent::Object* o) { if(o) delete o; } \
++	static CLASS* cast(::yake::ent::Object*);
+ 
+-	struct YAKE_ENT_API Object : public CoHolder, public VMHolder, public yake::PropHolder&lt;Object&gt;, public object_listener_mgr
++#define IMPL_OBJECT(CLASS) \
++	IMPL_CLASS_RTTI(CLASS) \
++	CLASS* CLASS::cast(::yake::ent::Object* obj) \
++	{ \
++		return (obj ? ((obj-&gt;isA() == CLASS::cls()) ? dynamic_cast&lt;CLASS*&gt;(obj) : 0 ) : 0); \
++	}
++
++	struct YAKE_ENT_API Object : public yake::PropHolder&lt;Object&gt;, public ObjectListenerManager
+ 	{
+-		DECL_GO(Object,&quot;Object/Entity base&quot;)
++		DECL_OBJECT(Object,&quot;Object&quot;)
+ 		Object() {}
+ 		virtual ~Object() {}
+ 
+-		typedef object_fsm::state_type fsm_state_type;
+-		typedef object_fsm::event_type fsm_event_type;
++		// id operations
++		void setId(const ObjectId&amp; id);
++		const ObjectId&amp; getId() const;
++		const ObjectId&amp; id() const
++		{ return id_; }
+ 
+ 		// operations
+ 		void init()
+ 		{
+ 			listeners_init(*this);
++			onInit();
+ 		}
+ 		void tick()
+ 		{
+ 			listeners_tick(*this);
++			onTick();
+ 		}
++	protected:
++		virtual void onInit() {}
++		virtual void onTick() {}
++	private:
++		ObjectId				id_;
++	};
++
++	struct YAKE_ENT_API Entity : public Object, public CoHolder, public VMHolder
++	{
++		DECL_OBJECT(Entity,&quot;Entity&quot;)
++		Entity() {}
++		virtual ~Entity() {}
++
++		typedef object_fsm::state_type fsm_state_type;
++		typedef object_fsm::event_type fsm_event_type;
++
++		// id operations
++		void setId(const ObjectId&amp; id);
++		const ObjectId&amp; getId() const;
++
++		// FSM operations
++
+ 		void addFsmState(const fsm_state_type&amp;);
+ 		void addFsmTransition(const fsm_state_type&amp;, const fsm_event_type&amp;, const fsm_state_type&amp;);
+ 		void setFsmState(const fsm_state_type&amp;);
+@@ -38,11 +79,12 @@
+ 		const fsm_state_type&amp; getCurrentFsmState() const
+ 		{ return m_.current(); }
+ 
+-
++		// VM operations
+ 		scripting::IVM* getFsmVM() const
+ 		{
+ 			 return this-&gt;getVM(&quot;main&quot;);
+ 		}
++
+ 		// signals
+ 		typedef boost::signal&lt;void(const std::string&amp;,scripting::IVM*)&gt; VmInitializedSignal;
+ 		boost::signals::connection subscribeToVmInitialized(const VmInitializedSignal::slot_type&amp;);
+@@ -54,7 +96,7 @@
+ 		object_fsm			m_;
+ 	};
+ 
+-} // namespace object
++} // namespace ent
+ } // namespace yake
+ 
+ #endif
+
+Modified: trunk/yake/yake/ent/object_listener.h
+===================================================================
+--- trunk/yake/yake/ent/object_listener.h	2006-03-12 18:53:07 UTC (rev 1236)
++++ trunk/yake/yake/ent/object_listener.h	2006-03-12 18:54:42 UTC (rev 1237)
+@@ -1,15 +1,15 @@
+-#ifndef YAKE_OBJECT_LISTENER_H
+-#define YAKE_OBJECT_LISTENER_H
++#ifndef YAKE_ENT_OBJECTLISTENER_H
++#define YAKE_ENT_OBJECTLISTENER_H
+ 
+ #include &quot;yake/ent/prerequisites.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+ 	struct Object;
+-	struct YAKE_ENT_API object_listener
++	struct YAKE_ENT_API ObjectListener
+ 	{
+-		virtual ~object_listener() {}
++		virtual ~ObjectListener() {}
+ 		virtual void onTick(Object&amp;) {}
+ 		virtual void onInit(Object&amp;) {}
+ 		virtual void onFsmEventHandled(Object&amp;, const object_fsm&amp;, const object_fsm::event_type&amp;) {}
+@@ -17,7 +17,7 @@
+ 		virtual void onFsmExitState(Object&amp;,/*const std::string&amp; fsmName, */const object_fsm&amp;, const object_fsm::state_type&amp;) {}
+ 	};
+ 
+-	struct YAKE_ENT_API object_listener_mgr : public ListenerManager&lt;object_listener&gt;
++	struct YAKE_ENT_API ObjectListenerManager : public ListenerManager&lt;ObjectListener&gt;
+ 	{
+ 	protected:
+ 		void listeners_init(Object&amp; obj)
+@@ -52,7 +52,7 @@
+ 		}
+ 	};
+ 
+-} // namespace object
++} // namespace ent
+ } // namespace yake
+ 
+ #endif
+
+Modified: trunk/yake/yake/ent/object_mgr.h
+===================================================================
+--- trunk/yake/yake/ent/object_mgr.h	2006-03-12 18:53:07 UTC (rev 1236)
++++ trunk/yake/yake/ent/object_mgr.h	2006-03-12 18:54:42 UTC (rev 1237)
+@@ -1,30 +1,44 @@
+-#ifndef YAKE_OBJECTMANAGER_H
+-#define YAKE_OBJECTMANAGER_H
++#ifndef YAKE_ENT_OBJECTMANAGER_H
++#define YAKE_ENT_OBJECTMANAGER_H
+ 
+ #include &quot;yake/ent/prerequisites.h&quot;
+ #include &quot;yake/ent/object.h&quot;
+ #include &quot;yake/ent/object_mgr_listener.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
++	typedef object::ResultCode RegistrationResultCode;
++	typedef std::pair&lt;RegistrationResultCode,ClassId&gt; RegistrationResult;
++
+ 	struct YAKE_ENT_API ObjectManager : public ListenerManager&lt;ObjectManagerListener&gt;
+ 	{
+ 		// operations
+-		Object* makeObject();
++		Object* makeObject(const ClassId clsId);
++		Object* makeObject(const std::string strClsId);
+ 		void destroyObject(Object*);
+ 		void tick();
++
++		template&lt;typename T&gt;
++		inline RegistrationResult registerClass(const std::string&amp; name)
++		{
++			return objMgr_.registerClass(name,&amp;T::create,&amp;T::destroy);
++		}
+ 	protected:
++		//
+ 		typedef ListenerManager&lt;ObjectManagerListener&gt; listener_mgr_type;
+ 		void listeners_onObjectCreated(Object* obj);
+ 		void listeners_onObjectInitialized(Object* obj);
+ 		void listeners_onDestroyObject(Object* obj);
+ 	private:
+ 		typedef std::deque&lt;Object*&gt; object_ptr_list;
+-		object_ptr_list	objs_;
++		object_ptr_list						objs_;
++
++		typedef object::ObjectManager&lt;Object&gt; obj_mgr_type;
++		obj_mgr_type							objMgr_;
+ 	};
+ 
+-} // namespace object
++} // namespace ent
+ } // namespace yake
+ 
+ #endif
+
+Modified: trunk/yake/yake/ent/object_mgr_listener.h
+===================================================================
+--- trunk/yake/yake/ent/object_mgr_listener.h	2006-03-12 18:53:07 UTC (rev 1236)
++++ trunk/yake/yake/ent/object_mgr_listener.h	2006-03-12 18:54:42 UTC (rev 1237)
+@@ -1,11 +1,11 @@
+-#ifndef YAKE_OBJECTMANAGERLISTENER_H
+-#define YAKE_OBJECTMANAGERLISTENER_H
++#ifndef YAKE_ENT_OBJECTMANAGERLISTENER_H
++#define YAKE_ENT_OBJECTMANAGERLISTENER_H
+ 
+ #include &quot;yake/ent/prerequisites.h&quot;
+ #include &quot;yake/ent/object.h&quot;
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+ 	struct YAKE_ENT_API ObjectManagerListener
+ 	{
+@@ -15,7 +15,7 @@
+ 		virtual void onDestroyObject(Object*) {}
+ 	};
+ 
+-} // namespace object
++} // namespace ent
+ } // namespace yake
+ 
+ #endif
+
+Modified: trunk/yake/yake/ent/pch.h
+===================================================================
+--- trunk/yake/yake/ent/pch.h	2006-03-12 18:53:07 UTC (rev 1236)
++++ trunk/yake/yake/ent/pch.h	2006-03-12 18:54:42 UTC (rev 1237)
+@@ -1,5 +1,5 @@
+-#ifndef YAKE_OBJECT_PCH_H
+-#define YAKE_OBJECT_PCH_H
++#ifndef YAKE_ENT_PCH_H
++#define YAKE_ENT_PCH_H
+ 
+ #include &quot;yake/base/yake.h&quot;
+ #include &lt;boost/bind.hpp&gt;
+
+Modified: trunk/yake/yake/ent/prerequisites.h
+===================================================================
+--- trunk/yake/yake/ent/prerequisites.h	2006-03-12 18:53:07 UTC (rev 1236)
++++ trunk/yake/yake/ent/prerequisites.h	2006-03-12 18:54:42 UTC (rev 1237)
+@@ -5,6 +5,7 @@
+ #include &quot;yake/statemachine/fsm_core.h&quot;
+ #include &quot;yake/base/yakeTaggedListenerManager.h&quot;
+ #include &quot;yake/base/templates/yakeVector.h&quot;
++#include &quot;yake/object/yakeObjects.h&quot;
+ 
+ #if defined(YAKE_ENT_EXPORTS)
+ #	define YAKE_ENT_API DLLEXPORT
+@@ -13,11 +14,19 @@
+ #endif
+ 
+ namespace yake {
+-namespace object {
++namespace ent {
+ 
+ 	typedef fsm::machine&lt;std::string,std::string&gt; object_fsm;
++	typedef object::ObjectId&lt;object::default_objectid_traits&gt; ObjectId;
++	typedef ObjectId::ClassId ClassId;
+ 
+-} // namespace object
++	struct ClsEntry
++	{
++		RttiClass* cls;
++	};
++	typedef object::ClassAndObjectIdManager&lt;ClsEntry&gt; ClassAndObjectIdManager;
++
++} // namespace ent
+ } // namespace yake
+ 
+ #endif
+
+Modified: trunk/yake/yake/ent/vm_holder.h
+===================================================================
+--- trunk/yake/yake/ent/vm_holder.h	2006-03-12 18:53:07 UTC (rev 1236)
++++ trunk/yake/yake/ent/vm_holder.h	2006-03-12 18:54:42 UTC (rev 1237)
+@@ -9,7 +9,7 @@
+ 	class IVM;
+ 	class IScriptingSystem;
+ }
+-namespace object {
++namespace ent {
+ 
+ 	struct YAKE_ENT_API VMHolder
+ 	{
+@@ -36,7 +36,7 @@
+ 	};
+ 
+ 
+-} // namespace object
++} // namespace ent
+ } // namespace yake
+ 
+ #endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000306.html">[Yake-svn] r1236 - trunk/yake/yake/audio
+</A></li>
+	<LI>Next message: <A HREF="000308.html">[Yake-svn] r1238 - trunk/yake/src/yake/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#307">[ date ]</a>
+              <a href="thread.html#307">[ thread ]</a>
+              <a href="subject.html#307">[ subject ]</a>
+              <a href="author.html#307">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

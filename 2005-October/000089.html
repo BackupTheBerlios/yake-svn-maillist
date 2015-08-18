@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1018 - trunk/yake/src/yake/plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1018%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200510122226.j9CMQC1f013817%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000088.html">
+   <LINK REL="Next"  HREF="000090.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1018 - trunk/yake/src/yake/plugins/physicsODE</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1018%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200510122226.j9CMQC1f013817%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1018 - trunk/yake/src/yake/plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Oct 13 00:26:12 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000088.html">[Yake-svn] r1017 - trunk/yake/common/media/vehicles
+</A></li>
+        <LI>Next message: <A HREF="000090.html">[Yake-svn] r1019 - trunk/yake/yapp/vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#89">[ date ]</a>
+              <a href="thread.html#89">[ thread ]</a>
+              <a href="subject.html#89">[ subject ]</a>
+              <a href="author.html#89">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-13 00:26:12 +0200 (Thu, 13 Oct 2005)
+New Revision: 1018
+
+Modified:
+   trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp
+Log:
+modified default friction
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp	2005-10-12 22:25:46 UTC (rev 1017)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp	2005-10-12 22:26:12 UTC (rev 1018)
+@@ -34,7 +34,7 @@
+ 	OdeMaterial::OdeMaterial() : 
+ 		mSoftness(0),
+ 		mFriction(10),
+-		mFriction2(0),
++		mFriction2(5),
+ 		mLateralSlip(false),
+ 		mSlipNormal(Vector3::kZero),
+ 		mSlipLinearCoeff(0),
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000088.html">[Yake-svn] r1017 - trunk/yake/common/media/vehicles
+</A></li>
+	<LI>Next message: <A HREF="000090.html">[Yake-svn] r1019 - trunk/yake/yapp/vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#89">[ date ]</a>
+              <a href="thread.html#89">[ thread ]</a>
+              <a href="subject.html#89">[ subject ]</a>
+              <a href="author.html#89">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

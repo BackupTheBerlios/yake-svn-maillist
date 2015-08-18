@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1011 - trunk/yake/src/yake/plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1011%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200510122219.j9CMJUA7013242%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000081.html">
+   <LINK REL="Next"  HREF="000083.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1011 - trunk/yake/src/yake/plugins/physicsODE</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1011%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200510122219.j9CMJUA7013242%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1011 - trunk/yake/src/yake/plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Oct 13 00:19:30 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000081.html">[Yake-svn] r1010 - trunk/yake/scripts/yake
+</A></li>
+        <LI>Next message: <A HREF="000083.html">[Yake-svn] r1012 - trunk/yake/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#82">[ date ]</a>
+              <a href="thread.html#82">[ thread ]</a>
+              <a href="subject.html#82">[ subject ]</a>
+              <a href="author.html#82">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-13 00:19:29 +0200 (Thu, 13 Oct 2005)
+New Revision: 1011
+
+Modified:
+   trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+Log:
+improved behaviour (e.g. friction)
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-10-12 21:00:33 UTC (rev 1010)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-10-12 22:19:29 UTC (rev 1011)
+@@ -287,7 +287,7 @@
+ 				}
+ 				
+ 				///FIXME Implement materials!
+-				contact[i].surface.mu = 0; //std::min( this-&gt;getFriction(), pOther-&gt;getFriction());
++				contact[i].surface.mu = std::min( rMatA.mFriction, rMatB.mFriction );
+ 				float friction2 = std::min( rMatA.mFriction2, rMatB.mFriction2 ); //std::min(this-&gt;getFriction2(), pOther-&gt;getFriction2());
+ 				if ( friction2 &gt; 0.f )
+ 				{
+@@ -348,7 +348,7 @@
+ 				contact[i].surface.motion1 = 0;
+ 				contact[i].surface.motion2 = 0;
+ 
+-				contact[i].surface.soft_erp = 0.9; // 0.8
++				contact[i].surface.soft_erp = 0.95; // 0.8
+ 				//contact[i].surface.bounce = 0.05; //0.05
+ 				//contact[i].surface.bounce_vel = 0.025; //0.025
+ 				
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2005-10-12 21:00:33 UTC (rev 1010)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2005-10-12 22:19:29 UTC (rev 1011)
+@@ -55,11 +55,14 @@
+ 			setMass( 1 );
+ 			setPosition( Vector3(0,0,0) );
+ 			setOrientation( Quaternion::kIdentity );
++
++			mOdeWorld-&gt;_addBody( this );
+ 		}
+ 
+ 		//---------------------------------------------------
+ 		OdeBody::~OdeBody()
+ 		{
++			mOdeWorld-&gt;_removeBody( this );
+ 			YAKE_SAFE_DELETE( mOdeBody );
+ 		}
+ 		
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp	2005-10-12 21:00:33 UTC (rev 1010)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeMaterial.cpp	2005-10-12 22:19:29 UTC (rev 1011)
+@@ -32,8 +32,8 @@
+ 
+ 	//---------------------------------------------------
+ 	OdeMaterial::OdeMaterial() : 
+-		mSoftness(0.5),
+-		mFriction(1),
++		mSoftness(0),
++		mFriction(10),
+ 		mFriction2(0),
+ 		mLateralSlip(false),
+ 		mSlipNormal(Vector3::kZero),
+@@ -59,7 +59,7 @@
+ 	}
+ 	void OdeMaterial::setStaticFriction( const real friction )
+ 	{
+-		//@todo
++		mFriction = friction; //@todo is that right?
+ 	}
+ 	void OdeMaterial::setStaticFrictionV( const real friction )
+ 	{
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-10-12 21:00:33 UTC (rev 1010)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-10-12 22:19:29 UTC (rev 1011)
+@@ -49,19 +49,20 @@
+ 			
+ 			mOdeContactGroup = new dJointGroup( 0 );
+ 
++			mOdeWorld-&gt;setAutoDisableFlag( 1 );
++			mOdeWorld-&gt;setAutoDisableAngularThreshold( 0.04 ); // ODE default: 0.01
++			mOdeWorld-&gt;setAutoDisableLinearThreshold( 0.03 ); // ODE default: 0.01
++			mOdeWorld-&gt;setAutoDisableSteps( 30 ); // ODE default: 10
++			mOdeWorld-&gt;setAutoDisableTime( 0 ); // ODE default: 0. (= ignore time)
++
+ 			mOdeWorld-&gt;setGravity( 0., -9.81, 0. );
+ 			mOdeWorld-&gt;setCFM( 0.0005 );
+ 			mOdeWorld-&gt;setERP( 0.99 );
+-			mOdeWorld-&gt;setAutoDisableFlag( 1 );
+-			mOdeWorld-&gt;setAutoDisableAngularThreshold( 0.005 ); // ODE default: 0.01
+-			mOdeWorld-&gt;setAutoDisableLinearThreshold( 0.005 ); // ODE default: 0.01
+-			mOdeWorld-&gt;setAutoDisableSteps( 10 ); // ODE default: 10
+-			mOdeWorld-&gt;setAutoDisableTime( 0 ); // ODE default: 0. (= ignore time)
+ 
+ 			dWorldSetQuickStepNumIterations( mOdeWorld-&gt;id(), 20 );
+ 
+-			//dWorldSetContactMaxCorrectingVel( mOdeWorld-&gt;id(), 2. );
+-			dWorldSetContactSurfaceLayer( mOdeWorld-&gt;id(), 0.0075 );
++			dWorldSetContactMaxCorrectingVel( mOdeWorld-&gt;id(), 10. );
++			dWorldSetContactSurfaceLayer( mOdeWorld-&gt;id(), 0.025 );
+ 
+ 			mTime = real(0.);
+ 		}
+@@ -254,30 +255,37 @@
+ 			mActors.push_back( SharedPtr&lt;OdeActor&gt;( pActor ) );
+ 			return pActor;
+ 		}
++		//-----------------------------------------------------
+ 		bool operator==(const SharedPtr&lt;OdeJoint&gt;&amp; lhs, const OdeJoint* rhs)
+ 		{
+ 			return (lhs.get() == rhs);
+ 		}
++		//-----------------------------------------------------
+ 		void OdeWorld::destroyJoint( IJointPtr pJoint )
+ 		{
+ 			YAKE_ASSERT( pJoint );
+ 			mJoints.erase( std::find(mJoints.begin(), mJoints.end(), dynamic_cast&lt;OdeJoint*&gt;(pJoint) ) );
+ 		}
++		//-----------------------------------------------------
+ 		bool operator==(const SharedPtr&lt;OdeActor&gt;&amp; lhs, const OdeActor* rhs)
+ 		{
+ 			return (lhs.get() == rhs);
+ 		}
++		//-----------------------------------------------------
+ 		void OdeWorld::destroyActor( IActorPtr pActor )
+ 		{
+ 			YAKE_ASSERT( pActor );
+ 			mActors.erase( std::find(mActors.begin(), mActors.end(), dynamic_cast&lt;OdeActor*&gt;(pActor) ) );
+ 		}
++		//-----------------------------------------------------
+ 		void OdeWorld::destroyAvatar( IAvatarPtr pAvatar )
+ 		{
+ 			YAKE_ASSERT( 0 &amp;&amp; &quot;NOT IMPLEMENTED&quot; );
+ 			//YAKE_ASSERT( !pAvatar.expired() );
+ 			//mAvatars.erase( std::find(mAvatars.begin(), mAvatars.end(), dynamic_cast&lt;OdeAvatar*&gt;(pAvatar .lock().get()) ) );
+ 		}
++
++		//-----------------------------------------------------
+ 		bool operator==(const SharedPtr&lt;OdeMaterial&gt;&amp; lhs, const OdeMaterial* rhs)
+ 		{
+ 			return (lhs.get() == rhs);
+@@ -319,6 +327,7 @@
+ 
+ 				firePreStepInternal(mStepSize);
+ 
++				//dWorldStep( mOdeWorld-&gt;id(), mStepSize );
+ 				dWorldQuickStep( mOdeWorld-&gt;id(), mStepSize );
+ 				//dWorldStepFast1( mOdeWorld-&gt;id(), mStepSize, 4 );
+ 
+@@ -328,6 +337,24 @@
+ 
+ 				// Clear contacts
+ 				mOdeContactGroup-&gt;empty();
++
++				// Dampen bodies
++				ConstVectorIterator&lt; BodyList &gt; itBody( mBodies );
++				while (itBody.hasMoreElements())
++				{
++					OdeBody* pBody = itBody.getNext();
++					YAKE_ASSERT( pBody );
++					dBody* pOdeBody = pBody-&gt;_getOdeBody();
++					YAKE_ASSERT( pOdeBody );
++					if (!pOdeBody-&gt;isEnabled())
++						continue;
++					const dReal vScale = -0.04 * pBody-&gt;getMass();
++					const dReal aScale = -0.05 * pBody-&gt;getMass();
++					dReal const* linV = pOdeBody-&gt;getLinearVel();
++					pOdeBody-&gt;addForce( vScale*linV[0], vScale*linV[1], vScale*linV[2] );
++					dReal const* angV = pOdeBody-&gt;getAngularVel();
++					pOdeBody-&gt;addTorque( aScale*angV[0], aScale*angV[1], aScale*angV[2] );
++				}
+ 			}
+ 			
+ 			firePostStep( mTime );
+@@ -366,6 +393,22 @@
+ 		}
+ 		
+ 		//-----------------------------------------------------
++		void OdeWorld::_addBody( OdeBody* body )
++		{
++			YAKE_ASSERT( body );
++			if (body)
++				mBodies.push_back( body );
++		}
++
++		//-----------------------------------------------------
++		void OdeWorld::_removeBody( OdeBody* body )
++		{
++			BodyList::iterator itFind = std::find( mBodies.begin(), mBodies.end(), body );
++			if (itFind != mBodies.end())
++				mBodies.erase( itFind );
++		}
++
++		//-----------------------------------------------------
+ 		void OdeWorld::_OdeNearCallback ( void* data, dGeomID o1, dGeomID o2 )
+ 		{
+ 			//YAKE_LOG(&quot;OdeWorld::-&gt;NearCallBack()&quot;);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000081.html">[Yake-svn] r1010 - trunk/yake/scripts/yake
+</A></li>
+	<LI>Next message: <A HREF="000083.html">[Yake-svn] r1012 - trunk/yake/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#82">[ date ]</a>
+              <a href="thread.html#82">[ thread ]</a>
+              <a href="subject.html#82">[ subject ]</a>
+              <a href="author.html#82">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

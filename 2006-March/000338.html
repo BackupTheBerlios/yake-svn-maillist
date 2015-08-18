@@ -1,0 +1,419 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1268 - in trunk/yake/scripts/msvc8: . plugins/ent samples samples/msg
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1268%20-%20in%20trunk/yake/scripts/msvc8%3A%20.%20plugins/ent%20samples%20samples/msg&In-Reply-To=%3C200603122313.k2CND3MR016890%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000337.html">
+   <LINK REL="Next"  HREF="000339.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1268 - in trunk/yake/scripts/msvc8: . plugins/ent samples samples/msg</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1268%20-%20in%20trunk/yake/scripts/msvc8%3A%20.%20plugins/ent%20samples%20samples/msg&In-Reply-To=%3C200603122313.k2CND3MR016890%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1268 - in trunk/yake/scripts/msvc8: . plugins/ent samples samples/msg">codeandroid at berlios.de
+       </A><BR>
+    <I>Mon Mar 13 00:13:03 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000337.html">[Yake-svn] r1267 - trunk/yake/yapp/base
+</A></li>
+        <LI>Next message: <A HREF="000339.html">[Yake-svn] r1269 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#338">[ date ]</a>
+              <a href="thread.html#338">[ thread ]</a>
+              <a href="subject.html#338">[ subject ]</a>
+              <a href="author.html#338">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-13 00:13:03 +0100 (Mon, 13 Mar 2006)
+New Revision: 1268
+
+Added:
+   trunk/yake/scripts/msvc8/samples/msg/
+   trunk/yake/scripts/msvc8/samples/msg/sampleMsg1.vcproj
+Modified:
+   trunk/yake/scripts/msvc8/plugins/ent/entLua.vcproj
+   trunk/yake/scripts/msvc8/yake.sln
+Log:
+
+
+Modified: trunk/yake/scripts/msvc8/plugins/ent/entLua.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/plugins/ent/entLua.vcproj	2006-03-12 23:12:37 UTC (rev 1267)
++++ trunk/yake/scripts/msvc8/plugins/ent/entLua.vcproj	2006-03-12 23:13:03 UTC (rev 1268)
+@@ -63,7 +63,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;ent2.lib scripting.lib scriptingLua.lib luad.lib luabindd.lib&quot;
++				AdditionalDependencies=&quot;ent.lib scripting.lib scriptingLua.lib luad.lib luabindd.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;2&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies/luabind/lib;../../../../dependencies/lua/lib;../../../../dependencies/lib&quot;
+@@ -145,7 +145,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;ent2.lib scripting.lib scriptingLua.lib lua.lib luabind.lib&quot;
++				AdditionalDependencies=&quot;ent.lib scripting.lib scriptingLua.lib lua.lib luabind.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;1&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/luabind/lib;../../../../dependencies/lua/lib;../../../../dependencies/lib&quot;
+
+Added: trunk/yake/scripts/msvc8/samples/msg/sampleMsg1.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/msg/sampleMsg1.vcproj	2006-03-12 23:12:37 UTC (rev 1267)
++++ trunk/yake/scripts/msvc8/samples/msg/sampleMsg1.vcproj	2006-03-12 23:13:03 UTC (rev 1268)
+@@ -0,0 +1,199 @@
++&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
++&lt;VisualStudioProject
++	ProjectType=&quot;Visual C++&quot;
++	Version=&quot;8,00&quot;
++	Name=&quot;sampleMsg1&quot;
++	ProjectGUID=&quot;{452438E8-F03B-47B9-984B-2CF79D2F6734}&quot;
++	Keyword=&quot;Win32Proj&quot;
++	&gt;
++	&lt;Platforms&gt;
++		&lt;Platform
++			Name=&quot;Win32&quot;
++		/&gt;
++	&lt;/Platforms&gt;
++	&lt;ToolFiles&gt;
++	&lt;/ToolFiles&gt;
++	&lt;Configurations&gt;
++		&lt;Configuration
++			Name=&quot;Debug|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/debug&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/debug/$(ProjectName)&quot;
++			ConfigurationType=&quot;1&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;0&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				Optimization=&quot;0&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/boost/;../../../../dependencies/ttl/&quot;
++				PreprocessorDefinitions=&quot;WIN32;_DEBUG;_CONSOLE&quot;
++				MinimalRebuild=&quot;true&quot;
++				BasicRuntimeChecks=&quot;3&quot;
++				RuntimeLibrary=&quot;3&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;0&quot;
++				PrecompiledHeaderThrough=&quot;yapp/samples/base/vehicle/yakePCH.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;4&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
++				LinkIncremental=&quot;2&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;1&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++		&lt;Configuration
++			Name=&quot;Release|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/release&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/release/$(ProjectName)&quot;
++			ConfigurationType=&quot;1&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;0&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/boost/;../../../../dependencies/ttl/&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE&quot;
++				RuntimeLibrary=&quot;2&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;0&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;3&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
++				LinkIncremental=&quot;1&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;false&quot;
++				SubSystem=&quot;1&quot;
++				OptimizeReferences=&quot;2&quot;
++				EnableCOMDATFolding=&quot;2&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++	&lt;/Configurations&gt;
++	&lt;References&gt;
++	&lt;/References&gt;
++	&lt;Files&gt;
++		&lt;Filter
++			Name=&quot;inc&quot;
++			&gt;
++		&lt;/Filter&gt;
++		&lt;Filter
++			Name=&quot;src&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\src\yake\samples\msg\sampleMsg1\demo.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++	&lt;/Files&gt;
++	&lt;Globals&gt;
++	&lt;/Globals&gt;
++&lt;/VisualStudioProject&gt;
+
+Modified: trunk/yake/scripts/msvc8/yake.sln
+===================================================================
+--- trunk/yake/scripts/msvc8/yake.sln	2006-03-12 23:12:37 UTC (rev 1267)
++++ trunk/yake/scripts/msvc8/yake.sln	2006-03-12 23:13:03 UTC (rev 1268)
+@@ -9,8 +9,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;graphicsOGRE&quot;, &quot;plugins\graphics\graphicsOgre.vcproj&quot;, &quot;{A2C2A0B2-2EB0-4254-891D-FE93466809CF}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
++		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;physics&quot;, &quot;physics.vcproj&quot;, &quot;{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}&quot;
+@@ -20,8 +20,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;physicsODE&quot;, &quot;plugins\physics\physicsODE.vcproj&quot;, &quot;{2F5124AA-56BD-4909-811A-E79901978C86}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
++		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+ 		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;input&quot;, &quot;input.vcproj&quot;, &quot;{1AF3930A-4E72-4455-AFD0-6B78684105CD}&quot;
+@@ -31,8 +31,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;inputOGRE&quot;, &quot;plugins\input\inputOgre.vcproj&quot;, &quot;{A1A2FE19-7B7E-42F1-808B-8FA5B6AA697E}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
++		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 		{1AF3930A-4E72-4455-AFD0-6B78684105CD} = {1AF3930A-4E72-4455-AFD0-6B78684105CD}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;scripting&quot;, &quot;scripting.vcproj&quot;, &quot;{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}&quot;
+@@ -42,8 +42,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;scriptingLua&quot;, &quot;plugins\scripting\scriptingLua.vcproj&quot;, &quot;{41CEA11B-9678-43E5-B2F4-754944D7B461}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
++		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;data&quot;, &quot;data.vcproj&quot;, &quot;{77A59B89-C2B3-429C-8317-ADE0D046CC3B}&quot;
+@@ -53,8 +53,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;scriptingBindingsLua&quot;, &quot;plugins\scripting\scriptingLuaBindings.vcproj&quot;, &quot;{CA63F621-0912-4551-B51A-7BD18F491181}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
++		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+ 		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;audio&quot;, &quot;audio.vcproj&quot;, &quot;{42BB6F78-B04C-4968-AA5E-271DC45BEFBB}&quot;
+@@ -74,26 +74,26 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;graphicsBindingsLua&quot;, &quot;plugins\scripting\graphicsLuaBindings.vcproj&quot;, &quot;{2D5E8A7F-96DA-4CC5-BFC8-430916ACF18A}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
++		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
++		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
++		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+ 		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;baseBindingsLua&quot;, &quot;plugins\scripting\baseLuaBindings.vcproj&quot;, &quot;{3867E9A4-41F3-4969-B0A8-40757BCB6C29}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
++		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
++		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+ 		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;yapp&quot;, &quot;yapp.vcproj&quot;, &quot;{F1116FDF-65C1-4788-AC1F-F339279B937A}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
++		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
++		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
++		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
++		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+ 		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;raf&quot;, &quot;raf.vcproj&quot;, &quot;{6D6DD5E8-3B81-4C98-B460-B434DEE23EE2}&quot;
+@@ -124,9 +124,14 @@
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;msg2&quot;, &quot;msg2.vcproj&quot;, &quot;{9E9DDB4A-CF98-4ED5-AB85-D3F5E71AE912}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;entLua&quot;, &quot;plugins\ent\entLua.vcproj&quot;, &quot;{89182311-DB82-446B-AA9B-C70A3A0AF035}&quot;
++	ProjectSection(ProjectDependencies) = postProject
++		{08BC40D8-33D8-4677-993A-32599A93A460} = {08BC40D8-33D8-4677-993A-32599A93A460}
++	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;ent&quot;, &quot;ent.vcproj&quot;, &quot;{08BC40D8-33D8-4677-993A-32599A93A460}&quot;
+ EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleMsg1&quot;, &quot;samples\msg\sampleMsg1.vcproj&quot;, &quot;{452438E8-F03B-47B9-984B-2CF79D2F6734}&quot;
++EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+ 		Debug|Win32 = Debug|Win32
+@@ -247,6 +252,10 @@
+ 		{08BC40D8-33D8-4677-993A-32599A93A460}.Debug|Win32.Build.0 = Debug|Win32
+ 		{08BC40D8-33D8-4677-993A-32599A93A460}.Release|Win32.ActiveCfg = Release|Win32
+ 		{08BC40D8-33D8-4677-993A-32599A93A460}.Release|Win32.Build.0 = Release|Win32
++		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Debug|Win32.ActiveCfg = Debug|Win32
++		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Debug|Win32.Build.0 = Debug|Win32
++		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Release|Win32.ActiveCfg = Release|Win32
++		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Release|Win32.Build.0 = Release|Win32
+ 	EndGlobalSection
+ 	GlobalSection(SolutionProperties) = preSolution
+ 		HideSolutionNode = FALSE
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000337.html">[Yake-svn] r1267 - trunk/yake/yapp/base
+</A></li>
+	<LI>Next message: <A HREF="000339.html">[Yake-svn] r1269 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#338">[ date ]</a>
+              <a href="thread.html#338">[ thread ]</a>
+              <a href="subject.html#338">[ subject ]</a>
+              <a href="author.html#338">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

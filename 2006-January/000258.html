@@ -1,0 +1,1376 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1188 - in trunk/yake/yake: . net net/detail
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-January/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1188%20-%20in%20trunk/yake/yake%3A%20.%20net%20net/detail&In-Reply-To=%3C200601152138.k0FLc79d015350%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000257.html">
+   <LINK REL="Next"  HREF="000259.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1188 - in trunk/yake/yake: . net net/detail</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1188%20-%20in%20trunk/yake/yake%3A%20.%20net%20net/detail&In-Reply-To=%3C200601152138.k0FLc79d015350%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1188 - in trunk/yake/yake: . net net/detail">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Jan 15 22:38:07 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000257.html">[Yake-svn] r1187 - trunk/yake/scripts/msvc8
+</A></li>
+        <LI>Next message: <A HREF="000259.html">[Yake-svn] r1189 - in trunk/yake/src/yake/samples: . net net/roclient net/roserver
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#258">[ date ]</a>
+              <a href="thread.html#258">[ thread ]</a>
+              <a href="subject.html#258">[ subject ]</a>
+              <a href="author.html#258">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-01-15 22:38:07 +0100 (Sun, 15 Jan 2006)
+New Revision: 1188
+
+Added:
+   trunk/yake/yake/net/
+   trunk/yake/yake/net/detail/
+   trunk/yake/yake/net/detail/netEnetClientPacketConnection.h
+   trunk/yake/yake/net/detail/netEnetServerPacketConnection.h
+   trunk/yake/yake/net/detail/netEventConnection.h
+   trunk/yake/yake/net/detail/netInternal.h
+   trunk/yake/yake/net/net.h
+   trunk/yake/yake/net/netBitstream.h
+   trunk/yake/yake/net/netBitstream.inl
+   trunk/yake/yake/net/netBitstreamAdapters.h
+   trunk/yake/yake/net/netCommon.h
+   trunk/yake/yake/net/netEvent.h
+   trunk/yake/yake/net/netPacket.h
+   trunk/yake/yake/net/netPrerequisites.h
+   trunk/yake/yake/net/netTypes.h
+   trunk/yake/yake/net/pch.h
+Log:
+initial revision
+
+Added: trunk/yake/yake/net/detail/netEnetClientPacketConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEnetClientPacketConnection.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/detail/netEnetClientPacketConnection.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,69 @@
++#ifndef NET_ENETCLIENTPACKETCONNECTION_H
++#define NET_ENETCLIENTPACKETCONNECTION_H
++
++namespace net {
++namespace impl {
++
++	//--------------------------------------------------------------------------
++	class EnetClientPacketConnection : public ::net::IClientPacketConnection
++	{
++	public:
++		EnetClientPacketConnection();
++		virtual ~EnetClientPacketConnection();
++
++		virtual void connect( const Address&amp; );
++		virtual void disconnect();
++
++		virtual void send(const void*, const size_t, const SendOptions&amp; opt = SendOptions());
++		virtual void send(const PeerId, const void*, const size_t, const SendOptions&amp; opt = SendOptions());
++
++		virtual void addStartedCallback(const OnStartedFn&amp;);
++		virtual void addPacketReceivedCallback( const OnPacketReceivedFn&amp;);
++		virtual void addTimeOutCallback(const OnTimeOutFn&amp;);
++	private:
++		void sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
++		void sendBroadcast(const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
++	private:
++		void update();
++
++		void fireCallback_Started()
++		{
++			for (OnStartedFnList::const_iterator it = startedFnList_.begin(); it != startedFnList_.end(); ++it)
++				(*it)();
++		}
++		void fireCallback_PacketReceived(const PeerId peerId, const void* data, const size_t dataLen, const ChannelId channel)
++		{
++			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++			for (OnPacketReceivedFnList::const_iterator it = packetReceivedFnList_.begin(); it != packetReceivedFnList_.end(); ++it)
++				(*it)(peerId,data,dataLen,channel);
++		}
++		void fireCallback_TimeOut()
++		{
++			for (OnTimeOutFnList::const_iterator it = timeOutFnList_.begin(); it != timeOutFnList_.end(); ++it)
++				(*it)();
++		}
++	private:
++		typedef std::deque&lt;OnStartedFn&gt; OnStartedFnList;
++		typedef std::deque&lt;OnPacketReceivedFn&gt; OnPacketReceivedFnList;
++		typedef std::deque&lt;OnTimeOutFn&gt; OnTimeOutFnList;
++		OnStartedFnList					startedFnList_;
++		OnPacketReceivedFnList			packetReceivedFnList_;
++		boost::mutex					packetReceivedFnListMtx_;
++		OnTimeOutFnList					timeOutFnList_;
++
++	private:
++		ENetAddress		m_address;
++		ENetHost*		m_host;
++		ENetPeer*		m_peer;
++		ENetPeer*		m_serverPeer;
++		bool			m_ready;
++		uint32			m_id;
++		bool			m_waitingForConnect;
++		std::string		m_serverIp;
++		Timer			m_connTimer;
++	};
++
++} // namespace impl
++} // namespace net
++
++#endif
+
+Added: trunk/yake/yake/net/detail/netEnetServerPacketConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEnetServerPacketConnection.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/detail/netEnetServerPacketConnection.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,131 @@
++#ifndef NET_ENETSERVERPACKETCONNECTION_H
++#define NET_ENETSERVERPACKETCONNECTION_H
++
++namespace net {
++namespace impl {
++
++	//--------------------------------------------------------------------------
++	class EnetServerPacketConnection : public ::net::IServerPacketConnection
++	{
++	public:
++		EnetServerPacketConnection();
++		virtual ~EnetServerPacketConnection();
++
++		virtual void start( const Address&amp;, const size_t );
++		virtual void stop();
++
++		virtual void setAllowedClientIps(const std::vector&lt;std::string&gt;&amp;);
++
++		virtual void disconnect( const PeerId client );
++
++		virtual void send(const void*, const size_t, const SendOptions&amp; opt = SendOptions());
++		virtual void send(const PeerId, const void*, const size_t, const SendOptions&amp; opt = SendOptions());
++
++		virtual void addStartedCallback(const OnStartedFn&amp;);
++		virtual void addClientConnectedCallback(const OnClientConnectedFn&amp;);
++		virtual void addClientDisconnectedCallback(const OnClientDisconnectedFn&amp;);
++		virtual void addPacketReceivedCallback( const OnPacketReceivedFn&amp;);
++	private:
++		void sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
++		void sendBroadcast(const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel);
++	private:
++		void update();
++		bool isIpAllowed( const std::string&amp; );
++		std::string ipToStringCached( const uint32 );
++
++		void fireCallback_Started()
++		{
++			for (OnStartedFnList::const_iterator it = startedFnList_.begin(); it != startedFnList_.end(); ++it)
++				(*it)();
++		}
++		void fireCallback_ClientConnected(const PeerId peerId, const Address&amp; addr)
++		{
++			for (OnClientConnectedFnList::const_iterator it = clientConnectedFnList_.begin(); it != clientConnectedFnList_.end(); ++it)
++				(*it)(peerId, addr);
++		}
++		void fireCallback_ClientDisconnected(const PeerId peerId)
++		{
++			for (OnClientDisconnectedFnList::const_iterator it = clientDisconnectedFnList_.begin(); it != clientDisconnectedFnList_.end(); ++it)
++				(*it)(peerId);
++		}
++		void fireCallback_PacketReceived(const PeerId peerId, const void* data, const size_t dataLen, const ChannelId channel)
++		{
++			boost::mutex::scoped_lock lck(packetReceivedFnListMtx_);
++			for (OnPacketReceivedFnList::const_iterator it = packetReceivedFnList_.begin(); it != packetReceivedFnList_.end(); ++it)
++				(*it)(peerId,data,dataLen,channel);
++		}
++	private:
++		typedef std::deque&lt;OnStartedFn&gt; OnStartedFnList;
++		typedef std::deque&lt;OnClientConnectedFn&gt; OnClientConnectedFnList;
++		typedef std::deque&lt;OnClientDisconnectedFn&gt; OnClientDisconnectedFnList;
++		typedef std::deque&lt;OnPacketReceivedFn&gt; OnPacketReceivedFnList;
++		OnStartedFnList					startedFnList_;
++		OnClientConnectedFnList			clientConnectedFnList_;
++		OnClientDisconnectedFnList		clientDisconnectedFnList_;
++		OnPacketReceivedFnList			packetReceivedFnList_;
++		boost::mutex					packetReceivedFnListMtx_;
++
++	private:
++		enum State {
++			S_DEAD,
++			S_STARTING,
++			S_RUNNING,
++			S_STOPPING
++		};
++		struct state_t {
++			State get() const
++			{
++				boost::mutex::scoped_lock lock(mtx_);
++				return state_;
++			}
++			void set(const State state)
++			{
++				boost::mutex::scoped_lock lock(mtx_);
++				state_ = state;
++			}
++		private:
++			State					state_;
++			mutable boost::mutex mtx_;
++		} m_state;
++
++		ENetAddress				m_address;
++		ENetHost*				m_host;
++		uint32					m_id;
++
++		// Could use std::vector&lt;uint32&gt; if not for IPv6 and the std::string interface of IPacketServer.
++		typedef std::vector&lt;std::string&gt; HostList;
++		HostList				m_ipWhiteList;
++		HostList				m_ipBlackList;
++		mutable boost::mutex	m_ipListMtx;
++
++		typedef std::map&lt;uint32,std::string&gt; IpToString;
++		IpToString				m_ip2string;
++
++		enum ClientState
++		{
++			CS_CONNECTED,
++			CS_DISCONNECTING,
++			CS_DEAD
++		};
++		struct Client
++		{
++			ENetPeer*	peer;
++			ClientState	state;
++			PeerId		id;
++			uint32		host;
++			//Address		addr;
++		};
++		typedef std::map&lt;ENetPeer*,Client*&gt; PeerToClientMap;
++		PeerToClientMap			m_clients; // access only via update()
++		typedef std::map&lt;PeerId,Client*&gt; IdToClientMap;
++		IdToClientMap			m_id2client;
++		PeerId					m_nextPeerId;
++		mutable boost::mutex m_clientsMtx;
++	private:
++		ClientState getClientState(ENetPeer* peer) const; // access only via update()
++	};
++
++} // namespace impl
++} // namespace net
++
++#endif
+
+Added: trunk/yake/yake/net/detail/netEventConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEventConnection.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/detail/netEventConnection.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,96 @@
++#ifndef NET_EVENTCONNECTION_H
++#define NET_EVENTCONNECTION_H
++
++namespace net {
++namespace impl {
++
++	//--------------------------------------------------------------------------
++	class EventConnection : public ::net::INetEventConnection
++	{
++	public:
++		EventConnection();
++		virtual ~EventConnection();
++
++		// INetEventConnection interface
++		virtual void setPacketConnection(IPacketConnection*,const NetEvent::Direction);
++		virtual void setMaxEventErrors(const size_t);
++
++		virtual void registerEvent(const NetEvent::id_type, const NetEvent::Direction,
++									const CreateEventFn&amp; fnCreate, const DestroyEventFn&amp; fnDestroy);
++		virtual void sendEvent(const NetEvent&amp;, const SendOptions&amp; opt = SendOptions());
++		virtual void sendEvent(const PeerId, const NetEvent&amp;, const SendOptions&amp; opt = SendOptions());
++		virtual void setAllowedIncomingEventIds(const std::vector&lt;NetEvent::id_type&gt;&amp;);
++
++		virtual void setProcessEventCallback(const EvtProcessEventFn&amp;);
++		//virtual void removeProcessEventCallback(const EvtProcessEventFn&amp;);
++		virtual void setDisconnectCallback(const EvtDisconnectFn&amp;);
++	private:
++		void onReceivePacket(const PeerId, const void*, const size_t, const ChannelId);
++	private:
++		//typedef std::deque&lt;EvtProcessEventFn&gt; EvtProcessEventFnList;
++		//EvtProcessEventFnList	processEventFns_;
++		EvtProcessEventFn processEventFn_;
++		void fireCallbacks_ProcessEvent(const PeerId peerId, const NetEvent&amp; evt, const ChannelId channel)
++		{
++			if (!processEventFn_.empty())
++				processEventFn_(peerId,evt,channel);
++
++			//EvtProcessEventFnList fns = processEventFns_; // Use a copy as the original container may be modified during the callbacks!
++			//for (EvtProcessEventFnList::const_iterator it = fns.begin(); it != fns.end(); ++it)
++			//	(*it)(peerId,evt,channel);
++		}
++
++	private:
++		typedef NetEvent::id_type event_id;
++		typedef NetEvent::Direction event_direction;
++
++		struct IdEntry
++		{
++			event_direction		dir;
++			CreateEventFn		fnCreate;
++			DestroyEventFn		fnDestroy;
++		};
++		typedef std::map&lt;event_id,IdEntry&gt; EventIdMap;
++		EventIdMap				eventIds_;
++
++		typedef std::vector&lt;NetEvent::id_type&gt; EventIdVector;
++		EventIdVector			allowedEventIds_;
++		mutable boost::mutex	allowedEventIdsMtx_;
++
++		event_direction			dir_;
++		IPacketConnection*		conn_;
++
++		struct statistics_t
++		{
++			statistics_t() : 
++				numInvalidPackets(0),
++				numInvalidEvents(0),
++				numInvalidEventIds(0),
++				numUnregisteredEventIds(0),
++				numWrongEventDirection(0),
++				numEventsProcessed(0),
++				numBlockedEventIds(0)
++			{}
++			size_t		numInvalidPackets;
++			size_t		numInvalidEvents;
++			size_t		numInvalidEventIds;
++			size_t		numUnregisteredEventIds;
++			size_t		numWrongEventDirection;
++			size_t		numEventsProcessed;
++			size_t		numBlockedEventIds;
++			size_t totalErrors() const
++			{
++				return numInvalidPackets +
++						numInvalidEvents +
++						numInvalidEventIds +
++						numUnregisteredEventIds +
++						numWrongEventDirection;
++			}
++		} stats_;
++		size_t					maxErrors_;
++	};
++
++} // namespace impl
++} // namespace net
++
++#endif
+
+Added: trunk/yake/yake/net/detail/netInternal.h
+===================================================================
+--- trunk/yake/yake/net/detail/netInternal.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/detail/netInternal.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,99 @@
++#ifndef NET_INTERNAL_H
++#define NET_INTERNAL_H
++
++#pragma warning(push)
++#pragma warning(disable: 4251) // C4251:  'T' needs to have dll-interface to be used by clients of class 'X'
++#pragma warning(disable: 4275) // C4275:  'T' used as base for dll-interface class 'X'
++
++#include &lt;cassert&gt;
++#include &lt;sstream&gt;
++#include &lt;iostream&gt;
++#include &lt;map&gt;
++#include &lt;boost/thread/thread.hpp&gt;
++#include &lt;boost/thread/mutex.hpp&gt;
++#include &lt;boost/bind.hpp&gt;
++
++#define NET_ERROR( X ) \
++	{ \
++		std::stringstream s; \
++		s &lt;&lt; &quot;net_error: &quot; &lt;&lt; X &lt;&lt; &quot;\n&quot;; \
++		std::cerr &lt;&lt; s.str().c_str(); \
++	}
++
++#define NET_LOG( X ) \
++	{ \
++		std::stringstream s; \
++		s &lt;&lt; &quot;net: &quot; &lt;&lt; X &lt;&lt; &quot;\n&quot;; \
++		std::cout &lt;&lt; s.str().c_str(); \
++	}
++
++#define NET_THROW(MSG) \
++	throw Exception(MSG,__FILE__,__LINE__)
++
++#define NET_EXCEPT NET_THROW
++
++namespace net {
++namespace impl {
++
++	boost::mutex&amp; getEnetMtx();
++
++	typedef boost::function&lt;void(void)&gt; UpdateFn;
++	class UpdateThread
++	{
++	private:
++		UpdateThread();
++		~UpdateThread();
++	public:
++		uint32 add( const UpdateFn&amp; );
++		//void remove( const UpdateFn&amp; );
++		void remove( const uint32 );
++		bool dead() const;
++		void requestQuit();
++
++		static bool create();
++		static void destroy();
++		static UpdateThread&amp; instance();
++
++		void __update__() // must only be called from net::update()
++		{ this-&gt;callFns(); }
++	private:
++		void threadMain();
++		void callFns();
++
++		typedef std::map&lt;uint32,UpdateFn&gt; UpdateFnMap;
++		UpdateFnMap		fns_;
++		uint32			nextId_;
++		boost::thread*	thread_;
++		mutable boost::mutex	mtx_;
++		bool			quitRequested_;
++
++		bool			dead_;
++		mutable boost::mutex	deadMtx_;
++
++		static UpdateThread* instance_;
++	};
++
++	/** @todo move this into general purpose lib/header
++	*/
++	template&lt;typename ctr_type&gt;
++		bool contains(const ctr_type&amp; ctr, typename const ctr_type::value_type&amp; value)
++	{
++		return (ctr.end() != std::find(ctr.begin(), ctr.end(), value));
++	}
++	template&lt;typename kt, typename vt, typename at&gt;
++		bool contains(const std::map&lt;kt,vt,at&gt;&amp; ctr, typename const std::map&lt;kt,vt,at&gt;::key_type&amp; key)
++	{
++		return (ctr.end() != ctr.find(key));
++	}
++	template&lt;typename map_type&gt;
++		bool map_contains(const map_type&amp; ctr, typename const map_type::key_type&amp; key)
++	{
++		return (ctr.end() != ctr.find(key));
++	}
++
++} // namespace impl
++} // namespace net
++
++#pragma warning(pop)
++
++#endif
+
+Added: trunk/yake/yake/net/net.h
+===================================================================
+--- trunk/yake/yake/net/net.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/net.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,16 @@
++#ifndef NET_H
++#define NET_H
++
++#include &quot;netPrerequisites.h&quot;
++#include &quot;netCommon.h&quot;
++#include &quot;netPacket.h&quot;
++#include &quot;netEvent.h&quot;
++
++namespace net {
++
++	NET_API bool initialize();
++	NET_API void shutdown();
++
++} // namespace net
++
++#endif
+
+Added: trunk/yake/yake/net/netBitstream.h
+===================================================================
+--- trunk/yake/yake/net/netBitstream.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/netBitstream.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,95 @@
++#ifndef NET_BITSTREAM_H
++#define NET_BITSTREAM_H
++
++#include &lt;bitset&gt;
++
++namespace net {
++
++	/**
++		\todo - optimize: use bit masks ? =&gt; have to profile this. newer processor
++					architectures aren't that fast with bit operations...
++				- optimize: remove casts
++	*/
++	template&lt;typename DataStreamType&gt;
++	class ibstream_base
++	{
++	public:
++		ibstream_base&amp; operator = (const ibstream_base&amp;);
++		ibstream_base(const ibstream_base&amp;);
++		ibstream_base( DataStreamType* pds = 0 );
++		~ibstream_base();
++		void setDataSource( DataStreamType*, const bool takeOwnership = false );
++		uint8 read( bool&amp; );
++		uint8 read( void* pd, size_t numBits );
++		uint8 read( uint8&amp;, uint8 numBits );
++		uint8 read( float&amp;, size_t numBits );
++	private:
++		bool _inByte( uint8&amp; );
++		DataStreamType*	mSource;
++		uint8					mBitPos;
++		std::bitset&lt;8&gt;		mBuf;
++		size_t				mTotalBits;
++		size_t				mTotalBytes;
++		bool					mDestroyDataStream;
++	};
++
++	template&lt;class DataStreamType&gt;
++	class obstream_base
++	{
++	public:
++		obstream_base&amp; operator = (const obstream_base&amp;);
++		obstream_base(const obstream_base&amp;);
++		obstream_base( DataStreamType* pds = 0 );
++		~obstream_base();
++		void setDataSink( DataStreamType* s, const bool takeOwnership = false );
++		uint8 write( const uint8, uint8 numBits );
++		void write( const bool );
++		void write( const void*, size_t numBits );
++
++		void write( const uint16, uint8 numBits );
++		void write( const uint32, uint8 numBits );
++		void write( const float, uint8 numBits );
++		void write( const double, uint8 numBits );
++		void flush();
++
++		size_t numBits() const;
++		//size_t numBytes() const; //pre or post flush?
++
++		void setNumBits(const uint8 numBitsForNextStreamOperations);
++		obstream_base&amp; operator &lt;&lt; (const uint8);
++		obstream_base&amp; operator &lt;&lt; (const uint16);
++		obstream_base&amp; operator &lt;&lt; (const uint32);
++		obstream_base&amp; operator &lt;&lt; (const int8);
++		obstream_base&amp; operator &lt;&lt; (const int16);
++		obstream_base&amp; operator &lt;&lt; (const int32);
++		obstream_base&amp; operator &lt;&lt; (const float);
++		obstream_base&amp; operator &lt;&lt; (const double);
++	private:
++		void _outByte( uint8 );
++		//std::ostream*	mStream;
++		DataStreamType*	mStream;
++		uint8					mBitPos;
++		std::bitset&lt;8&gt;		mBuf;
++		size_t				mTotalBits;
++		size_t				mTotalBytes;
++		uint8					mNumBitsForNextStreamOperations;
++		bool					mDestroyDataStream;
++	};
++
++	struct setNumBits
++	{
++		setNumBits(uint8 numBits) : b(numBits)
++		{}
++		uint8 b;
++	};
++	template&lt;class ostream_type&gt;
++	inline ostream_type&amp; operator &lt;&lt; (ostream_type&amp; lhs, const setNumBits&amp; rhs)
++	{
++		lhs.setNumBits(rhs.b);
++		return lhs;
++	}
++} // namespace net
++
++#include &quot;netBitStream.inl&quot;
++
++#endif
+
+Added: trunk/yake/yake/net/netBitstream.inl
+===================================================================
+--- trunk/yake/yake/net/netBitstream.inl	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/netBitstream.inl	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,324 @@
++#ifndef NET_BITSTREAM_INL
++#define NET_BITSTREAM_INL
++
++namespace net {
++
++	//--------------------------------------------------------------------------
++	// Class: ibstream
++	//--------------------------------------------------------------------------
++	template&lt;class DataStreamType&gt;
++	ibstream_base&lt;DataStreamType&gt;&amp; ibstream_base&lt;DataStreamType&gt;::operator = (const ibstream_base&lt;DataStreamType&gt;&amp; other)
++	{
++		mSource			= other.mSource;
++		mBitPos			= other.mBitPos;
++		mBuf				= other.mBuf;
++		mTotalBits		= other.mTotalBits;
++		mTotalBytes		= other.mTotalBytes;
++		mDestroyDataStream = other.mDestroyDataStream;
++		return *this;
++	}
++	template&lt;class DataStreamType&gt;
++	ibstream_base&lt;DataStreamType&gt;::ibstream_base(const ibstream_base&lt;DataStreamType&gt;&amp; other)
++	{
++		mSource			= other.mSource;
++		mBitPos			= other.mBitPos;
++		mBuf				= other.mBuf;
++		mTotalBits		= other.mTotalBits;
++		mTotalBytes		= other.mTotalBytes;
++		mDestroyDataStream = other.mDestroyDataStream;
++	}
++	template&lt;class DataStreamType&gt;
++	ibstream_base&lt;DataStreamType&gt;::ibstream_base( DataStreamType* pds = 0 ) : mSource(pds), mBitPos(8), mTotalBits(0), mTotalBytes(0), mDestroyDataStream(false)
++	{
++		mBuf.set(0);
++	}
++	template&lt;class DataStreamType&gt;
++	ibstream_base&lt;DataStreamType&gt;::~ibstream_base()
++	{
++		if (mDestroyDataStream &amp;&amp; mSource)
++			delete mSource;
++	#ifdef _OUTPUT_DEBUG_STUFF
++		std::cout &lt;&lt; &quot;ibstream: &quot; &lt;&lt; uint32(mTotalBits) &lt;&lt; &quot; bits read.\n&quot;;
++		std::cout &lt;&lt; &quot;ibstream: &quot; &lt;&lt; uint32(mTotalBytes) &lt;&lt; &quot; bytes read.\n&quot;;
++	#endif
++	}
++	template&lt;class DataStreamType&gt;
++	void ibstream_base&lt;DataStreamType&gt;::setDataSource( DataStreamType* s, const bool takeOwnership )
++	{
++		if (mDestroyDataStream &amp;&amp; mSource)
++			delete mSource;
++		mDestroyDataStream = takeOwnership;
++		mSource = s;
++	}
++	template&lt;class DataStreamType&gt;
++	bool ibstream_base&lt;DataStreamType&gt;::_inByte( uint8&amp; c )
++	{
++		if (!mSource)
++			return false;
++		if (!mSource-&gt;hasMoreData())
++			return false;
++		if (!mSource-&gt;read( c ))
++			return false;
++		++mTotalBytes;
++		return true;
++	}
++	template&lt;class DataStreamType&gt;
++	uint8 ibstream_base&lt;DataStreamType&gt;::read( uint8&amp; bits, uint8 numBits )
++	{
++		if (!mSource)
++			return 0;
++		if (numBits &gt; 8)
++			numBits = 8;
++
++		std::bitset&lt;8&gt; d(0);
++		//for (uint8 i = numBits-1; i != 0xff; i--) 
++		for (uint8 i = 0; i &lt; numBits; ++i) 
++		{
++			bool b;
++			read(b);
++			d[i] = b;
++	#ifdef _OUTPUT_DEBUG_STUFF
++			std::cout &lt;&lt; &quot;reading bit &quot; &lt;&lt; uint32(i) &lt;&lt; &quot; = &quot; &lt;&lt; d[i] &lt;&lt; &quot;\n&quot;;
++	#endif
++			mTotalBits++;
++		}
++
++		bits = uint8(d.to_ulong() &amp; 0xFF);
++
++		return numBits;
++	}
++	template&lt;class DataStreamType&gt;
++	uint8 ibstream_base&lt;DataStreamType&gt;::read( bool&amp; bit )
++	{
++		if (mBitPos == 8)
++		{
++			uint8 c;
++			_inByte( c );
++			mBuf = c;
++			mBitPos = 0;
++		}
++
++		bit = mBuf[mBitPos++];
++		return 1;
++	}
++	template&lt;class DataStreamType&gt;
++	uint8 ibstream_base&lt;DataStreamType&gt;::read( void* pd, size_t numBits )
++	{
++		uint8* pc = static_cast&lt;uint8*&gt;(pd);
++		uint8* pe = pc+(numBits &gt;&gt; 3);
++		if (pc == pe)
++		{
++			read( *pc, uint8(numBits) );
++			return uint8(numBits);
++		}
++
++		size_t toread = numBits;
++		while (pc != pe)
++			toread -= read( *pc++, (toread &gt; 8) ? 8 : uint8(toread) );
++
++		if (toread &gt; 0)
++			read( *pc, uint8(toread) );
++
++		return uint8(numBits);
++	}
++	template&lt;class DataStreamType&gt;
++	uint8 ibstream_base&lt;DataStreamType&gt;::read( float&amp; d, size_t numBits )
++	{
++		return read( &amp;d, numBits );
++	}
++
++	//--------------------------------------------------------------------------
++	// Class: obstream
++	//--------------------------------------------------------------------------
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator = (const obstream_base&lt;DataStreamType&gt;&amp; other)
++	{
++		mStream			= other.mStream;
++		mBitPos			= other.mBitPos;
++		mBuf				= other.mBuf;
++		mTotalBits		= other.mTotalBits;
++		mTotalBytes		= other.mTotalBytes;
++		mDestroyDataStream = other.mDestroyDataStream;
++		mNumBitsForNextStreamOperations = other.mNumBitsForNextStreamOperations;
++		return *this;
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;::obstream_base(const obstream_base&lt;DataStreamType&gt;&amp; other)
++	{
++		mStream			= other.mStream;
++		mBitPos			= other.mBitPos;
++		mBuf				= other.mBuf;
++		mTotalBits		= other.mTotalBits;
++		mTotalBytes		= other.mTotalBytes;
++		mDestroyDataStream = other.mDestroyDataStream;
++		mNumBitsForNextStreamOperations = other.mNumBitsForNextStreamOperations;
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const uint8 rhs)
++	{
++		write( rhs, mNumBitsForNextStreamOperations );
++		return *this;
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const uint16 rhs)
++	{
++		write( &amp;rhs, mNumBitsForNextStreamOperations );
++		return *this;
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const uint32 rhs)
++	{
++		write( &amp;rhs, mNumBitsForNextStreamOperations );
++		return *this;
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const int8 rhs)
++	{
++		write( &amp;rhs, mNumBitsForNextStreamOperations );
++		return *this;
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const int16 rhs)
++	{
++		write( &amp;rhs, mNumBitsForNextStreamOperations );
++		return *this;
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const int32 rhs)
++	{
++		write( &amp;rhs, mNumBitsForNextStreamOperations );
++		return *this;
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const float rhs)
++	{
++		write( &amp;rhs, mNumBitsForNextStreamOperations );
++		return *this;
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;&amp; obstream_base&lt;DataStreamType&gt;::operator &lt;&lt; (const double rhs)
++	{
++		write( &amp;rhs, mNumBitsForNextStreamOperations );
++		return *this;
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;::obstream_base( DataStreamType* pds = 0 ) : mStream(pds), mBitPos(0), mTotalBits(0), mTotalBytes(0), mNumBitsForNextStreamOperations(8), mDestroyDataStream(false)
++	{
++		mBuf.set(0);
++	}
++	template&lt;class DataStreamType&gt;
++	obstream_base&lt;DataStreamType&gt;::~obstream_base()
++	{
++		if (mStream &amp;&amp; mDestroyDataStream)
++			delete mStream;
++	#ifdef _OUTPUT_DEBUG_STUFF
++		std::cout &lt;&lt; &quot;obstream: &quot; &lt;&lt; uint32(mTotalBits) &lt;&lt; &quot; bits written.\n&quot;;
++		std::cout &lt;&lt; &quot;obstream: &quot; &lt;&lt; uint32(mTotalBytes) &lt;&lt; &quot; bytes written.\n&quot;;
++	#endif
++	}
++	template&lt;class DataStreamType&gt;
++	void obstream_base&lt;DataStreamType&gt;::setNumBits(const uint8 numBitsForNextStreamOperations)
++	{
++		mNumBitsForNextStreamOperations = numBitsForNextStreamOperations;
++	}
++	template&lt;class DataStreamType&gt;
++	void obstream_base&lt;DataStreamType&gt;::setDataSink( DataStreamType* s, const bool takeOwnership )
++	{
++		if (mStream &amp;&amp; mDestroyDataStream)
++			delete mStream;
++		mDestroyDataStream = takeOwnership;
++		mStream = s;
++	}
++	template&lt;class DataStreamType&gt;
++	void obstream_base&lt;DataStreamType&gt;::_outByte( uint8 c )
++	{
++		if (!mStream)
++			return;
++		//*mStream &lt;&lt; c;
++		mStream-&gt;write( c );
++		++mTotalBytes;
++	}
++	template&lt;class DataStreamType&gt;
++	uint8 obstream_base&lt;DataStreamType&gt;::write( const uint8 bits, uint8 numBits )
++	{
++		if (!mStream)
++			return 0;
++		if (numBits &gt; 8)
++			numBits = 8;
++
++		std::bitset&lt;8&gt; d(bits);
++
++		//for (int8 i = numBits-1; i&gt;=0; --i)
++		for (int8 i = 0; i&lt;numBits; ++i)
++		{
++	#ifdef _OUTPUT_DEBUG_STUFF
++			std::cout &lt;&lt; &quot;writing bit &quot; &lt;&lt; uint32(i) &lt;&lt; &quot; = &quot; &lt;&lt; d[i] &lt;&lt; &quot;\n&quot;;
++	#endif
++			write( d[i] );
++		}
++
++		return numBits;
++	}
++	template&lt;class DataStreamType&gt;
++	void obstream_base&lt;DataStreamType&gt;::write( const bool bit )
++	{
++		mBuf[ mBitPos ++ ] = bit;
++		if (mBitPos &gt;= 8)
++		{
++			uint8 c = uint8( mBuf.to_ulong() &amp; 0xFF );
++			_outByte( c );
++			mBitPos -= 8;
++		}
++		++mTotalBits;
++	}
++	template&lt;class DataStreamType&gt;
++	void obstream_base&lt;DataStreamType&gt;::flush()
++	{
++		if (mBitPos &gt; 0)
++		{
++			_outByte( uint8(mBuf.to_ulong() &amp; 0xFF) );
++			mBitPos = 0;
++		}
++	}
++	template&lt;class DataStreamType&gt;
++	void obstream_base&lt;DataStreamType&gt;::write( const void* pd, size_t numBits )
++	{
++		const uint8* pc = static_cast&lt;const uint8*&gt;(pd);
++		const uint8* pe = pc+(numBits &gt;&gt; 3);
++		if (pc == pe)
++		{
++			write( *pc, uint8(numBits) );
++			return;
++		}
++
++		size_t towrite = numBits;
++		while (pc != pe)
++			towrite -= write( *pc++, (towrite &gt; 8) ? 8 : uint8(towrite) );
++
++		if (towrite &gt; 0)
++			write( *pc, uint8(towrite) );
++	}
++	template&lt;class DataStreamType&gt;
++	void obstream_base&lt;DataStreamType&gt;::write( const uint16 d, uint8 numBits )
++	{
++		write( &amp;d, numBits );
++	}
++	template&lt;class DataStreamType&gt;
++	void obstream_base&lt;DataStreamType&gt;::write( const uint32 d, uint8 numBits )
++	{
++		write( &amp;d, numBits );
++	}
++	template&lt;class DataStreamType&gt;
++	void obstream_base&lt;DataStreamType&gt;::write( const float d, uint8 numBits )
++	{
++		write( &amp;d, numBits );
++	}
++	template&lt;class DataStreamType&gt;
++	size_t obstream_base&lt;DataStreamType&gt;::numBits() const
++	{
++		return mTotalBits;
++	}
++
++} // namespace net
++
++#endif
+\ No newline at end of file
+
+Added: trunk/yake/yake/net/netBitstreamAdapters.h
+===================================================================
+--- trunk/yake/yake/net/netBitstreamAdapters.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/netBitstreamAdapters.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,83 @@
++#ifndef NET_BITSTREAMADAPTERS_H
++#define NET_BITSTREAMADAPTERS_H
++
++namespace net {
++
++	template&lt;class ctr_type&gt;
++	struct bitstream_sink_stlcontainer
++	{
++	private:
++		bitstream_sink_stlcontainer();
++	public:
++		typedef ctr_type container_type;
++		bitstream_sink_stlcontainer(ctr_type&amp; ctr) : ctr_(ctr) {}
++		void write(const net::uint8 c)
++		{
++			ctr_.push_back( c );
++		}
++		ctr_type&amp;	ctr_;
++	};
++	typedef bitstream_sink_stlcontainer&lt;std::vector&lt;net::uint8&gt; &gt; bitstream_stlvector_sink;
++	typedef net::obstream_base&lt;bitstream_stlvector_sink&gt; obitstream_vector;
++
++	template&lt;class ctr_type&gt;
++	struct bitstream_source_stlcontainer
++	{
++	private:
++		bitstream_source_stlcontainer();
++	public:
++		typedef ctr_type container_type;
++		bitstream_source_stlcontainer(const container_type&amp; ctr) : ctr_(ctr), currPos(ctr.begin()), itEnd(ctr.end())
++		{}
++		bool hasMoreData() const
++		{
++			return currPos != itEnd;
++		}
++		bool read(net::uint8&amp; c) const
++		{
++			if (!hasMoreData())
++				return false;
++			c = *currPos++;
++			return true;
++		}
++	private:
++		mutable typename container_type::const_iterator currPos;
++		mutable typename container_type::const_iterator itEnd;
++		const container_type&amp;	ctr_;
++	};
++	typedef bitstream_source_stlcontainer&lt;std::vector&lt;net::uint8&gt; &gt; bitstream_stlvector_source;
++	typedef net::ibstream_base&lt;bitstream_stlvector_source&gt; ibitstream_vector;
++
++	struct bitstream_source_voidptr
++	{
++	private:
++		bitstream_source_voidptr();
++	public:
++		bitstream_source_voidptr(const void* data, const size_t len) : 
++			data_(0), curr_(0), end_(0)
++		{
++			data_ = reinterpret_cast&lt;const uint8*&gt;(data);
++			end_ = data_ + len;
++			curr_ = const_cast&lt;uint8*&gt;(data_);
++		}
++		bool hasMoreData() const
++		{
++			return curr_ != end_;
++		}
++		bool read(net::uint8&amp; c) const
++		{
++			if (!hasMoreData())
++				return false;
++			c = *curr_++;
++			return true;
++		}
++	private:
++		mutable size_t currPos;
++		const uint8*			data_;
++		const uint8*			end_;
++		mutable uint8*			curr_;
++	};
++	typedef net::ibstream_base&lt;bitstream_source_voidptr&gt; ibitstream_voidptr;
++} // namespace net
++
++#endif
+
+Added: trunk/yake/yake/net/netCommon.h
+===================================================================
+--- trunk/yake/yake/net/netCommon.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/netCommon.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,92 @@
++#ifndef NET_COMMON_H
++#define NET_COMMON_H
++
++namespace net {
++
++	typedef uint8 ChannelId;
++	typedef uint32 PeerId;
++
++	enum Reliability
++	{
++		R_RELIABLE = 0,
++		R_UNRELIABLE
++	};
++	enum Ordering
++	{
++		O_ORDERED = 0,
++		O_UNORDERED
++	};
++
++	struct NET_API SendOptions
++	{
++		SendOptions();
++		SendOptions(const SendOptions&amp;);
++		~SendOptions();
++		SendOptions&amp; operator=(const SendOptions&amp;);
++
++		SendOptions&amp; setPeerId(const PeerId);
++		SendOptions&amp; setReliability(const Reliability);
++		SendOptions&amp; setOrdering(const Ordering);
++		SendOptions&amp; setChannel(const ChannelId);
++
++		PeerId			peerId;
++		Reliability		reliability;
++		Ordering		ordering;
++		ChannelId		channelId;
++	};
++
++	struct NET_API Address
++	{
++		Address(const uint16 port);
++		Address(const std::string&amp; ip = std::string(&quot;127.0.0.1&quot;), const uint16 port = 0);
++		Address(const Address&amp;);
++		~Address();
++		Address&amp; operator=(const Address&amp;);
++
++		void setIp(const std::string&amp; ip);
++		const std::string&amp; ip() const;
++		void setPort(const uint16 port);
++		const uint16 port() const;
++	private:
++		std::string		ip_;
++		uint16			port_;
++	};
++
++	NET_API std::string ipToString(const uint32);
++
++	namespace native {
++		NET_API void sleep(const uint32 ms);
++	} // namespace native
++
++	struct NET_API Exception : public std::exception
++	{
++		Exception(const std::string&amp; msg, const char* file = 0, const int line = 0);
++		virtual const char* what() const;
++	private:
++		std::string	msg_;
++	};
++
++	namespace detail {
++		class NativeTimer;
++	}
++	class NET_API Timer
++	{
++	public:
++		Timer();
++		~Timer();
++		void start();
++		void stop();
++		void pause();
++		void resume();
++		void reset();
++		double getTime() const;
++	private:
++		detail::NativeTimer*	timer_;
++		double					start_;
++		mutable double			time_;
++		bool					paused_;
++	};
++
++} // namespace net
++
++#endif
+\ No newline at end of file
+
+Added: trunk/yake/yake/net/netEvent.h
+===================================================================
+--- trunk/yake/yake/net/netEvent.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/netEvent.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,72 @@
++#ifndef NET_EVENT_H
++#define NET_EVENT_H
++
++#include &quot;netBitstream.h&quot;
++#include &quot;netBitstreamAdapters.h&quot;
++
++namespace net {
++
++	typedef obitstream_vector obitstream;
++	typedef ibitstream_vector ibitstream;
++
++	typedef bitstream_stlvector_sink::container_type bitstream_data;
++	typedef bitstream_stlvector_sink bitstream_sink;
++	typedef bitstream_stlvector_source bitstream_source;
++
++	class NET_API NetEvent
++	{
++	public:
++		virtual ~NetEvent() {}
++
++		typedef uint8 id_type;
++		static const id_type EVTID_NONE;
++		enum Direction {
++			DIR_ANY,
++			DIR_CLIENT_TO_SERVER,
++			DIR_SERVER_TO_CLIENT
++		};
++	private:
++		NetEvent();
++		NetEvent(const NetEvent&amp;);
++		NetEvent&amp; operator=(const NetEvent&amp;);
++	protected:
++		NetEvent(const id_type);
++	public:
++
++		id_type id() const;
++		void setId(const id_type id); //@really needed?
++
++		virtual bool pack(obitstream&amp;) const = 0;
++		virtual bool unpack(ibitstream&amp;) = 0;
++	private:
++		id_type		id_;
++	};
++
++	class NET_API INetEventConnection
++	{
++	public:
++		virtual ~INetEventConnection();
++
++		virtual void setPacketConnection(IPacketConnection*,const NetEvent::Direction) = 0;
++		virtual void setMaxEventErrors(const size_t) = 0;
++
++		typedef boost::function&lt;NetEvent*(const NetEvent::id_type)&gt; CreateEventFn;
++		typedef boost::function&lt;void(NetEvent*)&gt; DestroyEventFn;
++
++		virtual void registerEvent(const NetEvent::id_type, const NetEvent::Direction,
++									const CreateEventFn&amp; fnCreate, const DestroyEventFn&amp; fnDestroy) = 0;
++		virtual void sendEvent(const NetEvent&amp;, const SendOptions&amp; opt = SendOptions()) = 0;
++		virtual void sendEvent(const PeerId, const NetEvent&amp;, const SendOptions&amp; opt = SendOptions()) = 0;
++		virtual void setAllowedIncomingEventIds(const std::vector&lt;NetEvent::id_type&gt;&amp;) = 0;
++
++		typedef boost::function&lt;void(const PeerId, const NetEvent&amp;, const ChannelId)&gt; EvtProcessEventFn;
++		typedef boost::function&lt;void(void)&gt; EvtDisconnectFn;
++
++		virtual void setProcessEventCallback(const EvtProcessEventFn&amp;) = 0;
++		virtual void setDisconnectCallback(const EvtDisconnectFn&amp;) = 0;
++	};
++	NET_API INetEventConnection* createEventConnection();
++
++} // namespace net
++
++#endif
+\ No newline at end of file
+
+Added: trunk/yake/yake/net/netPacket.h
+===================================================================
+--- trunk/yake/yake/net/netPacket.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/netPacket.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,66 @@
++#ifndef NET_PACKET_H
++#define NET_PACKET_H
++
++namespace net {
++
++	typedef std::vector&lt;uint8&gt; byte_chunk;
++
++	class NET_API IPacketSender
++	{
++	public:
++		virtual ~IPacketSender() {}
++		virtual void send(const void*, const size_t, const SendOptions&amp; opt = SendOptions()) = 0;
++		virtual void send(const PeerId, const void*, const size_t, const SendOptions&amp; opt = SendOptions()) = 0;
++	};
++
++	class NET_API IPacketReceiver
++	{
++	public:
++		virtual ~IPacketReceiver() {}
++
++		typedef boost::function&lt;void(const PeerId, const void*, const size_t, const ChannelId)&gt; OnPacketReceivedFn;
++		virtual void addPacketReceivedCallback( const OnPacketReceivedFn&amp;) = 0;
++	};
++
++	class NET_API IPacketConnection : public IPacketSender, public IPacketReceiver
++	{
++	public:
++		typedef boost::function&lt;void(void)&gt; OnStartedFn;
++		typedef boost::function&lt;void(void)&gt; OnTimeOutFn;
++		virtual void addStartedCallback(const OnStartedFn&amp;) = 0;
++	};
++
++	class NET_API IServerPacketConnection : public IPacketConnection
++	{
++	public:
++
++		/*** May throw exception. */
++		virtual void start( const Address&amp;, const size_t ) = 0;
++		virtual void stop() = 0;
++
++		virtual void setAllowedClientIps(const std::vector&lt;std::string&gt;&amp;) = 0;
++		//virtual void setAllowedClientIps(const std::vector&lt;uint32&gt;&amp;) = 0;
++
++		virtual void disconnect( const PeerId ) = 0;
++
++		typedef boost::function&lt;void(const PeerId, const Address&amp;)&gt; OnClientConnectedFn;
++		typedef boost::function&lt;void(const PeerId)&gt; OnClientDisconnectedFn;
++
++		/** Not thread-safe! Call only before calling start()! */
++		virtual void addClientConnectedCallback(const OnClientConnectedFn&amp;) = 0;
++		virtual void addClientDisconnectedCallback(const OnClientDisconnectedFn&amp;) = 0;
++	};
++	class NET_API IClientPacketConnection : public IPacketConnection
++	{
++	public:
++		virtual void connect( const Address&amp; ) = 0;
++		virtual void disconnect() = 0;
++
++		virtual void addTimeOutCallback(const OnTimeOutFn&amp;) = 0;
++	};
++	NET_API IServerPacketConnection* createServerPacketConnection();
++	NET_API IClientPacketConnection* createClientPacketConnection();
++
++} // namespace net
++
++#endif
+\ No newline at end of file
+
+Added: trunk/yake/yake/net/netPrerequisites.h
+===================================================================
+--- trunk/yake/yake/net/netPrerequisites.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/netPrerequisites.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,36 @@
++#ifndef NET_PREREQUISITES_H
++#define NET_PREREQUISITES_H
++
++#define NET_DLL
++
++#ifdef YAKE_NET_EXPORTS
++#	ifdef NET_DLL
++#		define NET_API __declspec(dllexport)
++#	else
++#		define NET_API
++#	endif
++#else
++#	ifdef NET_DLL
++#		define NET_API __declspec(dllimport)
++#	else
++#		define NET_API
++#	endif
++#	if defined( _DEBUG )
++#		pragma comment(lib,&quot;net_d.lib&quot;)
++#	else
++#		pragma comment(lib,&quot;net.lib&quot;)
++#	endif
++#endif
++
++#include &lt;cassert&gt;
++#include &lt;string&gt;
++#include &lt;vector&gt;
++#include &lt;deque&gt;
++#include &lt;boost/function.hpp&gt;
++#include &quot;netTypes.h&quot;
++
++#define NET_ASSERT(X) \
++	assert(X)
++
++
++#endif
+\ No newline at end of file
+
+Added: trunk/yake/yake/net/netTypes.h
+===================================================================
+--- trunk/yake/yake/net/netTypes.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/netTypes.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,15 @@
++#ifndef NET_TYPES_H
++#define NET_TYPES_H
++
++namespace net {
++
++	typedef unsigned char uint8;
++	typedef unsigned short uint16;
++	typedef unsigned int uint32;
++	typedef signed char int8;
++	typedef signed short int16;
++	typedef signed int int32;
++
++} // namespace net
++
++#endif
+\ No newline at end of file
+
+Added: trunk/yake/yake/net/pch.h
+===================================================================
+--- trunk/yake/yake/net/pch.h	2006-01-15 21:36:43 UTC (rev 1187)
++++ trunk/yake/yake/net/pch.h	2006-01-15 21:38:07 UTC (rev 1188)
+@@ -0,0 +1,6 @@
++#ifndef YAKE_NET_PCH_H
++#define YAKE_NET_PCH_H
++#pragma once
++
++
++#endif
+\ No newline at end of file
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000257.html">[Yake-svn] r1187 - trunk/yake/scripts/msvc8
+</A></li>
+	<LI>Next message: <A HREF="000259.html">[Yake-svn] r1189 - in trunk/yake/src/yake/samples: . net net/roclient net/roserver
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#258">[ date ]</a>
+              <a href="thread.html#258">[ thread ]</a>
+              <a href="subject.html#258">[ subject ]</a>
+              <a href="author.html#258">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

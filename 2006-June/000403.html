@@ -1,0 +1,856 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1335 - in trunk/yake/yake: loader model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1335%20-%20in%20trunk/yake/yake%3A%20loader%20model&In-Reply-To=%3C200606122127.k5CLRUjG023560%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000402.html">
+   <LINK REL="Next"  HREF="000404.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1335 - in trunk/yake/yake: loader model</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1335%20-%20in%20trunk/yake/yake%3A%20loader%20model&In-Reply-To=%3C200606122127.k5CLRUjG023560%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1335 - in trunk/yake/yake: loader model">codeandroid at berlios.de
+       </A><BR>
+    <I>Mon Jun 12 23:27:30 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000402.html">[Yake-svn] r1334 - in trunk/yake/src/yake: loader model
+</A></li>
+        <LI>Next message: <A HREF="000404.html">[Yake-svn] r1336 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#403">[ date ]</a>
+              <a href="thread.html#403">[ thread ]</a>
+              <a href="subject.html#403">[ subject ]</a>
+              <a href="author.html#403">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-12 23:27:29 +0200 (Mon, 12 Jun 2006)
+New Revision: 1335
+
+Added:
+   trunk/yake/yake/loader/yakeDotLinkLoader.h
+   trunk/yake/yake/loader/yakeXODEParser.h
+   trunk/yake/yake/model/model_link_dotlink_loader.h
+   trunk/yake/yake/model/model_physical_xode_loader.h
+Modified:
+   trunk/yake/yake/loader/loader.h
+   trunk/yake/yake/model/model.h
+   trunk/yake/yake/model/model_component.h
+   trunk/yake/yake/model/model_graphical_dotscene_loader.h
+   trunk/yake/yake/model/model_link.h
+Log:
+added physics/XODE and model/dotLink support
+
+Modified: trunk/yake/yake/loader/loader.h
+===================================================================
+--- trunk/yake/yake/loader/loader.h	2006-06-12 21:27:15 UTC (rev 1334)
++++ trunk/yake/yake/loader/loader.h	2006-06-12 21:27:29 UTC (rev 1335)
+@@ -29,5 +29,6 @@
+ 
+ #include &quot;yake/loader/prerequisites.h&quot;
+ #include &quot;yake/loader/yakeDotScene.h&quot;
++#include &quot;yake/loader/yakeXODEParser.h&quot;
+ 
+ #endif
+
+Added: trunk/yake/yake/loader/yakeDotLinkLoader.h
+===================================================================
+--- trunk/yake/yake/loader/yakeDotLinkLoader.h	2006-06-12 21:27:15 UTC (rev 1334)
++++ trunk/yake/yake/loader/yakeDotLinkLoader.h	2006-06-12 21:27:29 UTC (rev 1335)
+@@ -0,0 +1,53 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAPP_DOTLINKLOADER_H
++#define YAPP_DOTLINKLOADER_H
++
++#include &lt;yapp/base/yappPrerequisites.h&gt;
++
++namespace yake {
++namespace model {
++
++	class YAPP_BASE_API DotLinkLoader
++	{
++	public:
++		DotLinkLoader();
++		~DotLinkLoader();
++
++		bool load( const String &amp; rDotLinkFilename, complex::Model &amp; rModel );
++		bool load( const data::dom::INode &amp; rLinksNode, complex::Model &amp; rModel );
++
++		typedef SharedPtr&lt;ModelLink&gt; SharedModelLinkPtr;
++		typedef Deque&lt; SharedModelLinkPtr &gt; SharedModelLinkList;
++	private:
++		void parseLink( const data::dom::INode &amp; rLinkNode );
++		complex::Model*		mpModel;
++	};
++
++}
++}
++#endif
+
+Added: trunk/yake/yake/loader/yakeXODEParser.h
+===================================================================
+--- trunk/yake/yake/loader/yakeXODEParser.h	2006-06-12 21:27:15 UTC (rev 1334)
++++ trunk/yake/yake/loader/yakeXODEParser.h	2006-06-12 21:27:29 UTC (rev 1335)
+@@ -0,0 +1,257 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_DATA_XODEPARSER_H
++#define YAKE_DATA_XODEPARSER_H
++
++#include &lt;yake/loader/prerequisites.h&gt;
++#include &lt;yake/data/yakeData.h&gt;
++#include &lt;yake/physics/yakePhysics.h&gt;
++
++namespace yake {
++namespace data {
++namespace parser {
++namespace xode {
++
++	/** XODEParser base class providing default implementation for DOM parsing.
++	*/
++	class YAKE_LOADER_API XODEParser
++	{
++	public:
++		typedef SharedPtr&lt;dom::INode&gt; NodeSharedPtr;
++		typedef dom::NodeList::const_iterator NodeListIter;
++
++		
++		XODEParser();
++		virtual ~XODEParser() {}
++
++		String getName() const
++		{ 
++			return &quot;yake.data.xode&quot;;
++		}
++
++		virtual Version getVersion() const = 0;
++
++		/** Build physics model from DOM!
++			\param file 
++			\return 
++		*/
++		virtual bool load( const NodeSharedPtr docNode );
++
++		/** Prepare for next run of load/store.
++		*/
++		virtual void reset();
++		
++		/// XODE &quot;transform&quot; node representation
++		struct Transform
++		{
++			math::Vector3		position_;
++			math::Quaternion	rotation_;
++			math::Vector3		scale_;
++			
++			Transform() : scale_( math::Vector3::kUnitScale )
++			{
++			}
++			
++			bool isIdentity() const
++			{
++				bool result = scale_ == math::Vector3::kUnitScale;
++				result &amp;= position_ == math::Vector3::kZero;
++				result &amp;= rotation_ == math::Quaternion::kZero;
++				
++				return result;
++			}
++			
++			const Transform getDerivedTransform( const Transform&amp; parentTransform )
++			{
++				Transform result;
++				
++				const math::Quaternion&amp; rParRot = parentTransform.rotation_;
++				const math::Vector3&amp; rParPos = parentTransform.position_;
++				const math::Vector3&amp; rParScale = parentTransform.scale_;
++				
++				result.position_ = parentTransform.position_ 
++					+ rParRot*( position_*rParScale );
++					
++				result.rotation_ = rParRot*rotation_;
++				
++				result.scale_ = scale_*rParScale;  
++				
++				return result;
++			}
++		};
++
++		// Event-spawning parser makes heavy use of these
++		struct Desc
++		{
++		    String	name_;
++		    String	parentName_;
++		    Transform	transform_;
++		};
++
++		struct BodyDesc : public Desc
++		{
++		};
++
++		struct GeomDesc : public Desc
++		{
++		    SharedPtr&lt;physics::IShape::Desc&gt; shape_;
++		};
++
++		struct MassDesc : public Desc
++		{
++		    SharedPtr&lt;physics::IBody::MassDesc&gt; mass_;
++		};
++
++		struct JointDesc : public Desc
++		{
++		    String body1_;
++		    String body2_;
++
++		    SharedPtr&lt;physics::IJoint::DescBase&gt; joint_;
++		};
++
++		struct MaterialDesc : public Desc
++		{
++		    physics::IMaterial::Desc material_;
++		};
++		
++		typedef SignalX&lt; void( const BodyDesc&amp; ) &gt; BodySignal;
++		typedef SignalX&lt; void( const GeomDesc&amp; ) &gt; GeomSignal;
++		typedef SignalX&lt; void( const MassDesc&amp; ) &gt; MassSignal;
++		typedef SignalX&lt; void( const JointDesc&amp; ) &gt; JointSignal;
++		typedef SignalX&lt; void( const MaterialDesc&amp; ) &gt; MaterialSignal;
++		typedef SignalX&lt; void ( void ) &gt; EventSignal; // special event handler type
++	
++		SignalConnection subscribeToBodySignal( const BodySignal::slot_type&amp; slot )
++		{ return sigBody_.connect(slot); } 
++		SignalConnection subscribeToGeomSignal( const GeomSignal::slot_type&amp; slot )
++		{ return sigGeom_.connect(slot); } 
++		SignalConnection subscribeToMassSignal( const MassSignal::slot_type&amp; slot )
++		{ return sigMass_.connect(slot); } 
++		SignalConnection subscribeToJointSignal( const JointSignal::slot_type&amp; slot )
++		{ return sigJoint_.connect(slot); } 
++		SignalConnection subscribeToMaterialSignal( const MaterialSignal::slot_type&amp; slot )
++		{ return sigMaterial_.connect(slot); } 
++
++		SignalConnection subscribeToParseEndedSignal( const EventSignal::slot_type&amp; slot )
++		{ return sigParseEnded_.connect( slot ); } 
++
++		typedef AssocVector&lt; String, BodyDesc &gt; BodyDescMap;
++		typedef AssocVector&lt; String, GeomDesc &gt; GeomDescMap;
++		typedef AssocVector&lt; String, MassDesc &gt; MassDescMap;
++		typedef AssocVector&lt; String, JointDesc &gt; JointDescMap;
++		typedef AssocVector&lt; String, MaterialDesc &gt; MaterialDescMap;
++
++		const BodyDescMap&amp; getBodyDescriptions() { return bodyDescriptions_; }
++		const GeomDescMap&amp; getGeomDescriptions() { return geomDescriptions_; }
++		const MassDescMap&amp; getMassDescriptions() { return massDescriptions_; }
++		const JointDescMap&amp; getJointDescriptions() { return jointDescriptions_; }
++		const MaterialDescMap&amp; getMaterialDescriptions() { return materialDescriptions_; }
++		
++	protected:
++		BodySignal	sigBody_;
++		GeomSignal	sigGeom_;
++		MassSignal	sigMass_;
++		JointSignal	sigJoint_;
++		MaterialSignal	sigMaterial_;
++		EventSignal	sigParseEnded_;
++	
++		BodyDescMap bodyDescriptions_;
++		GeomDescMap geomDescriptions_;
++		MassDescMap massDescriptions_;
++		JointDescMap jointDescriptions_;
++		MaterialDescMap materialDescriptions_;
++		
++		/// Default implementations for common functions.
++		virtual void readXODE( const NodeSharedPtr pNode );
++		virtual void readWorld( const NodeSharedPtr pWorldNode );
++		virtual void readSpace( const NodeSharedPtr pSpaceNode, const String&amp; parent );
++		virtual void readBody( const NodeSharedPtr pBodyNode, const String&amp; parent );
++		virtual void readGeom( const NodeSharedPtr pGeomNode, const String&amp; parent , 
++			const Transform&amp; rParentTransform = Transform(), bool absoluteTransform = false );
++		virtual void readBox( const NodeSharedPtr pNode, real&amp; sX, real&amp; sY, real&amp; sZ );
++		virtual void readCappedCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length );
++		virtual void readCone( const NodeSharedPtr pNode, real&amp; radius, real&amp; length );
++		virtual void readCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length );
++		virtual void readPlane( const NodeSharedPtr pNode, real&amp; a, real&amp; b, real&amp; c, real&amp; d );
++		virtual void readRay( const NodeSharedPtr pNode, real&amp; length );
++		virtual void readSphere( const NodeSharedPtr pNode, real&amp; radius );
++		virtual void readTrimesh( const NodeSharedPtr pNode, physics::TriangleMeshDesc::VertexVector&amp; rVertices, physics::TriangleMeshDesc::IndexVector&amp; rIndices );
++		virtual void readVertices( const NodeSharedPtr pNode, physics::TriangleMeshDesc::VertexVector&amp; rVertices );
++		virtual void readIndices( const NodeSharedPtr pNode, physics::TriangleMeshDesc::IndexVector&amp; rIndices );
++		
++		virtual void readTransform( const NodeSharedPtr pTransformNode, Transform&amp; rTrans );
++
++		virtual void readVector3( const NodeSharedPtr pVecNode, math::Vector3&amp; rVec );  
++		virtual void readPosition( const NodeSharedPtr pPosNode, math::Vector3&amp; rPos );  
++		virtual void readQuaternion( const NodeSharedPtr pQuatNode, math::Quaternion&amp; rQuat );
++		virtual void readRotation( const NodeSharedPtr pRotNode, math::Quaternion&amp; rRot );
++		virtual void readScale( const NodeSharedPtr pScaleNode, math::Vector3&amp; rScale );  
++		virtual void readAxisAngleRot( const NodeSharedPtr pRotNode, math::Quaternion&amp; rRot );
++		virtual void readMass( const NodeSharedPtr pMassNode, const String&amp; parent , const Transform&amp; rParentTransform ); 
++		virtual void readMassShape( const NodeSharedPtr pMShapeNode, const String&amp; parent, const Transform&amp; rParentTransform ); 
++		virtual void readMassAdjust( const NodeSharedPtr pMAdjustNode, const String&amp; parent ); 
++		virtual void readJoint( const NodeSharedPtr pJointNode, const String&amp; parent , const Transform&amp; rParentTransform = Transform() );
++		
++		virtual physics::IJoint::DescBase* readBall( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readFixed( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readHinge( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readHinge2( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readSlider( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform );
++		virtual physics::IJoint::DescBase* readUniversal( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform );
++		
++		virtual void readAnchor( const NodeSharedPtr pAnchorNode, math::Vector3&amp; rAnchor, const Transform&amp; rJointTransform );
++		virtual void readAxis( const NodeSharedPtr pAxisNode, math::Vector3&amp; rAxis, const Transform&amp; rJointTransform );
++		virtual void readMaterialExt( const NodeSharedPtr pNode, const String&amp; parent  );
++		
++		// override to read xode extensions unknown to original parser
++		virtual void readExtension( const NodeSharedPtr, 
++			const String&amp; parent, 
++			const Transform&amp; parentTransformIfAny );
++
++	private:
++		NodeSharedPtr		mDocNode;
++	};
++	
++	class YAKE_LOADER_API XODEParserV1 : public XODEParser
++	{
++	public:
++		virtual ~XODEParserV1() {}
++		
++		virtual Version getVersion() const
++		{ 
++			return Version( 0, 5, 2 );
++		}
++	};
++
++} // xode
++} // parser
++} // data
++} // yake
++
++#endif
++
+
+Modified: trunk/yake/yake/model/model.h
+===================================================================
+--- trunk/yake/yake/model/model.h	2006-06-12 21:27:15 UTC (rev 1334)
++++ trunk/yake/yake/model/model.h	2006-06-12 21:27:29 UTC (rev 1335)
+@@ -42,13 +42,24 @@
+ namespace yake {
+ namespace model {
+ 	///@todo move out!!!
+-	struct CentralController
++	struct CentralControllerBase
+ 	{
++		virtual ~CentralControllerBase() {}
++
+ 		// parameters: frame (int32), timeElapsed/dt (real)
+ 		typedef Signal2&lt;void(const uint32, const real)&gt; PhysicsUpdateSignal;
+ 		typedef Signal2&lt;void(const uint32, const real)&gt; GraphicsUpdateSignal;
+-		SignalConnection subscribeToPhysicsUpdate(const PhysicsUpdateSignal::slot_type&amp;); 
+-		SignalConnection subscribeToGraphicsUpdate(const PhysicsUpdateSignal::slot_type&amp;);
++		SignalConnection subscribeToPhysicsUpdate(const PhysicsUpdateSignal::slot_type&amp; slot)
++		{ return physicsUpdateSignal_.connect(slot); }
++		SignalConnection subscribeToGraphicsUpdate(const GraphicsUpdateSignal::slot_type&amp; slot)
++		{ return graphicsUpdateSignal_.connect(slot); }
++		void triggerPhysicsUpdateSignal(const uint32 si, const real dt)
++		{ physicsUpdateSignal_(si,dt); }
++		void triggerGraphicsUpdateSignal(const uint32 si, const real dt)
++		{ graphicsUpdateSignal_(si,dt); }
++	protected:
++		PhysicsUpdateSignal		physicsUpdateSignal_;
++		GraphicsUpdateSignal	graphicsUpdateSignal_;
+ 	};
+ 
+ 	template&lt;typename T&gt;
+@@ -91,7 +102,7 @@
+ 				only ever a single link (instead of having one for each
+ 				pair of source/target objects).
+ 		*/
+-		ModelMovableLink* createLink(Movable*,Movable*,const String&amp; linkType = &quot;yake.movable&quot;);
++		ModelMovableLink* createLink(Movable*,Movable*,const String&amp; linkType = _T(&quot;yake.movable&quot;));
+ 		ModelMovableLink* createDirectLink(Movable*,Movable*); // uses &quot;yake.movable&quot;
+ 		ModelMovableLink* createWorldSpaceLink(Movable*,Movable*); // uses &quot;yake.movable_world&quot;
+ 
+@@ -115,10 +126,12 @@
+ 		ModelManager();
+ 		~ModelManager();
+ 
+-		Model* createModel(const String&amp;);
++		Model* createModel(const String&amp; modelName, const String&amp; def);
++		void clear();
+ 
+ 		void setCreationContext_GraphicalWorld(graphics::IWorld*);
+ 		void setCreationContext_PhysicalWorld(physics::IWorld*);
++		void setCreationContext_CentralController(CentralControllerBase*);
+ 	private:
+ 		ModelManager(const ModelManager&amp;);
+ 		ModelManager&amp; operator=(const ModelManager&amp;);
+@@ -126,7 +139,7 @@
+ 		ComponentCreatorManager		creatorMgr_;
+ 		ComponentCreationContext	ctx_;
+ 
+-		typedef Vector&lt;SharedPtr&lt;Model&gt; &gt; ModelList;
++		typedef AssocVector&lt;String,SharedPtr&lt;Model&gt; &gt; ModelList;
+ 		ModelList					models_;
+ 	};
+ 	/**@todo Move into private impl file. */
+
+Modified: trunk/yake/yake/model/model_component.h
+===================================================================
+--- trunk/yake/yake/model/model_component.h	2006-06-12 21:27:15 UTC (rev 1334)
++++ trunk/yake/yake/model/model_component.h	2006-06-12 21:27:29 UTC (rev 1335)
+@@ -36,9 +36,15 @@
+ 	{
+ 		ModelComponent() {}
+ 		virtual ~ModelComponent() {}
++		//Model* getOwner() const;
+ 	private:
++		//ModelComponent();
+ 		ModelComponent(const ModelComponent&amp;);
+ 		ModelComponent&amp; operator=(const ModelComponent&amp;);
++	protected:
++		//ModelComponent(Model&amp; owner) : owner_(&amp;owner) {}
++	private:
++		//Model*	owner_;
+ 	};
+ 	typedef SharedPtr&lt;ModelComponent&gt; ModelComponentSharedPtr;
+ 	typedef std::deque&lt;ModelComponentSharedPtr&gt; ModelComponentList;
+@@ -72,6 +78,7 @@
+ 		Physical&amp; operator=(const Physical&amp;);
+ 	public:
+ 		//@todo register factory?
++		//Physical(Model&amp; owner);
+ 		Physical();
+ 		virtual ~Physical();
+ 
+@@ -124,6 +131,7 @@
+ 	};
+ 	struct YAKE_MODEL_API Graphical : public ModelComponent
+ 	{
++		//Graphical(Model&amp; owner);
+ 		Graphical();
+ 		virtual ~Graphical();
+ 		//@todo register factory?
+@@ -146,6 +154,7 @@
+ 		void translate(const Vector3&amp;);
+ 		//void rotate(const Quaternion&amp;);
+ 	private:
++		//Graphical();
+ 		Graphical(const Graphical&amp;);
+ 		Graphical&amp; operator=(const Graphical&amp;);
+ 	private:
+@@ -181,12 +190,17 @@
+ 			return ((it != ctr.end()) ? it-&gt;second.p_ : 0);
+ 		}
+ 	};
+-	//@todo move into private header
++
++	//@todo move into private header:
++
++	struct CentralControllerBase;
+ 	struct ComponentCreationContext
+ 	{
+-		graphics::IWorld*	gworld_;
+-		physics::IWorld*	pworld_;
+-		ComponentCreationContext() : gworld_(0), pworld_(0)
++		Model*					model_;
++		graphics::IWorld*		gworld_;
++		physics::IWorld*		pworld_;
++		CentralControllerBase*	centralController_;
++		ComponentCreationContext() : model_(0), gworld_(0), pworld_(0), centralController_(0)
+ 		{}
+ 	};
+ 	struct YAKE_MODEL_API ComponentCreator
+@@ -194,20 +208,32 @@
+ 		YAKE_DECLARE_REGISTRY_0(ComponentCreator, String);
+ 		virtual ~ComponentCreator() {}
+ 
+-		virtual ModelComponent* create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params) = 0;
++		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params) = 0;
+ 	};
+ 	struct GraphicalFromDotSceneCreator : public ComponentCreator
+ 	{
+ 		YAKE_DECLARE_CONCRETE(GraphicalFromDotSceneCreator,&quot;graphics/dotScene&quot;);
+ 
+-		virtual ModelComponent* create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
+ 	};
++	struct PhysicalFromXODECreator : public ComponentCreator
++	{
++		YAKE_DECLARE_CONCRETE(PhysicalFromXODECreator,&quot;physics/dotXODE&quot;);
++
++		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++	};
++	struct LinkFromDotLinkCreator : public ComponentCreator
++	{
++		YAKE_DECLARE_CONCRETE(LinkFromDotLinkCreator,&quot;model/dotLink&quot;);
++
++		virtual void create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++	};
+ 	struct YAKE_MODEL_API ComponentCreatorManager
+ 	{
+ 		ComponentCreatorManager();
+ 		~ComponentCreatorManager();
+ 
+-		ModelComponent* create(const String&amp; type, const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
++		void create(const String&amp; type, const ComponentCreationContext&amp; ctx, const StringMap&amp; params);
+ 	private:
+ 		ComponentCreatorManager(const ComponentCreatorManager&amp;);
+ 		ComponentCreatorManager&amp; operator=(const ComponentCreatorManager);
+
+Modified: trunk/yake/yake/model/model_graphical_dotscene_loader.h
+===================================================================
+--- trunk/yake/yake/model/model_graphical_dotscene_loader.h	2006-06-12 21:27:15 UTC (rev 1334)
++++ trunk/yake/yake/model/model_graphical_dotscene_loader.h	2006-06-12 21:27:29 UTC (rev 1335)
+@@ -25,8 +25,8 @@
+    ------------------------------------------------------------------------------------
+ */
+ 
+-#ifndef YAPP_MODEL_GRAPHICAL_DOTSCENE_LOADER_H
+-#define YAPP_MODEL_GRAPHICAL_DOTSCENE_LOADER_H
++#ifndef YAKE_MODEL_GRAPHICAL_DOTSCENE_LOADER_H
++#define YAKE_MODEL_GRAPHICAL_DOTSCENE_LOADER_H
+ 
+ #include &lt;yake/model/prerequisites.h&gt;
+ #include &lt;yake/graphics/yakeGraphicsSystem.h&gt;
+
+Modified: trunk/yake/yake/model/model_link.h
+===================================================================
+--- trunk/yake/yake/model/model_link.h	2006-06-12 21:27:15 UTC (rev 1334)
++++ trunk/yake/yake/model/model_link.h	2006-06-12 21:27:29 UTC (rev 1335)
+@@ -59,8 +59,14 @@
+ 		virtual ~Updatable() {}
+ 		virtual void update(const Arg0Type) = 0;
+ 	};
+-	struct YAKE_MODEL_API ModelMovableLink : public ModelLink, public Updatable&lt;real&gt;
++	template&lt;typename Arg0Type,typename Arg1Type&gt;
++	struct Updatable2
+ 	{
++		virtual ~Updatable2() {}
++		virtual void update(const Arg0Type, const Arg1Type) = 0;
++	};
++	struct YAKE_MODEL_API ModelMovableLink : public ModelLink, public Updatable2&lt;uint32,real&gt;
++	{
+ 	public:
+ 		typedef Signal1&lt; void(const Vector3&amp;) &gt; PositionSignal;
+ 		typedef Signal1&lt; void(const Quaternion&amp;) &gt; OrientationSignal;
+@@ -70,6 +76,8 @@
+ 		SignalConnection subscribeToPositionChanged( Movable* pMovable );
+ 		SignalConnection subscribeToOrientationChanged( Movable* pMovable );
+ 
++		void setSource(Movable* );
++		Movable* getSource() const;
+ 	protected:
+ 		ModelMovableLink();
+ 	protected:
+@@ -78,6 +86,8 @@
+ 
+ 		Vector3				mLastPosition;
+ 		Quaternion			mLastOrientation;
++
++		Movable*			mSource;
+ 	};
+ 	/** A link controller designed to forward position and/or orientation to
+ 		to other clients using signals. Factory item id is &quot;yake.movable&quot;.
+@@ -89,7 +99,7 @@
+ 		YAKE_DECLARE_CONCRETE( ModelMovableDirectLink, &quot;yake.movable&quot; );
+ 
+ 		ModelMovableDirectLink();
+-		virtual void update( const real timeElapsed );
++		virtual void update( const uint32, const real timeElapsed );
+ 	};
+ 	/** A link controller designed to forward absolute (world space) position and/or orientation to
+ 		to other clients using signals. Factory item id is &quot;yake.movable&quot;.
+@@ -101,7 +111,7 @@
+ 		YAKE_DECLARE_CONCRETE( ModelMovableWorldLink, &quot;yake.movable_world&quot; ); // world coordinate system
+ 
+ 		ModelMovableWorldLink();
+-		virtual void update( const real timeElapsed );
++		virtual void update( const uint32, const real timeElapsed );
+ 	};
+ 	struct ModelMovableLink_decoupled : public ModelMovableLink
+ 	{
+@@ -109,7 +119,7 @@
+ 		YAKE_DECLARE_CONCRETE( ModelMovableWorldLink, &quot;yake.movable.decoupled&quot; );
+ 
+ 		ModelMovableLink_decoupled();
+-		virtual void update( const real timeElapsed );
++		virtual void update( const uint32, const real timeElapsed );
+ 		//@todo add history/interpolation specific code
+ 	};
+ 
+
+Added: trunk/yake/yake/model/model_link_dotlink_loader.h
+===================================================================
+--- trunk/yake/yake/model/model_link_dotlink_loader.h	2006-06-12 21:27:15 UTC (rev 1334)
++++ trunk/yake/yake/model/model_link_dotlink_loader.h	2006-06-12 21:27:29 UTC (rev 1335)
+@@ -0,0 +1,56 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MODEL_DOTLINKLOADER_H
++#define YAKE_MODEL_DOTLINKLOADER_H
++
++#include &lt;yake/model/prerequisites.h&gt;
++#include &lt;yake/data/yakeData.h&gt;
++
++namespace yake {
++namespace model {
++
++	struct CentralControllerBase;
++	class YAKE_MODEL_API DotLinkLoader
++	{
++	public:
++		DotLinkLoader();
++		~DotLinkLoader();
++
++		bool load( const String &amp; rDotLinkFilename, Model &amp; rModel, CentralControllerBase&amp; centralController );
++		bool load( const yake::data::dom::INode &amp; rLinksNode, Model &amp; rModel, CentralControllerBase&amp; centralController );
++
++		typedef SharedPtr&lt;ModelLink&gt; SharedModelLinkPtr;
++		typedef Deque&lt; SharedModelLinkPtr &gt; SharedModelLinkList;
++	private:
++		void parseLink( const data::dom::INode &amp; rLinkNode );
++		Model*					mpModel;
++		CentralControllerBase*	mpCentralController;
++	};
++
++}
++}
++#endif
+
+Added: trunk/yake/yake/model/model_physical_xode_loader.h
+===================================================================
+--- trunk/yake/yake/model/model_physical_xode_loader.h	2006-06-12 21:27:15 UTC (rev 1334)
++++ trunk/yake/yake/model/model_physical_xode_loader.h	2006-06-12 21:27:29 UTC (rev 1335)
+@@ -0,0 +1,125 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++
++#ifndef YAKE_MODEL_PHYSICAL_XODE_LOADER_H
++#define YAKE_MODEL_PHYSICAL_XODE_LOADER_H
++
++#include &lt;yake/model/prerequisites.h&gt;
++#include &lt;yake/physics/yakePhysics.h&gt;
++#include &lt;yake/loader/yakeXODEParser.h&gt;
++
++namespace yake {
++namespace model {
++
++    /** Class implements DotSceneParser's listener. Creates graphical objects and places
++     * them in model::Graphical object.
++     */
++    class YAKE_MODEL_API XODEListener
++    {
++	public:
++	    XODEListener( Physical&amp; owner, physics::IWorld* physWorld, const String&amp; namePrefix = _T(&quot;&quot;) ) : 
++			owner_( owner ), 
++			physicalWorld_( physWorld ),
++			namePrefix_(namePrefix)
++	    {}
++
++	    virtual ~XODEListener() {}		
++
++		typedef yake::data::parser::xode::XODEParser parser_t;
++
++	    virtual void processBody( const parser_t::BodyDesc&amp; desc );
++	    virtual void processGeom( const parser_t::GeomDesc&amp; desc );
++	    virtual void processMass( const parser_t::MassDesc&amp; desc );
++	    virtual void processJoint( const parser_t::JointDesc&amp; desc );
++	    virtual void processMaterial( const parser_t::MaterialDesc&amp; desc );
++	    virtual void postprocess();
++
++		physics::IJoint* getJointByName( const String&amp; name )
++	    {
++			JointMap::const_iterator it = joints_.find( name );
++			return (it == joints_.end()) ? 0 : it-&gt;second.joint_;
++	    }
++
++	protected:
++
++	    struct ActorInfo
++	    {
++		physics::IActor*		actor_;
++		String					parentName_;
++	    };
++	    
++	    struct GeomInfo
++	    {
++		physics::IShape*		shape_;
++		String					parentName_;
++	    };
++
++	    struct MassInfo
++	    {
++		physics::IBody::MassDesc	mass_;
++		String						parentName_;
++	    };
++
++	    struct JointInfo
++	    {
++		physics::IJoint*		joint_;
++		String					parentName_;
++	    };
++
++	    struct MaterialInfo
++	    {
++		physics::IMaterial*		material_;
++		String					parentName_;
++	    };
++
++	    typedef AssocVector&lt; String, ActorInfo &gt; ActorMap;
++	    typedef AssocVector&lt; String, GeomInfo &gt; GeomMap;
++	    typedef AssocVector&lt; String, MassInfo &gt; MassMap;
++	    typedef AssocVector&lt; String, JointInfo &gt; JointMap;
++	    typedef AssocVector&lt; String, MaterialInfo &gt; MaterialMap;
++	    typedef Vector&lt; typename parser_t::JointDesc &gt; JointDescVector;
++
++	    JointDescVector jointDescriptions_;
++
++	    ActorMap	actors_;
++	    GeomMap	geoms_;
++	    MassMap	masses_;
++	    JointMap	joints_;
++	    MaterialMap materials_;
++
++	    physics::IWorld*	physicalWorld_;
++
++	    Physical&amp;			owner_;
++		String				namePrefix_;
++    };
++
++
++} // model
++} // yake
++
++#endif 
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000402.html">[Yake-svn] r1334 - in trunk/yake/src/yake: loader model
+</A></li>
+	<LI>Next message: <A HREF="000404.html">[Yake-svn] r1336 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#403">[ date ]</a>
+              <a href="thread.html#403">[ thread ]</a>
+              <a href="subject.html#403">[ subject ]</a>
+              <a href="author.html#403">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

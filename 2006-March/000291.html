@@ -1,0 +1,1223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1219 - in trunk/yake/yake: . ent prop statemachine
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1219%20-%20in%20trunk/yake/yake%3A%20.%20ent%20prop%20statemachine&In-Reply-To=%3C200603051839.k25IdcnQ030695%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000290.html">
+   <LINK REL="Next"  HREF="000283.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1219 - in trunk/yake/yake: . ent prop statemachine</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1219%20-%20in%20trunk/yake/yake%3A%20.%20ent%20prop%20statemachine&In-Reply-To=%3C200603051839.k25IdcnQ030695%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1219 - in trunk/yake/yake: . ent prop statemachine">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar  5 19:39:38 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000290.html">[Yake-svn] r1218 - trunk/yake/yake/base
+</A></li>
+        <LI>Next message: <A HREF="000283.html">[Yake-svn] r1220 - trunk/yake/yake/prop
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#291">[ date ]</a>
+              <a href="thread.html#291">[ thread ]</a>
+              <a href="subject.html#291">[ subject ]</a>
+              <a href="author.html#291">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-05 19:39:30 +0100 (Sun, 05 Mar 2006)
+New Revision: 1219
+
+Added:
+   trunk/yake/yake/ent/
+   trunk/yake/yake/ent/component.h
+   trunk/yake/yake/ent/component_holder.h
+   trunk/yake/yake/ent/ent.h
+   trunk/yake/yake/ent/object.h
+   trunk/yake/yake/ent/object_listener.h
+   trunk/yake/yake/ent/object_mgr.h
+   trunk/yake/yake/ent/object_mgr_listener.h
+   trunk/yake/yake/ent/pch.h
+   trunk/yake/yake/ent/prerequisites.h
+   trunk/yake/yake/ent/vm_holder.h
+   trunk/yake/yake/prop/
+   trunk/yake/yake/prop/prerequisites.h
+   trunk/yake/yake/prop/prop.h
+   trunk/yake/yake/prop/prop_def.h
+   trunk/yake/yake/prop/prop_holder.h
+   trunk/yake/yake/prop/rtti_class.h
+   trunk/yake/yake/statemachine/
+   trunk/yake/yake/statemachine/fsm_core.h
+Log:
+initial revision
+
+Added: trunk/yake/yake/ent/component.h
+===================================================================
+--- trunk/yake/yake/ent/component.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/ent/component.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,28 @@
++#ifndef YAKE_OBJECT_COMPONENT_H
++#define YAKE_OBJECT_COMPONENT_H
++
++#include &quot;yake/ent/prerequisites.h&quot;
++#include &quot;yake/prop/yakeProperty.h&quot;
++
++namespace yake {
++namespace object {
++
++	struct Co;
++
++#define DECL_CO(CLASS,DESC) \
++	DECL_CLASS_RTTI(CLASS,DESC) \
++public: \
++	static CLASS* cast(::yake::object::Co*);
++
++	struct YAKE_ENT_API Co : public PropHolder&lt;Co&gt;
++	{
++		virtual ~Co() {}
++
++		DECL_CO(Co,&quot;Component base&quot;)
++	public:
++	};
++
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/ent/component_holder.h
+===================================================================
+--- trunk/yake/yake/ent/component_holder.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/ent/component_holder.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,25 @@
++#ifndef YAKE_OBJECT_COMPONENT_HOLDER_H
++#define YAKE_OBJECT_COMPONENT_HOLDER_H
++
++#include &quot;prerequisites.h&quot;
++
++namespace yake {
++namespace object {
++
++	typedef std::string CoTag;
++	struct YAKE_ENT_API CoHolder
++	{
++		// operations
++		void addCo(const CoTag&amp;, Co*);
++		Co* removeCo(const Co*);
++		Co* removeCo(const CoTag&amp;);
++		Co* getCo(const CoTag&amp;) const;
++	private:
++		typedef std::map&lt;CoTag,Co*&gt; TagCoMap;
++		TagCoMap	components_;
++	};
++
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/ent/ent.h
+===================================================================
+--- trunk/yake/yake/ent/ent.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/ent/ent.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,12 @@
++#ifndef YAKE_ENT_H
++#define YAKE_ENT_H
++
++#include &quot;yake/ent/prerequisites.h&quot;
++#include &quot;yake/ent/component.h&quot;
++#include &quot;yake/ent/component_holder.h&quot;
++#include &quot;yake/ent/object_listener.h&quot;
++#include &quot;yake/ent/object.h&quot;
++#include &quot;yake/ent/object_mgr.h&quot;
++#include &quot;yake/ent/object_mgr_listener.h&quot;
++
++#endif
+
+Added: trunk/yake/yake/ent/object.h
+===================================================================
+--- trunk/yake/yake/ent/object.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/ent/object.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,60 @@
++#ifndef YAKE_OBJECT_H
++#define YAKE_OBJECT_H
++
++#include &quot;yake/ent/prerequisites.h&quot;
++#include &quot;yake/ent/object_listener.h&quot;
++#include &quot;yake/ent/vm_holder.h&quot;
++
++namespace yake {
++namespace object {
++
++#define DECL_GO(CLASS,DESC) \
++	DECL_CLASS_RTTI(CLASS,DESC) \
++public: \
++	static CLASS* cast(::yake::object::Co*);
++
++	struct YAKE_ENT_API Object : public CoHolder, public VMHolder, public yake::PropHolder&lt;Object&gt;, public object_listener_mgr
++	{
++		DECL_GO(Object,&quot;Object/Entity base&quot;)
++		Object() {}
++		virtual ~Object() {}
++
++		typedef object_fsm::state_type fsm_state_type;
++		typedef object_fsm::event_type fsm_event_type;
++
++		// operations
++		void init()
++		{
++			listeners_init(*this);
++		}
++		void tick()
++		{
++			listeners_tick(*this);
++		}
++		void addFsmState(const fsm_state_type&amp;);
++		void addFsmTransition(const fsm_state_type&amp;, const fsm_event_type&amp;, const fsm_state_type&amp;);
++		void setFsmState(const fsm_state_type&amp;);
++		void processFsmEvent(const fsm_event_type&amp; evt);
++		const fsm_state_type&amp; getCurrentFsmState() const
++		{ return m_.current(); }
++
++
++		scripting::IVM* getFsmVM() const
++		{
++			 return this-&gt;getVM(&quot;main&quot;);
++		}
++		// signals
++		typedef boost::signal&lt;void(const std::string&amp;,scripting::IVM*)&gt; VmInitializedSignal;
++		boost::signals::connection subscribeToVmInitialized(const VmInitializedSignal::slot_type&amp;);
++
++	private:
++		void onEnter(const object_fsm&amp;, const object_fsm::state_type&amp; state);
++		void onExit(const object_fsm&amp;, const object_fsm::state_type&amp; state);
++	private:
++		object_fsm			m_;
++	};
++
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/ent/object_listener.h
+===================================================================
+--- trunk/yake/yake/ent/object_listener.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/ent/object_listener.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,58 @@
++#ifndef YAKE_OBJECT_LISTENER_H
++#define YAKE_OBJECT_LISTENER_H
++
++#include &quot;yake/ent/prerequisites.h&quot;
++
++namespace yake {
++namespace object {
++
++	struct Object;
++	struct YAKE_ENT_API object_listener
++	{
++		virtual ~object_listener() {}
++		virtual void onTick(Object&amp;) {}
++		virtual void onInit(Object&amp;) {}
++		virtual void onFsmEventHandled(Object&amp;, const object_fsm&amp;, const object_fsm::event_type&amp;) {}
++		virtual void onFsmEnterState(Object&amp;,/*const std::string&amp; fsmName, */const object_fsm&amp;, const object_fsm::state_type&amp;) {}
++		virtual void onFsmExitState(Object&amp;,/*const std::string&amp; fsmName, */const object_fsm&amp;, const object_fsm::state_type&amp;) {}
++	};
++
++	struct YAKE_ENT_API object_listener_mgr : public ListenerManager&lt;object_listener&gt;
++	{
++	protected:
++		void listeners_init(Object&amp; obj)
++		{
++			yake::ConstVectorIterator&lt;listener_list&gt; it(listeners_);
++			while (it.hasMoreElements())
++				it.getNext().first-&gt;onInit(obj);
++		}
++		void listeners_tick(Object&amp; obj)
++		{
++			yake::ConstVectorIterator&lt;listener_list&gt; it(listeners_);
++			while (it.hasMoreElements())
++				it.getNext().first-&gt;onTick(obj);
++		}
++		void listeners_fsmEventHandled(Object&amp; obj,/*const std::string&amp; fsmName, */const object_fsm&amp; fsm, const object_fsm::event_type&amp; evt)
++		{
++			yake::ConstVectorIterator&lt;listener_list&gt; it(listeners_);
++			while (it.hasMoreElements())
++				it.getNext().first-&gt;onFsmEventHandled(obj,fsm,evt);
++		}
++		void listeners_fsmEnterState(Object&amp; obj,/*const std::string&amp; fsmName, */const object_fsm&amp; fsm, const object_fsm::state_type&amp; state)
++		{
++			yake::ConstVectorIterator&lt;listener_list&gt; it(listeners_);
++			while (it.hasMoreElements())
++				it.getNext().first-&gt;onFsmEnterState(obj,fsm,state);
++		}
++		void listeners_fsmExitState(Object&amp; obj,/*const std::string&amp; fsmName, */const object_fsm&amp; fsm, const object_fsm::state_type&amp; state)
++		{
++			yake::ConstVectorIterator&lt;listener_list&gt; it(listeners_);
++			while (it.hasMoreElements())
++				it.getNext().first-&gt;onFsmExitState(obj,fsm,state);
++		}
++	};
++
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/ent/object_mgr.h
+===================================================================
+--- trunk/yake/yake/ent/object_mgr.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/ent/object_mgr.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,30 @@
++#ifndef YAKE_OBJECTMANAGER_H
++#define YAKE_OBJECTMANAGER_H
++
++#include &quot;yake/ent/prerequisites.h&quot;
++#include &quot;yake/ent/object.h&quot;
++#include &quot;yake/ent/object_mgr_listener.h&quot;
++
++namespace yake {
++namespace object {
++
++	struct YAKE_ENT_API ObjectManager : public ListenerManager&lt;ObjectManagerListener&gt;
++	{
++		// operations
++		Object* makeObject();
++		void destroyObject(Object*);
++		void tick();
++	protected:
++		typedef ListenerManager&lt;ObjectManagerListener&gt; listener_mgr_type;
++		void listeners_onObjectCreated(Object* obj);
++		void listeners_onObjectInitialized(Object* obj);
++		void listeners_onDestroyObject(Object* obj);
++	private:
++		typedef std::deque&lt;Object*&gt; object_ptr_list;
++		object_ptr_list	objs_;
++	};
++
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/ent/object_mgr_listener.h
+===================================================================
+--- trunk/yake/yake/ent/object_mgr_listener.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/ent/object_mgr_listener.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,21 @@
++#ifndef YAKE_OBJECTMANAGERLISTENER_H
++#define YAKE_OBJECTMANAGERLISTENER_H
++
++#include &quot;yake/ent/prerequisites.h&quot;
++#include &quot;yake/ent/object.h&quot;
++
++namespace yake {
++namespace object {
++
++	struct YAKE_ENT_API ObjectManagerListener
++	{
++		virtual ~ObjectManagerListener() {}
++		virtual void onObjectCreated(Object*) {}
++		virtual void onObjectInitialized(Object*) {}
++		virtual void onDestroyObject(Object*) {}
++	};
++
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/ent/pch.h
+===================================================================
+--- trunk/yake/yake/ent/pch.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/ent/pch.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,7 @@
++#ifndef YAKE_OBJECT_PCH_H
++#define YAKE_OBJECT_PCH_H
++
++#include &quot;yake/base/yake.h&quot;
++#include &lt;boost/bind.hpp&gt;
++
++#endif
+
+Added: trunk/yake/yake/ent/prerequisites.h
+===================================================================
+--- trunk/yake/yake/ent/prerequisites.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/ent/prerequisites.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,23 @@
++#ifndef YAKE_OBJECT_PREREQUISITES_H
++#define YAKE_OBJECT_PREREQUISITES_H
++
++#include &quot;yake/prop/yakeProperty.h&quot;
++#include &quot;yake/statemachine/fsm_core.h&quot;
++#include &quot;yake/base/yakeTaggedListenerManager.h&quot;
++#include &quot;yake/base/templates/yakeVector.h&quot;
++
++#if defined(YAKE_ENT_EXPORTS)
++#	define YAKE_ENT_API DLLEXPORT
++#else
++#	define YAKE_ENT_API DLLIMPORT
++#endif
++
++namespace yake {
++namespace object {
++
++	typedef fsm::machine&lt;std::string,std::string&gt; object_fsm;
++
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/ent/vm_holder.h
+===================================================================
+--- trunk/yake/yake/ent/vm_holder.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/ent/vm_holder.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,42 @@
++#ifndef YAKE_ENT_VMHOLDER_H
++#define YAKE_ENT_VMHOLDER_H
++
++#include &quot;yake/ent/prerequisites.h&quot;
++#include &quot;yake/ent/object_listener.h&quot;
++
++namespace yake {
++namespace scripting {
++	class IVM;
++	class IScriptingSystem;
++}
++namespace object {
++
++	struct YAKE_ENT_API VMHolder
++	{
++		VMHolder() {}
++		virtual ~VMHolder();
++
++		// operations
++
++		/** Warning: Currently ownership is not transferred! */
++		bool attachVM(scripting::IVM*,const std::string&amp; tag);
++		scripting::IVM* detachVM(const std::string&amp; tag);
++		scripting::IVM* getVM(const std::string&amp; tag) const;
++
++		// signals
++		typedef boost::signal&lt;void(const std::string&amp;,scripting::IVM*)&gt; VmAttachedSignal;
++		boost::signals::connection subsribeToVmAttached(const VmAttachedSignal::slot_type&amp;);
++		typedef boost::signal&lt;void(const std::string&amp;,scripting::IVM*)&gt; VmDetachedSignal;
++		boost::signals::connection subscribeToVmDetached(const VmDetachedSignal::slot_type&amp;);
++	private:
++		VmAttachedSignal					sigAttached_;
++		VmDetachedSignal					sigDetached_;
++		typedef std::map&lt;std::string,scripting::IVM*&gt; VmMap;
++		VmMap									vms_;
++	};
++
++
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/prop/prerequisites.h
+===================================================================
+--- trunk/yake/yake/prop/prerequisites.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/prop/prerequisites.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,23 @@
++#ifndef YAKE_PROP_PREREQUISITES_H
++#define YAKE_PROP_PREREQUISITES_H
++
++//#include &quot;../common/prerequisites.h&quot;
++#include &quot;yake/base/yakePrerequisites.h&quot;
++#include &lt;string&gt;
++#include &lt;map&gt;
++#include &lt;set&gt;
++#include &lt;deque&gt;
++#include &lt;vector&gt;
++#include &lt;algorithm&gt;
++#include &lt;boost/any.hpp&gt;
++#include &lt;cassert&gt;
++#include &lt;boost/signal.hpp&gt;
++#include &lt;boost/any.hpp&gt;
++
++namespace yake {
++
++
++
++} // namespace yake
++
++#endif
+\ No newline at end of file
+
+Added: trunk/yake/yake/prop/prop.h
+===================================================================
+--- trunk/yake/yake/prop/prop.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/prop/prop.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,86 @@
++#ifndef YAKE_PROP_H
++#define YAKE_PROP_H
++
++#include &quot;prerequisites.h&quot;
++
++namespace yake {
++
++	struct Prop
++	{
++	public:
++		friend struct PropDef;
++
++		template&lt;typename T&gt;
++		bool setValue(const T&amp; v)
++		{
++			try {
++				boost::any_cast&lt;T&gt;(value_); // &lt;- test for type mismatch!
++				value_ = v;
++				return true;
++			} 
++			catch (boost::bad_any_cast&amp;)
++			{
++				std::cout &lt;&lt; &quot;Prop::setValue() ERROR: type mismatch. '&quot; &lt;&lt; def_.type() &lt;&lt; &quot;' expected, got '&quot; &lt;&lt; typeid(v).name() &lt;&lt; &quot;'\n&quot;;
++				return false;
++			}
++		}
++		template&lt;typename T&gt;
++		bool getValue(T&amp; v) const
++		{
++			try {
++				v = boost::any_cast&lt;T&gt;(value_);
++				return true;
++			} 
++			catch (boost::bad_any_cast&amp;)
++			{
++				return false;
++			}
++		}
++		void setValue(const boost::any&amp; value) // @todo Unsafe! Fix this somehow!
++		{ value_ = value; }
++		const PropDef&amp; def() const
++		{ return def_; }
++	private:
++		Prop();
++		Prop(const PropDef&amp; def, const boost::any&amp; defaultValue) :
++		value_(defaultValue), def_(def)
++		{}
++	private:
++		boost::any				value_;
++		const PropDef&amp;			def_;
++	};
++	typedef std::vector&lt;Prop&gt; PropList;
++
++
++	typedef std::map&lt;std::string,Prop*&gt; StringPropPtrMap;
++	inline std::ostream&amp; operator &lt;&lt; (std::ostream&amp; out, const StringPropPtrMap&amp; props)
++	{
++		out &lt;&lt; &quot;properties=(\n&quot;;
++		for (StringPropPtrMap::const_iterator it = props.begin(); it != props.end(); ++it)
++		{
++			out &lt;&lt; &quot;      '&quot; &lt;&lt; it-&gt;first &lt;&lt; &quot;' : '&quot; &lt;&lt; it-&gt;second-&gt;def().type() &lt;&lt; &quot;' = &quot;;
++			const std::string type = it-&gt;second-&gt;def().type();
++			/*if (type == &quot;struct vector3&quot;)
++			{
++				vector3 v;
++				it-&gt;second-&gt;getValue&lt;vector3&gt;(v);
++				out &lt;&lt; v;
++			}
++			else*/ if (type == &quot;int&quot;)
++			{
++				int v;
++				it-&gt;second-&gt;getValue&lt;int&gt;(v);
++				out &lt;&lt; v;
++			}
++			else
++				out &lt;&lt; &quot;(unhandled value type)&quot;;
++			out &lt;&lt; &quot;\n&quot;;
++		}
++		out &lt;&lt; &quot;   )\n&quot;;
++		return out;
++	}
++
++
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/prop/prop_def.h
+===================================================================
+--- trunk/yake/yake/prop/prop_def.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/prop/prop_def.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,61 @@
++#ifndef YAKE_PROP_DEF_H
++#define YAKE_PROP_DEF_H
++
++#include &quot;prerequisites.h&quot;
++
++namespace yake {
++
++	struct Prop;
++	struct PropDef
++	{
++		PropDef() {}
++		PropDef(const PropDef&amp; other) :
++		name_(other.name_),
++			description_(other.description_),
++			type_(other.type_),
++			defaultValue_(other.defaultValue_)
++		{}
++		PropDef&amp; operator = (const PropDef&amp; rhs)
++		{
++			name_ = rhs.name_;
++			description_ = rhs.description_;
++			type_ = rhs.type_;
++			defaultValue_ = rhs.defaultValue_;
++			return *this;
++		}
++		template&lt;typename T&gt;
++		PropDef(const std::string&amp; name, const std::string&amp; desc, const T&amp; defaultValue) :
++		name_(name),
++			description_(desc),
++			defaultValue_(defaultValue),
++			type_(typeid(T).name())
++		{
++		}
++		std::string name() const
++		{ return name_; }
++		std::string description() const;
++		std::string type() const
++		{ return type_; }
++		Prop* create() const;
++		boost::any getDefaultValue() const
++		{ return defaultValue_; }
++	private:
++		std::string		name_;
++		std::string		description_;
++		std::string		type_;
++		boost::any		defaultValue_;
++	};
++	inline std::ostream&amp; operator &lt;&lt; (std::ostream&amp; out, const PropDef&amp; propdef)
++	{
++		out &lt;&lt; &quot;PropDef(name='&quot; &lt;&lt; propdef.name() &lt;&lt; &quot;', type='&quot; &lt;&lt; propdef.type() &lt;&lt; &quot;')&quot;;
++		return out;
++	}
++} // namespace yake
++
++	#include &quot;prop.h&quot;
++namespace yake {
++	inline Prop* PropDef::create() const
++	{ return new Prop(*this,defaultValue_); }
++} // namespace yake
++
++#endif
+\ No newline at end of file
+
+Added: trunk/yake/yake/prop/prop_holder.h
+===================================================================
+--- trunk/yake/yake/prop/prop_holder.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/prop/prop_holder.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,101 @@
++#ifndef YAKE_PROP_HOLDER_H
++#define YAKE_PROP_HOLDER_H
++
++#include &quot;prerequisites.h&quot;
++#include &lt;iostream&gt; // std::cout for warnings
++
++namespace yake {
++
++	struct RttiClass;
++	template&lt;typename T&gt;
++	struct PropHolder
++	{
++		PropHolder()
++		{
++			//if (!ms_cls)
++			//	ms_cls = new RttiClass();
++		}
++		virtual ~PropHolder() {}
++
++		virtual RttiClass* isA() const = 0;
++
++		template&lt;typename T&gt;
++		bool getValue(const std::string&amp; name, T&amp; retValue) const
++		{
++			StringPropPtrMap::const_iterator it = props_.find(name);
++			if (it == props_.end())
++				return false;
++			assert( it-&gt;second );
++			return it-&gt;second-&gt;getValue&lt;T&gt;(retValue);
++		}
++		template&lt;typename T&gt;
++		bool setValue(const std::string&amp; name, const T&amp; value)
++		{
++			StringPropPtrMap::iterator it = props_.find(name);
++			if (it == props_.end())
++				return false;
++			assert( it-&gt;second );
++			return it-&gt;second-&gt;setValue&lt;T&gt;(value);
++		}
++
++		std::ostream&amp; dump(std::ostream&amp; out) const
++		{
++			out &lt;&lt; &quot;object(type='&quot; &lt;&lt; isA()-&gt;name() &lt;&lt; &quot;')\n&quot;;
++			out &lt;&lt; &quot;   &quot; &lt;&lt; props_;
++			return out;
++		}
++
++		void init()
++		{
++			initProps( *isA(), props_ );
++		}
++	private:
++		void initProps(const RttiClass&amp; cls, StringPropPtrMap&amp; props)
++		{
++			const RttiClass::ParentClassList&amp; parentClsList = cls.getParents();
++			RttiClass::ParentClassList::const_iterator itClsEnd = parentClsList.end();
++			for (RttiClass::ParentClassList::const_iterator itCls = parentClsList.begin(); itCls != itClsEnd; ++itCls)
++				initProps(**itCls, props);
++
++			const PropDefMap&amp; defs = cls.getPropDefs();
++			PropDefMap::const_iterator itDefEnd = defs.end();
++			for (PropDefMap::const_iterator itDef = defs.begin(); itDef != itDefEnd; ++itDef)
++			{
++				const PropDef&amp; def = itDef-&gt;second;
++				if (def.name().empty())
++				{
++					std::cout &lt;&lt; &quot;warning: empty property name in class '&quot; &lt;&lt; cls.name() &lt;&lt; &quot;'. skipping.\n&quot;;
++					continue;
++				}
++				StringPropPtrMap::const_iterator itFind = props.find(def.name());
++				if (itFind == props.end())
++				{
++					props[ def.name() ] = def.create();
++				}
++				else
++				{
++					const PropDef&amp; baseDef = itFind-&gt;second-&gt;def();
++					std::cout &lt;&lt; &quot;warning: class '&quot; &lt;&lt; cls.name() &lt;&lt; &quot;' attempts to override inherited property '&quot; &lt;&lt; def.name() &lt;&lt; &quot;'\n&quot;;
++					if (def.type() == baseDef.type())
++					{
++						std::cout &lt;&lt; &quot;  =&gt; override of default value accepted.\n&quot;;
++						itFind-&gt;second-&gt;setValue( def.getDefaultValue() );
++					}
++					else
++					{
++						std::cout &lt;&lt; &quot;  =&gt; type mismatch. could not override default value.\n&quot;;
++					}
++				}
++			}
++		}
++
++		//static const RttiClass* getRttiClass();
++	private:
++		//static RttiClass* ms_cls; // @todo make it auto_ptr
++		StringPropPtrMap		props_;
++	};
++	//template&lt;typename T&gt; RttiClass PropHolder&lt;T&gt;::ms_cls = 0;
++
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/prop/rtti_class.h
+===================================================================
+--- trunk/yake/yake/prop/rtti_class.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/prop/rtti_class.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,195 @@
++#ifndef YAKE_PROP_RTTI_CLASS_H
++#define YAKE_PROP_RTTI_CLASS_H
++
++#include &quot;prerequisites.h&quot;
++#include &lt;sstream&gt;
++
++namespace yake {
++
++	typedef std::vector&lt;PropDef&gt; PropDefList;
++	typedef std::map&lt;std::string,PropDef&gt; PropDefMap;
++	struct RttiClass;
++	struct RttiClassTemplate;
++	struct RttiClassMgr;
++	typedef std::set&lt;const RttiClass*&gt; RttiClassConstPtrSet;
++	struct RttiClass
++	{
++	public:
++		// &quot;Class c'tor&quot;
++		RttiClass(const std::string&amp; name) : name_(name) {}
++		RttiClass(const std::string&amp; name, const std::string&amp; parent0) : 
++		name_(name) 
++		{
++			addParent( parent0 );
++		}
++		RttiClass(const std::string&amp; name, const std::string&amp; parent0, const std::string&amp; parent1) : 
++		name_(name) 
++		{
++			addParent( parent0 );
++			addParent( parent1 );
++		}
++		// &quot;ClassTemplate c'tor&quot;
++		RttiClass(const std::string&amp; name, const RttiClass&amp; orig) :
++		name_(name),
++			props_(orig.props_),
++			parents_(orig.parents_),
++			parentNames_(orig.parentNames_),
++			parentPtrs_(orig.parentPtrs_)
++		{
++		}
++		std::string name() const
++		{ return name_; }
++
++		typedef RttiClassConstPtrSet ParentClassList;
++		const ParentClassList&amp; getParents() const
++		{ return parentPtrs_;  }
++
++		typedef std::deque&lt;std::string&gt; StringList;
++		const StringList&amp; getParentNames() const
++		{
++			return parentNames_;
++		}
++
++		void addParent(const std::string&amp; clsName)
++		{
++			assert( !clsName.empty() );
++			assert( parents_.find(clsName) == parents_.end() );
++			parents_[ clsName ] = 0;
++			parentNames_.push_back( clsName );
++		}
++
++		const PropDefMap&amp; getPropDefs() const
++		{ return props_; }
++		void add(const PropDef&amp;);
++
++		//void setName_(const std::string&amp; name) { name_ = name; }
++	private:
++		friend struct RttiClassMgr;
++		void setParent(const std::string&amp; clsName, RttiClass* cls)
++		{
++			assert( cls );
++			assert( !clsName.empty() );
++			assert( parents_.find(clsName) != parents_.end() );
++			parents_[ clsName ] = cls;
++			parentPtrs_.insert(cls);
++		}
++	private:
++		std::string						name_;
++		PropDefMap						props_;
++
++		typedef std::map&lt;std::string,RttiClass*&gt; ParentClassMap;
++		ParentClassMap					parents_;
++		StringList						parentNames_;
++		ParentClassList				parentPtrs_;
++	};
++	inline std::ostream&amp; operator &lt;&lt; (std::ostream&amp; out, const RttiClass&amp; cls)
++	{
++		out &lt;&lt; &quot;RttiClass(name='&quot; &lt;&lt; cls.name() &lt;&lt; &quot;')\n&quot;;
++		for (RttiClass::StringList::const_iterator itClsName = cls.getParentNames().begin();  itClsName != cls.getParentNames().end(); ++itClsName)
++			out &lt;&lt; &quot;   inherits from '&quot; &lt;&lt; *itClsName &lt;&lt; &quot;' (name)\n&quot;;
++		for (RttiClassConstPtrSet::const_iterator itCls = cls.getParents().begin(); itCls != cls.getParents().end(); ++itCls)
++			out &lt;&lt; &quot;   inherits from '&quot; &lt;&lt; (*itCls)-&gt;name() &lt;&lt; &quot;' (ptr)\n&quot;;
++		for (PropDefMap::const_iterator it = cls.getPropDefs().begin(); it != cls.getPropDefs().end(); ++it)
++		{
++			out &lt;&lt; &quot;   property '&quot; &lt;&lt; it-&gt;first.c_str() &lt;&lt; &quot;' = &quot; &lt;&lt; it-&gt;second.type() &lt;&lt; &quot;\n&quot;;
++		}
++		return out;
++	}
++
++	struct RttiException : public std::exception
++	{
++		RttiException(const std::string&amp; msg, const std::string&amp; loc = &quot;&quot;, const char* file = 0, const int line = 0)
++		{
++			std::stringstream out;
++			out &lt;&lt; &quot;RttiException:\n&quot;;
++			out &lt;&lt; &quot;  Reason: &quot; &lt;&lt; msg &lt;&lt; &quot;\n&quot;;
++			if (!loc.empty())
++				out &lt;&lt; &quot;  Location: &quot; &lt;&lt; loc &lt;&lt; &quot;\n&quot;;
++			if (file)
++				out &lt;&lt; &quot;  File: &quot; &lt;&lt; file &lt;&lt; &quot;@&quot; &lt;&lt; line &lt;&lt; &quot;\n&quot;;
++			msg_ = out.str();
++		}
++		const char* what() const
++		{ return msg_.c_str(); }
++	private:
++		std::string		msg_;
++	};
++#define THROW_RTTI(MSG) \
++	throw RttiException(MSG,&quot;&quot;,__FILE__,__LINE__)
++#define THROW_RTTI_LOC(MSG,LOC) \
++	throw RttiException(MSG,LOC,__FILE__,__LINE__)
++
++	struct RttiClassMgr
++	{
++		// insert into existing hierarchy
++		void insert(RttiClass*) throw(RttiException);
++		void erase(RttiClass*) throw(RttiException);
++		RttiClass* get(const std::string&amp;) const throw() ;
++	private:
++		typedef std::map&lt;std::string,RttiClass*&gt; StringClassPtrMap;
++		StringClassPtrMap	classes_;
++	};
++	inline RttiClass* RttiClassMgr::get(const std::string&amp; clsName) const
++	{
++		StringClassPtrMap::const_iterator it = classes_.find(clsName);
++		return (it == classes_.end()) ? 0 : it-&gt;second;
++	}
++	inline void RttiClassMgr::insert(RttiClass* cls)
++	{
++		assert( cls );
++		if (!cls)
++			THROW_RTTI_LOC(&quot;Null class pointer.&quot;,&quot;RttiClassMgr::insert&quot;);
++		const std::string clsName = cls-&gt;name();
++		if (clsName.empty())
++			THROW_RTTI_LOC(&quot;Empty class name.&quot;,&quot;RttiClassMgr::insert&quot;);
++		StringClassPtrMap::const_iterator it = classes_.find(clsName);
++		if (it != classes_.end())
++			THROW_RTTI_LOC(&quot;Entry for this class name already exists!&quot;,&quot;RttiClassMgr::insert&quot;);
++
++		// find parents and other referenced objects
++		const RttiClass::StringList&amp; parentNames = cls-&gt;getParentNames();
++		if (!parentNames.empty())
++		{
++			for (RttiClass::StringList::const_iterator itName = parentNames.begin(); itName != parentNames.end(); ++itName)
++			{
++				RttiClass* parentCls = get(*itName);
++				if (parentCls)
++					cls-&gt;setParent(*itName,parentCls);
++				else
++					THROW_RTTI_LOC(&quot;Parent class not registered!&quot;,&quot;RttiClassMgr::insert&quot;);
++			}
++		}
++
++		// finally insert
++		classes_.insert( std::make_pair(clsName,cls) );
++
++		// post-process
++	}
++	inline void RttiClass::add(const PropDef &amp; propdef)
++	{
++		props_[ propdef.name() ] = propdef;
++	}
++
++	#define DECL_CLASS_RTTI(CLASS,DESC) \
++	public: \
++		static std::string clsName()  \
++		{ return std::string( #CLASS ); } \
++		static std::string clsDescription()  \
++		{ return std::string( DESC ); } \
++		static ::yake::RttiClass* cls() \
++		{ return &amp;ms_cls; } \
++		virtual ::yake::RttiClass* isA() const \
++		{ return &amp;ms_cls; } \
++	private: \
++		static ::yake::RttiClass ms_cls; \
++	public:
++
++	#define IMPL_CLASS_RTTI(CLASS) \
++		::yake::RttiClass CLASS::ms_cls( CLASS::clsName() );
++
++	#define IMPL_CLASS_RTTI_1(CLASS,PARENT1) \
++		::yake::RttiClass CLASS::ms_cls( CLASS::clsName(), PARENT1 );
++
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/statemachine/fsm_core.h
+===================================================================
+--- trunk/yake/yake/statemachine/fsm_core.h	2006-03-05 18:33:21 UTC (rev 1218)
++++ trunk/yake/yake/statemachine/fsm_core.h	2006-03-05 18:39:30 UTC (rev 1219)
+@@ -0,0 +1,265 @@
++#ifndef FSM_CORE_H
++#define FSM_CORE_H
++
++#include &lt;cassert&gt; // assert()
++#include &lt;string&gt;
++#include &lt;iostream&gt; // std::cout in debug mode
++#include &lt;map&gt;
++
++// If defined the initial state is a null state.
++// What a null state is and whether a state is a null state
++// is determined by two templated functions for which specializations
++// may or may not be needed depending on the target type.
++// Specializations for common built-in and STL types are provided.
++// The functions are: get_null_state&lt;&gt;(), is_state_null&lt;&gt;(..).
++//
++// If not defined, the initial state will be set to whatever the constructor
++// of the state type sets it to.
++//
++// The initial state can be set to any state already registered with the machine
++// using machine&lt;&gt;::setState(..).
++//
++
++#define FSM_USE_NULL_STATE
++
++namespace fsm {
++#if defined(FSM_USE_NULL_STATE)
++	template&lt;typename state_type_&gt;
++	const state_type_&amp; get_null_state();
++
++	template&lt;typename state_type_&gt;
++	inline bool is_state_null(const state_type_&amp; state)
++	{
++		return (state == get_null_state&lt;state_type_&gt;());
++	}
++
++	template&lt;&gt;
++	inline const int&amp; get_null_state()
++	{
++		static int ms_null = 0xffffffff;
++		return ms_null;
++	}
++	template&lt;&gt;
++	inline const unsigned char&amp; get_null_state()
++	{
++		static unsigned char ms_null = 0xff;
++		return ms_null;
++	}
++	template&lt;&gt;
++	inline const std::string&amp; get_null_state()
++	{
++		static std::string ms_null = &quot;null&quot;;
++		return ms_null;
++	}
++#endif
++	template&lt;typename T1&gt;
++	struct do_nothing_on_one
++	{
++		void operator()(const T1&amp;)
++		{}
++	};
++	template&lt;typename T1, typename T2&gt;
++	struct do_nothing_on_two
++	{
++		void operator()(const T1&amp;,const T2&amp;)
++		{}
++	};
++
++	template&lt;typename _state_type, typename _event_type&gt;
++	struct machine
++	{
++		// types
++		typedef _state_type state_type;
++		typedef _event_type event_type;
++		typedef machine machine_type;
++
++		typedef do_nothing_on_one&lt;state_type&gt; do_nothing_state_op;
++		typedef do_nothing_on_two&lt;machine_type,state_type&gt; do_nothing_op;
++
++		// construction
++#if defined(FSM_USE_NULL_STATE)
++		machine() : 
++			curr_(get_null_state&lt;state_type&gt;()) 
++#else
++		machine()
++#endif
++		{}
++
++		// operations
++		void addState(const state_type&amp;);
++		//? void addEvent(const event_type);
++		void addTransition(const state_type&amp;, const event_type&amp;, const state_type&amp;);
++		void setState(const state_type&amp;);
++
++		void clear();
++
++		size_t numStates() const;
++		size_t numOffgoingTransitions(const state_type&amp;) const; // off-going transitions for source state
++		const state_type&amp; current() const;
++
++#ifdef _DEBUG
++		void dump(std::ostream&amp; out) const
++		{
++			out &lt;&lt; &quot;machine&lt;&gt;::dump()\n&quot;;
++			out &lt;&lt; &quot;  current = '&quot; &lt;&lt; curr_ &lt;&lt; &quot;'\n&quot;;
++			for (state_map::const_iterator it = states_.begin(); it != states_.end(); ++it)
++			{
++				out &lt;&lt; &quot;  state '&quot; &lt;&lt; it-&gt;first &lt;&lt; &quot;'\n&quot;;
++				const event_state_map&amp; evt2state = it-&gt;second.offgoing_transitions;
++				for (event_state_map::const_iterator itT = evt2state.begin(); itT != evt2state.end(); ++itT)
++				{
++					out &lt;&lt; &quot;    event '&quot; &lt;&lt; itT-&gt;first &lt;&lt; &quot;' -&gt; state '&quot; &lt;&lt; itT-&gt;second &lt;&lt; &quot;'\n&quot;;
++				}
++			}
++		}
++#endif
++
++		std::pair&lt;bool,std::string&gt; validate();
++
++		void processEvent(const event_type&amp; evt)
++		{
++			do_nothing_op do_nothing;
++			processEventCb(evt, do_nothing, do_nothing);
++		}
++
++		template&lt;typename enter_state_op_t, typename exit_state_op_t&gt;
++		void processEventCb(const event_type&amp; evt, enter_state_op_t&amp; enterOp, exit_state_op_t&amp; exitOp)
++		{
++			const state_map::const_iterator it = states_.find( curr_ );
++			if (it == states_.end())
++			{
++				std::cerr &lt;&lt; &quot;error: machine&lt;&gt;::processEventCb():\n   invalid current state.\n\n&quot;;
++				return;
++			}
++			const event_state_map&amp; evt2state = it-&gt;second.offgoing_transitions;
++			const event_state_map::const_iterator itFindTransition = evt2state.find(evt);
++			if (itFindTransition == evt2state.end())
++			{
++				std::cerr &lt;&lt; &quot;error: machine&lt;&gt;::processEventCb():\n   transition not found! (evt=&quot; &lt;&lt; evt &lt;&lt; &quot;, src=&quot; &lt;&lt; it-&gt;first &lt;&lt; &quot;)\n\n&quot;;
++				return;
++			}
++			exitOp(*this,curr_);
++			curr_ = itFindTransition-&gt;second;
++			enterOp(*this,curr_);
++		}
++
++	private:
++		// @todo hash_map&lt;&gt; or AssocVector&lt;&gt;
++		typedef std::map&lt;event_type,state_type&gt; event_state_map;
++		struct state_e
++		{
++			event_state_map offgoing_transitions;
++			//void* userdata;
++		};
++		typedef std::map&lt;state_type,state_e&gt; state_map;
++		state_map		states_;
++		state_type		curr_;
++	};
++	template&lt;typename _state_type, typename _event_type&gt;
++	void machine&lt;_state_type,_event_type&gt;::setState(const state_type&amp; dest)
++	{
++		const state_map::const_iterator it = states_.find( dest );
++		if (it == states_.end())
++		{
++			std::cerr &lt;&lt; &quot;error: machine&lt;&gt;::setState():\n   unregistered state.\n\n&quot;;
++			return;
++		}
++		curr_ = dest;
++	}
++	template&lt;typename _state_type, typename _event_type&gt;
++	const _state_type&amp; machine&lt;_state_type,_event_type&gt;::current() const
++	{
++		return curr_;
++	}
++	template&lt;typename _state_type, typename _event_type&gt;
++	void machine&lt;_state_type,_event_type&gt;::clear()
++	{
++#if defined(FSM_USE_NULL_STATE)
++		curr_ = get_null_state&lt;state_type&gt;();
++#else
++		curr_ = state_type();
++#endif
++		states_.clear();
++	}
++#if 0 // alternative implementation
++	template&lt;typename _state_type, typename _event_type&gt;
++	void machine&lt;_state_type,_event_type&gt;::processEvent(const event_type&amp; evt)
++	{
++		const state_map::const_iterator it = states_.find( curr_ );
++		if (it == states_.end())
++		{
++			std::cerr &lt;&lt; &quot;error: machine&lt;&gt;::processEvent():\n   invalid current state.\n\n&quot;;
++			return;
++		}
++		const event_state_map&amp; evt2state = it-&gt;second.offgoing_transitions;
++		const event_state_map::const_iterator itFindTransition = evt2state.find(evt);
++		if (itFindTransition == evt2state.end())
++		{
++			std::cerr &lt;&lt; &quot;error: machine&lt;&gt;::processEvent():\n   transition not found! (evt=&quot; &lt;&lt; evt &lt;&lt; &quot;, src=&quot; &lt;&lt; it-&gt;first &lt;&lt; &quot;)\n\n&quot;;
++			return;
++		}
++		curr_ = itFindTransition-&gt;second;
++	}
++#endif
++	template&lt;typename _state_type, typename _event_type&gt;
++	void machine&lt;_state_type,_event_type&gt;::addState(const state_type&amp; state)
++	{
++		state_map::iterator it = states_.find( state );
++		if (it == states_.end())
++		{
++			states_.insert( state_map::value_type(state,state_e()) );
++			return;
++		}
++#ifdef _DEBUG
++		std::cerr &lt;&lt; &quot;error: machine&lt;&gt;::addState():\n   state already exists!\n\n&quot;;
++#endif
++	}
++	template&lt;typename _state_type, typename _event_type&gt;
++	void machine&lt;_state_type,_event_type&gt;::addTransition(const state_type&amp; src, const event_type&amp; evt, const state_type&amp; dest)
++	{
++		if (src == dest) // @todo Allow this !? Optionally? Shouldn't do much harm...
++		{
++			std::cerr &lt;&lt; &quot;error: machine&lt;&gt;::addTransition():\n   source and destination are identical!\n\n&quot;;
++			return;
++		}
++		state_map::iterator it = states_.find( src );
++		if (it == states_.end())
++		{
++			std::cerr &lt;&lt; &quot;error: machine&lt;&gt;::addTransition():\n   unregistered source state!\n\n&quot;;
++			return;
++		}
++		{
++			const state_map::const_iterator itDest = states_.find( dest );
++			if (itDest == states_.end())
++			{
++				std::cerr &lt;&lt; &quot;error: machine&lt;&gt;::addTransition():\n   unregistered destination state!\n\n&quot;;
++				return;
++			}
++		}
++		event_state_map&amp; evt2state = it-&gt;second.offgoing_transitions;
++#ifdef _DEBUG
++		if (evt2state.find(evt) != evt2state.end())
++		{
++			std::cerr &lt;&lt; &quot;error: machine&lt;&gt;::addTransition():\n   transition for this combination of source and event already exists!\n\n&quot;;
++			return;
++		}
++#endif
++		evt2state.insert( event_state_map::value_type( evt, dest) );
++#ifdef _DEBUG
++		std::cout &lt;&lt; &quot;machine&lt;&gt;::addTransition(): from=&quot; &lt;&lt; src &lt;&lt; &quot; evt=&quot; &lt;&lt; evt &lt;&lt; &quot; dest=&quot; &lt;&lt; dest &lt;&lt; &quot;\n&quot;;
++#endif
++	}
++	template&lt;typename _state_type, typename _event_type&gt;
++	size_t machine&lt;_state_type,_event_type&gt;::numStates() const
++	{
++		return states_.size();
++	}
++	template&lt;typename _state_type, typename _event_type&gt;
++	size_t machine&lt;_state_type,_event_type&gt;::numOffgoingTransitions(const state_type&amp; src) const
++	{
++		const state_map::const_iterator it = states_.find( src );
++		return ( (it == states_.end()) ? 0 : it-&gt;second.offgoing_transitions.size() );
++	}
++} // namespace fsm
++
++#endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000290.html">[Yake-svn] r1218 - trunk/yake/yake/base
+</A></li>
+	<LI>Next message: <A HREF="000283.html">[Yake-svn] r1220 - trunk/yake/yake/prop
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#291">[ date ]</a>
+              <a href="thread.html#291">[ thread ]</a>
+              <a href="subject.html#291">[ subject ]</a>
+              <a href="author.html#291">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

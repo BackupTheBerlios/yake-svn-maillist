@@ -1,0 +1,831 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1394 - trunk/yake/src/yapp/samples/misc/car
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1394%20-%20trunk/yake/src/yapp/samples/misc/car&In-Reply-To=%3C200607192159.k6JLxSgZ021919%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000461.html">
+   <LINK REL="Next"  HREF="000463.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1394 - trunk/yake/src/yapp/samples/misc/car</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1394%20-%20trunk/yake/src/yapp/samples/misc/car&In-Reply-To=%3C200607192159.k6JLxSgZ021919%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1394 - trunk/yake/src/yapp/samples/misc/car">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 19 23:59:28 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000461.html">[Yake-svn] r1393 - trunk/yake/src/yapp/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000463.html">[Yake-svn] r1395 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#462">[ date ]</a>
+              <a href="thread.html#462">[ thread ]</a>
+              <a href="subject.html#462">[ subject ]</a>
+              <a href="author.html#462">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-19 23:59:28 +0200 (Wed, 19 Jul 2006)
+New Revision: 1394
+
+Modified:
+   trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp
+Log:
+merged car and jet demos
+
+Modified: trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp	2006-07-19 21:58:55 UTC (rev 1393)
++++ trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp	2006-07-19 21:59:28 UTC (rev 1394)
+@@ -12,6 +12,8 @@
+ using namespace yake;
+ 
+ const input::ActionId ACTIONID_BRAKE( input::ACTIONID_USER+1, &quot;brake&quot; );
++const input::ActionId ACTIONID_TOGGLE_VEHICLE( input::ACTIONID_USER+2, &quot;toggle_vehicle&quot; );
++const real razorMeshScale = 0.1;
+ 
+ /** Configuration of the application */
+ struct TheConfiguration : public raf::ApplicationConfiguration
+@@ -44,9 +46,8 @@
+ public:
+ 	TheMainState(raf::Application&amp; owner) :
+ 		raf::RtMainState(owner),
+-		mVehicle(0),
+-		mVehicleModel(0),
+-		mGround(0)
++		mGround(0),
++		mActive(0)
+ 	{
+ 		enableInstantQuitByKey( input::KC_ESCAPE );
+ 	}
+@@ -54,28 +55,6 @@
+ 	{
+ 	}
+ private:
+-	void _createWheelVisual(model::Model&amp; theModel, vehicle::IVehicle&amp; theVehicle, const String&amp; wheelId, graphics::ISceneNode&amp; parentSN)
+-	{
+-		// scene node + wheel mesh
+-		graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode();
+-		graphics::IEntity* pE = getGraphicalWorld()-&gt;createEntity(&quot;wheel1.mesh&quot;);
+-		pE-&gt;setCastsShadow( true );
+-		pSN-&gt;attachEntity( pE );
+-		model::ModelMovableLink* pLink = theModel.createLink( theVehicle.getWheelInterface(wheelId), pSN );
+-		mCentralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
+-
+-		// scene node + particle system for smoke...
+-		pSN = getGraphicalWorld()-&gt;createSceneNode();
+-		graphics::IParticleSystem* pPS = getGraphicalWorld()-&gt;createParticleSystem(&quot;SkidSmoke&quot;);
+-		mWheelPs[wheelId] = pPS;
+-		mEmitterEmissionRate[wheelId] = pPS-&gt;getEmissionRate(0);
+-		pSN-&gt;attachParticleSystem( pPS );
+-		pLink = new model::ModelMovableDirectLink();
+-		pLink-&gt;setSource( theVehicle.getWheelInterface(wheelId) );
+-		pLink-&gt;subscribeToPositionChanged( pSN ); //position only!
+-		theModel.addLink( pLink );
+-		mCentralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
+-	}
+ 	void onModelComponent_preInit(const model::ComponentCreationContext&amp; ctx, model::ModelComponent&amp;)
+ 	{
+ 		YAKE_LOG(&quot;demo: onModelComponent_preInit()&quot;);
+@@ -149,62 +128,33 @@
+ 		// materials @todo read from .physics:
+ 		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.01f, 0.01f, 0.01f ), &quot;chassis&quot; );
+ 		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.01f, 0.2f, 0.01f ), &quot;chassisTop&quot; );
+-		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.01f, 0.25f, 0.01f ), &quot;wheel&quot; );
++		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.01f, 0.5f, 0.01f ), &quot;wheel&quot; );
+ 
+ 		// vehicle(s)
+ 
+ 		YAKE_ASSERT( mVehicleSystem.get() );
+ 		mVehicleSystem-&gt;loadTemplates(&quot;../../media/vehicles/delorean.xml&quot;);
++		mVehicleSystem-&gt;loadTemplates(&quot;../../media/vehicles/jet.xml&quot;);
+ 
+ 		// It's possible retrieve the template and make further adjustments to it before
+ 		// instantiating vehicles.
+ 		// e.g.: vehicle::VehicleTemplate* tpl = pVS-&gt;getTemplate(&quot;delorean&quot;);
+ 
+-		// instantiate vehicle model (physics + representation containers)
+-		mVehicleModel = mModelMgr.createModel(&quot;theCar&quot;,
+-				&quot;physics/empty:name=p&quot;
+-				&quot;|graphics/empty:name=g&quot;
+-				&quot;|yake/dotVehicle:name=veh;template=delorean;physical=p&quot;
+-				);
+-		YAKE_ASSERT( mVehicleModel );
+-		vehicle::VehicleModelComponent* vehComp = static_cast&lt;vehicle::VehicleModelComponent*&gt;(mVehicleModel-&gt;getComponentByTag(&quot;veh&quot;));
+-		YAKE_ASSERT( vehComp );
+-		mVehicle = vehComp-&gt;getVehicle();
+-		YAKE_ASSERT( mVehicle );
++		// sky box
++		getGraphicalWorld()-&gt;setSkyBox(&quot;Examples/SpaceSkyBox&quot;);
+ 
+-		//mVehicle-&gt;enableDebugGeometry( *getGraphicalWorld() );
++		// create car
++		mCar.reset( new Car() );
++		mCar-&gt;init(mCentralController,mModelMgr,*getGraphicalWorld(),*mVehicleSystem);
+ 
+-		// create visuals
+-		// - ship body
+-		graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode(&quot;root&quot;);
+-		graphics::IEntity* pE = getGraphicalWorld()-&gt;createEntity(&quot;delorean.mesh&quot;);
+-		pE-&gt;setCastsShadow( true );
+-		pSN-&gt;attachEntity( pE );
+-		//pSN-&gt;setScale( Vector3::kUnitScale * razorMeshScale );
+-		model::Graphical* pG = dynamic_cast&lt;model::Graphical*&gt;(mVehicleModel-&gt;getComponentByTag(&quot;g&quot;));
+-		YAKE_ASSERT( pG );
+-		pG-&gt;addSceneNode(pSN, &quot;delorean_root&quot;);
+-
+-		// - wheel visuals
+-		if (mVehicle-&gt;getWheelInterface(&quot;leftFrontWheel&quot;))
+-		{
+-			_createWheelVisual( *mVehicleModel, *mVehicle, &quot;leftFrontWheel&quot;, *pSN );
+-			_createWheelVisual( *mVehicleModel, *mVehicle, &quot;rightFrontWheel&quot;, *pSN );
+-			_createWheelVisual( *mVehicleModel, *mVehicle, &quot;leftRearWheel&quot;, *pSN );
+-			_createWheelVisual( *mVehicleModel, *mVehicle, &quot;rightRearWheel&quot;, *pSN );
+-		}
+-
+-		// create visual &lt;-&gt; physics links
+-		model::ModelMovableLink* pLink = mVehicleModel-&gt;createLink( mVehicle-&gt;getChassisMovable(), pSN );
+-		mCentralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
+-
+-		// sky box
+-		getGraphicalWorld()-&gt;setSkyBox(&quot;Examples/SpaceSkyBox&quot;);
++		// create Jet
++		mJet.reset( new Jet() );
++		mJet-&gt;init(mCentralController,mModelMgr,*getGraphicalWorld(),*mVehicleSystem);
+ 	}
+ 	virtual void onDestroyScene()
+ 	{
+-		mVehicleModel = 0;
+-		mVehicle = 0;
++		mCar.reset();
++		mJet.reset();
+ 
+ 		mModelMgr.clear();
+ 		mVehicleSystem.reset();
+@@ -214,114 +164,548 @@
+ 	virtual void onEnter()
+ 	{
+ 		RtMainState::onEnter();
+-		using namespace input;
+ 
+-		// front wheel controls
++		mActionMap.reg( ACTIONID_TOGGLE_VEHICLE,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), input::KC_T, input::KAM_RELEASED ) );
++		mActionMap.subscribeToActionId( ACTIONID_TOGGLE_VEHICLE, boost::bind(&amp;TheMainState::toggleVehicle,this) );
+ 
+-		mActionMap.reg( ACTIONID_LEFT,
+-			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_LEFT, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_LEFT, boost::bind(&amp;TheMainState::onFrontWheelLeft,this) );
+-
+-		mActionMap.reg( ACTIONID_RIGHT,
+-			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_RIGHT, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_RIGHT, boost::bind(&amp;TheMainState::onFrontWheelRight,this) );
+-
+-		mActionMap.reg( ACTIONID_FORWARD,
+-			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_UP, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_FORWARD, boost::bind(&amp;TheMainState::onForward,this) );
+-
+-		mActionMap.reg( ACTIONID_BRAKE,
+-			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_DOWN, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_BRAKE, boost::bind(&amp;TheMainState::onReverse,this) );
+-
+-		//mActionMap.reg( ACTIONID_UP,
+-		//	new input::KeyboardActionCondition( getApp().getKeyboard(), KC_PGUP, KAM_CONTINUOUS ) );
+-		//mActionMap.subscribeToActionId( ACTIONID_UP, boost::bind(&amp;TheMainState::onUp,this) );
++		YAKE_ASSERT( !mActive );
++		mActive = mCar.get();
++		mActive-&gt;onEnter(mActionMap,getApp().getKeyboard());
+ 	}
+ 	virtual void onExit()
+ 	{
++		YAKE_ASSERT( mActive );
++		if (mActive)
++		{
++			mActive-&gt;onExit();
++			mActive = 0;
++		}
++
+ 		RtMainState::onExit();
+ 	}
+ 	virtual void onFrame(const real timeElapsed)
+ 	{
+ 		mActionMap.update();
+ 
+-		vehicle::IEnginePtrList engines = mVehicle-&gt;getEngineInterfaces();
+-		ConstDequeIterator&lt; vehicle::IEnginePtrList &gt; itEngine( engines );
+-		while (itEngine.hasMoreElements())
++		mCentralController.triggerPhysicsUpdateSignal(0,timeElapsed);
++		mCentralController.triggerGraphicsUpdateSignal(0,timeElapsed);
++
++		if (mCar)
++			mCar-&gt;onFrame( timeElapsed );
++		if (mJet)
++			mJet-&gt;onFrame( timeElapsed );
++		if (mActive)
+ 		{
+-			vehicle::IEngine* pEngine = itEngine.getNext();
+-			pEngine-&gt;setInputSignal( pEngine-&gt;getInputSignal() - timeElapsed * 1.7 );
++			getDefaultCamera()-&gt;lookAt(mActive-&gt;getPosition());
+ 		}
++	}
++private:
++	model::Model*						mGround;
+ 
+-		real steering0 = 0;
+-		real braking0 = 0;
++	model::ModelManager					mModelMgr;
++	model::CentralControllerBase		mCentralController;
++	SharedPtr&lt;vehicle::IVehicleSystem&gt;	mVehicleSystem;
+ 
+-		ConstDequeIterator&lt; ActionIdList &gt; itAction( mActiveActions );
+-		while (itAction.hasMoreElements())
++	input::ActionMap					mActionMap;
++
++	struct GoVehicleBase
++	{
++		virtual ~GoVehicleBase() {}
++		virtual Vector3 getPosition() const = 0;
++		virtual void onEnter(input::ActionMap&amp; actionMap, input::KeyboardDevice* keyboard) = 0;
++		virtual void onExit()
+ 		{
+-			const input::ActionId activeId = itAction.getNext();
+-			if (activeId == input::ACTIONID_FORWARD)
+-				mVehicle-&gt;getEngineInterface(&quot;main&quot;)-&gt;setInputSignal(1.);
+-			else if (activeId == ACTIONID_BRAKE)
+-				braking0 = 1.;
+-			else if (activeId == input::ACTIONID_LEFT)
+-				steering0 -= real(0.7);
+-			else if (activeId == input::ACTIONID_RIGHT)
+-				steering0 += real(0.7);
++			for( SignalConnectionList::iterator it = mInputSignalConnections.begin(); it != mInputSignalConnections.end(); ++it )
++				it-&gt;disconnect();
++			mInputSignalConnections.clear();
++
++			for( ConditionConnectionList::iterator it = mInputConditionConnections.begin(); it != mInputConditionConnections.end(); ++it )
++				it-&gt;disconnect();
++			mInputConditionConnections.clear();
+ 		}
+-		mVehicle-&gt;setSteering( 0, steering0 );
+-		mVehicle-&gt;getWheelInterface(&quot;leftFrontWheel&quot;)-&gt;brake(braking0);
+-		mVehicle-&gt;getWheelInterface(&quot;rightFrontWheel&quot;)-&gt;brake(braking0);
++		virtual void onFrame(const real timeElapsed) = 0;
++		void addInputSignalConnection(const SignalConnection&amp; conn)
++		{
++			mInputSignalConnections.push_back( conn );
++		}
++		void addInputConditionConnection(const input::ConditionConnection&amp; conn)
++		{
++			mInputConditionConnections.push_back( conn );
++		}
++	private:
++		typedef std::deque&lt;SignalConnection&gt; SignalConnectionList;
++		SignalConnectionList	mInputSignalConnections;
++		typedef std::deque&lt;input::ConditionConnection&gt; ConditionConnectionList;
++		ConditionConnectionList	mInputConditionConnections;
++	};
++	struct Car : public GoVehicleBase
++	{
++		Car() : mModel(0), mVehicle(0)
++		{}
++		~Car()
++		{
++			destroy();
++		}
++		virtual Vector3 getPosition() const
++		{
++			YAKE_ASSERT( mVehicle );
++			return mVehicle-&gt;getChassisPosition();
++		}
+ 
+-		mVehicle-&gt;updateSimulation( timeElapsed );
+-		//mVehicleModel-&gt;updatePhysics( timeElapsed );
++		void init(model::CentralControllerBase&amp; centralController,model::ModelManager&amp; modelMgr,graphics::IWorld&amp; gworld,vehicle::IVehicleSystem&amp; vehSys)
++		{
++			// instantiate vehicle model (physics + representation containers)
++			YAKE_ASSERT( !mModel );
++			mModel = modelMgr.createModel(&quot;theCar&quot;,
++					&quot;physics/empty:name=p&quot;
++					&quot;|graphics/empty:name=g&quot;
++					&quot;|yake/dotVehicle:name=veh;template=delorean;physical=p&quot;
++					);
++			YAKE_ASSERT( mModel );
++			vehicle::VehicleModelComponent* vehComp = static_cast&lt;vehicle::VehicleModelComponent*&gt;(mModel-&gt;getComponentByTag(&quot;veh&quot;));
++			YAKE_ASSERT( vehComp );
++			mVehicle = vehComp-&gt;getVehicle();
++			YAKE_ASSERT( mVehicle );
+ 
+-		ConstDequeIterator&lt; WheelPsMap &gt; itWheel( mWheelPs );
+-		while (itWheel.hasMoreElements())
++			// create visuals
++
++			model::Graphical* pG = dynamic_cast&lt;model::Graphical*&gt;(mModel-&gt;getComponentByTag(&quot;g&quot;));
++			YAKE_ASSERT( pG );
++
++			//mVehicle-&gt;enableDebugGeometry( *getGraphicalWorld() );
++
++			// create visuals
++			// - ship body
++			graphics::ISceneNode* pSN = gworld.createSceneNode(&quot;root&quot;);
++			graphics::IEntity* pE = gworld.createEntity(&quot;delorean.mesh&quot;);
++			pE-&gt;setCastsShadow( true );
++			pSN-&gt;attachEntity( pE );
++			//pSN-&gt;setScale( Vector3::kUnitScale * razorMeshScale );
++			pG-&gt;addSceneNode(pSN, &quot;delorean_root&quot;);
++
++			// - wheel visuals
++			if (mVehicle-&gt;getWheelInterface(&quot;leftFrontWheel&quot;))
++			{
++				_createCarWheelVisual( centralController, gworld, &quot;leftFrontWheel&quot;, *pSN );
++				_createCarWheelVisual( centralController, gworld, &quot;rightFrontWheel&quot;, *pSN );
++				_createCarWheelVisual( centralController, gworld, &quot;leftRearWheel&quot;, *pSN );
++				_createCarWheelVisual( centralController, gworld, &quot;rightRearWheel&quot;, *pSN );
++			}
++
++			// create visual &lt;-&gt; physics links
++			model::ModelMovableLink* pLink = mModel-&gt;createLink( mVehicle-&gt;getChassisMovable(), pSN );
++			centralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
++		}
++		void destroy()
+ 		{
+-			const String wheelId = itWheel.getNext().first;
+-			mWheelPs[ wheelId ]-&gt;setEmissionRate( 0, mEmitterEmissionRate[wheelId] * mVehicle-&gt;getWheelInterface( wheelId )-&gt;getSkid() );
++			//@todo
++			mModel = 0;
++			mVehicle = 0;
+ 		}
++		virtual void onEnter(input::ActionMap&amp; actionMap, input::KeyboardDevice* keyboard)
++		{
++			using namespace input;
+ 
+-		getDefaultCamera()-&gt;lookAt(mVehicle-&gt;getChassisPosition());
+-		//mVehicleModel-&gt;updateGraphics( timeElapsed );
++			// front wheel controls
+ 
+-		mCentralController.triggerPhysicsUpdateSignal(0,timeElapsed);
+-		mCentralController.triggerGraphicsUpdateSignal(0,timeElapsed);
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_LEFT,
++					new input::KeyboardActionCondition( keyboard, KC_LEFT, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_LEFT, boost::bind(&amp;Car::onFrontWheelLeft,this) ) );
+ 
+-		mActiveActions.clear();
+-	}
+-protected:
+-	void onForward()
+-	{ mActiveActions.insert( input::ACTIONID_FORWARD ); }
+-	void onReverse()
+-	{ mActiveActions.insert( ACTIONID_BRAKE ); }
+-	void onUp()
+-	{ mActiveActions.insert( input::ACTIONID_UP ); }
+-	void onFrontWheelLeft()
+-	{ mActiveActions.insert( input::ACTIONID_LEFT ); }
+-	void onFrontWheelRight()
+-	{ mActiveActions.insert( input::ACTIONID_RIGHT ); }
+-private:
+-private:
+-	model::Model*			mGround;
+-	vehicle::IVehicle*		mVehicle;
+-	model::Model*			mVehicleModel;
+-	typedef AssocVector&lt;String,real&gt; EmitterRealMap;
+-	EmitterRealMap			mEmitterMinVel;
+-	EmitterRealMap			mEmitterMaxVel;
+-	EmitterRealMap			mEmitterEmissionRate;
+-	typedef AssocVector&lt;String,graphics::IParticleSystem*&gt; WheelPsMap;
+-	WheelPsMap				mWheelPs;
+-	input::ActionMap		mActionMap;
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_RIGHT,
++					new input::KeyboardActionCondition( keyboard, KC_RIGHT, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_RIGHT, boost::bind(&amp;Car::onFrontWheelRight,this) ) );
+ 
+-	typedef std::set&lt;input::ActionId&gt; ActionIdList;
+-	ActionIdList			mActiveActions;
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_FORWARD,
++					new input::KeyboardActionCondition( keyboard, KC_UP, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_FORWARD, boost::bind(&amp;Car::onForward,this) ) );
+ 
+-	model::ModelManager					mModelMgr;
+-	model::CentralControllerBase		mCentralController;
+-	SharedPtr&lt;vehicle::IVehicleSystem&gt;	mVehicleSystem;
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_BRAKE,
++					new input::KeyboardActionCondition( keyboard, KC_DOWN, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_BRAKE, boost::bind(&amp;Car::onReverse,this) ) );
++		}
++		void onExit()
++		{
++			GoVehicleBase::onExit();
++		}
++		virtual void onFrame(const real timeElapsed)
++		{
++			vehicle::IEnginePtrList engines = mVehicle-&gt;getEngineInterfaces();
++			ConstDequeIterator&lt; vehicle::IEnginePtrList &gt; itEngine( engines );
++			while (itEngine.hasMoreElements())
++			{
++				vehicle::IEngine* pEngine = itEngine.getNext();
++				pEngine-&gt;setInputSignal( pEngine-&gt;getInputSignal() - timeElapsed * 1.7 );
++			}
++
++			real steering0 = 0;
++			real braking0 = 0;
++
++			ConstDequeIterator&lt; ActionIdList &gt; itAction( mActiveActions );
++			while (itAction.hasMoreElements())
++			{
++				const input::ActionId activeId = itAction.getNext();
++				if (activeId == input::ACTIONID_FORWARD)
++					mVehicle-&gt;getEngineInterface(&quot;main&quot;)-&gt;setInputSignal(1.);
++				else if (activeId == ACTIONID_BRAKE)
++					braking0 = 1.;
++				else if (activeId == input::ACTIONID_LEFT)
++					steering0 -= real(0.7);
++				else if (activeId == input::ACTIONID_RIGHT)
++					steering0 += real(0.7);
++			}
++			mVehicle-&gt;setSteering( 0, steering0 );
++			mVehicle-&gt;getWheelInterface(&quot;leftFrontWheel&quot;)-&gt;brake(braking0);
++			mVehicle-&gt;getWheelInterface(&quot;rightFrontWheel&quot;)-&gt;brake(braking0);
++
++			mVehicle-&gt;updateSimulation( timeElapsed );
++
++			ConstDequeIterator&lt; WheelPsMap &gt; itWheel( mWheelPs );
++			while (itWheel.hasMoreElements())
++			{
++				const String wheelId = itWheel.getNext().first;
++				mWheelPs[ wheelId ]-&gt;setEmissionRate( 0, mEmitterEmissionRate[wheelId] * mVehicle-&gt;getWheelInterface( wheelId )-&gt;getSkid() );
++			}
++
++			mActiveActions.clear();
++		}
++	private:
++		vehicle::IVehicle*		mVehicle;
++		model::Model*			mModel;
++		typedef AssocVector&lt;String,real&gt; EmitterRealMap;
++		EmitterRealMap			mEmitterMinVel;
++		EmitterRealMap			mEmitterMaxVel;
++		EmitterRealMap			mEmitterEmissionRate;
++		typedef AssocVector&lt;String,graphics::IParticleSystem*&gt; WheelPsMap;
++		WheelPsMap				mWheelPs;
++
++		typedef std::set&lt;input::ActionId&gt; ActionIdList;
++		ActionIdList			mActiveActions;
++
++	private:
++		void onForward()
++		{ mActiveActions.insert( input::ACTIONID_FORWARD ); }
++		void onReverse()
++		{ mActiveActions.insert( ACTIONID_BRAKE ); }
++		void onUp()
++		{ mActiveActions.insert( input::ACTIONID_UP ); }
++		void onFrontWheelLeft()
++		{ mActiveActions.insert( input::ACTIONID_LEFT ); }
++		void onFrontWheelRight()
++		{ mActiveActions.insert( input::ACTIONID_RIGHT ); }
++		void _createCarWheelVisual(model::CentralControllerBase&amp; centralController, graphics::IWorld&amp; gworld, const String&amp; wheelId, graphics::ISceneNode&amp; parentSN)
++		{
++			YAKE_ASSERT( mModel );
++			YAKE_ASSERT( mVehicle );
++
++			// scene node + wheel mesh
++			graphics::ISceneNode* pSN = gworld.createSceneNode();
++			graphics::IEntity* pE = gworld.createEntity(&quot;wheel1.mesh&quot;);
++			pE-&gt;setCastsShadow( true );
++			pSN-&gt;attachEntity( pE );
++
++			model::ModelMovableLink* pLink = mModel-&gt;createLink( mVehicle-&gt;getWheelInterface(wheelId), pSN );
++			centralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
++
++			// scene node + particle system for smoke...
++			pSN = gworld.createSceneNode();
++			graphics::IParticleSystem* pPS = gworld.createParticleSystem(&quot;SkidSmoke&quot;);
++			mWheelPs[wheelId] = pPS;
++			mEmitterEmissionRate[wheelId] = pPS-&gt;getEmissionRate(0);
++			pSN-&gt;attachParticleSystem( pPS );
++
++			pLink = new model::ModelMovableDirectLink();
++			pLink-&gt;setSource( mVehicle-&gt;getWheelInterface(wheelId) );
++			pLink-&gt;subscribeToPositionChanged( pSN ); //position only!
++			mModel-&gt;addLink( pLink );
++			centralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
++		}
++	};
++
++	struct Jet : public GoVehicleBase
++	{
++		Jet() : mModel(0), mVehicle(0)
++		{}
++		~Jet()
++		{
++			destroy();
++		}
++		virtual Vector3 getPosition() const
++		{
++			YAKE_ASSERT( mVehicle );
++			return mVehicle-&gt;getChassisPosition();
++		}
++		void init(model::CentralControllerBase&amp; centralController,model::ModelManager&amp; modelMgr,graphics::IWorld&amp; gworld,vehicle::IVehicleSystem&amp; vehSys)
++		{
++			YAKE_ASSERT( !mModel );
++			mModel = modelMgr.createModel(&quot;theJet&quot;,
++					&quot;physics/empty:name=p&quot;
++					&quot;|graphics/empty:name=g&quot;
++					&quot;|yake/dotVehicle:name=veh;template=jet;physical=p&quot;
++					);
++			YAKE_ASSERT( mModel );
++			vehicle::VehicleModelComponent* vehComp = static_cast&lt;vehicle::VehicleModelComponent*&gt;(mModel-&gt;getComponentByTag(&quot;veh&quot;));
++			YAKE_ASSERT( vehComp );
++			mVehicle = vehComp-&gt;getVehicle();
++			YAKE_ASSERT( mVehicle );
++
++			mVehicle-&gt;translate(Vector3(-30,0,30));
++
++			// create visuals
++
++			model::Graphical* pG = dynamic_cast&lt;model::Graphical*&gt;(mModel-&gt;getComponentByTag(&quot;g&quot;));
++			YAKE_ASSERT( pG );
++
++			// - ship body
++			graphics::ISceneNode* pSN = gworld.createSceneNode();
++			pSN-&gt;attachEntity( gworld.createEntity(&quot;razor.mesh&quot;) );
++			pSN-&gt;setScale( math::Vector3::kUnitScale * razorMeshScale );
++			pG-&gt;addSceneNode(pSN,&quot;root&quot;);
++
++			YAKE_LOG( &quot;Creating thruster visuals&quot; );
++			// - thruster visuals
++			_createThrusterVisual( centralController, gworld, &quot;left&quot;, &quot;left&quot;, *pSN );
++			_createThrusterVisual( centralController, gworld, &quot;right&quot;, &quot;right&quot;, *pSN );
++			_createThrusterVisual( centralController, gworld, &quot;front&quot;, &quot;backward&quot;, *pSN );
++			_createThrusterVisual( centralController, gworld, &quot;rear&quot;, &quot;forward&quot;, *pSN );
++			_createThrusterVisual( centralController, gworld, &quot;bottom&quot;, &quot;upward&quot;, *pSN );
++			_createThrusterVisual( centralController, gworld, &quot;top&quot;, &quot;downward&quot;, *pSN );
++
++			// - wheel visuals
++			if (mVehicle-&gt;getWheelInterface(&quot;frontWheel&quot;))
++			{
++				_createWheelVisual( centralController, gworld, &quot;frontWheel&quot;, *pSN );
++				_createWheelVisual( centralController, gworld, &quot;leftRearWheel&quot;, *pSN );
++				_createWheelVisual( centralController, gworld, &quot;rightRearWheel&quot;, *pSN );
++			}
++
++			// create visual &lt;-&gt; physics links
++			model::ModelMovableLink* pLink = mModel-&gt;createLink( mVehicle-&gt;getChassisMovable(), pSN );
++			centralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
++		}
++		void destroy()
++		{
++			//@todo
++			mModel = 0;
++			mVehicle = 0;
++		}
++		virtual void onEnter(input::ActionMap&amp; actionMap, input::KeyboardDevice* keyboard)
++		{
++			using namespace input;
++
++			// front wheel controls
++
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_LEFT,
++					new input::KeyboardActionCondition( keyboard, KC_COMMA, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_LEFT, boost::bind(&amp;Jet::onFrontWheelLeft,this) ) );
++
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_RIGHT,
++					new input::KeyboardActionCondition( keyboard, KC_PERIOD, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_RIGHT, boost::bind(&amp;Jet::onFrontWheelRight,this) ) );
++
++			// thruster controls
++
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_STRAFE_LEFT,
++					new input::KeyboardActionCondition( keyboard, KC_LEFT, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_STRAFE_LEFT, boost::bind(&amp;Jet::onStrafeLeft,this) ) );
++
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_STRAFE_RIGHT,
++					new input::KeyboardActionCondition( keyboard, KC_RIGHT, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_STRAFE_RIGHT, boost::bind(&amp;Jet::onStrafeRight,this) ) );
++
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_FORWARD,
++					new input::KeyboardActionCondition( keyboard, KC_UP, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_FORWARD, boost::bind(&amp;Jet::onForward,this) ) );
++
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_REVERSE,
++					new input::KeyboardActionCondition( keyboard, KC_DOWN, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_REVERSE, boost::bind(&amp;Jet::onReverse,this) ) );
++
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_UP,
++					new input::KeyboardActionCondition( keyboard, KC_PGUP, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_UP, boost::bind(&amp;Jet::onUp,this) ) );
++
++			this-&gt;addInputConditionConnection(
++				actionMap.reg( ACTIONID_DOWN,
++					new input::KeyboardActionCondition( keyboard, KC_PGDOWN, KAM_CONTINUOUS ) ) );
++			this-&gt;addInputSignalConnection(
++				actionMap.subscribeToActionId( ACTIONID_DOWN, boost::bind(&amp;Jet::onDown,this) ) );
++		}
++		virtual void onExit()
++		{
++			GoVehicleBase::onExit();
++		}
++		virtual void onFrame(const real timeElapsed)
++		{
++			vehicle::IEnginePtrList engines = mVehicle-&gt;getEngineInterfaces();
++			ConstDequeIterator&lt; vehicle::IEnginePtrList &gt; itEngine( engines );
++			while (itEngine.hasMoreElements())
++			{
++				vehicle::IEngine* pEngine = itEngine.getNext();
++				pEngine-&gt;setInputSignal( std::max(0., pEngine-&gt;getInputSignal() - timeElapsed * 1.7) );
++			}
++
++			real steering0 = 0;
++
++			ConstDequeIterator&lt; ActionIdList &gt; itAction( mActiveActions );
++			while (itAction.hasMoreElements())
++			{
++				const input::ActionId activeId = itAction.getNext();
++				if (activeId == input::ACTIONID_STRAFE_LEFT)
++					mVehicle-&gt;getEngineInterface(&quot;right&quot;)-&gt;setInputSignal(1.);
++				else if (activeId == input::ACTIONID_STRAFE_RIGHT)
++					mVehicle-&gt;getEngineInterface(&quot;left&quot;)-&gt;setInputSignal(1.);
++				else if (activeId == input::ACTIONID_FORWARD)
++					mVehicle-&gt;getEngineInterface(&quot;forward&quot;)-&gt;setInputSignal(1.);
++				else if (activeId == input::ACTIONID_REVERSE)
++					mVehicle-&gt;getEngineInterface(&quot;backward&quot;)-&gt;setInputSignal(1.);
++				else if (activeId == input::ACTIONID_UP)
++					mVehicle-&gt;getEngineInterface(&quot;upward&quot;)-&gt;setInputSignal(1.);
++				else if (activeId == input::ACTIONID_DOWN)
++					mVehicle-&gt;getEngineInterface(&quot;downward&quot;)-&gt;setInputSignal(1.);
++				else if (activeId == input::ACTIONID_LEFT)
++					steering0 -= 0.3;
++				else if (activeId == input::ACTIONID_RIGHT)
++					steering0 += 0.3;
++			}
++			mVehicle-&gt;setSteering( 0, steering0 );
++
++			mVehicle-&gt;updateSimulation( timeElapsed );
++
++			_updateThrusterPs();
++
++			mActiveActions.clear();
++		}
++	private:
++		vehicle::IVehicle*		mVehicle;
++		model::Model*			mModel;
++
++		typedef AssocVector&lt;String,real&gt; EmitterRealMap;
++		EmitterRealMap			mEmitterMinVel;
++		EmitterRealMap			mEmitterMaxVel;
++		EmitterRealMap			mEmitterEmissionRate;
++		typedef AssocVector&lt;String,graphics::IParticleSystem*&gt; ThrusterPsMap;
++		ThrusterPsMap			mThrusterPs;
++		input::ActionMap		mActionMap;
++
++		typedef std::set&lt;input::ActionId&gt; ActionIdList;
++		ActionIdList			mActiveActions;
++
++	private:
++		void onStrafeLeft()
++		{ mActiveActions.insert( input::ACTIONID_STRAFE_LEFT ); }
++		void onStrafeRight()
++		{ mActiveActions.insert( input::ACTIONID_STRAFE_RIGHT ); }
++		void onForward()
++		{ mActiveActions.insert( input::ACTIONID_FORWARD ); }
++		void onReverse()
++		{ mActiveActions.insert( input::ACTIONID_REVERSE ); }
++		void onUp()
++		{ mActiveActions.insert( input::ACTIONID_UP ); }
++		void onDown()
++		{ mActiveActions.insert( input::ACTIONID_DOWN ); }
++		void onFrontWheelLeft()
++		{ mActiveActions.insert( input::ACTIONID_LEFT ); }
++		void onFrontWheelRight()
++		{ mActiveActions.insert( input::ACTIONID_RIGHT ); }
++		void _createThrusterVisual(model::CentralControllerBase&amp; centralController, graphics::IWorld&amp; gworld, const String&amp; mtPtId, const String&amp; engineId, graphics::ISceneNode&amp; parentSN)
++		{
++			graphics::ISceneNode* pSN = parentSN.createChildNode( mtPtId );
++
++			graphics::IParticleSystem* pPS = gworld.createParticleSystem(&quot;thruster2&quot;);
++			pSN-&gt;attachParticleSystem( pPS );
++
++			YAKE_ASSERT( mModel );
++			YAKE_ASSERT( mVehicle );
++			model::ModelMovableLink* pLink = mModel-&gt;createLink( mVehicle-&gt;getMountPoint(mtPtId), pSN );
++			centralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
++
++			_regThrusterPs( engineId, *pPS );
++		}
++		void _createWheelVisual(model::CentralControllerBase&amp; centralController, graphics::IWorld&amp; gworld, const String&amp; wheelId, graphics::ISceneNode&amp; parentSN)
++		{
++			graphics::ISceneNode* pSN = gworld.createSceneNode();
++			graphics::IEntity* pE = gworld.createEntity(&quot;sphere_d1.mesh&quot;);
++			pSN-&gt;attachEntity( pE );
++			const math::Vector3 scale = math::Vector3::kUnitScale * 2.f * mVehicle-&gt;getWheelInterface(wheelId)-&gt;getRadius();
++			pSN-&gt;setScale( scale );
++
++			YAKE_ASSERT( mModel );
++			YAKE_ASSERT( mVehicle );
++			model::ModelMovableLink* pLink = mModel-&gt;createLink( mVehicle-&gt;getWheelInterface(wheelId), pSN );
++			centralController.subscribeToGraphicsUpdate( Bind2(&amp;model::ModelMovableLink::update,pLink) );
++		}
++		void _regThrusterPs(const String&amp; engineId, graphics::IParticleSystem&amp; ps)
++		{
++			mEmitterMinVel[ engineId ] = ps.getMinVelocity(0);
++			mEmitterMaxVel[ engineId ] = ps.getMaxVelocity(0);
++			mEmitterEmissionRate[ engineId ] = ps.getEmissionRate(0);
++			mThrusterPs[ engineId ] = &ps;
++		}
++		void _updateThrusterPs()
++		{
++			ConstDequeIterator&lt; ThrusterPsMap &gt; itM( mThrusterPs );
++			while (itM.hasMoreElements())
++			{
++				std::pair&lt;String,graphics::IParticleSystem*&gt; p = itM.getNext();
++				const String mtPtId = p.first;
++				graphics::IParticleSystem* ps = p.second;
++				const real throttle = mVehicle-&gt;getEngineInterface(mtPtId)-&gt;getInputSignal();
++
++				real rate = throttle * mEmitterEmissionRate[ mtPtId ];
++				ps-&gt;setEmissionRate( 0, rate );
++				std::cout &lt;&lt; &quot;r=&quot; &lt;&lt; rate &lt;&lt; &quot; t=&quot; &lt;&lt; throttle &lt;&lt; &quot;\n&quot;;
++
++				real vel = throttle * mEmitterMaxVel[ mtPtId ];
++				ps-&gt;setMaxVelocity( 0, vel );
++
++				vel = throttle * mEmitterMinVel[ mtPtId ];
++				ps-&gt;setMinVelocity( 0, vel );
++			}
++		}
++	};
++	SharedPtr&lt;Jet&gt;				mJet;
++	SharedPtr&lt;Car&gt;				mCar;
++	GoVehicleBase*				mActive;
++	void toggleVehicle()
++	{
++		// 1st time
++		if (!mActive)
++			mActive = mCar.get();
++		else
++			mActive-&gt;onExit();
++
++		// toggle
++		if (mActive == static_cast&lt;GoVehicleBase*&gt;(mJet.get()))
++			mActive = mCar.get();
++		else
++			mActive = mJet.get();
++
++		mActive-&gt;onEnter(mActionMap,getApp().getKeyboard());
++	}
+ };
+ 
+ /** The mighty application itself! */
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000461.html">[Yake-svn] r1393 - trunk/yake/src/yapp/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000463.html">[Yake-svn] r1395 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#462">[ date ]</a>
+              <a href="thread.html#462">[ thread ]</a>
+              <a href="subject.html#462">[ subject ]</a>
+              <a href="author.html#462">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

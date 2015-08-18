@@ -1,0 +1,93 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1167 - trunk/yake/src/yake/samples/base/abstractfactory
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-December/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1167%20-%20trunk/yake/src/yake/samples/base/abstractfactory&In-Reply-To=%3C200512072223.jB7MNaxp021981%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000237.html">
+   <LINK REL="Next"  HREF="000236.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1167 - trunk/yake/src/yake/samples/base/abstractfactory</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1167%20-%20trunk/yake/src/yake/samples/base/abstractfactory&In-Reply-To=%3C200512072223.jB7MNaxp021981%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1167 - trunk/yake/src/yake/samples/base/abstractfactory">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Dec  7 23:23:36 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000237.html">[Yake-svn] r1166 - trunk/yake/src/yake/plugins/physicsNX
+</A></li>
+        <LI>Next message: <A HREF="000236.html">[Yake-svn] r1168 - trunk/yake/src/yake/samples/physics/demo
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#238">[ date ]</a>
+              <a href="thread.html#238">[ thread ]</a>
+              <a href="subject.html#238">[ subject ]</a>
+              <a href="author.html#238">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-12-07 23:23:35 +0100 (Wed, 07 Dec 2005)
+New Revision: 1167
+
+Modified:
+   trunk/yake/src/yake/samples/base/abstractfactory/yakeUnitTest.cpp
+Log:
+various fixes
+
+Modified: trunk/yake/src/yake/samples/base/abstractfactory/yakeUnitTest.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/base/abstractfactory/yakeUnitTest.cpp	2005-12-07 22:23:19 UTC (rev 1166)
++++ trunk/yake/src/yake/samples/base/abstractfactory/yakeUnitTest.cpp	2005-12-07 22:23:35 UTC (rev 1167)
+@@ -67,7 +67,7 @@
+ 	private InheritLinear
+ 	&lt; 
+ 		system_list, 
+-		typename lambda&lt; semi_init_system_holder&lt;_, _&gt; &gt;::type,
++		typename ::boost::mpl::lambda&lt; semi_init_system_holder&lt;_, _&gt; &gt;::type,
+ 		semi_init_system_holder_root
+ 	&gt;::type
+ {
+@@ -101,7 +101,7 @@
+ typedef InheritMultiple
+ 	&lt;
+ 		list&lt; int, std::string, Widget &gt;,
+-		lambda&lt; Holder&lt; _ &gt; &gt;::type
++		::boost::mpl::lambda&lt; Holder&lt; _ &gt; &gt;::type
+ 	&gt;::type myWidgetInfo;
+ 
+ } // inheritance
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000237.html">[Yake-svn] r1166 - trunk/yake/src/yake/plugins/physicsNX
+</A></li>
+	<LI>Next message: <A HREF="000236.html">[Yake-svn] r1168 - trunk/yake/src/yake/samples/physics/demo
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#238">[ date ]</a>
+              <a href="thread.html#238">[ thread ]</a>
+              <a href="subject.html#238">[ subject ]</a>
+              <a href="author.html#238">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

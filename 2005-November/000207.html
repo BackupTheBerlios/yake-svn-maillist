@@ -1,0 +1,306 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1137 - trunk/yake/yapp/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1137%20-%20trunk/yake/yapp/model&In-Reply-To=%3C200511100019.jAA0JNPs012525%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000206.html">
+   <LINK REL="Next"  HREF="000209.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1137 - trunk/yake/yapp/model</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1137%20-%20trunk/yake/yapp/model&In-Reply-To=%3C200511100019.jAA0JNPs012525%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1137 - trunk/yake/yapp/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov 10 01:19:23 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000206.html">[Yake-svn] r1136 - trunk/yake/yapp/loader
+</A></li>
+        <LI>Next message: <A HREF="000209.html">[Yake-svn] r1138 - trunk/yake/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#207">[ date ]</a>
+              <a href="thread.html#207">[ thread ]</a>
+              <a href="subject.html#207">[ subject ]</a>
+              <a href="author.html#207">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-10 01:19:16 +0100 (Thu, 10 Nov 2005)
+New Revision: 1137
+
+Added:
+   trunk/yake/yapp/model/yakeGraphicalDataImporter.h
+Modified:
+   trunk/yake/yapp/model/yakeGraphical.h
+Log:
+patch 1350326 by mj (modified by psy)
+
+Modified: trunk/yake/yapp/model/yakeGraphical.h
+===================================================================
+--- trunk/yake/yapp/model/yakeGraphical.h	2005-11-10 00:17:06 UTC (rev 1136)
++++ trunk/yake/yapp/model/yakeGraphical.h	2005-11-10 00:19:16 UTC (rev 1137)
+@@ -41,12 +41,12 @@
+ 	*/
+ 	class YAPP_BASE_API Graphical : public Submodel
+ 	{
+-		YAKE_DECLARE_CLASS( Graphical );
+ 	public:
+ 		Graphical()
+ 		{}
++
+ 		virtual ~Graphical();
+-		//typedef Vector&lt;graphics::ISceneNode*&gt; SceneNodeList;
++
+ 		typedef graphics::SceneNodePtrList SceneNodeList;
+ 
+ 		/** Adds a scene node to this model::Graphical object.
+@@ -60,7 +60,7 @@
+ 			all child nodes recursively.
+ 			Consider using getAllSceneNodes() as an alternative (for performance reasons!).
+ 		*/
+-		SceneNodeList getSceneNodes(bool bRecursive = false) const;
++		SceneNodeList getSceneNodes( bool bRecursive = false ) const;
+ 
+ 		/** Returns a scene node given its name, either restricted to root nodes or the complete
+ 			node hierarchy.
+@@ -77,86 +77,16 @@
+ 		*/
+ 		void setPosition( const Vector3&amp; pos );
+ 	
+-		//... getAllX();
+-		//
+-		//graphics::IEntity* getEntity( String name );
+-		//graphics::ICamera* getCamera( String name );
+-		//graphics::ILight* getLight( String name );
+-		//
+-		//graphics::ISceneNode* getParentForEntity( String entityName );
+-		//graphics::ISceneNode* getParentForLight( String lightName );
+-		//graphics::ISceneNode* getParentForCamera( String cameraName );
+-		
+ 	private:
+ 		struct SceneNodeEntry
+ 		{
+ 			graphics::ISceneNode*	pSN;
+ 			bool					bOwned;
+ 		};
++
+ 		typedef Vector&lt; SceneNodeEntry &gt; NodeList;
+ 		NodeList		mNodes;
+ 		
+-		class DotSceneListener
+-		{
+-		public:
+-			DotSceneListener( Graphical&amp; owner ) : mOwner(owner)
+-			{}
+-			typedef yake::data::parser::dotscene::DotSceneParser::NodeDesc SceneNodeDesc;
+-			typedef yake::data::parser::dotscene::DotSceneParser::EntityDesc EntityDesc;
+-			typedef yake::data::parser::dotscene::DotSceneParser::CameraDesc CameraDesc;
+-			typedef yake::data::parser::dotscene::DotSceneParser::LightDesc LightDesc;
+-			
+-			void processSceneNode( const SceneNodeDesc );
+-			void processEntity( const EntityDesc );
+-			void processCamera( const CameraDesc );
+-			void processLight( const LightDesc );
+-			
+-			void reset( graphics::IWorld* graphicsWorld )
+-			{
+-				mSceneNodes.clear();
+-				mEntities.clear();
+-				mCameras.clear();
+-				mLights.clear();
+-				
+-				mGWorld = graphicsWorld;
+-			}
+-			
+-			struct EntityInfo
+-			{
+-				graphics::IEntity*	entity;
+-				String				parentSceneNode;
+-			};
+-			
+-			struct CameraInfo
+-			{
+-				graphics::ICamera*	camera;
+-				String				parentSceneNode;
+-			};
+-			
+-			struct LightInfo
+-			{
+-				graphics::ILight*	light;
+-				String				parentSceneNode;
+-			};
+-
+-			typedef AssocVector&lt; String, graphics::ISceneNode* &gt; SceneNodeMap;
+-			typedef AssocVector&lt; String, EntityInfo &gt; EntityMap;
+-			typedef AssocVector&lt; String, CameraInfo &gt; CameraMap;
+-			typedef AssocVector&lt; String, LightInfo &gt; LightMap;
+-			
+-			typedef std::map&lt; String, String &gt; TrackerMap;
+-			TrackerMap		mTrackersTargets;
+-			
+-			SceneNodeMap	mSceneNodes;
+-			EntityMap		mEntities;
+-			CameraMap		mCameras;
+-			LightMap		mLights;
+-			
+-			graphics::IWorld*	mGWorld;
+-
+-			Graphical&amp;		mOwner;
+-		};
+-
+ 	};
+ 
+ } // model
+
+Added: trunk/yake/yapp/model/yakeGraphicalDataImporter.h
+===================================================================
+--- trunk/yake/yapp/model/yakeGraphicalDataImporter.h	2005-11-10 00:17:06 UTC (rev 1136)
++++ trunk/yake/yapp/model/yakeGraphicalDataImporter.h	2005-11-10 00:19:16 UTC (rev 1137)
+@@ -0,0 +1,111 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++
++#ifndef YAPP_MODEL_GRAPHICAL_DATA_IMPORTER_H
++#define YAPP_MODEL_GRAPHICAL_DATA_IMPORTER_H
++
++#include &lt;yapp/base/yappPrerequisites.h&gt;
++#include &lt;yake/graphics/yakeGraphicsSystem.h&gt;
++#include &lt;yapp/model/yakeModel.h&gt;
++#include &lt;yapp/loader/yakeDotScene.h&gt;
++
++namespace yake {
++namespace model {
++
++    /** Class implements DotSceneParser's listener. Creates graphical objects and places
++     * them in model::Graphical object.
++     */
++    class DotSceneListener
++    {
++	public:
++	    DotSceneListener( Graphical&amp; owner ) : mOwner(owner)
++	    {}
++
++	    virtual ~DotSceneListener() {}		
++
++	    typedef yake::data::parser::dotscene::DotSceneParser::NodeDesc SceneNodeDesc;
++	    typedef yake::data::parser::dotscene::DotSceneParser::EntityDesc EntityDesc;
++	    typedef yake::data::parser::dotscene::DotSceneParser::CameraDesc CameraDesc;
++	    typedef yake::data::parser::dotscene::DotSceneParser::LightDesc LightDesc;
++
++	    virtual void processSceneNode( const SceneNodeDesc );
++	    virtual void processEntity( const EntityDesc );
++	    virtual void processCamera( const CameraDesc );
++	    virtual void processLight( const LightDesc );
++
++	    void reset( graphics::IWorld* graphicsWorld )
++	    {
++			mSceneNodes.clear();
++			mEntities.clear();
++			mCameras.clear();
++			mLights.clear();
++
++			mGWorld = graphicsWorld;
++	    }
++
++	    struct EntityInfo
++	    {
++			graphics::IEntity*	entity;
++			String		parentSceneNode;
++	    };
++
++	    struct CameraInfo
++	    {
++			graphics::ICamera*	camera;
++			String		parentSceneNode;
++	    };
++
++	    struct LightInfo
++	    {
++			graphics::ILight*	light;
++			String		parentSceneNode;
++	    };
++
++	    typedef AssocVector&lt; String, graphics::ISceneNode* &gt; SceneNodeMap;
++	    typedef AssocVector&lt; String, EntityInfo &gt; EntityMap;
++	    typedef AssocVector&lt; String, CameraInfo &gt; CameraMap;
++	    typedef AssocVector&lt; String, LightInfo &gt; LightMap;
++
++	    typedef std::map&lt; String, String &gt; TrackerMap;
++	    TrackerMap		mTrackersTargets;
++
++	    SceneNodeMap	mSceneNodes;
++	    EntityMap		mEntities;
++	    CameraMap		mCameras;
++	    LightMap		mLights;
++
++	    graphics::IWorld*	mGWorld;
++
++	    Graphical&amp;		mOwner;
++    };
++
++
++} // model
++} // yake
++
++#endif 
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000206.html">[Yake-svn] r1136 - trunk/yake/yapp/loader
+</A></li>
+	<LI>Next message: <A HREF="000209.html">[Yake-svn] r1138 - trunk/yake/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#207">[ date ]</a>
+              <a href="thread.html#207">[ thread ]</a>
+              <a href="subject.html#207">[ subject ]</a>
+              <a href="author.html#207">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,2402 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r996 - in trunk/yake: . src/yake/base/native/Linux src/yake/physics src/yake/plugins/graphicsOgre src/yake/samples/graphics/demo src/yapp src/yapp/loader src/yapp/model src/yapp/samples src/yapp/samples/base src/yapp/samples/base/vehicle src/yapp/samples/model/dotLink src/yapp/vehicle yake/base yake/base/prerequisites yake/base/templates yapp/loader
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r996%20-%20in%20trunk/yake%3A%20.%20src/yake/base/native/Linux%20src/yake/physics%20src/yake/plugins/graphicsOgre%20src/yake/samples/graphics/demo%20src/yapp%20src/yapp/loader%20src/yapp/model%20src/yapp/samples%20src/yapp/samples/base%20src/yapp/samples/base/vehicle%20src/yapp/samples/model/dotLink%20src/yapp/vehicle%20yake/base%20yake/base/prerequisites%20yake/base/templates%20yapp/loader&In-Reply-To=%3C200510061803.j96I3OmY022453%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000065.html">
+   <LINK REL="Next"  HREF="000066.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r996 - in trunk/yake: . src/yake/base/native/Linux src/yake/physics src/yake/plugins/graphicsOgre src/yake/samples/graphics/demo src/yapp src/yapp/loader src/yapp/model src/yapp/samples src/yapp/samples/base src/yapp/samples/base/vehicle src/yapp/samples/model/dotLink src/yapp/vehicle yake/base yake/base/prerequisites yake/base/templates yapp/loader</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r996%20-%20in%20trunk/yake%3A%20.%20src/yake/base/native/Linux%20src/yake/physics%20src/yake/plugins/graphicsOgre%20src/yake/samples/graphics/demo%20src/yapp%20src/yapp/loader%20src/yapp/model%20src/yapp/samples%20src/yapp/samples/base%20src/yapp/samples/base/vehicle%20src/yapp/samples/model/dotLink%20src/yapp/vehicle%20yake/base%20yake/base/prerequisites%20yake/base/templates%20yapp/loader&In-Reply-To=%3C200510061803.j96I3OmY022453%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r996 - in trunk/yake: . src/yake/base/native/Linux src/yake/physics src/yake/plugins/graphicsOgre src/yake/samples/graphics/demo src/yapp src/yapp/loader src/yapp/model src/yapp/samples src/yapp/samples/base src/yapp/samples/base/vehicle src/yapp/samples/model/dotLink src/yapp/vehicle yake/base yake/base/prerequisites yake/base/templates yapp/loader">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Oct  6 20:03:24 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000065.html">[Yake-svn] r995 - trunk/yake/yapp/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000066.html">[Yake-svn] r997 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#68">[ date ]</a>
+              <a href="thread.html#68">[ thread ]</a>
+              <a href="subject.html#68">[ subject ]</a>
+              <a href="author.html#68">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-06 20:03:10 +0200 (Thu, 06 Oct 2005)
+New Revision: 996
+
+Modified:
+   trunk/yake/autogen.sh
+   trunk/yake/buildspec.xml
+   trunk/yake/src/yake/base/native/Linux/yakeDebug.cpp
+   trunk/yake/src/yake/physics/yakePhysicsAffectorZone.cpp
+   trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp
+   trunk/yake/src/yake/samples/graphics/demo/yakeGraphicsDemo.cpp
+   trunk/yake/src/yapp/Makefile.am
+   trunk/yake/src/yapp/loader/yakeXODEParser.cpp
+   trunk/yake/src/yapp/model/Makefile.am
+   trunk/yake/src/yapp/model/yakePhysical.cpp
+   trunk/yake/src/yapp/samples/Makefile.am
+   trunk/yake/src/yapp/samples/base/Makefile.am
+   trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp
+   trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp
+   trunk/yake/src/yapp/vehicle/yakeMountPoint.cpp
+   trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+   trunk/yake/src/yapp/vehicle/yakeOdeEngine.cpp
+   trunk/yake/src/yapp/vehicle/yakeVehicle.cpp
+   trunk/yake/yake/base/Makefile.am
+   trunk/yake/yake/base/prerequisites/yakePrerequisitesGCC.h
+   trunk/yake/yake/base/templates/yakeAlgorithms.h
+   trunk/yake/yake/base/templates/yakeManager.h
+   trunk/yake/yake/base/yakeDebugLogAppender.h
+   trunk/yake/yapp/loader/yakeXODEParser.h
+Log:
+patch 1312759 by mj,
+a few fixes by psy
+
+Modified: trunk/yake/autogen.sh
+===================================================================
+--- trunk/yake/autogen.sh	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/autogen.sh	2005-10-06 18:03:10 UTC (rev 996)
+@@ -1,8 +1,8 @@
+ #!/bin/bash
+ 
+ libtoolize --force --copy
++aclocal
+ autoheader
+-aclocal
+ automake -a
+ autoconf
+ 
+
+Modified: trunk/yake/buildspec.xml
+===================================================================
+--- trunk/yake/buildspec.xml	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/buildspec.xml	2005-10-06 18:03:10 UTC (rev 996)
+@@ -12,6 +12,7 @@
+ 			&lt;include&gt;dependencies/OGRE&lt;/include&gt;
+ 			&lt;include&gt;dependencies/ode/include&lt;/include&gt;
+ 			&lt;include&gt;dependencies/luabind&lt;/include&gt;
++			&lt;include&gt;/usr/local/include/CEGUI&lt;/include&gt;
+ 	&lt;/Common&gt;
+ 
+ 	&lt;!-- One can define lists of strings to be used later  --&gt;
+@@ -27,6 +28,7 @@
+ 	
+ 	&lt;/BuildSharedLibrary&gt;
+ 
++	&lt;!-- YAKE core libraries... --&gt;
+ 	&lt;BuildSharedLibrary
+ 		name=&quot;yakeTemplates&quot;
+ 		src=&quot;src/yake/base/templates&quot;
+@@ -99,7 +101,15 @@
+                 &lt;libadd&gt;yakeBase&lt;/libadd&gt;
+         &lt;/BuildSharedLibrary&gt;
+ 
++        &lt;BuildSharedLibrary
++                name=&quot;yakeThread&quot;
++                src=&quot;src/yake/thread&quot;
++        &gt;
++                &lt;libadd&gt;yakeBase&lt;/libadd&gt;
++		&lt;libadd&gt;ZThread&lt;/libadd&gt;
++        &lt;/BuildSharedLibrary&gt;
+ 
++
+ &lt;!--
+ 	&lt;BuildSharedLibrary
+ 		name=&quot;yakeRx&quot;
+@@ -132,7 +142,7 @@
+ 		&lt;libadd&gt;yakeInput&lt;/libadd&gt;
+ 		&lt;libadd&gt;OgreMain&lt;/libadd&gt;
+ 	&lt;/BuildSharedLibrary&gt;
+-&lt;!--
++
+ 	&lt;BuildSharedLibrary
+ 		name=&quot;yakephysicsODE&quot;
+ 		src=&quot;src/yake/plugins/physicsODE&quot;
+@@ -140,16 +150,18 @@
+ 		&lt;libadd&gt;yakePhysics&lt;/libadd&gt;
+ 		&lt;libadd&gt;ode&lt;/libadd&gt;
+ 	&lt;/BuildSharedLibrary&gt;
+---&gt;
++
+ 	&lt;BuildSharedLibrary
+ 		name=&quot;yakescriptingLua&quot;
+ 		src=&quot;src/yake/plugins/scriptingLua&quot;
+ 	&gt;
+ 		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
++		&lt;libadd&gt;luabind&lt;/libadd&gt;
+ 		&lt;libadd&gt;lualib&lt;/libadd&gt;
+ 		&lt;libadd&gt;lua&lt;/libadd&gt;
+ 	&lt;/BuildSharedLibrary&gt;
+ 
++	&lt;!-- TODO Rename this thing? --&gt; 
+ 	&lt;BuildSharedLibrary
+ 		name=&quot;yakescriptingBindingsLua&quot;
+ 		src=&quot;src/yake/plugins/scriptingLuaBindings&quot;
+@@ -158,13 +170,34 @@
+ 		&lt;libadd&gt;luabind&lt;/libadd&gt;
+ 		&lt;libadd&gt;lualib&lt;/libadd&gt;
+ 		&lt;libadd&gt;lua&lt;/libadd&gt;
+-
+ 	&lt;/BuildSharedLibrary&gt;
+ 
+ 	&lt;BuildSharedLibrary
+ 		name=&quot;yakegraphicsLuaBindings&quot;
++		src=&quot;src/yake/plugins/graphicsLuaBindings&quot;
++	&gt;
++		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
++		&lt;libadd&gt;luabind&lt;/libadd&gt;
++		&lt;libadd&gt;lualib&lt;/libadd&gt;
++		&lt;libadd&gt;lua&lt;/libadd&gt;
++	&lt;/BuildSharedLibrary&gt;
+ 
+ 	&lt;BuildSharedLibrary
++		name=&quot;yakebaseLuaBindings&quot;
++		src=&quot;src/yake/plugins/baseLuaBindings&quot;
++	&gt;
++		&lt;libadd&gt;yakeBase&lt;/libadd&gt;
++		&lt;libadd&gt;luabind&lt;/libadd&gt;
++		&lt;libadd&gt;lualib&lt;/libadd&gt;
++		&lt;libadd&gt;lua&lt;/libadd&gt;
++	&lt;/BuildSharedLibrary&gt;
++
++&lt;!--
++	*********************************************
++	*  YAPP                                     *
++	*********************************************
++--&gt;
++	&lt;BuildSharedLibrary
+ 		name=&quot;yappEvents&quot;
+ 		src=&quot;src/yapp/base/event&quot;
+ 	/&gt;
+@@ -192,7 +225,69 @@
+ 		&lt;libadd&gt;yappLoader&lt;/libadd&gt;
+ 	&lt;/BuildSharedLibrary&gt;
+ 
++	&lt;BuildSharedLibrary
++		name=&quot;yappStatemachine&quot;	
++		src=&quot;src/yapp/statemachine&quot;
++	&gt;
++		&lt;libadd&gt;yappBase&lt;/libadd&gt;
++	&lt;/BuildSharedLibrary&gt;
++
++	&lt;BuildSharedLibrary
++		name=&quot;yappMsg&quot;	
++		src=&quot;src/yapp/msg&quot;
++	&gt;
++		&lt;libadd&gt;yappBase&lt;/libadd&gt;
++	&lt;/BuildSharedLibrary&gt;
++
++	&lt;BuildSharedLibrary
++		name=&quot;yappEnt&quot;	
++		src=&quot;src/yapp/ent&quot;
++	&gt;
++		&lt;libadd&gt;yappBase&lt;/libadd&gt;
++		&lt;libadd&gt;yappStatemachine&lt;/libadd&gt;
++		&lt;libadd&gt;yappMsg&lt;/libadd&gt;
++	&lt;/BuildSharedLibrary&gt;
++
++	&lt;BuildSharedLibrary
++		name=&quot;yappVehicle&quot;	
++		src=&quot;src/yapp/vehicle&quot;
++	&gt;
++		&lt;libadd&gt;yappBase&lt;/libadd&gt;
++	&lt;/BuildSharedLibrary&gt;
++
++	&lt;BuildSharedLibrary
++		name=&quot;yappraf&quot;	
++		src=&quot;src/yapp/raf&quot;
++	&gt;
++		&lt;libadd&gt;yappBase&lt;/libadd&gt;
++	&lt;/BuildSharedLibrary&gt;
++
++	&lt;BuildSharedLibrary
++		name=&quot;yakeCEGUIOgreAdapter&quot;
++		src=&quot;src/yapp/plugins/ceguiOgreRendererAdapter&quot;
++	&gt;
++		&lt;libadd&gt;CEGUIBase&lt;/libadd&gt;
++		&lt;libadd&gt;OgreMain&lt;/libadd&gt;
++	&lt;/BuildSharedLibrary&gt;
++
++	&lt;BuildSharedLibrary
++		name=&quot;yappEntLua&quot;
++		src=&quot;src/yapp/plugins/entLua&quot;
++	&gt;
++		&lt;libadd&gt;yappEnt&lt;/libadd&gt;
++	&lt;/BuildSharedLibrary&gt;
++
++	&lt;BuildSharedLibrary
++		name=&quot;yappmodelLuaBindings&quot;
++		src=&quot;src/yapp/plugins/modelLuaBindings&quot;
++	&gt;
++		&lt;libadd&gt;yappEnt&lt;/libadd&gt;
++	&lt;/BuildSharedLibrary&gt;
++
++&lt;!-- SAMPLES --&gt;
++
+ 	&lt;List name=&quot;common_libs&quot;&gt;
++		&lt;item&gt;yakeBase&lt;/item&gt;
+ 		&lt;item&gt;yakeAudio&lt;/item&gt;
+ 		&lt;item&gt;yakeGraphics&lt;/item&gt;
+ 		&lt;item&gt;yakeInput&lt;/item&gt;
+@@ -236,11 +331,34 @@
+ 		name=&quot;dotLinkLoaderDemo&quot;
+ 		src=&quot;src/yapp/samples/model/dotLink&quot;
+ 	&gt;
+-
+ 		&lt;libadd&gt;common_libs&lt;/libadd&gt;
+ 		&lt;libadd&gt;yappModel&lt;/libadd&gt;
+ 		&lt;libadd&gt;yappLoader&lt;/libadd&gt;
+ 	&lt;/BuildProgram&gt;
+ 
++	&lt;BuildProgram
++		name=&quot;VehicleDemo&quot;
++		src=&quot;src/yapp/samples/base/vehicle&quot;
++	&gt;
++		&lt;libadd&gt;common_libs&lt;/libadd&gt;	
++		&lt;libadd&gt;yappModel&lt;/libadd&gt;	
++		&lt;libadd&gt;yappStatemachine&lt;/libadd&gt;	
++		&lt;libadd&gt;yappVehicle&lt;/libadd&gt;	
++		&lt;libadd&gt;yappraf&lt;/libadd&gt;
++	&lt;/BuildProgram&gt;	
++
++	&lt;BuildProgram
++		name=&quot;consoleDemo&quot;
++		src=&quot;src/yapp/samples/gui/console&quot;
++	&gt;
++		&lt;libadd&gt;common_libs&lt;/libadd&gt;
++		&lt;libadd&gt;yakeCEGUIOgreAdapter&lt;/libadd&gt;
++		&lt;libadd&gt;lua&lt;/libadd&gt;
++		&lt;libadd&gt;lualib&lt;/libadd&gt;
++		&lt;libadd&gt;luabind&lt;/libadd&gt;
++		&lt;libadd&gt;CEGUIOgreRenderer&lt;/libadd&gt;
++	&lt;/BuildProgram&gt;
++		
++
+ &lt;/BuildSpec&gt;
+ 
+
+Modified: trunk/yake/src/yake/base/native/Linux/yakeDebug.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/Linux/yakeDebug.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yake/base/native/Linux/yakeDebug.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -88,6 +88,7 @@
+ 						int nLine,
+ 						bool&amp; rbIgnoreAlways )
+ {
++	return false;
+ }
+ 
+ } // native
+
+Modified: trunk/yake/src/yake/physics/yakePhysicsAffectorZone.cpp
+===================================================================
+--- trunk/yake/src/yake/physics/yakePhysicsAffectorZone.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yake/physics/yakePhysicsAffectorZone.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -72,7 +72,7 @@
+ 
+ 	AffectorZoneManager::AffectorZoneManager(SharedPtr&lt;physics::IWorld&gt;&amp; pWorld) : mWorld(pWorld)
+ 	{
+-		mStepSigConn = mWorld-&gt;subscribeToPreStepInternal( boost::bind(AffectorZoneManager::update, this, _1) );
++		mStepSigConn = mWorld-&gt;subscribeToPreStepInternal( boost::bind(&amp;AffectorZoneManager::update, this, _1) );
+ 	}
+ 
+ 	AffectorZoneManager::~AffectorZoneManager()
+
+Modified: trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yake/plugins/graphicsOgre/graphicsOgreCamera.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -207,7 +207,12 @@
+ 	Matrix4 OgreCamera::getProjectionMatrix() const
+ 	{
+ 		YAKE_ASSERT( mCam ).debug(&quot;need a camera!&quot;);
++// for Ogre 1.1.0 &quot;Dagon&quot; compatibility
++#if OGRE_VERSION_MINOR &gt;= 1 
++		return MATRIX4_OGRE2YAKE( mCam-&gt;getProjectionMatrix() );
++#else
+ 		return MATRIX4_OGRE2YAKE( mCam-&gt;getStandardProjectionMatrix() );
++#endif
+ 	}
+ 
+ 	//------------------------------------------------------
+
+Modified: trunk/yake/src/yake/samples/graphics/demo/yakeGraphicsDemo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/graphics/demo/yakeGraphicsDemo.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yake/samples/graphics/demo/yakeGraphicsDemo.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -415,7 +415,7 @@
+ 		theApp.initialise();
+ 		theApp.run();
+ 	}
+-	catch (const yake::Exception &amp; e)
++	catch ( const yake::Exception&amp; e )
+ 	{
+ 		std::cout &lt;&lt; std::endl &lt;&lt; e.what() &lt;&lt; std::endl;
+ 	}
+
+Modified: trunk/yake/src/yapp/Makefile.am
+===================================================================
+--- trunk/yake/src/yapp/Makefile.am	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/Makefile.am	2005-10-06 18:03:10 UTC (rev 996)
+@@ -1,3 +1,4 @@
+ INCLUDES = $(all_includes)
+ METASOURCES = AUTO
+-SUBDIRS = base loader model statemachine ent gui msg plugins samples raf
++SUBDIRS = base loader model statemachine gui msg ent vehicle raf plugins \
++	samples
+
+Modified: trunk/yake/src/yapp/loader/yakeXODEParser.cpp
+===================================================================
+--- trunk/yake/src/yapp/loader/yakeXODEParser.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/loader/yakeXODEParser.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -8,11 +8,11 @@
+    the terms of the GNU Lesser General Public License as published by the Free Software
+    Foundation; either version 2 of the License, or (at your option) any later
+    version.
+-
++ 
+    This program is distributed in the hope that it will be useful, but WITHOUT
+    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+    FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
++ 
+    You should have received a copy of the GNU Lesser General Public License along with
+    this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+    Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+@@ -29,67 +29,71 @@
+ #include &lt;yapp/base/yapp.h&gt;
+ #include &lt;yapp/loader/yakeXODEParser.h&gt;
+ 
+-namespace yake {
+-namespace data {
+-namespace parser {
+-namespace xode {
+-	
++namespace yake
++{
++namespace data
++{
++namespace parser
++{
++namespace xode
++{
+ 	//------------------------------------------------------
+ 	XODEParser::XODEParser( model::Physical&amp; rBaseModel ) : mBaseModel( rBaseModel )
+-	{
+-	}
+-
++	{}
++	
+ 	//------------------------------------------------------
+-	bool XODEParser::load( const SharedPtr&lt;dom::INode&gt; docNode, physics::IWorld* pPWorld )
++	bool XODEParser::load(  const NodeSharedPtr docNode, physics::IWorld* pPWorld )
+ 	{
+-		std::cout &lt;&lt; &quot;load()&quot; &lt;&lt; std::endl;
+-		
++		YAKE_LOG( &quot;load()&quot; );
++	
+ 		YAKE_ASSERT( docNode.get() );
+ 		YAKE_ASSERT( pPWorld );
+-		
++	
+ 		mDocNode = docNode;
+ 		mPWorld = pPWorld;
+-		
++	
+ 		/// clearing out...
+ 		mJointDescriptions.clear();
+-		
+-		std::cout &lt;&lt; &quot;parsing xode...&quot; &lt;&lt; std::endl;
+-		
++	
++		YAKE_LOG( &quot;*******************&quot; );
++		YAKE_LOG( &quot;* Parsing xode... *&quot; );
++		YAKE_LOG( &quot;*******************&quot; );
++	
+ 		readXODE( mDocNode );
+ 	
+ 		return true;
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readXODE( const SharedPtr&lt;dom::INode&gt; pNode )
++	void XODEParser::readXODE( const NodeSharedPtr pNode )
+ 	{
+ 		YAKE_ASSERT( pNode );
+-		
++	
+ 		const String name = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+-		std::cout &lt;&lt; &quot;readXODE() [&quot; &lt;&lt; name &lt;&lt; &quot;]&quot; &lt;&lt; std::endl;
+-		
++		YAKE_LOG( &quot;readXODE() [&quot; + name + &quot;]&quot; );
++	
+ 		// Assuming single world in .xode
+-		SharedPtr&lt;dom::INode&gt; pWorldNode = pNode-&gt;getNodeByName( &quot;world&quot; );
+- 		YAKE_ASSERT( pWorldNode );
+-				
+-		std::cout &lt;&lt; &quot;xode: found world = &quot; &lt;&lt; ( pWorldNode.get() ? &quot;yes!&quot; : &quot;no :(&quot; ) &lt;&lt; std::endl;
+-		
++		NodeSharedPtr pWorldNode = pNode-&gt;getNodeByName( &quot;world&quot; );
++		YAKE_ASSERT( pWorldNode );
++	
++		YAKE_LOG( &quot;xode: found world = &quot; + String( pWorldNode.get() ? &quot;yes!&quot; : &quot;no :(&quot; ) );
++	
+ 		readWorld( pWorldNode );
+-		
++	
+ 		createJointsFromDescriptions();
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readWorld( const SharedPtr&lt;dom::INode&gt; pWorldNode )
++	void XODEParser::readWorld( const NodeSharedPtr pWorldNode )
+ 	{
+ 		YAKE_ASSERT( pWorldNode );
+-		
++	
+ 		// Assuming single space in &lt;world&gt;
+-		SharedPtr&lt;dom::INode&gt; pSpaceNode = pWorldNode-&gt;getNodeByName( &quot;space&quot; );
+- 		YAKE_ASSERT( pSpaceNode );
+-				
+-		std::cout &lt;&lt; &quot;xode::world: found space = &quot; &lt;&lt; ( pSpaceNode.get() ? &quot;yes!&quot; : &quot;no :(&quot; ) &lt;&lt; std::endl;
+-		
++		NodeSharedPtr pSpaceNode = pWorldNode-&gt;getNodeByName( &quot;space&quot; );
++		YAKE_ASSERT( pSpaceNode );
++	
++		YAKE_LOG( &quot;xode::world: found space = &quot; + String( pSpaceNode.get() ? &quot;yes!&quot; : &quot;no :(&quot; ) );
++	
+ 		readSpace( pSpaceNode );
+ 	}
+ 	
+@@ -98,18 +102,18 @@
+ 	{
+ 		mDocNode.reset();
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readSpace( const SharedPtr&lt;dom::INode&gt; pSpaceNode )
++	void XODEParser::readSpace( const NodeSharedPtr pSpaceNode )
+ 	{
+-		std::cout &lt;&lt; &quot;readSpace()&quot; &lt;&lt; std::endl;
+-			
++		YAKE_LOG( &quot;readSpace()&quot; );
++	
+ 		const dom::NodeList&amp; nodes = pSpaceNode-&gt;getNodes();
+ 		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				yake::StringUtil::toLowerCase( (*it)-&gt;getName() );
+-			
++	
+ 			if ( nodeName == &quot;body&quot; )
+ 			{
+ 				readBody( *it );
+@@ -124,90 +128,89 @@
+ 			}
+ 		}
+ 	}
+-
++	
+ 	/// Utility functor for use with std::find_if
+ 	//------------------------------------------------------
+-	class NodeHunter : public std::unary_function&lt;SharedPtr&lt;dom::INode&gt;&amp;,bool&gt;
++	class NodeHunter : public std::unary_function&lt;XODEParser::NodeSharedPtr&amp;,bool&gt;
+ 	{
+ 	public:
+ 		NodeHunter( String const&amp; rNodeName ):mNodeName( rNodeName )
++		{}
++	
++		bool operator()( const XODEParser::NodeSharedPtr&amp; pNode )
+ 		{
++			return pNode-&gt;getName() == mNodeName;
+ 		}
+-		
+-		bool operator()( SharedPtr&lt;dom::INode&gt;const&amp; pNode )
+-		{
+-			return pNode-&gt;getName() == mNodeName; 
+-		}
+-		
++	
+ 	private:
+ 		String mNodeName;
+-	}; 
++	};
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readVector3( const SharedPtr&lt;dom::INode&gt; pVecNode, Vector3&amp; rVec )
++	void XODEParser::readVector3( const NodeSharedPtr pVecNode, Vector3&amp; rVec )
+ 	{
+ 		real x = StringUtil::parseReal( pVecNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
+ 		real y = StringUtil::parseReal( pVecNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
+ 		real z = StringUtil::parseReal( pVecNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
+-		
++	
+ 		rVec = Vector3( x, y, z );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readScale( const SharedPtr&lt;dom::INode&gt; pScaleNode, Vector3&amp; rScale )
++	void XODEParser::readScale( const NodeSharedPtr pScaleNode, Vector3&amp; rScale )
+ 	{
+ 		readVector3( pScaleNode, rScale );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readPosition( const SharedPtr&lt;dom::INode&gt; pPosNode, Vector3&amp; rPos )
++	void XODEParser::readPosition( const NodeSharedPtr pPosNode, Vector3&amp; rPos )
+ 	{
+ 		readVector3( pPosNode, rPos );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+ 	/**
+-	 *        Reads quaternion from pQuatNode to rQuat
+-	 *        Ignores aformat attribute  
+-	 * @param pQuatNode 
+-	 * @param rQuat 
+-	 */
+-	void XODEParser::readQuaternion( const SharedPtr&lt;dom::INode&gt; pQuatNode, Quaternion&amp; rQuat )
++			*        Reads quaternion from pQuatNode to rQuat
++			*        Ignores aformat attribute
++			* @param pQuatNode
++			* @param rQuat
++	*/
++	void XODEParser::readQuaternion( const NodeSharedPtr pQuatNode, Quaternion&amp; rQuat )
+ 	{
+ 		real x = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
+ 		real y = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
+ 		real z = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
+ 		real w = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;w&quot; ) );
+-		
++	
+ 		rQuat = Quaternion( w, x, y, z );
+ 	}
+ 	
+ 	//------------------------------------------------------
+ 	/**
+-	 *        Reads angle and axis x, y, z attributes and spawns quaternion with them in rRot
+-	 * @param pRotNode 
+-	 * @param rRot 
+-	 */
+-	void XODEParser::readAxisAngleRot( const SharedPtr&lt;dom::INode&gt; pRotNode, Quaternion&amp; rRot )
++			*        Reads angle and axis x, y, z attributes and spawns quaternion with them in rRot
++			* @param pRotNode
++			* @param rRot
++	*/
++	void XODEParser::readAxisAngleRot( const NodeSharedPtr pRotNode, Quaternion&amp; rRot )
+ 	{
+ 		real x = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
+ 		real y = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
+ 		real z = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
+ 		real angle = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;angle&quot; ) );
+-		
++	
+ 		rRot.FromAngleAxis( angle, Vector3( x, y, z ) );
+ 	}
+-	  
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readRotation( const SharedPtr&lt;dom::INode&gt; pRotNode, Quaternion&amp; rRot )
++	void XODEParser::readRotation( const NodeSharedPtr pRotNode, Quaternion&amp; rRot )
+ 	{
+ 		const dom::NodeList&amp; nodes = pRotNode-&gt;getNodes();
+-		
++	
+ 		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-
++	
+ 			if ( nodeName == &quot;quaternion&quot; )
+ 			{
+ 				readQuaternion( *it, rRot );
+@@ -222,17 +225,17 @@
+ 			}
+ 		}
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readTransform( const SharedPtr&lt;dom::INode&gt; pTransformNode, Transform&amp; rTrans )
++	void XODEParser::readTransform( const NodeSharedPtr pTransformNode, Transform&amp; rTrans )
+ 	{
+ 		const dom::NodeList&amp; nodes = pTransformNode-&gt;getNodes();
+-		
++	
+ 		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-		
++	
+ 			if ( nodeName == &quot;position&quot; )
+ 			{
+ 				readPosition( *it, rTrans.mPosition );
+@@ -251,103 +254,104 @@
+ 			}
+ 		}
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readMassShape( const SharedPtr&lt;dom::INode&gt; pMShapeNode, 
+-					physics::IBody&amp; rBody, 
+-					Transform const&amp; rParentTransform )
++	void XODEParser::readMassShape( const NodeSharedPtr pMShapeNode,
++											physics::IBody&amp; rBody,
++											Transform const&amp; rParentTransform )
+ 	{
+ 	
+-		real density = StringUtil::parseReal( pMShapeNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;density&quot; ) );
+-
+-		std::cout &lt;&lt; &quot;reading mass_shape with density = &quot; &lt;&lt; density &lt;&lt; &quot; &quot; &lt;&lt; std::endl;
++		String strDensity = pMShapeNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;density&quot; );
++		real density = StringUtil::parseReal( strDensity );
+ 	
++		YAKE_LOG( &quot;reading mass_shape with density = &quot; + strDensity + &quot; &quot; );
++	
+ 		const dom::NodeList&amp; nodes = pMShapeNode-&gt;getNodes();
+-		
++	
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-		
+-			std::cout &lt;&lt; &quot;reading mass_shape that is &quot; &lt;&lt; nodeName &lt;&lt; &quot; &quot; &lt;&lt; std::endl;
+-
++	
++			YAKE_LOG( &quot;reading mass_shape that is &quot; + nodeName + &quot; &quot; );
++	
+ 			if ( nodeName == &quot;cylinder&quot; )
+ 			{
+ 				real radius, length;
+ 				readCylinder( *it, radius, length );
+-				
++	
+ 				physics::IBody::CylinderMassDesc desc( radius, length, density, rParentTransform.mPosition );
+-				
++	
+ 				rBody.addMass( desc );
+ 			}
+ 			else if ( nodeName == &quot;sphere&quot; )
+ 			{
+ 				real radius;
+ 				readSphere( *it, radius );
+-				
++	
+ 				physics::IBody::SphereMassDesc desc( radius, density, rParentTransform.mPosition );
+-				
++	
+ 				rBody.addMass( desc );
+ 			}
+ 			else if ( nodeName == &quot;box&quot; )
+ 			{
+ 				real sX, sY, sZ;
+ 				readBox( *it, sX, sY, sZ );
+-				
++	
+ 				physics::IBody::BoxMassDesc desc( sX, sY, sZ, density, rParentTransform.mPosition );
+-				
++	
+ 				rBody.addMass( desc );
+ 			}
+ 			else if ( nodeName == &quot;cappedCylinder&quot; )
+ 			{
+ 				real radius, length;
+ 				readCappedCylinder( *it, radius, length );
+-				
++	
+ 				physics::IBody::CapsuleMassDesc desc( radius, length, density, rParentTransform.mPosition );
+-				
++	
+ 				rBody.addMass( desc );
+ 			}
+ 		}
+ 	}
+-		
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readMassAdjust( const SharedPtr&lt;dom::INode&gt; pMAdjustNode, 
+-					 physics::IBody&amp; rBody )
++	void XODEParser::readMassAdjust( const NodeSharedPtr pMAdjustNode,
++												physics::IBody&amp; rBody )
+ 	{
+-			real total = StringUtil::parseReal( pMAdjustNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;total&quot; ) );
+-			
+-			rBody.setMass( total );
++		real total = StringUtil::parseReal( pMAdjustNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;total&quot; ) );
++	
++		rBody.setMass( total );
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readMass( const SharedPtr&lt;dom::INode&gt; pMassNode, physics::IBody&amp; rBody, Transform const&amp; rParentTransform )
++	void XODEParser::readMass( const NodeSharedPtr pMassNode, physics::IBody&amp; rBody, Transform const&amp; rParentTransform )
+ 	{
+ 		const dom::NodeList&amp; nodes = pMassNode-&gt;getNodes();
+-
++	
+ 		// Seek transform
+ 		Transform massTransform;
+-		
++	
+ 		NodeHunter hunter( &quot;transform&quot; );
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+-		NodeListIter iTrans = 
++		NodeListIter iTrans =
+ 			std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
+-		
++	
+ 		if ( iTrans != nodes.end() )
+ 		{
+ 			readTransform( *iTrans, massTransform );
+ 		}
+-		
++	
+ 		if ( !rParentTransform.isIdentity() )
+ 		{
+ 			massTransform = massTransform.getDerivedTransform( rParentTransform );
+ 		}
+-		
++	
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-
++	
+ 			if ( nodeName == &quot;mass_shape&quot; )
+ 			{
+ 				readMassShape( *it, rBody, massTransform );
+@@ -361,58 +365,56 @@
+ 				readMass( *it, rBody, massTransform );
+ 			}
+ 		}
+-		
+-	} 
+-
++	
++	}
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readBody( const SharedPtr&lt;dom::INode&gt; pBodyNode )
++	void XODEParser::readBody( const NodeSharedPtr pBodyNode )
+ 	{
+ 		const String name = pBodyNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+-		std::cout &lt;&lt; &quot;readBody() [&quot; &lt;&lt; name &lt;&lt; &quot;]&quot; &lt;&lt; std::endl;
+-		
++		YAKE_LOG( &quot;readBody() [&quot; + name + &quot;]&quot; );
++	
+ 		physics::IActorPtr pDynActor = mPWorld-&gt;createActor( physics::ACTOR_DYNAMIC );
+-		YAKE_ASSERT( pDynActor ).error( &quot;Failed to create actor!&quot; );
+-		
++		YAKE_ASSERT( pDynActor != NULL ).error( &quot;Failed to create actor!&quot; );
++	
+ 		mBaseModel.addActor( physics::IActorPtr( pDynActor ), name );
+-		
++	
+ 		const dom::NodeList&amp; nodes = pBodyNode-&gt;getNodes();
+-		
+-		
++	
+ 		// Seek transform
+ 		Transform bodyTransform;
+-		
++	
+ 		NodeHunter hunter( &quot;transform&quot; );
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+-		NodeListIter iTrans = 
++		NodeListIter iTrans =
+ 			std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
+-		
++	
+ 		if ( iTrans != nodes.end() )
+ 		{
+-			std::cout &lt;&lt; &quot;readBody() [&quot; &lt;&lt; name &lt;&lt; &quot;] : body has transform &quot; &lt;&lt; std::endl;
+-
++			YAKE_LOG( &quot;readBody() [&quot; + name + &quot;] : body has transform &quot; );
++	
+ 			readTransform( *iTrans, bodyTransform );
+ 		}
+-		
++	
+ 		if ( !bodyTransform.isIdentity() )
+ 		{
+ 			pDynActor-&gt;setPosition( bodyTransform.mPosition );
+ 			pDynActor-&gt;setOrientation( bodyTransform.mRotation );
+ 		}
+-
++	
+ 		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-
+-			std::cout &lt;&lt; &quot; body [&quot; &lt;&lt; name &lt;&lt; &quot;] has node #&quot; &lt;&lt; nodeName &lt;&lt; std::endl;
+-			
++	
++			YAKE_LOG( &quot; body [&quot; + name + &quot;] has node #&quot; + nodeName );
++	
+ 			if ( nodeName == &quot;geom&quot; )
+ 			{
+ 				readGeom( *it, pDynActor, bodyTransform );
+ 			}
+ 			else if ( nodeName == &quot;mass&quot; )
+ 			{
+-				
+ 				readMass( *it, pDynActor-&gt;getBody(), bodyTransform );
+ 			}
+ 			else if ( nodeName == &quot;joint&quot; )
+@@ -422,84 +424,150 @@
+ 		}
+ 	}
+ 	
++	//------------------------------------------------------
++	/**
++	*    Searches for &lt;ext name=&quot;material&quot;&gt; node, parses it, creates material and returns ptr to created material
++	*    If no node, returns NULL
++	* @param pNode - node to search
++	* @return ptr to newly created material or physics::WeakIMaterialPtr()
++	*/
++	physics::IMaterialPtr XODEParser::readMaterialExt( const NodeSharedPtr pNode )
++	{
++		YAKE_LOG( &quot;Entered readMaterialExt...&quot; );
+ 	
++		const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
++	
++		// Looking for ext
++		// TODO maybe we need some advanced searching here?
++		// like finding all ext nodes or finding &lt;ext name=&quot;material&quot;&gt;?
++		// For now finding ext would be enough
++		NodeHunter hunter( &quot;ext&quot; );
++		typedef dom::NodeList::const_iterator NodeListIter;
++		NodeListIter iExt =
++			std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
++	
++		if ( iExt != nodes.end() )
++		{
++			YAKE_LOG( &quot;readMaterialExt() : found extension... processing... :) &quot; );
++	
++			if ( (*iExt)-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; ) == &quot;material&quot; )
++			{
++				YAKE_LOG( &quot;readMaterialExt() : found extension IS material! Parsing...&quot; );
++				const dom::NodeList&amp; extNodes = (*iExt)-&gt;getNodes();
++				//HACK assuming first node is &quot;params&quot;
++				NodeSharedPtr pParamsNode = *extNodes.begin();
++	
++				// parsing
++				physics::IMaterial::Desc desc;
++	
++				String strFriction = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;friction&quot; );
++				String strRestitution = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;bouncecoeff&quot; );
++				String strSoftness = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;soften&quot; );
++	
++				YAKE_LOG( &quot;Read friction = &quot; + strFriction );
++				YAKE_LOG( &quot;Read restitution = &quot; + strRestitution );
++				YAKE_LOG( &quot;Read softness = &quot; + strSoftness );
++	
++				desc.mFriction = StringUtil::parseReal( strFriction );
++				desc.mRestitution = StringUtil::parseReal( strRestitution );
++				desc.mSoftness = StringUtil::parseReal( strSoftness );
++	
++				physics::IMaterialPtr result = mPWorld-&gt;createMaterial( desc );
++	
++				return result;
++			}
++			else
++			{
++				YAKE_LOG( &quot;readMaterialExt() : found extension was not material&quot; );
++			}
++		}
++		else
++		{
++			YAKE_LOG( &quot;readMaterialExt() : didn't find material... returning default one :) &quot; );
++		}
++	
++		return physics::IMaterialPtr();
++	}
++	
+ 	//------------------------------------------------------
+ 	/**
+-	 *        Reads geom xode node and attaches ICollisionGeometry* to *pParentObject.
+-	 *        If no parent object supplied then attaches geometry to mBaseModel directly.
+-	 *        No folded bodys, geoms, spaces processed.
+-	 * @param pGeomNode 
+-	 * @param pParentObject 
+-	 */
+-	void XODEParser::readGeom( const SharedPtr&lt;dom::INode&gt; pGeomNode, 
+-				   physics::IActor* pParentObject,
+-				   const Transform&amp; rParentTransform )
++	*        Reads geom xode node and attaches ICollisionGeometry* to *pParentObject.
++	*        If no parent object supplied then attaches geometry to mBaseModel directly.
++	*        No folded bodies, geoms, spaces processed.
++	* @param pGeomNode
++	* @param pParentObject
++	*/
++	void XODEParser::readGeom( const NodeSharedPtr pGeomNode,
++										physics::IActor* pParentObject,
++										const Transform&amp; rParentTransform )
+ 	{
+-		YAKE_DECLARE_FUNCTION( readGeom );
+-
+ 		const String name = pGeomNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+-		std::cout &lt;&lt; &quot;readGeom() [&quot; &lt;&lt; name &lt;&lt; &quot;]&quot; &lt;&lt; std::endl;
+-		
++		YAKE_LOG( &quot;readGeom() [&quot; + name + &quot;]&quot; );
++	
+ 		physics::IShape* pShape = NULL;
+-
++	
+ 		if ( !pParentObject )
+ 		{
+ 			YAKE_LOG(&quot;XODE::readGeom() creating static actor...&quot;);
+ 			// adding shape to new IStaticActor
+ 			//physics::IStaticActor::Desc desc;
++	
+ 			physics::IActorPtr pStaticActor( mPWorld-&gt;createActor(physics::ACTOR_STATIC) );
+ 			pParentObject = pStaticActor;
+ 			mBaseModel.addActor( pStaticActor, name );
+ 		}
+-
++	
+ 		const dom::NodeList&amp; nodes = pGeomNode-&gt;getNodes();
+-		
++	
+ 		// Looking for transform
+ 		NodeHunter hunter( &quot;transform&quot; );
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+-		NodeListIter iTrans = 
++		NodeListIter iTrans =
+ 			std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
+-
++	
+ 		Transform geomTransform;
+-			
++	
+ 		if ( iTrans != nodes.end() )
+ 		{
+-			std::cout &lt;&lt; &quot;readGeom() [&quot; &lt;&lt; name &lt;&lt; &quot;] : geom has transform &quot; &lt;&lt; std::endl;
+-
++			YAKE_LOG( &quot;readGeom() [&quot; + name + &quot;] : geom has transform &quot; );
++	
+ 			readTransform( *iTrans, geomTransform );
+ 		}
+-
+-		
+-///FIXME We don't need derived transform here as it is automaitcally handled by concrete plugin
+-/*		if ( !rParentTransform.isIdentity() )
+-		{
+-			geomTransform = geomTransform.getDerivedTransform( rParentTransform );
++	
++	
++		///FIXME We don't need derived transform here as it is automaitcally handled by concrete plugin
++		/*		if ( !rParentTransform.isIdentity() )
++					{
++					geomTransform = geomTransform.getDerivedTransform( rParentTransform );
+ 		}*/
+-		
++	
+ 		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-
+-			std::cout &lt;&lt; &quot; geom [&quot; &lt;&lt; name &lt;&lt; &quot;] has node #&quot; &lt;&lt; nodeName &lt;&lt; std::endl;
+-
++	
++			YAKE_LOG( &quot; geom [&quot; + name + &quot;] has node #&quot; + nodeName );
++	
+ 			if ( nodeName == &quot;box&quot; )
+ 			{
+ 				real sizeX, sizeY, sizeZ;
+ 				readBox( *it, sizeX, sizeY, sizeZ );
+-				
++	
+ 				sizeX *= rParentTransform.mScale.x;
+ 				sizeY *= rParentTransform.mScale.y;
+ 				sizeZ *= rParentTransform.mScale.z;
+-			
+-				std::cout &lt;&lt; &quot; box with sizes: &quot; &lt;&lt; sizeX &lt;&lt; &quot;, &quot; &lt;&lt; sizeY &lt;&lt; &quot;, &quot; &lt;&lt; sizeZ &lt;&lt; std::endl;
+-				
+-				physics::IShape::BoxDesc desc( 
+-												Vector3( sizeX, sizeY, sizeZ ), 
+-												0, 						// FIXME material
+-												geomTransform.mPosition,
+-												geomTransform.mRotation );
+-										
++	
++				String strSizeX; strSizeX &lt;&lt; sizeX;
++				String strSizeY; strSizeY &lt;&lt; sizeY;
++				String strSizeZ; strSizeZ &lt;&lt; sizeZ;
++	
++				YAKE_LOG( &quot; box with sizes: &quot; + strSizeX + &quot;, &quot; + strSizeY + &quot;, &quot; + strSizeZ );
++	
++				physics::IShape::BoxDesc desc(	Vector3( sizeX, sizeY, sizeZ ),
++														readMaterialExt( *it ),
++														geomTransform.mPosition,
++														geomTransform.mRotation );
++	
+ 				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+ 				if (pParentObject)
+ 					pParentObject-&gt;createShape( desc );
+@@ -508,21 +576,20 @@
+ 			{
+ 				real radius, length;
+ 				readCappedCylinder( *it, radius, length );
+-				
+-				real scale = ( rParentTransform.mScale.x 
+-						+ rParentTransform.mScale.y
+-						+ rParentTransform.mScale.z ) /3;
+-					
++	
++				real scale = ( rParentTransform.mScale.x
++									+ rParentTransform.mScale.y
++									+ rParentTransform.mScale.z ) /3;
++	
+ 				radius *= scale;
+ 				length *= scale;
+-				
+-				physics::IShape::CapsuleDesc desc( 
+-												length,
+-												radius, 
+-												0, 						// FIXME material
+-												geomTransform.mPosition,
+-												geomTransform.mRotation );
+-										
++	
++				physics::IShape::CapsuleDesc desc(	length,
++															radius,
++															readMaterialExt( *it ),
++															geomTransform.mPosition,
++															geomTransform.mRotation );
++	
+ 				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+ 				if (pParentObject)
+ 					pParentObject-&gt;createShape( desc );
+@@ -531,35 +598,34 @@
+ 			{
+ 				real radius, length;
+ 				readCone( *it, radius, length );
+-				
+-				real scale = ( rParentTransform.mScale.x 
+-						+ rParentTransform.mScale.y
+-						+ rParentTransform.mScale.z ) /3;
+-					
++	
++				real scale = ( rParentTransform.mScale.x
++									+ rParentTransform.mScale.y
++									+ rParentTransform.mScale.z ) /3;
++	
+ 				radius *= scale;
+ 				length *= scale;
+-				
++	
+ 				YAKE_ASSERT( false ).error( &quot;NOT implemented in Yake&quot; ); //TODO
+ 			}
+ 			else if ( nodeName == &quot;cylinder&quot; )
+ 			{
+ 				real radius, length;
+ 				readCylinder( *it, radius, length );
+-				
+-				real scale = ( rParentTransform.mScale.x 
+-						+ rParentTransform.mScale.y
+-						+ rParentTransform.mScale.z ) /3;
+-				
++	
++				real scale = ( rParentTransform.mScale.x
++									+ rParentTransform.mScale.y
++									+ rParentTransform.mScale.z ) /3;
++	
+ 				radius *= scale;
+ 				length *= scale;
+-				
+-				physics::IShape::CapsuleDesc desc( 
+-												length,
+-												radius, 
+-												0, 						// FIXME material
+-												geomTransform.mPosition,
+-												geomTransform.mRotation );
+-										
++	
++				physics::IShape::CapsuleDesc desc(	length,
++															radius,
++															readMaterialExt( *it ),
++															geomTransform.mPosition,
++															geomTransform.mRotation );
++	
+ 				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+ 				if (pParentObject)
+ 					pParentObject-&gt;createShape( desc );
+@@ -568,48 +634,49 @@
+ 			{
+ 				real a, b, c, d;
+ 				readPlane( *it, a, b, c, d );
+-				
+-				physics::IShape::PlaneDesc desc( 
+-												Vector3( a, b, c ),
+-												d, 
+-												0, 						// FIXME material
+-												geomTransform.mPosition,
+-												geomTransform.mRotation );
+-										
++				physics::IShape::PlaneDesc desc(	Vector3( a, b, c ),
++															d,
++															readMaterialExt( *it ),
++															geomTransform.mPosition,
++															geomTransform.mRotation );
++	
+ 				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+ 				if (pParentObject)
++				{
+ 					pParentObject-&gt;createShape( desc );
++					YAKE_LOG( &quot;Creating plane shape...&quot; );
++				}
+ 			}
+ 			else if ( nodeName == &quot;ray&quot; )
+ 			{
+ 				real length;
+ 				readRay( *it, length );
+-				
+-				real scale = ( rParentTransform.mScale.x 
+-						+ rParentTransform.mScale.y
+-						+ rParentTransform.mScale.z ) /3;
+-					
++	
++				real scale = ( rParentTransform.mScale.x
++									+ rParentTransform.mScale.y
++									+ rParentTransform.mScale.z ) /3;
++	
+ 				length *= scale;
+-				
++	
+ 				YAKE_ASSERT( false ).error( &quot;NOT implemented in Yake&quot; ); //TODO
+ 			}
+ 			else if ( nodeName == &quot;sphere&quot; )
+ 			{
+ 				real radius;
+ 				readSphere( *it, radius );
+-				
+-				real scale = ( rParentTransform.mScale.x 
+-						+ rParentTransform.mScale.y
+-						+ rParentTransform.mScale.z ) /3;
+-					
++	
++				real scale = ( rParentTransform.mScale.x
++									+ rParentTransform.mScale.y
++									+ rParentTransform.mScale.z ) /3;
++	
+ 				radius *= scale;
+-				
+-				physics::IShape::SphereDesc desc( 
+-												radius, 
+-												0, 						// FIXME material
+-												geomTransform.mPosition,
+-												geomTransform.mRotation );
+-										
++	
++				physics::IShape::SphereDesc desc(
++					radius,
++					readMaterialExt( *it ),
++					geomTransform.mPosition,
++					geomTransform.mRotation );
++	
+ 				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+ 				if (pParentObject)
+ 					pParentObject-&gt;createShape( desc );
+@@ -618,38 +685,39 @@
+ 			{
+ 				physics::TriangleMeshDesc::VertexVector vertices;
+ 				physics::TriangleMeshDesc::IndexVector indices;
+-				
++	
+ 				readTrimesh( *it, vertices, indices );
+-				
++	
+ 				physics::TriangleMeshDesc::VertexVector scaledVertices;
+-				
++	
+ 				ConstVectorIterator&lt; physics::TriangleMeshDesc::VertexVector &gt; iV( vertices.begin(), vertices.end() );
+-				
++	
+ 				while ( iV.hasMoreElements() )
+ 				{
+ 					Vector3 const&amp; vertex = iV.getNext();
+ 					scaledVertices.push_back( vertex * rParentTransform.mScale );
+ 				}
+-				
++	
+ 				physics::TriangleMeshDesc dataDesc( vertices, indices );
+-				
++	
+ 				physics::TriangleMeshId meshId = mPWorld-&gt;createTriangleMesh( dataDesc );
+-				
+-				physics::IShape::TriMeshDesc desc( 
+-												meshId, 
+-												0, 						// FIXME material
+-												geomTransform.mPosition,
+-												geomTransform.mRotation );
+-										
++	
++				physics::IShape::TriMeshDesc desc(	meshId,
++															readMaterialExt( *it ),
++															geomTransform.mPosition,
++															geomTransform.mRotation );
++	
+ 				YAKE_ASSERT( pParentObject ).warning( &quot;FIXME Static shapes are not supported&quot; );
+ 				if (pParentObject)
+ 					pParentObject-&gt;createShape( desc );
+ 			}
+ 		}
++	
++		YAKE_LOG( &quot;INFO: Leaving readGeom()&quot; );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readBox( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; sizeX, real&amp; sizeY, real&amp; sizeZ )
++	void XODEParser::readBox( const NodeSharedPtr pNode, real&amp; sizeX, real&amp; sizeY, real&amp; sizeZ )
+ 	{
+ 		sizeX = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;sizex&quot; ) );
+ 		sizeY = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;sizey&quot; ) );
+@@ -657,62 +725,62 @@
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readCappedCylinder( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; radius, real&amp; length )
++	void XODEParser::readCappedCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length )
+ 	{
+ 		radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
+ 		length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readCone( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; radius, real&amp; length )
++	void XODEParser::readCone( const NodeSharedPtr pNode, real&amp; radius, real&amp; length )
+ 	{
+ 		radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
+ 		length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readCylinder( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; radius, real&amp; length )
++	void XODEParser::readCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length )
+ 	{
+ 		radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
+ 		length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readPlane( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; a, real&amp; b, real&amp; c, real&amp; d )
++	void XODEParser::readPlane( const NodeSharedPtr pNode, real&amp; a, real&amp; b, real&amp; c, real&amp; d )
+ 	{
+ 		a = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;a&quot; ) );
+ 		b = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;b&quot; ) );
+ 		c = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;c&quot; ) );
+ 		d = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;d&quot; ) );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readRay( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; length )
++	void XODEParser::readRay( const NodeSharedPtr pNode, real&amp; length )
+ 	{
+ 		length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readSphere( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; radius )
++	void XODEParser::readSphere( const NodeSharedPtr pNode, real&amp; radius )
+ 	{
+ 		radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readTrimesh( const SharedPtr&lt;dom::INode&gt; pMeshNode,
+-				      physics::TriangleMeshDesc::VertexVector&amp; rVertices,
+-				      physics::TriangleMeshDesc::IndexVector&amp; rIndices )
++	void XODEParser::readTrimesh( const NodeSharedPtr pMeshNode,
++											physics::TriangleMeshDesc::VertexVector&amp; rVertices,
++											physics::TriangleMeshDesc::IndexVector&amp; rIndices )
+ 	{
+ 		const dom::NodeList&amp; nodes = pMeshNode-&gt;getNodes();
+-		
++	
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-		
+-			std::cout &lt;&lt; &quot;   Reading &quot; &lt;&lt; nodeName &lt;&lt; &quot; now...&quot; &lt;&lt; std::endl;
+-			
++	
++			YAKE_LOG( &quot;   Reading &quot; + nodeName + &quot; now...&quot; );
++	
+ 			if ( nodeName == &quot;vertices&quot; )
+ 			{
+ 				readVertices( *it, rVertices );
+@@ -723,50 +791,50 @@
+ 			}
+ 		}
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readVertices( const SharedPtr&lt;dom::INode&gt; pNode, 
+-				       physics::TriangleMeshDesc::VertexVector&amp; rVertices )
++	void XODEParser::readVertices( const NodeSharedPtr pNode,
++											physics::TriangleMeshDesc::VertexVector&amp; rVertices )
+ 	{
+ 		const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
+-		
++	
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-		
++	
+ 			if ( nodeName == &quot;v&quot; )
+ 			{
+ 				real x = StringUtil::parseReal( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;x&quot; ) );
+ 				real y = StringUtil::parseReal( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;y&quot; ) );
+ 				real z = StringUtil::parseReal( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;z&quot; ) );
+-			
++	
+ 				rVertices.push_back( Vector3( x, y, z ) );
+ 			}
+ 		}
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readIndices( const SharedPtr&lt;dom::INode&gt; pNode, 
+-				       physics::TriangleMeshDesc::IndexVector&amp; rIndices )
++	void XODEParser::readIndices( const NodeSharedPtr pNode,
++											physics::TriangleMeshDesc::IndexVector&amp; rIndices )
+ 	{
+ 		const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
+-		
++	
+ 		typedef int32 IndexT;
+-		
++	
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-		
++	
+ 			if ( nodeName == &quot;t&quot; )
+ 			{
+ 				IndexT ia = StringUtil::parseInt( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;ia&quot; ) );
+ 				IndexT ib = StringUtil::parseInt( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;ib&quot; ) );
+ 				IndexT ic = StringUtil::parseInt( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;ic&quot; ) );
+-			
++	
+ 				rIndices.push_back( ia );
+ 				rIndices.push_back( ib );
+ 				rIndices.push_back( ic );
+@@ -775,99 +843,107 @@
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readJoint(	const SharedPtr&lt;dom::INode&gt; pJointNode,
+-								const String&amp; rBodyName,
+-								Transform&amp; rParentTransform )
++	void XODEParser::readJoint(	const NodeSharedPtr pJointNode,
++										const String&amp; rBodyName,
++										Transform&amp; rParentTransform )
+ 	{
+ 		JointDescription desc;
+-		
++	
+ 		desc.mBody1Name = rBodyName;
+ 		desc.mJointDefNode = pJointNode;
+ 		desc.mParentTransform = rParentTransform;
+-		
++	
+ 		mJointDescriptions.push_back( desc );
+ 	}
+ 	
+ 	//------------------------------------------------------
+ 	void XODEParser::createJointsFromDescriptions()
+ 	{
++		YAKE_LOG( &quot;Creating joints from descriptions...&quot; );
++
+ 		for( JointDescriptions::iterator j = mJointDescriptions.begin(); j != mJointDescriptions.end(); ++j )
+ 			createJoint( *j );
+-	} 
++	}
+ 	
+ 	//------------------------------------------------------
+ 	void XODEParser::createJoint( const JointDescription&amp; rDesc )
+ 	{
+-		
++	
+ 		const dom::NodeList&amp; nodes = rDesc.mJointDefNode-&gt;getNodes();
+-		
+-		String name = rDesc.mJointDefNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; ); 
+-		
++	
++		String name = rDesc.mJointDefNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
++
++		YAKE_LOG( &quot;Creating joint '&quot; + name + &quot;' ...&quot; );
++	
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+-		
++	
+ 		// Looking for link2
+ 		NodeHunter linkHunter( &quot;link2&quot; );
+-		NodeListIter iLink = 
++		NodeListIter iLink =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), linkHunter );
+-		
++	
+ 		YAKE_ASSERT( iLink != nodes.end() ).error( &quot;2nd body name is not present in joint definition!&quot; );
+-		
++	
+ 		String body2Name = (*iLink)-&gt;getAttributeValueAs&lt;String&gt;( &quot;body&quot; );
+ 		
++		YAKE_LOG( &quot;The joint connects two actors:&quot; );
++		YAKE_LOG( &quot; 1:&quot; + rDesc.mBody1Name );
++		YAKE_LOG( &quot; 2:&quot; + body2Name );
++	
+ 		// Looking for transform
+ 		NodeHunter hunter( &quot;transform&quot; );
+-		NodeListIter iTrans = 
++		NodeListIter iTrans =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
+-			
++	
+ 		Transform jointTransform;
+-			
++	
+ 		if ( iTrans != nodes.end() )
+ 		{
+-			std::cout &lt;&lt; &quot;readJoint() [&quot; &lt;&lt; name &lt;&lt; &quot;] : joint has transform &quot; &lt;&lt; std::endl;
+-
++			YAKE_LOG( &quot;createJoint() [&quot; + name + &quot;] : joint has transform &quot; );
++	
+ 			readTransform( *iTrans, jointTransform );
+ 		}
+-		
++	
+ 		if ( !rDesc.mParentTransform.isIdentity() )
+ 		{
+ 			jointTransform = jointTransform.getDerivedTransform( rDesc.mParentTransform );
+ 		}
+-		
+-		physics::IActorPtr pActor1 = mBaseModel.getActorByName( rDesc.mBody1Name );
+-		physics::IActorPtr pActor2 = mBaseModel.getActorByName( body2Name );
+-		
+-		YAKE_ASSERT( pActor1 &amp;&amp; pActor2 ).error( &quot;You're trying to attach joint to non-dynamic actors! That's not possible!&quot; );
+-				
++	
++		physics::IActorPtr pDynActor1 = mBaseModel.getActorByName( rDesc.mBody1Name );
++		physics::IActorPtr pDynActor2 = mBaseModel.getActorByName( body2Name );
++	
++		YAKE_ASSERT( pDynActor1 &amp;&amp; pDynActor2 ).error( &quot;You're trying to attach joint to non-existent actors! That's not possible ;) !&quot; );
++	
+ 		for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
+ 		{
+-			String nodeName = 
++			String nodeName =
+ 				StringUtil::toLowerCase( (*it)-&gt;getName() );
+-		
+-			std::cout &lt;&lt; &quot;   Reading &quot; &lt;&lt; nodeName &lt;&lt; &quot; now...&quot; &lt;&lt; std::endl;
+-			
++	
++			YAKE_LOG( &quot;   Reading &quot; + nodeName + &quot; now...&quot; );
++	
+ 			if ( nodeName == &quot;ball&quot; )
+ 			{
+-				readBall( *it, pActor1, pActor2, jointTransform );
++				readBall( *it, pDynActor1, pDynActor2, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;fixed&quot; )
+ 			{
+-				readFixed( *it, pActor1, pActor2, jointTransform );
++				readFixed( *it, pDynActor1, pDynActor2, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;hinge&quot; )
+ 			{
+-				readHinge( *it, pActor1, pActor2, jointTransform );
++				readHinge( *it, pDynActor1, pDynActor2, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;hinge2&quot; )
+ 			{
+-				readHinge2( *it, pActor1, pActor2, jointTransform );
++				readHinge2( *it, pDynActor1, pDynActor2, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;slider&quot; )
+ 			{
+-				readSlider( *it, pActor1, pActor2, jointTransform );
++				readSlider( *it, pDynActor1, pDynActor2, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;universal&quot; )
+ 			{
+-				readUniversal( *it, pActor1, pActor2, jointTransform );
++				readUniversal( *it, pDynActor1, pDynActor2, jointTransform );
+ 			}
+ 			else if ( nodeName == &quot;amotor&quot; )
+ 			{
+@@ -877,210 +953,238 @@
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readBall(	const SharedPtr&lt;dom::INode&gt; pJointNode,
+-								physics::IActor* pActor1,
+-								physics::IActor* pActor2,
+-								Transform&amp; rJointTransform )
++	void XODEParser::readBall(	const NodeSharedPtr pJointNode,
++										physics::IActor* pActor1,
++										physics::IActor* pActor2,
++										Transform&amp; rJointTransform )
+ 	{
++		YAKE_LOG( &quot;Reading ball joint description...&quot; );
++
+ 		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
+-		
++	
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+-		
++	
+ 		// Looking for anchor
+ 		NodeHunter anchorHunter( &quot;anchor&quot; );
+-		NodeListIter iAnchor = 
++		NodeListIter iAnchor =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
+-		
++	
+ 		YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for ball joint!&quot; );
+ 	
+ 		Vector3 anchor;
+-		
++	
+ 		readAnchor( *iAnchor, anchor, rJointTransform );
+-		
++	
+ 		physics::IJoint::DescBall desc( pActor1, pActor2, anchor );
+-		
+-		mPWorld-&gt;createJoint( desc ); 
++	
++		mPWorld-&gt;createJoint( desc );
++
++		YAKE_LOG( &quot;Finished processing ball joint description.&quot; );
+ 	}
+-
++	
+ 	//------------------------------------------------------
+-	void XODEParser::readFixed(	const SharedPtr&lt;dom::INode&gt; pJointNode,
+-								physics::IActor* pActor1,
+-								physics::IActor* pActor2,
+-								Transform&amp; rJointTransform )
++	void XODEParser::readFixed(	const NodeSharedPtr pJointNode,
++										physics::IActor* pActor1,
++										physics::IActor* pActor2,
++										Transform&amp; rJointTransform )
+ 	{
++		YAKE_LOG( &quot;Reading fixed joint description...&quot; );
++
+ 		physics::IJoint::DescFixed desc( pActor1, pActor2 );
+-		
+-		mPWorld-&gt;createJoint( desc ); 
++	
++		mPWorld-&gt;createJoint( desc );
++
++		YAKE_LOG( &quot;Finished processing fixed joint description.&quot; );
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readHinge(	const SharedPtr&lt;dom::INode&gt; pJointNode,
+-								physics::IActor* pActor1,
+-								physics::IActor* pActor2,
+-								Transform&amp; rJointTransform )
++	void XODEParser::readHinge(	const NodeSharedPtr pJointNode,
++										physics::IActor* pActor1,
++										physics::IActor* pActor2,
++										Transform&amp; rJointTransform )
+ 	{
++		YAKE_LOG( &quot;Reading hinge joint description...&quot; );
++
+ 		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
+-		
++	
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+-		
++	
+ 		// Looking for anchor
+ 		NodeHunter anchorHunter( &quot;anchor&quot; );
+-		NodeListIter iAnchor = 
++		NodeListIter iAnchor =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
+-		
++	
+ 		YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for hinge joint!&quot; );
+-		
++	
+ 		// Looking for axis
+ 		NodeHunter axisHunter( &quot;axis&quot; );
+-		NodeListIter iAxis = 
++		NodeListIter iAxis =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
+-		
++	
+ 		YAKE_ASSERT( iAxis != nodes.end() ).error( &quot;Axis was not defined for hinge joint!&quot; );
+ 	
+ 		Vector3 anchor;
+ 		Vector3 axis;
+-		
++	
+ 		readAnchor( *iAnchor, anchor, rJointTransform );
+ 		readAxis( *iAxis, axis, rJointTransform );
+-		
++	
+ 		physics::IJoint::DescHinge desc( pActor1, pActor2, axis, anchor );
+-		
+-		mPWorld-&gt;createJoint( desc ); 
++	
++		mPWorld-&gt;createJoint( desc );
++
++		YAKE_LOG( &quot;Finished processing hinge joint description.&quot; );
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readHinge2(	const SharedPtr&lt;dom::INode&gt; pJointNode,
+-								physics::IActor* pActor1,
+-								physics::IActor* pActor2,
+-								Transform&amp; rJointTransform )
++	void XODEParser::readHinge2(	const NodeSharedPtr pJointNode,
++										physics::IActor* pActor1,
++										physics::IActor* pActor2,
++										Transform&amp; rJointTransform )
+ 	{
++		YAKE_LOG( &quot;Reading hinge2 joint description...&quot; );
++
+ 		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
+-		
++	
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+-		
++	
+ 		// Looking for anchor
+ 		NodeHunter anchorHunter( &quot;anchor&quot; );
+-		NodeListIter iAnchor = 
++		NodeListIter iAnchor =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
+-		
+-		YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for hinge joint!&quot; );
+-		
++	
++		YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for hinge2 joint!&quot; );
++	
+ 		// Looking for axis
+ 		NodeHunter axisHunter( &quot;axis&quot; );
+-		NodeListIter iAxis0 = 
++		NodeListIter iAxis0 =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
+-		
++	
+ 		YAKE_ASSERT( iAxis0 != nodes.end() ).error( &quot;Axis0 was not defined for hinge2 joint!&quot; );
+-		
+-		NodeListIter iAxis1 = 
++	
++		NodeListIter iAxis1 =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( iAxis0 + 1, nodes.end(), axisHunter );
+-		
++	
+ 		YAKE_ASSERT( iAxis1 != nodes.end() ).error( &quot;Axis1 was not defined for hinge2 joint!&quot; );
+ 	
+ 		Vector3 anchor;
+ 		Vector3 axis0;
+ 		Vector3 axis1;
+-		
++	
+ 		readAnchor( *iAnchor, anchor, rJointTransform );
+ 		readAxis( *iAxis0, axis0, rJointTransform );
+ 		readAxis( *iAxis1, axis1, rJointTransform );
+-		
++	
+ 		physics::IJoint::DescHinge2 desc( pActor1, pActor2, axis0, axis1, anchor );
+-		
+-		mPWorld-&gt;createJoint( desc ); 
++	
++		mPWorld-&gt;createJoint( desc );
++
++		YAKE_LOG( &quot;Finished processing hinge2 joint description.&quot; );
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readSlider(	const SharedPtr&lt;dom::INode&gt; pJointNode,
+-								physics::IActor* pActor1,
+-								physics::IActor* pActor2,
+-								Transform&amp; rJointTransform )
++	void XODEParser::readSlider(	const NodeSharedPtr pJointNode,
++										physics::IActor* pActor1,
++										physics::IActor* pActor2,
++										Transform&amp; rJointTransform )
+ 	{
++		YAKE_LOG( &quot;Reading slider joint description...&quot; );
++
+ 		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
+-		
++	
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+-		
++	
+ 		// Looking for axis
+ 		NodeHunter axisHunter( &quot;axis&quot; );
+-		NodeListIter iAxis = 
++		NodeListIter iAxis =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
+-		
+-		YAKE_ASSERT( iAxis != nodes.end() ).error( &quot;Axis was not defined for hinge joint!&quot; );
+ 	
++		YAKE_ASSERT( iAxis != nodes.end() ).error( &quot;Axis was not defined for slider joint!&quot; );
++	
+ 		Vector3 axis;
+-		
++	
+ 		readAxis( *iAxis, axis, rJointTransform );
+-		
++	
+ 		physics::IJoint::DescSlider desc( pActor1, pActor2, axis );
+-		
+-		mPWorld-&gt;createJoint( desc ); 
++	
++		mPWorld-&gt;createJoint( desc );
++
++		YAKE_LOG( &quot;Finished processing slider joint description.&quot; );
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readUniversal(	const SharedPtr&lt;dom::INode&gt; pJointNode,
+-									physics::IActor* pActor1,
+-									physics::IActor* pActor2,
+-									Transform&amp; rJointTransform )
++	void XODEParser::readUniversal(	const NodeSharedPtr pJointNode,
++											physics::IActor* pActor1,
++											physics::IActor* pActor2,
++											Transform&amp; rJointTransform )
+ 	{
++		YAKE_LOG( &quot;Reading universal joint description...&quot; );
++
+ 		const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
+-		
++	
+ 		typedef dom::NodeList::const_iterator NodeListIter;
+-		
++	
+ 		// Looking for anchor
+ 		NodeHunter anchorHunter( &quot;anchor&quot; );
+-		NodeListIter iAnchor = 
++		NodeListIter iAnchor =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
+-		
+-		YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for hinge joint!&quot; );
+-		
++	
++		YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for universal joint!&quot; );
++	
+ 		// Looking for axis
+ 		NodeHunter axisHunter( &quot;axis&quot; );
+-		NodeListIter iAxis0 = 
++		NodeListIter iAxis0 =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
+-		
+-		YAKE_ASSERT( iAxis0 != nodes.end() ).error( &quot;Axis0 was not defined for hinge2 joint!&quot; );
+-		
+-		NodeListIter iAxis1 = 
++	
++		YAKE_ASSERT( iAxis0 != nodes.end() ).error( &quot;Axis0 was not defined for universal joint!&quot; );
++	
++		NodeListIter iAxis1 =
+ 			std::find_if&lt;NodeListIter, NodeHunter&gt;( iAxis0 + 1, nodes.end(), axisHunter );
+-		
+-		YAKE_ASSERT( iAxis1 != nodes.end() ).error( &quot;Axis1 was not defined for hinge2 joint!&quot; );
+ 	
++		YAKE_ASSERT( iAxis1 != nodes.end() ).error( &quot;Axis1 was not defined for universal joint!&quot; );
++	
+ 		Vector3 anchor;
+ 		Vector3 axis0;
+ 		Vector3 axis1;
+-		
++	
+ 		readAnchor( *iAnchor, anchor, rJointTransform );
+ 		readAxis( *iAxis0, axis0, rJointTransform );
+ 		readAxis( *iAxis1, axis1, rJointTransform );
+-		
++	
+ 		physics::IJoint::DescUniversal desc( pActor1, pActor2, axis0, axis1, anchor );
+-		
+-		mPWorld-&gt;createJoint( desc ); 
++	
++		mPWorld-&gt;createJoint( desc );
++
++		YAKE_LOG( &quot;Finished processing universal joint description.&quot; );
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readAnchor(	const SharedPtr&lt;dom::INode&gt; pAnchorNode,
+-									Vector3&amp; rAnchor,
+-									Transform&amp; rJointTransform )
++	void XODEParser::readAnchor(	const NodeSharedPtr pAnchorNode,
++										Vector3&amp; rAnchor,
++										Transform&amp; rJointTransform )
+ 	{
++		YAKE_LOG( &quot;Reading anchor...&quot; );
++
+ 		rAnchor.x = StringUtil::parseReal( pAnchorNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
+ 		rAnchor.y = StringUtil::parseReal( pAnchorNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
+ 		rAnchor.z = StringUtil::parseReal( pAnchorNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
+-		
++	
+ 		rAnchor = rJointTransform.mPosition + rJointTransform.mRotation*( rJointTransform.mScale*rAnchor );
+ 	}
+ 	
+ 	//------------------------------------------------------
+-	void XODEParser::readAxis(	const SharedPtr&lt;dom::INode&gt; pAxisNode,
+-								Vector3&amp; rAxis,
+-								Transform&amp; rJointTransform )
++	void XODEParser::readAxis(	const NodeSharedPtr pAxisNode,
++										Vector3&amp; rAxis,
++										Transform&amp; rJointTransform )
+ 	{
++		YAKE_LOG( &quot;Reading axis...&quot; );
++
+ 		rAxis.x = StringUtil::parseReal( pAxisNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
+ 		rAxis.y = StringUtil::parseReal( pAxisNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
+ 		rAxis.z = StringUtil::parseReal( pAxisNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
+-		
++	
+ 		/// TODO What about all other axis params?
+-		
++	
+ 		rAxis = rJointTransform.mRotation*rAxis;
+ 	}
+ 
+
+Modified: trunk/yake/src/yapp/model/Makefile.am
+===================================================================
+--- trunk/yake/src/yapp/model/Makefile.am	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/model/Makefile.am	2005-10-06 18:03:10 UTC (rev 996)
+@@ -3,6 +3,5 @@
+ 
+ lib_LTLIBRARIES = libyappModel.la
+ libyappModel_la_SOURCES = yakeComplexModel.cpp yakeGraphical.cpp \
+-	yakePhysical.cpp yakeVehicle.cpp yakeActor.cpp yakeModelLink.cpp \
+-	yakeModelMovableLink.cpp yakeVehiclePhysicalComponent.cpp yakeVehicleTpl.cpp
++	yakePhysical.cpp yakeActor.cpp yakeModelLink.cpp yakeModelMovableLink.cpp
+ libyappModel_la_LIBADD = $(top_builddir)/src/yapp/loader/libyappLoader.la
+
+Modified: trunk/yake/src/yapp/model/yakePhysical.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakePhysical.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/model/yakePhysical.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -36,6 +36,7 @@
+ 		mActors.clear();
+ 		mJoints.clear();
+ 	}
++	
+ 	//-----------------------------------------------------
+ 	Physical::ActorVector Physical::getActors() const
+ 	{
+@@ -49,6 +50,7 @@
+ 		}
+ 		return c;
+ 	}
++
+ 	//-----------------------------------------------------
+ 	void Physical::translate( const Vector3 &amp; d )
+ 	{
+@@ -60,6 +62,7 @@
+ 				pActor-&gt;translate( d );
+ 		}
+ 	}
++
+ 	//-----------------------------------------------------
+ 	void Physical::addActor( physics::IActorPtr pActor, const String &amp; rName )
+ 	{
+@@ -69,6 +72,7 @@
+ 		String name = (rName.length() &gt; 0) ? rName : (uniqueName::create(&quot;physical_actor_&quot;));
+ 		mActors.insert( std::make_pair(name,pActor) );
+ 	}
++
+ 	//-----------------------------------------------------
+ 	void Physical::addJoint(physics::IJointPtr pJoint )
+ 	{
+@@ -77,6 +81,7 @@
+ 			return;
+ 		mJoints.push_back( pJoint );
+ 	}
++
+ 	//-----------------------------------------------------
+ 	physics::IActorPtr Physical::getActorByName( const String &amp; rName ) const
+ 	{
+
+Modified: trunk/yake/src/yapp/samples/Makefile.am
+===================================================================
+--- trunk/yake/src/yapp/samples/Makefile.am	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/samples/Makefile.am	2005-10-06 18:03:10 UTC (rev 996)
+@@ -1,3 +1,3 @@
+ INCLUDES = $(all_includes)
+ METASOURCES = AUTO
+-SUBDIRS = base model misc graphics gui raf
++SUBDIRS = base misc gui raf model graphics
+
+Modified: trunk/yake/src/yapp/samples/base/Makefile.am
+===================================================================
+--- trunk/yake/src/yapp/samples/base/Makefile.am	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/samples/base/Makefile.am	2005-10-06 18:03:10 UTC (rev 996)
+@@ -1,3 +1,4 @@
+ INCLUDES = $(all_includes)
+ METASOURCES = AUTO
+ 
++SUBDIRS = vehicle
+
+Modified: trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -14,7 +14,7 @@
+ struct TheConfiguration : public raf::ApplicationConfiguration
+ {
+ 	virtual StringVector getLibraries()
+-	{ return MakeStringVector() &lt;&lt; &quot;graphicsOgre&quot; &lt;&lt; &quot;inputOgre&quot; &lt;&lt; &quot;physicsNx&quot;; }
++	{ return MakeStringVector() &lt;&lt; &quot;graphicsOgre&quot; &lt;&lt; &quot;inputOgre&quot; &lt;&lt; &quot;physicsODE&quot;; }
+ 
+ 	//virtual StringVector getScriptingSystems()
+ 	//{ return MakeStringVector() &lt;&lt; &quot;lua&quot;; }
+@@ -26,7 +26,7 @@
+ 	{ return MakeStringVector() &lt;&lt; &quot;ogre&quot;; }
+ 
+ 	virtual StringVector getPhysicsSystems()
+-	{ return MakeStringVector() &lt;&lt; &quot;nx&quot;; }
++	{ return MakeStringVector() &lt;&lt; &quot;ode&quot;; }
+ };
+ 
+ /** Main application state */
+@@ -128,19 +128,19 @@
+ 		using namespace input;
+ 		mActionMap.reg( ACTIONID_STRAFE_LEFT,
+ 			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_LEFT, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_STRAFE_LEFT, boost::bind(TheMainState::onStrafeLeft,this) );
++		mActionMap.subscribeToActionId( ACTIONID_STRAFE_LEFT, boost::bind(&amp;TheMainState::onStrafeLeft,this) );
+ 
+ 		mActionMap.reg( ACTIONID_STRAFE_RIGHT,
+ 			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_RIGHT, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_STRAFE_RIGHT, boost::bind(TheMainState::onStrafeRight,this) );
++		mActionMap.subscribeToActionId( ACTIONID_STRAFE_RIGHT, boost::bind(&amp;TheMainState::onStrafeRight,this) );
+ 
+ 		mActionMap.reg( ACTIONID_FORWARD,
+ 			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_UP, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_FORWARD, boost::bind(TheMainState::onForward,this) );
++		mActionMap.subscribeToActionId( ACTIONID_FORWARD, boost::bind(&amp;TheMainState::onForward,this) );
+ 
+ 		mActionMap.reg( ACTIONID_REVERSE,
+ 			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_DOWN, KAM_CONTINUOUS ) );
+-		mActionMap.subscribeToActionId( ACTIONID_REVERSE, boost::bind(TheMainState::onReverse,this) );
++		mActionMap.subscribeToActionId( ACTIONID_REVERSE, boost::bind(&amp;TheMainState::onReverse,this) );
+ 	}
+ 	virtual void onExit()
+ 	{
+@@ -248,6 +248,7 @@
+ {
+ 	// Use default executor for convenience.
+ 	// It's always possible to manually execute TheApp::initialise() etc.
+-	return (raf::runApplication( TheApp() )) ? 0 : 1;
++	TheApp theApp;
++	return (raf::runApplication( theApp )) ? 0 : 1;
+ }
+ 
+
+Modified: trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/samples/model/dotLink/yakeDotLinkDemo.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -72,7 +72,7 @@
+ 	{
+ 	}
+ 
+-	void onKey(const yake::input::KeyboardEvent&amp; rEvent)
++	void onKey( const yake::input::KeyboardEvent&amp; rEvent )
+ 	{
+ 		std::cout &lt;&lt; &quot;KEY: &quot; &lt;&lt; rEvent.keyCode &lt;&lt; std::endl;
+ 		
+@@ -80,7 +80,7 @@
+ 			requestShutdown();
+ 	}
+ 	
+-	void onMB(uint8 btn)
++	void onMB( uint8 btn )
+ 	{
+ 		std::cout &lt;&lt; &quot;MB: &quot; &lt;&lt; static_cast&lt;int&gt;( btn ) &lt;&lt; std::endl;
+ 	}
+
+Modified: trunk/yake/src/yapp/vehicle/yakeMountPoint.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeMountPoint.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/vehicle/yakeMountPoint.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -25,7 +25,7 @@
+    ------------------------------------------------------------------------------------
+ */
+ #include &lt;yapp/vehicle/yakePCH.h&gt;
+-#include &lt;yapp/vehicle/yakeInterfaces.h&gt;
++#include &lt;yapp/vehicle/yakeVehicle.h&gt;
+ #include &lt;yapp/vehicle/yakeNativeOde.h&gt;
+ 
+ namespace yake {
+
+Modified: trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -25,7 +25,7 @@
+    ------------------------------------------------------------------------------------
+ */
+ #include &lt;yapp/vehicle/yakePCH.h&gt;
+-#include &lt;yapp/vehicle/yakeInterfaces.h&gt;
++#include &lt;yapp/vehicle/yakeVehicle.h&gt;
+ #include &lt;yapp/vehicle/yakeNativeOde.h&gt;
+ 
+ namespace yake {
+@@ -203,7 +203,7 @@
+ 					pEngine-&gt;setMaximumForce( thrusterTpl-&gt;maxForce );
+ 					pEngine-&gt;setThrottle(0.);
+ 					subscribeToUpdateThrusterSimulation(
+-						boost::bind( OdeThruster::updateSimulation, pEngine, _1 ) );
++						boost::bind( &amp;OdeThruster::updateSimulation, pEngine, _1 ) );
+ 
+ 					// the mountable thruster wrapper
+ 					if (thrusterTpl-&gt;mountPtIdx != MPID_NO_PARENT)
+@@ -214,7 +214,7 @@
+ 						pMounted-&gt;addTarget( mpChassis-&gt;getBodyPtr() );
+ 
+ 						subscribeToApplyThrusterToTargets(
+-							boost::bind( OdeMountedThruster::applyToTargets, pMounted ) );
++							boost::bind( &amp;OdeMountedThruster::applyToTargets, pMounted ) );
+ 
+ 						mMountPoints[thrusterTpl-&gt;mountPtIdx]-&gt;attach( pMounted );
+ 					}
+
+Modified: trunk/yake/src/yapp/vehicle/yakeOdeEngine.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeOdeEngine.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/vehicle/yakeOdeEngine.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -25,7 +25,7 @@
+    ------------------------------------------------------------------------------------
+ */
+ #include &lt;yapp/vehicle/yakePCH.h&gt;
+-#include &lt;yapp/vehicle/yakeInterfaces.h&gt;
++#include &lt;yapp/vehicle/yakeVehicle.h&gt;
+ #include &lt;yapp/vehicle/yakeNativeOde.h&gt;
+ 
+ namespace yake {
+
+Modified: trunk/yake/src/yapp/vehicle/yakeVehicle.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeVehicle.cpp	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/src/yapp/vehicle/yakeVehicle.cpp	2005-10-06 18:03:10 UTC (rev 996)
+@@ -25,7 +25,7 @@
+    ------------------------------------------------------------------------------------
+ */
+ #include &lt;yapp/vehicle/yakePCH.h&gt;
+-#include &lt;yapp/vehicle/yakeInterfaces.h&gt;
++#include &lt;yapp/vehicle/yakeVehicle.h&gt;
+ #include &lt;yapp/vehicle/yakeNativeOde.h&gt;
+ 
+ namespace yake {
+
+Modified: trunk/yake/yake/base/Makefile.am
+===================================================================
+--- trunk/yake/yake/base/Makefile.am	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/yake/base/Makefile.am	2005-10-06 18:03:10 UTC (rev 996)
+@@ -1,4 +1,10 @@
+ INCLUDES = 
+ METASOURCES = AUTO
+-include_HEADERS =  yakeByteSwapInputStreamDecorator.h yakeByteSwapOutputStreamDecorator.h yakeConfigFile.h yakeCriticalSection.h yakeDataChunk.h yakeDebugLogAppender.h yakeDebugOutputStream.h yakeException.h yake.h yakeInputStreamDecorator.h yakeInputStream.h yakeLibrary.h yakeLock.h yakeLog.h yakeMimeTypeManager.h yakeMovable.h yakeOutputStreamDecorator.h yakeOutputStream.h yakePCH.h yakePlatform.h yakePlugin.h yakePrerequisites.h yakeProcessor.h yakeResource.h yakeSerializable.h yakeState.h yakeString.h yakeTimer.h yakeUniqueId.h yakeUniqueName.h yakeVersion.h
++include_HEADERS = yakeByteSwapInputStreamDecorator.h \
++	yakeByteSwapOutputStreamDecorator.h yakeConfigFile.h yakeCriticalSection.h yakeDataChunk.h \
++	yakeDebugLogAppender.h yakeDebugOutputStream.h yakeException.h yake.h \
++	yakeInputStreamDecorator.h yakeInputStream.h yakeLibrary.h yakeLock.h yakeLog.h \
++	yakeMimeTypeManager.h yakeMovable.h yakeOutputStreamDecorator.h yakeOutputStream.h yakePCH.h \
++	yakePlatform.h yakePlugin.h yakePrerequisites.h yakeProcessor.h yakeResource.h \
++	yakeSerializable.h yakeString.h yakeTimer.h yakeUniqueId.h yakeUniqueName.h yakeVersion.h
+ SUBDIRS = prerequisites templates mpl native math
+
+Modified: trunk/yake/yake/base/prerequisites/yakePrerequisitesGCC.h
+===================================================================
+--- trunk/yake/yake/base/prerequisites/yakePrerequisitesGCC.h	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/yake/base/prerequisites/yakePrerequisitesGCC.h	2005-10-06 18:03:10 UTC (rev 996)
+@@ -40,7 +40,9 @@
+ //#	include &lt;wchar.h&gt;
+ #	include &lt;ext/hash_map&gt;
+ #ifdef __GNUC__
+-#    if __GNUC__ &lt; 3
++#    if __GNUC__ &gt;= 4
++# 	include&lt;ext/hash_fun.h&gt; 
++#    elif __GNUC__ &lt; 3
+ #       include &lt;ext/stl_hash_fun.h&gt;
+ #    elif __GNUC_MINOR__ &lt; 4
+ #        include &lt;ext/stl_hash_fun.h&gt;
+
+Modified: trunk/yake/yake/base/templates/yakeAlgorithms.h
+===================================================================
+--- trunk/yake/yake/base/templates/yakeAlgorithms.h	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/yake/base/templates/yakeAlgorithms.h	2005-10-06 18:03:10 UTC (rev 996)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -32,7 +32,7 @@
+ //============================================================================
+ // Standard headers
+ #ifndef YAKE_BASEPREREQUISITES_H
+-#	include &quot;yakePrerequisites.h&quot;
++#	include &lt;yake/base/yakePrerequisites.h&gt;
+ #endif
+ // Yake
+ 
+
+Modified: trunk/yake/yake/base/templates/yakeManager.h
+===================================================================
+--- trunk/yake/yake/base/templates/yakeManager.h	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/yake/base/templates/yakeManager.h	2005-10-06 18:03:10 UTC (rev 996)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+@@ -58,13 +58,11 @@
+ YAKE_DECLARE_CLASS( yake::base::templates::DefaultManagerError&lt;&gt; )
+     static Value_ OnUnknownType( Identifier_ )
+     {
+-      YAKE_DECLARE_FUNCTION( OnUnknownType )
+       YAKE_EXCEPT( &quot;Unknown Type.&quot; );
+     }
+ 
+     static void OnNotFound( Identifier_ )
+     {
+-      YAKE_DECLARE_FUNCTION( OnNotFound )
+       YAKE_EXCEPT( &quot;Unkown Identifier_.&quot; );
+     }
+ };
+
+Modified: trunk/yake/yake/base/yakeDebugLogAppender.h
+===================================================================
+--- trunk/yake/yake/base/yakeDebugLogAppender.h	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/yake/base/yakeDebugLogAppender.h	2005-10-06 18:03:10 UTC (rev 996)
+@@ -1,7 +1,7 @@
+ /*
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
++   Copyright  2004 The YAKE Team
+    For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+
+Modified: trunk/yake/yapp/loader/yakeXODEParser.h
+===================================================================
+--- trunk/yake/yapp/loader/yakeXODEParser.h	2005-10-06 17:34:54 UTC (rev 995)
++++ trunk/yake/yapp/loader/yakeXODEParser.h	2005-10-06 18:03:10 UTC (rev 996)
+@@ -41,6 +41,8 @@
+ 	class YAPP_BASE_API XODEParser
+ 	{
+ 	public:
++		typedef SharedPtr&lt;dom::INode&gt; NodeSharedPtr;
++		
+ 		XODEParser( model::Physical&amp; rBaseModel );
+ 		virtual ~XODEParser() {}
+ 
+@@ -55,7 +57,7 @@
+ 			\param file 
+ 			\return 
+ 		*/
+-		virtual bool load( const SharedPtr&lt;dom::INode&gt; docNode,  physics::IWorld* pPWorld );
++		virtual bool load( const NodeSharedPtr docNode,  physics::IWorld* pPWorld );
+ 
+ 		/** Prepare for next run of load/store.
+ 		*/
+@@ -104,44 +106,45 @@
+ 		/// Default implementations for common functions.
+ 		
+ 
+-		virtual void readXODE( const SharedPtr&lt;dom::INode&gt; pNode );
+-		virtual void readWorld( const SharedPtr&lt;dom::INode&gt; pWorldNode );
+-		virtual void readSpace( const SharedPtr&lt;dom::INode&gt; pSpaceNode );
+-		virtual void readBody( const SharedPtr&lt;dom::INode&gt; pBodyNode );
+-		virtual void readGeom( const SharedPtr&lt;dom::INode&gt; pGeomNode, physics::IActor* pParentObject = NULL, const Transform&amp; rParentTransform = Transform() );
+-		virtual void readBox( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; sX, real&amp; sY, real&amp; sZ );
+-		virtual void readCappedCylinder( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; radius, real&amp; length );
+-		virtual void readCone( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; radius, real&amp; length );
+-		virtual void readCylinder( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; radius, real&amp; length );
+-		virtual void readPlane( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; a, real&amp; b, real&amp; c, real&amp; d );
+-		virtual void readRay( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; length );
+-		virtual void readSphere( const SharedPtr&lt;dom::INode&gt; pNode, real&amp; radius );
+-		virtual void readTrimesh( const SharedPtr&lt;dom::INode&gt; pNode, physics::TriangleMeshDesc::VertexVector&amp; rVertices, physics::TriangleMeshDesc::IndexVector&amp; rIndices );
+-		virtual void readVertices( const SharedPtr&lt;dom::INode&gt; pNode, physics::TriangleMeshDesc::VertexVector&amp; rVertices );
+-		virtual void readIndices( const SharedPtr&lt;dom::INode&gt; pNode, physics::TriangleMeshDesc::IndexVector&amp; rIndices );
++		virtual void readXODE( const NodeSharedPtr pNode );
++		virtual void readWorld( const NodeSharedPtr pWorldNode );
++		virtual void readSpace( const NodeSharedPtr pSpaceNode );
++		virtual void readBody( const NodeSharedPtr pBodyNode );
++		virtual void readGeom( const NodeSharedPtr pGeomNode, physics::IActor* pParentObject = NULL, const Transform&amp; rParentTransform = Transform() );
++		virtual void readBox( const NodeSharedPtr pNode, real&amp; sX, real&amp; sY, real&amp; sZ );
++		virtual void readCappedCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length );
++		virtual void readCone( const NodeSharedPtr pNode, real&amp; radius, real&amp; length );
++		virtual void readCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length );
++		virtual void readPlane( const NodeSharedPtr pNode, real&amp; a, real&amp; b, real&amp; c, real&amp; d );
++		virtual void readRay( const NodeSharedPtr pNode, real&amp; length );
++		virtual void readSphere( const NodeSharedPtr pNode, real&amp; radius );
++		virtual void readTrimesh( const NodeSharedPtr pNode, physics::TriangleMeshDesc::VertexVector&amp; rVertices, physics::TriangleMeshDesc::IndexVector&amp; rIndices );
++		virtual void readVertices( const NodeSharedPtr pNode, physics::TriangleMeshDesc::VertexVector&amp; rVertices );
++		virtual void readIndices( const NodeSharedPtr pNode, physics::TriangleMeshDesc::IndexVector&amp; rIndices );
+ 		
+-		virtual void readTransform( const SharedPtr&lt;dom::INode&gt; pTransformNode, Transform&amp; rTrans );
++		virtual void readTransform( const NodeSharedPtr pTransformNode, Transform&amp; rTrans );
+ 
+-		virtual void readVector3( const SharedPtr&lt;dom::INode&gt; pVecNode, Vector3&amp; rVec );  
+-		virtual void readPosition( const SharedPtr&lt;dom::INode&gt; pPosNode, Vector3&amp; rPos );  
+-		virtual void readQuaternion( const SharedPtr&lt;dom::INode&gt; pQuatNode, Quaternion&amp; rQuat );
+-		virtual void readRotation( const SharedPtr&lt;dom::INode&gt; pRotNode, Quaternion&amp; rRot );
+-		virtual void readScale( const SharedPtr&lt;dom::INode&gt; pScaleNode, Vector3&amp; rScale );  
+-		virtual void readAxisAngleRot( const SharedPtr&lt;dom::INode&gt; pRotNode, Quaternion&amp; rRot );
+-		virtual void readMass( const SharedPtr&lt;dom::INode&gt; pMassNode, physics::IBody&amp; rBody, const Transform&amp; rParentTransform ); 
+-		virtual void readMassShape( const SharedPtr&lt;dom::INode&gt; pMShapeNode, physics::IBody&amp; rBody, const Transform&amp; rParentTransform ); 
+-		virtual void readMassAdjust( const SharedPtr&lt;dom::INode&gt; pMAdjustNode, physics::IBody&amp; rBody ); 
+-		virtual void readJoint( const SharedPtr&lt;dom::INode&gt; pJointNode, const String&amp; rBodyName, Transform&amp; rParentTransform );
++		virtual void readVector3( const NodeSharedPtr pVecNode, Vector3&amp; rVec );  
++		virtual void readPosition( const NodeSharedPtr pPosNode, Vector3&amp; rPos );  
++		virtual void readQuaternion( const NodeSharedPtr pQuatNode, Quaternion&amp; rQuat );
++		virtual void readRotation( const NodeSharedPtr pRotNode, Quaternion&amp; rRot );
++		virtual void readScale( const NodeSharedPtr pScaleNode, Vector3&amp; rScale );  
++		virtual void readAxisAngleRot( const NodeSharedPtr pRotNode, Quaternion&amp; rRot );
++		virtual void readMass( const NodeSharedPtr pMassNode, physics::IBody&amp; rBody, const Transform&amp; rParentTransform ); 
++		virtual void readMassShape( const NodeSharedPtr pMShapeNode, physics::IBody&amp; rBody, const Transform&amp; rParentTransform ); 
++		virtual void readMassAdjust( const NodeSharedPtr pMAdjustNode, physics::IBody&amp; rBody ); 
++		virtual void readJoint( const NodeSharedPtr pJointNode, const String&amp; rBodyName, Transform&amp; rParentTransform );
+ 		
+-		virtual void readBall( const SharedPtr&lt;dom::INode&gt; pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+-		virtual void readFixed( const SharedPtr&lt;dom::INode&gt; pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+-		virtual void readHinge( const SharedPtr&lt;dom::INode&gt; pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+-		virtual void readHinge2( const SharedPtr&lt;dom::INode&gt; pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+-		virtual void readSlider( const SharedPtr&lt;dom::INode&gt; pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+-		virtual void readUniversal( const SharedPtr&lt;dom::INode&gt; pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
++		virtual void readBall( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
++		virtual void readFixed( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
++		virtual void readHinge( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
++		virtual void readHinge2( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
++		virtual void readSlider( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
++		virtual void readUniversal( const NodeSharedPtr pJointNode, physics::IActor* pActor1, physics::IActor* pActor2, Transform&amp; rJointTransform );
+ 		
+-		virtual void readAnchor( const SharedPtr&lt;dom::INode&gt; pAnchorNode, Vector3&amp; rAnchor, Transform&amp; rJointTransform );
+-		virtual void readAxis( const SharedPtr&lt;dom::INode&gt; pAxisNode, Vector3&amp; rAxis, Transform&amp; rJointTransform );
++		virtual void readAnchor( const NodeSharedPtr pAnchorNode, Vector3&amp; rAnchor, Transform&amp; rJointTransform );
++		virtual void readAxis( const NodeSharedPtr pAxisNode, Vector3&amp; rAxis, Transform&amp; rJointTransform );
++		virtual physics::IMaterialPtr XODEParser::readMaterialExt( const NodeSharedPtr pNode );
+ 		
+ // 		readGroup
+ // 		readJointgroup
+@@ -150,7 +153,7 @@
+ 		struct JointDescription
+ 		{
+ 			String					mBody1Name; /// name of 2nd body is inside joint def  node
+-			SharedPtr&lt;dom::INode&gt;	mJointDefNode;
++			NodeSharedPtr	mJointDefNode;
+ 			Transform				mParentTransform;
+ 		};
+ 	
+@@ -162,7 +165,7 @@
+ 		void createJoint( const JointDescription&amp; rDesc );
+ 		
+ 	private:
+-		SharedPtr&lt;dom::INode&gt;			mDocNode;
++		NodeSharedPtr			mDocNode;
+ 		physics::IWorld*					mPWorld;
+ 		model::Physical&amp;					mBaseModel;
+ 	};
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000065.html">[Yake-svn] r995 - trunk/yake/yapp/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000066.html">[Yake-svn] r997 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#68">[ date ]</a>
+              <a href="thread.html#68">[ thread ]</a>
+              <a href="subject.html#68">[ subject ]</a>
+              <a href="author.html#68">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

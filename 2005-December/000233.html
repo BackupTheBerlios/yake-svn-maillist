@@ -1,0 +1,318 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1163 - trunk/yake/src/yake/plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-December/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1163%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200512072219.jB7MJUME021340%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000232.html">
+   <LINK REL="Next"  HREF="000234.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1163 - trunk/yake/src/yake/plugins/physicsODE</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1163%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200512072219.jB7MJUME021340%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1163 - trunk/yake/src/yake/plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Dec  7 23:19:30 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000232.html">[Yake-svn] r1162 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000234.html">[Yake-svn] r1164 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#233">[ date ]</a>
+              <a href="thread.html#233">[ thread ]</a>
+              <a href="subject.html#233">[ subject ]</a>
+              <a href="author.html#233">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-12-07 23:19:29 +0100 (Wed, 07 Dec 2005)
+New Revision: 1163
+
+Added:
+   trunk/yake/src/yake/plugins/physicsODE/OdeRay.cpp
+Modified:
+   trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+Log:
+updated physics avatar
+
+Added: trunk/yake/src/yake/plugins/physicsODE/OdeRay.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeRay.cpp	2005-12-07 22:18:53 UTC (rev 1162)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeRay.cpp	2005-12-07 22:19:29 UTC (rev 1163)
+@@ -0,0 +1,137 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &lt;yake/plugins/physicsODE/yakePCH.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeWorld.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeRay.h&gt;
++
++namespace yake {
++namespace physics {
++
++	//-----------------------------------------------------
++	OdeRay::OdeRay(OdeWorld* world, const real length) :
++		mWorld(world),
++		mLength(length)
++	{
++		YAKE_ASSERT( mWorld );
++		YAKE_ASSERT( length &gt; 0 );
++		mRay = new dRay( world-&gt;_getOdeSpace()-&gt;id(), length );
++		mRay-&gt;setData( this );
++		this-&gt;setDirection( -Vector3::kUnitY );
++		mPreStepConn = mWorld-&gt;subscribeToPreStep( boost::bind(&amp;OdeRay::onPreStep,this) );
++	}
++	OdeRay::~OdeRay()
++	{
++		mPreStepConn.disconnect();
++		YAKE_SAFE_DELETE( mRay );
++	}
++	void OdeRay::ignore(dGeomID id)
++	{
++		mIgnoreGeoms.push_back( id );
++	}
++	void OdeRay::collideWith( dGeomID geomOther )
++	{
++		GeomIdList::const_iterator itFind = std::find( mIgnoreGeoms.begin(), mIgnoreGeoms.end(), geomOther );
++		if (itFind != mIgnoreGeoms.end())
++			return;
++		dContact contact;
++		int numCollided = dCollide( mRay-&gt;id(), geomOther, 1, &amp;contact.geom, sizeof( dContact ) );
++		YAKE_ASSERT( numCollided &gt;= 0 &amp;&amp; numCollided &lt;= 1 );
++		if (numCollided &lt; 1)
++			return;
++		if (contact.geom.depth &lt; mIntersectionDepth)
++		{
++			mIntersects = true;
++			mIntersectionDepth = real(contact.geom.depth);
++			mIntersectionPoint = Vector3( contact.geom.pos[0], contact.geom.pos[1], contact.geom.pos[2] );
++			// As we have passed dCollide the ray as the first parameter, the normal
++			// is oriented correctly for ray deflection from the surface.
++			mIntersectionNormal = Vector3( contact.geom.normal[0], contact.geom.normal[1], contact.geom.normal[2] );
++		}
++	}
++	real OdeRay::length() const
++	{
++		return mLength;
++	}
++	bool OdeRay::intersects() const
++	{
++		return mIntersects;
++	}
++	real OdeRay::intersectionDepth() const
++	{
++		return mIntersectionDepth;
++	}
++	Vector3 OdeRay::intersectionPoint() const
++	{
++		return mIntersectionPoint;
++	}
++	Vector3 OdeRay::intersectionNormal() const
++	{
++		return mIntersectionNormal;
++	}
++    void OdeRay::setPosition( const Vector3&amp; rPosition )
++    {
++		mPosition = rPosition;
++		if (mRay)
++			mRay-&gt;setPosition( mPosition.x, mPosition.y, mPosition.z );
++    }
++	void OdeRay::setDirection(const Vector3&amp; dir)
++	{
++		mDirection = dir;
++		if (mRay)
++			mRay-&gt;set( mPosition.x, mPosition.y, mPosition.z, mDirection.x, mDirection.y, mDirection.z );
++	}
++	Vector3 OdeRay::getDirection() const
++	{
++		return mDirection;
++	}
++    void OdeRay::setOrientation( const Quaternion&amp; rOrientation )
++    {
++		this-&gt;setDirection( rOrientation * Vector3::kUnitZ );
++    }
++    Vector3 OdeRay::getPosition() const
++    {
++		if (mRay)
++		{
++			const dReal* pos = mRay-&gt;getPosition();
++			mPosition = Vector3(pos[0],pos[1],pos[2]);
++		}
++		return mPosition;
++    }
++    Quaternion OdeRay::getOrientation() const
++    {
++		if (mRay)
++		{
++			dQuaternion q;
++			mRay-&gt;getQuaternion(q);
++			return Quaternion( real(q[0]), real(q[1]), real(q[2]), real(q[3]) );
++		}
++		return Quaternion::kIdentity;
++    }
++
++} // physics
++} // yake
++
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-12-07 22:18:53 UTC (rev 1162)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeWorld.cpp	2005-12-07 22:19:29 UTC (rev 1163)
+@@ -30,6 +30,8 @@
+ #include &lt;yake/plugins/physicsODE/OdeBody.h&gt;
+ #include &lt;yake/plugins/physicsODE/OdeActor.h&gt;
+ #include &lt;yake/plugins/physicsODE/OdeShapes.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeAvatar.h&gt;
++#include &lt;yake/plugins/physicsODE/OdeRay.h&gt;
+ 
+ #if (YAKE_PLATFORM == PLATFORM_WIN32) &amp;&amp; (YAKE_COMPILER == COMPILER_MSVC)
+ #	define ADJUST_FPU_PRECISION
+@@ -271,8 +273,22 @@
+ 		
+ 		return pJoint;
+ 	}
+-	
+ 	//-----------------------------------------------------
++	IAvatarPtr OdeWorld::createAvatar( const IAvatar::Desc&amp; rkAvatarDesc )
++	{
++		OdeAvatar* pAvatar = new OdeAvatar( this );
++		YAKE_ASSERT( pAvatar );
++
++		if (!pAvatar-&gt;init( rkAvatarDesc ))
++		{
++			delete pAvatar;
++			return 0;
++		}
++		
++		mAvatars.push_back( SharedPtr&lt;OdeAvatar&gt;( pAvatar ) );
++		return pAvatar;
++	}
++	//-----------------------------------------------------
+ 	IActorPtr OdeWorld::createActor( const IActor::Desc&amp; rActorDesc )
+ 	{
+ 		OdeActor* pActor = new OdeActor( this, (rActorDesc.type == ACTOR_DYNAMIC) );
+@@ -330,6 +346,8 @@
+ 			mTime += mStepSize;
+ 			t -= mStepSize;
+ 	
++			firePreStepInternal(mStepSize);
++
+ 	#ifdef ADJUST_FPU_PRECISION
+ 			_controlfp(_PC_64, _MCW_PC);
+ 	#endif
+@@ -340,8 +358,6 @@
+ 			//mOdeWorld-&gt;step( mStepSize );
+ 			//mOdeWorld-&gt;stepFast1( mStepSize, 4 );
+ 
+-			firePreStepInternal(mStepSize);
+-
+ 			//dWorldStep( mOdeWorld-&gt;id(), mStepSize );
+ 			dWorldQuickStep( mOdeWorld-&gt;id(), mStepSize );
+ 			//dWorldStepFast1( mOdeWorld-&gt;id(), mStepSize, 4 );
+@@ -370,6 +386,9 @@
+ 				dReal const* angV = pOdeBody-&gt;getAngularVel();
+ 				pOdeBody-&gt;addTorque( aScale*angV[0], aScale*angV[1], aScale*angV[2] );
+ 			}
++
++			//
++			mSigPostStepInternal(mStepSize);
+ 		}
+ 		
+ 		firePostStep( mTime );
+@@ -450,15 +469,29 @@
+ 			return;
+ 
+ 
+-		OdeActor* pA = static_cast&lt;OdeGeom*&gt;( dGeomGetData( o1 ) )-&gt;getOwner();
+-		OdeActor* pB = static_cast&lt;OdeGeom*&gt;( dGeomGetData( o2 ) )-&gt;getOwner();
+-		
+-		if ( pA &amp;&amp; pB )
++		void* data1 = dGeomGetData( o1 );
++		void* data2 = dGeomGetData( o2 );
++		if ( ( dGeomGetClass( o1 ) == dRayClass ) || ( dGeomGetClass( o2 ) == dRayClass ) )
+ 		{
+-			// collide
+-			pA-&gt;_collide( pB, o1, o2, odeContactGroup );
+-			return;
++			const bool firstIsRay = (dGeomGetClass(o1) == dRayClass);
++			dGeomID rayId = firstIsRay ? o1 : o2;
++			dGeomID otherId = firstIsRay ? o2 : o1;
++			OdeRay* pRay = static_cast&lt;OdeRay*&gt;( firstIsRay ? data1 : data2 );
++			YAKE_ASSERT( pRay );
++			if (pRay)
++				pRay-&gt;collideWith( otherId );
+ 		}
++		else if (data1 &amp;&amp; data2)
++		{
++			OdeActor* pA = static_cast&lt;OdeGeom*&gt;( data1 )-&gt;getOwner();
++			OdeActor* pB = static_cast&lt;OdeGeom*&gt;( data2 )-&gt;getOwner();
++			if ( pA &amp;&amp; pB )
++			{
++				// collide
++				pA-&gt;_collide( pB, o1, o2, odeContactGroup );
++				return;
++			}
++		}
+ 	}
+ 
+ } // physics
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000232.html">[Yake-svn] r1162 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000234.html">[Yake-svn] r1164 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#233">[ date ]</a>
+              <a href="thread.html#233">[ thread ]</a>
+              <a href="subject.html#233">[ subject ]</a>
+              <a href="author.html#233">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

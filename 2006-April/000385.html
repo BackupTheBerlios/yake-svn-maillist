@@ -1,0 +1,1880 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1317 - in trunk/yake: dependencies scripts/msvc8 src/yake/audio src/yake/base src/yake/base/math src/yake/base/native/Linux src/yake/base/native/win32 src/yake/data src/yake/ent src/yake/input src/yake/net src/yake/net/detail src/yake/samples/physics/demo yake/base yake/base/math yake/base/native yake/base/native/win32 yake/base/templates yake/data yake/ent yake/msg yake/net yake/net/detail yake/object yake/physics yake/plugins/graphicsOgre yake/samples/common yake/statemachine
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-April/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1317%20-%20in%20trunk/yake%3A%20dependencies%20scripts/msvc8%20src/yake/audio%20src/yake/base%20src/yake/base/math%20src/yake/base/native/Linux%20src/yake/base/native/win32%20src/yake/data%20src/yake/ent%20src/yake/input%20src/yake/net%20src/yake/net/detail%20src/yake/samples/physics/demo%20yake/base%20yake/base/math%20yake/base/native%20yake/base/native/win32%20yake/base/templates%20yake/data%20yake/ent%20yake/msg%20yake/net%20yake/net/detail%20yake/object%20yake/physics%20yake/plugins/graphicsOgre%20yake/samples/common%20yake/statemachine&In-Reply-To=%3C200604231754.k3NHsxHx029757%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000384.html">
+   <LINK REL="Next"  HREF="000386.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1317 - in trunk/yake: dependencies scripts/msvc8 src/yake/audio src/yake/base src/yake/base/math src/yake/base/native/Linux src/yake/base/native/win32 src/yake/data src/yake/ent src/yake/input src/yake/net src/yake/net/detail src/yake/samples/physics/demo yake/base yake/base/math yake/base/native yake/base/native/win32 yake/base/templates yake/data yake/ent yake/msg yake/net yake/net/detail yake/object yake/physics yake/plugins/graphicsOgre yake/samples/common yake/statemachine</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1317%20-%20in%20trunk/yake%3A%20dependencies%20scripts/msvc8%20src/yake/audio%20src/yake/base%20src/yake/base/math%20src/yake/base/native/Linux%20src/yake/base/native/win32%20src/yake/data%20src/yake/ent%20src/yake/input%20src/yake/net%20src/yake/net/detail%20src/yake/samples/physics/demo%20yake/base%20yake/base/math%20yake/base/native%20yake/base/native/win32%20yake/base/templates%20yake/data%20yake/ent%20yake/msg%20yake/net%20yake/net/detail%20yake/object%20yake/physics%20yake/plugins/graphicsOgre%20yake/samples/common%20yake/statemachine&In-Reply-To=%3C200604231754.k3NHsxHx029757%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1317 - in trunk/yake: dependencies scripts/msvc8 src/yake/audio src/yake/base src/yake/base/math src/yake/base/native/Linux src/yake/base/native/win32 src/yake/data src/yake/ent src/yake/input src/yake/net src/yake/net/detail src/yake/samples/physics/demo yake/base yake/base/math yake/base/native yake/base/native/win32 yake/base/templates yake/data yake/ent yake/msg yake/net yake/net/detail yake/object yake/physics yake/plugins/graphicsOgre yake/samples/common yake/statemachine">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Apr 23 19:54:59 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000384.html">[Yake-svn] r1316 - in trunk/yake/common/media: . scripts
+</A></li>
+        <LI>Next message: <A HREF="000386.html">[Yake-svn] r1318 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#385">[ date ]</a>
+              <a href="thread.html#385">[ thread ]</a>
+              <a href="subject.html#385">[ subject ]</a>
+              <a href="author.html#385">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-04-23 19:54:49 +0200 (Sun, 23 Apr 2006)
+New Revision: 1317
+
+Modified:
+   trunk/yake/dependencies/DEPENDENCIES
+   trunk/yake/scripts/msvc8/base.vcproj
+   trunk/yake/scripts/msvc8/net.vcproj
+   trunk/yake/src/yake/audio/yakePCH.cpp
+   trunk/yake/src/yake/base/math/yakeSimpleSpline.cpp
+   trunk/yake/src/yake/base/native/Linux/yakeTime.cpp
+   trunk/yake/src/yake/base/native/win32/yakeCriticalSection.cpp
+   trunk/yake/src/yake/base/native/win32/yakeDebug.cpp
+   trunk/yake/src/yake/base/native/win32/yakeLibrary.cpp
+   trunk/yake/src/yake/base/native/win32/yakeProcessor.cpp
+   trunk/yake/src/yake/base/native/win32/yakeTime.cpp
+   trunk/yake/src/yake/base/yakeDataChunk.cpp
+   trunk/yake/src/yake/base/yakeLog.cpp
+   trunk/yake/src/yake/data/yakeXMLSerializer.cpp
+   trunk/yake/src/yake/ent/object.cpp
+   trunk/yake/src/yake/ent/object_listener.cpp
+   trunk/yake/src/yake/ent/object_mgr.cpp
+   trunk/yake/src/yake/ent/object_mgr_listener.cpp
+   trunk/yake/src/yake/ent/vm_holder.cpp
+   trunk/yake/src/yake/input/yakeActionMap.cpp
+   trunk/yake/src/yake/net/detail/netCommon.cpp
+   trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp
+   trunk/yake/src/yake/net/detail/netEventConnection.cpp
+   trunk/yake/src/yake/net/detail/netInternal.cpp
+   trunk/yake/src/yake/net/net.cpp
+   trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+   trunk/yake/yake/base/math/yakeGeometry.h
+   trunk/yake/yake/base/native/win32/yakeUndefine.h
+   trunk/yake/yake/base/native/yakeNative.h
+   trunk/yake/yake/base/templates/yakeSmartAssert.h
+   trunk/yake/yake/base/yakeProcessor.h
+   trunk/yake/yake/data/yakeDataSerializer.h
+   trunk/yake/yake/ent/object_mgr.h
+   trunk/yake/yake/msg/listener_mgr.h
+   trunk/yake/yake/net/detail/netEventConnection.h
+   trunk/yake/yake/net/detail/netInternal.h
+   trunk/yake/yake/net/netBitstream.inl
+   trunk/yake/yake/net/netBitstreamAdapters.h
+   trunk/yake/yake/net/netCommon.h
+   trunk/yake/yake/net/netEvent.h
+   trunk/yake/yake/net/netPacket.h
+   trunk/yake/yake/net/netPrerequisites.h
+   trunk/yake/yake/net/netTypes.h
+   trunk/yake/yake/net/pch.h
+   trunk/yake/yake/object/ObjectManager.h
+   trunk/yake/yake/physics/yakeAffectorZone.h
+   trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsSystem.h
+   trunk/yake/yake/samples/common/init_gui.h
+   trunk/yake/yake/statemachine/fsm_core.h
+Log:
+various fixes (compatibility, cleanup, standard compliance and more)
+
+Modified: trunk/yake/dependencies/DEPENDENCIES
+===================================================================
+--- trunk/yake/dependencies/DEPENDENCIES	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/dependencies/DEPENDENCIES	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -13,3 +13,4 @@
+ OpenThreads/
+ tinyxml/
+ ttl/
++zThread
+
+Modified: trunk/yake/scripts/msvc8/base.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/base.vcproj	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/scripts/msvc8/base.vcproj	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -198,26 +198,6 @@
+ 				&gt;
+ 			&lt;/File&gt;
+ 			&lt;File
+-				RelativePath=&quot;..\..\src\yake\base\yakeDebugOutputStream.cpp&quot;
+-				&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Debug|Win32&quot;
+-					ExcludedFromBuild=&quot;true&quot;
+-					&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-					/&gt;
+-				&lt;/FileConfiguration&gt;
+-				&lt;FileConfiguration
+-					Name=&quot;Release|Win32&quot;
+-					ExcludedFromBuild=&quot;true&quot;
+-					&gt;
+-					&lt;Tool
+-						Name=&quot;VCCLCompilerTool&quot;
+-					/&gt;
+-				&lt;/FileConfiguration&gt;
+-			&lt;/File&gt;
+-			&lt;File
+ 				RelativePath=&quot;..\..\src\yake\base\yakeException.cpp&quot;
+ 				&gt;
+ 			&lt;/File&gt;
+
+Modified: trunk/yake/scripts/msvc8/net.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/net.vcproj	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/scripts/msvc8/net.vcproj	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -64,7 +64,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;ws2_32.lib winmm.lib&quot;
++				AdditionalDependencies=&quot;ws2_32.lib winmm.lib base.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;2&quot;
+ 				AdditionalLibraryDirectories=&quot;../../common/lib/debug;../../dependencies/lib&quot;
+@@ -145,7 +145,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;ws2_32.lib winmm.lib&quot;
++				AdditionalDependencies=&quot;ws2_32.lib winmm.lib base.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
+ 				LinkIncremental=&quot;1&quot;
+ 				AdditionalLibraryDirectories=&quot;../../common/lib/release;../../dependencies/lib&quot;
+
+Modified: trunk/yake/src/yake/audio/yakePCH.cpp
+===================================================================
+--- trunk/yake/src/yake/audio/yakePCH.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/audio/yakePCH.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -24,4 +24,4 @@
+    source code distribution.
+    ------------------------------------------------------------------------------------
+ */
+-#include &lt;yake/audio/yakePCH.h&gt;
+\ No newline at end of file
++#include &lt;yake/audio/yakePCH.h&gt;
+
+Modified: trunk/yake/src/yake/base/math/yakeSimpleSpline.cpp
+===================================================================
+--- trunk/yake/src/yake/base/math/yakeSimpleSpline.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/math/yakeSimpleSpline.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -75,11 +75,11 @@
+         // change where this is not the case
+         // TODO: base on arclength?
+ 
+-        
++
+         // Work out which segment this is in
+         real fSeg = t * mPoints.size();
+         unsigned int segIdx = (unsigned int)fSeg;
+-        // Apportion t 
++        // Apportion t
+         t = fSeg - segIdx;
+ 
+         return interpolate(segIdx, t);
+@@ -89,8 +89,7 @@
+     Vector3 SimpleSpline::interpolate(unsigned int fromIndex, real t)
+     {
+         // Bounds check
+-        assert (fromIndex &gt;= 0 &amp;&amp; fromIndex &lt; mPoints.size() &amp;&amp;
+-            &quot;fromIndex out of bounds&quot;);
++        assert ( fromIndex &lt; mPoints.size() &amp;&amp; &quot;fromIndex out of bounds&quot;);
+ 
+         if ((fromIndex + 1) == mPoints.size())
+         {
+@@ -151,7 +150,7 @@
+     void SimpleSpline::recalcTangents(void)
+     {
+         // Catmull-Rom approach
+-        // 
++        //
+         // tangent[i] = 0.5 * (point[i+1] - point[i-1])
+         //
+         // Assume endpoint tangents are parallel with line with neighbour
+@@ -212,7 +211,7 @@
+             {
+                 mTangents[i] = 0.5 * (mPoints[i+1] - mPoints[i-1]);
+             }
+-            
++
+         }
+ 
+ 
+
+Modified: trunk/yake/src/yake/base/native/Linux/yakeTime.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/Linux/yakeTime.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/Linux/yakeTime.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -70,7 +70,7 @@
+ 		
+ 		gettimeofday( &amp;t_now, 0 );
+ 		
+-		return static_cast&lt; float &gt;( 
++		return static_cast&lt; real &gt;( 
+ 			( t_now.tv_sec - TimerInit_g.mStart.tv_sec ) * 1000 + 
+ 			( t_now.tv_usec - TimerInit_g.mStart.tv_usec ) / 1000 ) / 1000;
+ 	}
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeCriticalSection.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeCriticalSection.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/win32/yakeCriticalSection.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -39,7 +39,7 @@
+ namespace native
+ {
+ 
+-YAKE_BASE_NATIVE_API CriticalSectionHandle criticalSection_Create()
++CriticalSectionHandle criticalSection_Create()
+ {
+   CRITICAL_SECTION* criticalSectionImpl = new CRITICAL_SECTION;
+   InitializeCriticalSection( criticalSectionImpl );
+@@ -47,19 +47,19 @@
+   return ( CriticalSectionHandle )criticalSectionImpl;
+ }
+ 
+-YAKE_BASE_NATIVE_API void criticalSection_Enter( CriticalSectionHandle criticalSection )
++void criticalSection_Enter( CriticalSectionHandle criticalSection )
+ {
+   CRITICAL_SECTION* criticalSectionImpl = ( CRITICAL_SECTION* )criticalSection;
+   EnterCriticalSection( criticalSectionImpl );
+ }
+ 
+-YAKE_BASE_NATIVE_API void criticalSection_Leave( CriticalSectionHandle criticalSection )
++void criticalSection_Leave( CriticalSectionHandle criticalSection )
+ {
+   CRITICAL_SECTION* criticalSectionImpl = ( CRITICAL_SECTION* )criticalSection;
+   LeaveCriticalSection( criticalSectionImpl );
+ }
+ 
+-YAKE_BASE_NATIVE_API void criticalSection_Delete( CriticalSectionHandle criticalSection )
++void criticalSection_Delete( CriticalSectionHandle criticalSection )
+ {
+   CRITICAL_SECTION* criticalSectionImpl = ( CRITICAL_SECTION* )criticalSection;
+   DeleteCriticalSection( criticalSectionImpl );
+@@ -67,4 +67,4 @@
+ }
+ 
+ } // native
+-} // yake
+\ No newline at end of file
++} // yake
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeDebug.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeDebug.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/win32/yakeDebug.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -82,7 +82,7 @@
+ 		SetWindowPos( hDlg,
+ 			0,
+ 			( GetDeviceCaps( GetDC( 0 ), HORZRES ) - ( rc.right - rc.left ) ) / 2,
+-			( GetDeviceCaps( GetDC( 0 ), VERTRES ) - ( rc.bottom - rc.top ) ) / 2, 
++			( GetDeviceCaps( GetDC( 0 ), VERTRES ) - ( rc.bottom - rc.top ) ) / 2,
+ 			0,
+ 			0,
+ 			SWP_NOSIZE | SWP_NOZORDER );
+@@ -107,7 +107,7 @@
+ 	return FALSE;
+ }
+ 
+-YAKE_BASE_NATIVE_API bool debug_AssertFailed( const char* pszMessage, const char* pszCondition, const char* pszFile, int nLine, bool&amp; rbIgnoreAlways )
++bool debug_AssertFailed( const char* pszMessage, const char* pszCondition, const char* pszFile, int nLine, bool&amp; rbIgnoreAlways )
+ {
+ 	g_pszMessage		= pszMessage;
+ 	g_pszCondition	= pszCondition;
+@@ -153,7 +153,7 @@
+     static bool consoleApp_;
+ } logConsole_g;
+ 
+-YAKE_BASE_NATIVE_API void debug_Log( const char * what, DebugLog::Severity eSeverity, const char * source )
++void debug_Log( const char * what, DebugLog::Severity eSeverity, const char * source )
+ {
+ 	static char szBuffer[ 1024 ];
+ 
+@@ -161,7 +161,7 @@
+     ( eSeverity == DebugLog::WARNINGS ? FOREGROUND_GREEN | FOREGROUND_RED : FOREGROUND_RED ) );
+ 	wColor |= FOREGROUND_INTENSITY;
+ 
+-	if( *source != NULL )
++	if( *source )
+ 		sprintf( szBuffer, &quot;%s: %s&quot;, source, what );
+ 	else
+ 		sprintf( szBuffer, &quot;%s&quot;, what );
+@@ -170,7 +170,7 @@
+ 	logConsole_g.Print( &quot;\n&quot;, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
+ }
+ 
+-YAKE_BASE_NATIVE_API void debug_Print( const char * string )
++void debug_Print( const char * string )
+ {
+   logConsole_g.Print( string, FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED );
+ }
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeLibrary.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeLibrary.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/win32/yakeLibrary.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -45,28 +45,28 @@
+ namespace native
+ {
+ 
+-YAKE_BASE_NATIVE_API LibraryHandle library_Load(const char * filename)
++LibraryHandle library_Load(const char * filename)
+ {
+ 	YAKE_ASSERT(filename).debug(&quot;Invalid filename.&quot;);
+ 	// load library
+ 	LibraryHandle handle = (LibraryHandle)::LoadLibraryA(filename);
+ 
+ 	// todo: <A HREF="http://yake.org/forum/viewtopic.php?t=340">http://yake.org/forum/viewtopic.php?t=340</A>
+-	if (!handle) 
++	if (!handle)
+ 		YAKE_EXCEPT(&quot;Couldn't load library &quot; + String(filename) + &quot;.&quot;);
+ 	return handle;
+ }
+ 
+-YAKE_BASE_NATIVE_API void * library_GetSymbol(LibraryHandle library, const char * function)
++void * library_GetSymbol(LibraryHandle library, const char * function)
+ {
+ 	YAKE_ASSERT(library).debug(&quot;Invalid library handle.&quot;);
+ 	YAKE_ASSERT(function).debug(&quot;Invalid library function.&quot;);
+ 	// get the procedure's address
+-	void * address = ::GetProcAddress((HMODULE) library, function);
++	void * address = (void *)(::GetProcAddress((HMODULE) library, function));
+ 	return address;
+ }
+ 
+-YAKE_BASE_NATIVE_API void library_Free(LibraryHandle library)
++void library_Free(LibraryHandle library)
+ {
+ 	YAKE_ASSERT(library).debug(&quot;Invalid library handle.&quot;);
+ 	// free library
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeProcessor.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeProcessor.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/win32/yakeProcessor.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -45,7 +45,7 @@
+ {
+ /*
+ // todo
+-YAKE_BASE_NATIVE_API void Processor_RetrieveInfo( std::wstring&amp; name, float&amp; frequency, Processor::Info&amp; info )
++void Processor_RetrieveInfo( std::wstring&amp; name, float&amp; frequency, Processor::Info&amp; info )
+ {
+ #define CACHE_COPY( Dest, Src ) Dest.isPresent = Src.bPresent; Dest.size = Widen( Src.strSize ); Dest.numAssociativeWays = Src.uiAssociativeWays; Dest.lineSize = Src.uiLineSize; Dest.isSectored = Src.bSectored;
+ #define TLB_COPY( Dest, Src )   Dest.isPresent = Src.bPresent; Dest.pageSize = Widen( Src.strPageSize ); Dest.numAssociativeWays = Src.uiAssociativeWays; Dest.numEntries = Src.uiEntries;
+
+Modified: trunk/yake/src/yake/base/native/win32/yakeTime.cpp
+===================================================================
+--- trunk/yake/src/yake/base/native/win32/yakeTime.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/native/win32/yakeTime.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -53,7 +53,7 @@
+ public:
+ 	// Public member for a gain of speed.
+ 	Win32::LARGE_INTEGER mTimerFrequency;
+-	float mStart;
++	real mStart;
+ 
+ 	// Constructor.
+ 	TimerInit()
+@@ -61,37 +61,37 @@
+ 		if( !Win32::QueryPerformanceFrequency( &amp;mTimerFrequency ) )
+ 		{
+ 			mTimerFrequency.QuadPart = 0;
+-			mStart = float( Win32::timeGetTime() ) / 1000.0f;
++			mStart = real( Win32::timeGetTime() ) / 1000.0f;
+ 		}
+ 		else
+ 		{
+ 			Win32::LARGE_INTEGER largeCount;
+ 			Win32::QueryPerformanceCounter( &amp;largeCount );
+ 
+-			long double count = long double( largeCount.QuadPart );
+-			long double frequency = long double( mTimerFrequency.QuadPart );
++			double count = double( largeCount.QuadPart );
++			double frequency = double( mTimerFrequency.QuadPart );
+ 
+-			mStart = float( count / frequency );
++			mStart = real( count / frequency );
+ 		}
+ 	}
+ } TimerInit_g;
+ 
+ 
+-float YAKE_BASE_NATIVE_API getTime()
++real getTime()
+ {
+ 	// No performance timer available.
+ 	if( TimerInit_g.mTimerFrequency.QuadPart == 0 )
+-		return float( Win32::timeGetTime() ) / 1000.0f - TimerInit_g.mStart;
++		return real( Win32::timeGetTime() ) / 1000.0f - TimerInit_g.mStart;
+ 
+ 	Win32::LARGE_INTEGER largeCount;
+ 	Win32::QueryPerformanceCounter( &amp;largeCount );
+ 
+-	long double count = long double( largeCount.QuadPart );
+-	long double frequency = long double( TimerInit_g.mTimerFrequency.QuadPart );
++	double count = double( largeCount.QuadPart );
++	double frequency = double( TimerInit_g.mTimerFrequency.QuadPart );
+ 
+-	return float( count / frequency ) - TimerInit_g.mStart;
++	return real( count / frequency ) - TimerInit_g.mStart;
+ }
+ 
+ 
+ } // native
+-} // yake
+\ No newline at end of file
++} // yake
+
+Modified: trunk/yake/src/yake/base/yakeDataChunk.cpp
+===================================================================
+--- trunk/yake/src/yake/base/yakeDataChunk.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/yakeDataChunk.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -52,7 +52,11 @@
+ 		}
+ 		mSize = size;
+ 		if (mSize &gt; 0)
++		{
+ 			mData = new uint8[ mSize ];
++			if (pData)
++                memcpy(mData,pData,size);
++		}
+ 		return mSize;
+ 	}
+ 
+@@ -100,7 +104,7 @@
+ 		}
+ 		else
+ 		{
+-			if (mSize-pos &lt; 0)
++			if (pos &gt; mSize)
+ 				mPos = 0;
+ 			else
+ 				mPos = mSize-pos;
+
+Modified: trunk/yake/src/yake/base/yakeLog.cpp
+===================================================================
+--- trunk/yake/src/yake/base/yakeLog.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/base/yakeLog.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright  2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+
+Modified: trunk/yake/src/yake/data/yakeXMLSerializer.cpp
+===================================================================
+--- trunk/yake/src/yake/data/yakeXMLSerializer.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/data/yakeXMLSerializer.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -37,28 +37,28 @@
+ 	{
+ 		parse( pElem );
+ 	}
+-	
++
+ 	XmlNode::~XmlNode()
+ 	{
+ 		mNodes.clear();
+ 	}
+-	
++
+ 	const NodeList&amp; XmlNode::getNodes() const
+ 	{
+ 		return mNodes;
+ 	}
+-	
++
+ 	const INode::AttributeMap&amp; XmlNode::getAttributes() const
+ 	{
+ 		return mAttributes;
+ 	}
+-	
++
+ 	void XmlNode::addNode( SharedPtr&lt;INode&gt; pNode )
+ 	{
+ 		if (pNode)
+ 			mNodes.push_back( pNode );
+ 	}
+-	
++
+ 	String XmlNode::getName() const
+ 	{
+ 		YAKE_ASSERT( mElem );
+@@ -96,52 +96,53 @@
+ 		const char* val = mElem-&gt;Attribute( rName.c_str() );
+ 		return val ? String( val ) : String(&quot;&quot;);
+ 	}
+-	
++
+ 	SharedPtr&lt;INode&gt; XmlNode::getNodeByName( String const&amp; rName ) const
+ 	{
+ 		for ( NodeList::const_iterator it = mNodes.begin(); it != mNodes.end(); ++it )
+ 		{
+ 			data::dom::INode::ValueType value = (*it)-&gt;getName();
+-			
++
+ 			if ( varGet&lt;String&gt;( value ) == rName )
+ 				return ( *it );
+ 		}
+-		
++
+ 		return SharedPtr&lt;INode&gt;();
+ 	}
+-	
++
+ 	SharedPtr&lt;INode&gt; XmlNode::getNodeById( String const&amp; rId ) const
+ 	{
+ 		// still NYI?
++		YAKE_ASSERT( 0==1 );
+ 		return SharedPtr&lt;INode&gt;();
+ 	}
+-	
++
+ 	void XmlNode::parse( TiXmlElement* pElem )
+ 	{
+ 		YAKE_ASSERT( pElem );
+-		
+-		for ( TiXmlAttribute* pAttr = mElem-&gt;FirstAttribute(); 
+-			pAttr != 0; 
++
++		for ( TiXmlAttribute* pAttr = pElem-&gt;FirstAttribute();
++			pAttr != 0;
+ 			pAttr = pAttr-&gt;Next() )
+ 		{
+ 			mAttributes.insert( std::make_pair( pAttr-&gt;Name(), String( pAttr-&gt;Value() ) ) );
+ 		}
+ 	}
+ 
+-	XmlSerializer::XmlSerializer() : mXmlDoc(0), mRootNode(), mRootElem(0)
++	XmlSerializer::XmlSerializer() : mRootNode(), mRootElem(0), mXmlDoc(0)
+ 	{
+ 	}
+-	
++
+ 	XmlSerializer::~XmlSerializer()
+ 	{
+ 		reset();
+ 	}
+-	
++
+ 	SharedPtr&lt;INode&gt; XmlSerializer::getDocumentNode() const
+ 	{
+ 		return mRootNode;
+ 	}
+-	
++
+ 	void XmlSerializer::parse( String const&amp; rFile, bool fireSignals )
+ 	{
+ 		if ( mXmlDoc )
+@@ -163,15 +164,15 @@
+ 		// recursively traverse xml tree and fire events as needed
+ 		parseNode( mRootNode );
+ 	}
+-	
++
+ 	void XmlSerializer::reset()
+ 	{
+ 		YAKE_SAFE_DELETE( mXmlDoc );
+-		
++
+ 		mRootElem = 0;
+ 		mRootNode.reset();
+ 	}
+-	
++
+ 	void XmlSerializer::parseNode( SharedPtr&lt;XmlNode&gt; pNode )
+ 	{
+ 		YAKE_ASSERT( pNode );
+@@ -188,8 +189,8 @@
+ 			mNewNodeSignal( pNode );
+ 
+ 			// iterate over node's attributes &amp; fire signals
+-			for ( TiXmlAttribute* pAttr = pNodeElem-&gt;FirstAttribute(); 
+-				pAttr != 0; 
++			for ( TiXmlAttribute* pAttr = pNodeElem-&gt;FirstAttribute();
++				pAttr != 0;
+ 				pAttr = pAttr-&gt;Next() )
+ 			{
+ 				// fire &quot;new attribute&quot;
+@@ -200,7 +201,7 @@
+ 		// iterate over child xml elements, creating new nodes as we go
+ 		// and recursively parsing them.
+ 		for ( TiXmlElement* pElem = pNodeElem-&gt;FirstChildElement();
+-			pElem != 0; 
++			pElem != 0;
+ 			pElem = pElem-&gt;NextSiblingElement() )
+ 		{
+ 			SharedPtr&lt;XmlNode&gt; pNewNode( new XmlNode( pElem ) );
+
+Modified: trunk/yake/src/yake/ent/object.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/ent/object.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -45,7 +45,16 @@
+ 
+ 	void Entity::processFsmEvent(const fsm_event_type&amp; evt)
+ 	{
+-		m_.processEventCb(evt,boost::bind(&amp;Entity::onEnter,this,_1,_2),boost::bind(&amp;Entity::onExit,this,_1,_2));
++	    // On MSVC8 the following line of code works but fails miserable with GCC 3.4.2 (MinGW).
++	    // That's why we use the approach below.
++		//m_.processEventCb(evt,boost::bind(&amp;Entity::onEnter,this,_1,_2),boost::bind(&amp;Entity::onExit,this,_1,_2));
++
++		typedef boost::function&lt;void(const object_fsm&amp;, const object_fsm::state_type&amp; state)&gt; fn_t;
++		const fn_t fnEnter = boost::bind(&amp;Entity::onEnter,boost::ref(this),_1,_2);
++		const fn_t fnExit = boost::bind(&amp;Entity::onExit,boost::ref(this),_1,_2);
++
++		m_.processEventCb(std::string(evt), fnEnter, fnExit);
++
+ 		listeners_fsmEventHandled(*this,m_,evt);
+ 	}
+ 	void Entity::addFsmState(const fsm_state_type&amp; state)
+@@ -92,4 +101,4 @@
+ 	}
+ 
+ }
+-}
+\ No newline at end of file
++}
+
+Modified: trunk/yake/src/yake/ent/object_listener.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_listener.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/ent/object_listener.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -31,4 +31,4 @@
+ namespace ent {
+ 
+ }
+-}
+\ No newline at end of file
++}
+
+Modified: trunk/yake/src/yake/ent/object_mgr.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_mgr.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/ent/object_mgr.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -99,4 +99,4 @@
+ 	}
+ 
+ }
+-}
+\ No newline at end of file
++}
+
+Modified: trunk/yake/src/yake/ent/object_mgr_listener.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/object_mgr_listener.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/ent/object_mgr_listener.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -31,4 +31,4 @@
+ namespace ent {
+ 
+ }
+-}
+\ No newline at end of file
++}
+
+Modified: trunk/yake/src/yake/ent/vm_holder.cpp
+===================================================================
+--- trunk/yake/src/yake/ent/vm_holder.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/ent/vm_holder.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -95,4 +95,4 @@
+ 	}
+ 
+ }
+-}
+\ No newline at end of file
++}
+
+Modified: trunk/yake/src/yake/input/yakeActionMap.cpp
+===================================================================
+--- trunk/yake/src/yake/input/yakeActionMap.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/input/yakeActionMap.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -278,7 +278,6 @@
+ 		if (!in.is_open())
+ 			return false;
+ 
+-		int e = 0;
+ 		do {
+ 			String line;
+ 			std::getline(in,line);
+@@ -313,7 +312,7 @@
+ 			if (StringUtil::startsWith(inputSpec, &quot;key_&quot;, true ))
+ 			{
+ 				const KeyboardActionMode kam = (mode == &quot;pressed&quot;) ? KAM_PRESSED :
+-				((mode == &quot;continuous&quot;) ? KAM_CONTINUOUS : 
++				((mode == &quot;continuous&quot;) ? KAM_CONTINUOUS :
+ 				((mode == &quot;released&quot;) ? KAM_RELEASED :
+ 				((mode == &quot;pressed_released&quot;) ? KAM_PRESSED_AND_RELEASED :
+ 					KAM_PRESSED
+@@ -399,13 +398,13 @@
+ 
+ 	//-----------------------------------------------------
+ 	void KeyboardActionCondition::setKey( const KeyCode key )
+-	{ 
++	{
+ 		mKey = key;
+ 	}
+ 
+ 	//-----------------------------------------------------
+ 	void KeyboardActionCondition::setMode( KeyboardActionMode mode )
+-	{ 
++	{
+ 		mMode = mode;
+ 	}
+ 
+
+Modified: trunk/yake/src/yake/net/detail/netCommon.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netCommon.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/net/detail/netCommon.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -1,6 +1,7 @@
+ #include &lt;yake/net/pch.h&gt;
+ #include &lt;sstream&gt;
+ #include &lt;yake/net/net.h&gt;
++#include &lt;yake/base/native/yakeNative.h&gt;
+ 
+ // Modify the following defines if you have to target a platform prior to the ones specified below.
+ // Refer to MSDN for the latest info on corresponding values for different platforms.
+@@ -8,9 +9,9 @@
+ #define WINVER 0x0501		// Change this to the appropriate value to target other versions of Windows.
+ #endif
+ 
+-#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
++#ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.
+ #define _WIN32_WINNT 0x0501	// Change this to the appropriate value to target other versions of Windows.
+-#endif						
++#endif
+ 
+ #ifndef _WIN32_WINDOWS		// Allow use of features specific to Windows 98 or later.
+ #define _WIN32_WINDOWS 0x0410 // Change this to the appropriate value to target Windows Me or later.
+@@ -31,11 +32,11 @@
+ 	//-------------------------------------------------------------------------
+ 
+ 	CallbackConnection::CallbackConnection(const CallbackHandle h, const DisconnectFn&amp; fn) :
+-		handle_(h), disconnectFn_(fn)
++		disconnectFn_(fn), handle_(h)
+ 	{
+ 	}
+-		CallbackConnection::CallbackConnection(const CallbackConnection&amp; other) :
+-		handle_(other.handle_), disconnectFn_(other.disconnectFn_)
++	CallbackConnection::CallbackConnection(const CallbackConnection&amp; other) :
++		disconnectFn_(other.disconnectFn_), handle_(other.handle_)
+ 	{
+ 	}
+ 	CallbackConnection&amp; CallbackConnection::operator=(const CallbackConnection&amp; rhs)
+@@ -124,7 +125,7 @@
+ 			ss &lt;&lt; &quot;location: &quot; &lt;&lt; file &lt;&lt; &quot;:&quot; &lt;&lt; line &lt;&lt; &quot;\n&quot;;
+ 		msg_ = ss.str();
+ 	}
+-	const char* Exception::what() const
++	const char* Exception::what() const throw()
+ 	{
+ 		return msg_.c_str();
+ 	}
+@@ -132,7 +133,7 @@
+ 	//-------------------------------------------------------------------------
+ 	// SendOptions
+ 	//-------------------------------------------------------------------------
+-	SendOptions::SendOptions() : 
++	SendOptions::SendOptions() :
+ 		peerId(0xffffffff),
+ 		reliability(R_RELIABLE),
+ 		ordering(O_ORDERED),
+@@ -180,53 +181,16 @@
+ 	//-------------------------------------------------------------------------
+ 	// NativeTimer &amp; Timer
+ 	//-------------------------------------------------------------------------
+-	namespace detail {
+-		class NativeTimer
+-		{
+-		public:
+-			NativeTimer()
+-			{
+-				mCurrent = getTime();
+-				mLast = mCurrent;
+-			}
+-			~NativeTimer()  {}
+-
+-			void tick()
+-			{
+-				mLast = mCurrent;
+-				mCurrent = getTime();
+-			}
+-
+-			double getDiff()
+-			{
+-				return mCurrent - mLast;
+-			}
+-
+-			double getTime()
+-			{
+-				QueryPerformanceFrequency( (LARGE_INTEGER*)&amp;freq );
+-				QueryPerformanceCounter( (LARGE_INTEGER*)&amp;time );
+-				return (double)(time) / (double)freq;
+-			}
+-
+-		private:
+-			__int64  time;
+-			__int64  freq;
+-			double	mLast;
+-			double	mCurrent;
+-		};
+-	} // namespace detail
+-	Timer::Timer() : timer_( new detail::NativeTimer() ), start_(0.), paused_(false), time_(0.)
++	Timer::Timer() : start_(0.), time_(0.), paused_(false)
+ 	{
++		start_ = ::yake::native::getTime();
+ 	}
+ 	Timer::~Timer()
+ 	{
+-		if (timer_)
+-			delete timer_;
+ 	}
+ 	void Timer::start()
+ 	{
+-		start_ = timer_-&gt;getTime();
++		start_ = ::yake::native::getTime();
+ 		time_ = 0.;
+ 		paused_ = false;
+ 	}
+@@ -240,7 +204,7 @@
+ 	}
+ 	void Timer::resume()
+ 	{
+-		const double dt = timer_-&gt;getTime() - time_;
++		const double dt = ::yake::native::getTime() - time_;
+ 		start_ += dt;
+ 		paused_ = false;
+ 	}
+@@ -252,7 +216,7 @@
+ 	double Timer::getTime() const
+ 	{
+ 		if (!paused_)
+-			time_ = (timer_-&gt;getTime() - start_);
++			time_ = (::yake::native::getTime() - start_);
+ 		return time_;
+ 	}
+ 
+
+Modified: trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -272,8 +272,6 @@
+ 						peerId = (reinterpret_cast&lt;Client*&gt;(event.peer-&gt;data))-&gt;id;
+ 					}
+ 
+-					//Note: The callbacks can take over ownership/destruction of the packet!
+-					bool bPacketDeleted = false;
+ 					fireCallback_PacketReceived(peerId,event.packet-&gt;data,event.packet-&gt;dataLength,event.channelID);
+ 				}
+ 				{
+@@ -337,7 +335,7 @@
+ 		}
+ 		{
+ 			boost::mutex::scoped_lock enetLock(getEnetMtx());
+-			ENetPacket* packet = enet_packet_create( 
++			ENetPacket* packet = enet_packet_create(
+ 														dataPtr, dataSize,
+ 														(rel == R_RELIABLE) ? ENET_PACKET_FLAG_RELIABLE : 0 );
+ 			// send
+@@ -358,7 +356,7 @@
+ 		}
+ 		{
+ 			boost::mutex::scoped_lock enetLock(getEnetMtx());
+-			ENetPacket* packet = enet_packet_create( 
++			ENetPacket* packet = enet_packet_create(
+ 														dataPtr, dataSize,
+ 														(rel == R_RELIABLE) ? ENET_PACKET_FLAG_RELIABLE : 0 );
+ 			enet_host_broadcast( m_host, channel, packet );
+
+Modified: trunk/yake/src/yake/net/detail/netEventConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -27,7 +27,7 @@
+ 	}
+ namespace impl {
+ 
+-	EventConnection::EventConnection() : conn_(0), dir_(NetEvent::DIR_ANY), maxErrors_(0), manualPolling_(false), started_(false)
++	EventConnection::EventConnection() : conn_(0), dir_(NetEvent::DIR_ANY), manualPolling_(false), started_(false), maxErrors_(0)
+ 	{
+ 	}
+ 	EventConnection::~EventConnection()
+
+Modified: trunk/yake/src/yake/net/detail/netInternal.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netInternal.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/net/detail/netInternal.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -9,12 +9,14 @@
+ 	UpdateThread* UpdateThread::instance_ = 0;
+ 	bool UpdateThread::create()
+ 	{
++		NET_ASSERT( !instance_ );
+ 		if (!instance_)
+ 			instance_ = new UpdateThread();
+ 		return (instance_ != 0);
+ 	}
+ 	void UpdateThread::destroy()
+ 	{
++		NET_ASSERT( instance_ );
+ 		if (instance_)
+ 		{
+ 			instance_-&gt;requestQuit();
+
+Modified: trunk/yake/src/yake/net/net.cpp
+===================================================================
+--- trunk/yake/src/yake/net/net.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/net/net.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -3,6 +3,8 @@
+ #include &lt;yake/net/net.h&gt;
+ #include &lt;yake/net/detail/netInternal.h&gt;
+ 
++#if YAKE_PLATFORM == PLATFORM_WIN32
++
+ #ifdef _MANAGED
+ #pragma managed(push, off)
+ #endif
+@@ -27,6 +29,8 @@
+ #pragma managed(pop)
+ #endif
+ 
++#endif // PLATFORM_WIN32
++
+ namespace net {
+ 
+ 	bool initialize()
+
+Modified: trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+ #include &lt;yake/graphics/yakeGraphicsSystem.h&gt;
+ #include &lt;yake/physics/yakePhysics.h&gt;
+ 
+-#define USE_SECOND_PHYSICS_PLUGIN
++//#define USE_SECOND_PHYSICS_PLUGIN
+ 
+ using namespace yake;
+ using namespace yake::math;
+
+Modified: trunk/yake/yake/base/math/yakeGeometry.h
+===================================================================
+--- trunk/yake/yake/base/math/yakeGeometry.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/base/math/yakeGeometry.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -70,10 +70,15 @@
+ 
+ 		Point3	min,max;
+ 
+-		bool Rectangle::intersects(const Rectangle &amp; rect) const
++		bool Rectangle::intersects(const Rectangle &amp; rhs) const
+ 		{
+-			//fixme
+-			YAKE_ASSERT( 1==0 );
++		    if (contains(rhs.min))
++                return true;
++            if (contains(rhs.max))
++                return true;
++            if ((min &lt;= rhs.min &amp;&amp; max &gt;= rhs.max) ||
++                (min &gt;= rhs.min &amp;&amp; max &lt;= rhs.max))
++                return true;
+ 			return false;
+ 		}
+ 
+
+Modified: trunk/yake/yake/base/native/win32/yakeUndefine.h
+===================================================================
+--- trunk/yake/yake/base/native/win32/yakeUndefine.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/base/native/win32/yakeUndefine.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -31,4 +31,4 @@
+ #undef CreateWindow
+ #undef CreateWindowEx
+ 
+-#endif // YAKE_CORE_NATIVE_WIN32_UNDEFINE_H
+\ No newline at end of file
++#endif // YAKE_CORE_NATIVE_WIN32_UNDEFINE_H
+
+Modified: trunk/yake/yake/base/native/yakeNative.h
+===================================================================
+--- trunk/yake/yake/base/native/yakeNative.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/base/native/yakeNative.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -28,59 +28,50 @@
+ #define YAKE_BASE_NATIVE_NATIVE_H
+ 
+ //============================================================================
+-//    IMPLEMENTATION HEADERS
+-//============================================================================
++#include &lt;yake/base/yakePrerequisites.h&gt;
+ #include &lt;yake/base/yakeProcessor.h&gt;
+ 
+-#if defined( YAKE_BASE_EXPORTS )
+-#	define YAKE_BASE_NATIVE_API DLLEXPORT
+-#else
+-#	define YAKE_BASE_NATIVE_API DLLIMPORT
+-#endif
+-
+ //============================================================================
+-//    INTERFACE STRUCTURES / UTILITY CLASSES
+-//============================================================================
+ namespace yake
+ {
+ namespace native
+ {
+ 
+-// Library Interface.
+-typedef const void * LibraryHandle;
+-YAKE_BASE_NATIVE_API LibraryHandle library_Load(const char * filemame);
+-YAKE_BASE_NATIVE_API void * library_GetSymbol(LibraryHandle, const char * function);
+-YAKE_BASE_NATIVE_API void library_Free(LibraryHandle);
++	// Library Interface.
++	typedef const void * LibraryHandle;
++	YAKE_BASE_API LibraryHandle library_Load(const char * filemame);
++	YAKE_BASE_API void * library_GetSymbol(LibraryHandle, const char * function);
++	YAKE_BASE_API void library_Free(LibraryHandle);
+ 
+-// Debugging Interface.
+-struct DebugLog
+-{
+-	enum Severity
++	// Debugging Interface.
++	struct DebugLog
+ 	{
+-		INFORMATIONS,
+-		WARNINGS,
+-		ERRORS
++		enum Severity
++		{
++			INFORMATIONS,
++			WARNINGS,
++			ERRORS
++		};
+ 	};
+-};
+-YAKE_BASE_NATIVE_API bool debug_AssertFailed( const char* pszMessage, const char* pszCondition, const char* pszFile, int nLine, bool&amp; rbIgnoreAlways );
+-YAKE_BASE_NATIVE_API void debug_Log( const char* what, DebugLog::Severity, const char* source );
+-YAKE_BASE_NATIVE_API void debug_Print( const char* string );
++	YAKE_BASE_API bool debug_AssertFailed( const char* pszMessage, const char* pszCondition, const char* pszFile, int nLine, bool&amp; rbIgnoreAlways );
++	YAKE_BASE_API void debug_Log( const char* what, DebugLog::Severity, const char* source );
++	YAKE_BASE_API void debug_Print( const char* string );
+ 
+-// Critical Section Interface.
+-typedef const void* CriticalSectionHandle;
+-YAKE_BASE_NATIVE_API CriticalSectionHandle criticalSection_Create();
+-YAKE_BASE_NATIVE_API void criticalSection_Enter( CriticalSectionHandle );
+-YAKE_BASE_NATIVE_API void criticalSection_Leave( CriticalSectionHandle );
+-YAKE_BASE_NATIVE_API void criticalSection_Delete( CriticalSectionHandle );
++	// Critical Section Interface.
++	typedef const void* CriticalSectionHandle;
++	YAKE_BASE_API CriticalSectionHandle criticalSection_Create();
++	YAKE_BASE_API void criticalSection_Enter( CriticalSectionHandle );
++	YAKE_BASE_API void criticalSection_Leave( CriticalSectionHandle );
++	YAKE_BASE_API void criticalSection_Delete( CriticalSectionHandle );
+ 
+-// Processor Information Interface.
+-YAKE_BASE_NATIVE_API void processor_RetrieveInfo( std::wstring&amp; name, float&amp; frequency, Processor::Info&amp; );
++	// Processor Information Interface.
++	YAKE_BASE_API void processor_RetrieveInfo( std::wstring&amp; name, float&amp; frequency, Processor::Info&amp; );
+ 
+-// Timing Interface.
+-YAKE_BASE_NATIVE_API float getTime();
++	// Timing Interface.
++	YAKE_BASE_API real getTime();
+ 
+-// Application Information Interface.
+-YAKE_BASE_NATIVE_API const char* getApplicationDir();
++	// Application Information Interface.
++	YAKE_BASE_API const char* getApplicationDir();
+ 
+ } // native
+ } // yake
+
+Modified: trunk/yake/yake/base/templates/yakeSmartAssert.h
+===================================================================
+--- trunk/yake/yake/base/templates/yakeSmartAssert.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/base/templates/yakeSmartAssert.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -41,11 +41,11 @@
+ //============================================================================
+ //    INTERFACE STRUCTURES / UTILITY CLASSES
+ //============================================================================
+-namespace yake 
++namespace yake
+ {
+ namespace base
+ {
+-namespace assert 
++namespace assert
+ {
+ 
+ /** NOT USED. Has to be redone for proper assertion handler registration.
+@@ -104,7 +104,7 @@
+ 	Acknowledgement: After following a different approach for a similar thing
+ 	I went for an implementation based on this article:
+ 	<A HREF="http://www.cuj.com/documents/s=8464/cujcexp0308alexandr/cujcexp0308alexandr.html">http://www.cuj.com/documents/s=8464/cujcexp0308alexandr/cujcexp0308alexandr.html</A>
+-		
++
+ 	Usage:
+ 
+ 	The assertion macro can be used like this:
+@@ -128,7 +128,7 @@
+ 		\code YAKE_ASSERT( a==b )(a)(b).msg(&quot;hola&quot;).msg(&quot;compadres&quot;);\endcode
+ 
+ 	The following assertion levels exist:
+-		
++
+ 		warning -&gt; warning()
+ 		debug -&gt; debug()
+ 		error -&gt; error()
+@@ -136,6 +136,9 @@
+ */
+ struct YAKE_BASE_API SmartAssert
+ {
++public:
++	SmartAssert&amp; YAKE_ASSERT_A;
++	SmartAssert&amp; YAKE_ASSERT_B;
+ private:
+ 	SmartAssertContext	mCtx;
+ 
+@@ -145,9 +148,6 @@
+ 	SmartAssert( const char * strExpr ) : YAKE_ASSERT_A(*this), YAKE_ASSERT_B(*this), mCtx(strExpr) {}
+ 	~SmartAssert();
+ 
+-	SmartAssert&amp; YAKE_ASSERT_A;
+-	SmartAssert&amp; YAKE_ASSERT_B;
+-
+ 	template&lt; class type &gt;
+ 	SmartAssert &amp; printValue( const type &amp; value, const char * msg )
+ 	{
+
+Modified: trunk/yake/yake/base/yakeProcessor.h
+===================================================================
+--- trunk/yake/yake/base/yakeProcessor.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/base/yakeProcessor.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -32,9 +32,7 @@
+ //    IMPLEMENTATION HEADERS
+ //============================================================================
+ // Standard headers
+-#ifndef YAKE_BASE_PREREQUISITES_H
+-#	include &lt;yake/base/yakePrerequisites.h&gt;
+-#endif
++#include &lt;yake/base/yakePrerequisites.h&gt;
+ // Yake
+ #include &lt;yake/base/yakeString.h&gt;
+ #include &lt;yake/base/templates/yakeSingleton.h&gt;
+
+Modified: trunk/yake/yake/data/yakeDataSerializer.h
+===================================================================
+--- trunk/yake/yake/data/yakeDataSerializer.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/data/yakeDataSerializer.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright  2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -118,6 +118,7 @@
+ 	class YAKE_DATA_API ISerializer
+ 	{
+ 	public:
++        virtual ~ISerializer() {}
+ 		virtual String getName() const = 0;
+ 		virtual Version getVersion() const = 0;
+ 
+@@ -145,7 +146,7 @@
+ 	protected:
+ 		typedef Signal1&lt; void( SharedPtr&lt;INode&gt; ) &gt;		NewNodeSignal;
+ 		typedef Signal1&lt; void( String const&amp; ) &gt;		NewAttributeSignal;
+-		
++
+ 		NewNodeSignal						mNewNodeSignal;
+ 		NewAttributeSignal					mNewAttributeSignal;
+ 
+
+Modified: trunk/yake/yake/ent/object_mgr.h
+===================================================================
+--- trunk/yake/yake/ent/object_mgr.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/ent/object_mgr.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -57,32 +57,32 @@
+ 			@see msg::makeListener
+ 			@see broadcastMessage
+ 		*/
+-		void postMessage(msg::detail::message_base*, const msg::Source source = msg::kNullSource);
++		void postMessage(msg::detail::message_base*, const msg::Source source = msg::kNoSource);
+ 
+ 		/** Post a global message which is broadcasted to every object!
+ 			@see msg::makeMessage
+ 			@see msg::makeListener
+ 		*/
+-		void broadcastMessage(msg::detail::message_base*, const msg::Source source = msg::kNullSource);
++		void broadcastMessage(msg::detail::message_base*, const msg::Source source = msg::kNoSource);
+ 
+ 		/** Post message to a specific object.
+ 			@see msg::makeMessage
+ 			@see msg::makeListener
+ 		*/
+-		void postMessage(Object*, msg::detail::message_base*, const msg::Source source = msg::kNullSource);
++		void postMessage(Object*, msg::detail::message_base*, const msg::Source source = msg::kNoSource);
+ 
+ 		/** Post message to a specific object.
+ 			@see msg::makeMessage
+ 			@see msg::makeListener
+ 		*/
+-		void postMessage(ObjectId, msg::detail::message_base*, const msg::Source source = msg::kNullSource);
++		void postMessage(ObjectId, msg::detail::message_base*, const msg::Source source = msg::kNoSource);
+ 
+ 		/** Post message to objects in a STL(-like) container with object pointers.
+ 			@see msg::makeMessage
+ 			@see msg::makeListener
+ 		*/
+ 		template&lt;typename T_container&gt;
+-		void postMessage(const T_container&amp; objCtr, msg::detail::message_base* msg, const msg::Source source = msg::kNullSource)
++		void postMessage(const T_container&amp; objCtr, msg::detail::message_base* msg, const msg::Source source = msg::kNoSource)
+ 		{
+ 			ConstVectorIterator&lt;T_container&gt; it(objCtr);
+ 			while (it.hasMoreElements())
+
+Modified: trunk/yake/yake/msg/listener_mgr.h
+===================================================================
+--- trunk/yake/yake/msg/listener_mgr.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/msg/listener_mgr.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -77,15 +77,15 @@
+ 		void disconnect();
+ 
+ 		bool empty() const
+-		{ 
+-			return (listener_ != 0); 
++		{
++			return (listener_ != 0);
+ 		}
+ 		detail::listener_base* listener() const
+ 		{
+ 			return listener_;
+ 		}
+ 		source_type source() const
+-		{ 
++		{
+ 			return source_;
+ 		}
+ 		target_type target() const
+@@ -238,8 +238,8 @@
+ 				return isProcessing_;
+ 			}
+ 		private:
+-			typedef MSG_NAMESPACE::detail::listener_list listener_list;
+-			typedef MSG_NAMESPACE::detail::listener_map listener_map;
++			//typedef MSG_NAMESPACE::detail::listener_list listener_list;
++			//typedef MSG_NAMESPACE::detail::listener_map listener_map;
+ 			typedef AssocVector&lt;target_type,listener_map&gt; target_map;
+ 			typedef AssocVector&lt;source_type,target_map&gt; source_map;
+ 			source_map		sources_;
+
+Modified: trunk/yake/yake/net/detail/netEventConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEventConnection.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/detail/netEventConnection.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -51,14 +51,14 @@
+ 		EventIdVector				allowedEventIds_;
+ 		mutable boost::mutex		allowedEventIdsMtx_;
+ 
++		IPacketConnection*		conn_;
+ 		event_direction			dir_;
+-		IPacketConnection*		conn_;
+ 
+ 		struct EvtQItem
+ 		{
+ 			PeerId					peerId_;
++			NetEvent*				evt_;
+ 			ChannelId				channel_;
+-			NetEvent*				evt_;
+ 			DestroyEventFn			fnDestroy_;
+ 			EvtQItem(const PeerId peerId, NetEvent* evt, const ChannelId channel, const DestroyEventFn fnDestroy) :
+ 				peerId_(peerId), evt_(evt), channel_(channel), fnDestroy_(fnDestroy)
+@@ -82,7 +82,7 @@
+ 
+ 		struct statistics_t
+ 		{
+-			statistics_t() : 
++			statistics_t() :
+ 				numInvalidPackets(0),
+ 				numInvalidEvents(0),
+ 				numInvalidEventIds(0),
+
+Modified: trunk/yake/yake/net/detail/netInternal.h
+===================================================================
+--- trunk/yake/yake/net/detail/netInternal.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/detail/netInternal.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -76,17 +76,17 @@
+ 	/** @todo move this into general purpose lib/header
+ 	*/
+ 	template&lt;typename ctr_type&gt;
+-		bool contains(const ctr_type&amp; ctr, typename const ctr_type::value_type&amp; value)
++		bool contains(const ctr_type&amp; ctr, const typename ctr_type::value_type&amp; value)
+ 	{
+ 		return (ctr.end() != std::find(ctr.begin(), ctr.end(), value));
+ 	}
+ 	template&lt;typename kt, typename vt, typename at&gt;
+-		bool contains(const std::map&lt;kt,vt,at&gt;&amp; ctr, typename const std::map&lt;kt,vt,at&gt;::key_type&amp; key)
++		bool contains(const std::map&lt;kt,vt,at&gt;&amp; ctr, const typename std::map&lt;kt,vt,at&gt;::key_type&amp; key)
+ 	{
+ 		return (ctr.end() != ctr.find(key));
+ 	}
+ 	template&lt;typename map_type&gt;
+-		bool map_contains(const map_type&amp; ctr, typename const map_type::key_type&amp; key)
++		bool map_contains(const map_type&amp; ctr, const typename map_type::key_type&amp; key)
+ 	{
+ 		return (ctr.end() != ctr.find(key));
+ 	}
+
+Modified: trunk/yake/yake/net/netBitstream.inl
+===================================================================
+--- trunk/yake/yake/net/netBitstream.inl	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netBitstream.inl	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -28,7 +28,7 @@
+ 		mDestroyDataStream = other.mDestroyDataStream;
+ 	}
+ 	template&lt;class DataStreamType&gt;
+-	ibstream_base&lt;DataStreamType&gt;::ibstream_base( DataStreamType* pds = 0 ) : mSource(pds), mBitPos(8), mTotalBits(0), mTotalBytes(0), mDestroyDataStream(false)
++	ibstream_base&lt;DataStreamType&gt;::ibstream_base( DataStreamType* pds /*= 0*/ ) : mSource(pds), mBitPos(8), mTotalBits(0), mTotalBytes(0), mDestroyDataStream(false)
+ 	{
+ 		mBuf.set(0);
+ 	}
+@@ -71,8 +71,8 @@
+ 			numBits = 8;
+ 
+ 		std::bitset&lt;8&gt; d(0);
+-		//for (uint8 i = numBits-1; i != 0xff; i--) 
+-		for (uint8 i = 0; i &lt; numBits; ++i) 
++		//for (uint8 i = numBits-1; i != 0xff; i--)
++		for (uint8 i = 0; i &lt; numBits; ++i)
+ 		{
+ 			bool b;
+ 			read(b);
+@@ -202,7 +202,7 @@
+ 		return *this;
+ 	}
+ 	template&lt;class DataStreamType&gt;
+-	obstream_base&lt;DataStreamType&gt;::obstream_base( DataStreamType* pds = 0 ) : mStream(pds), mBitPos(0), mTotalBits(0), mTotalBytes(0), mNumBitsForNextStreamOperations(8), mDestroyDataStream(false)
++	obstream_base&lt;DataStreamType&gt;::obstream_base( DataStreamType* pds /*= 0*/ ) : mStream(pds), mBitPos(0), mTotalBits(0), mTotalBytes(0), mNumBitsForNextStreamOperations(8), mDestroyDataStream(false)
+ 	{
+ 		mBuf.set(0);
+ 	}
+@@ -321,4 +321,4 @@
+ 
+ } // namespace net
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/netBitstreamAdapters.h
+===================================================================
+--- trunk/yake/yake/net/netBitstreamAdapters.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netBitstreamAdapters.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -27,7 +27,7 @@
+ 		bitstream_source_stlcontainer();
+ 	public:
+ 		typedef ctr_type container_type;
+-		bitstream_source_stlcontainer(const container_type&amp; ctr) : ctr_(ctr), currPos(ctr.begin()), itEnd(ctr.end())
++		bitstream_source_stlcontainer(const container_type&amp; ctr) : currPos(ctr.begin()), itEnd(ctr.end()), ctr_(ctr)
+ 		{}
+ 		bool hasMoreData() const
+ 		{
+@@ -53,8 +53,8 @@
+ 	private:
+ 		bitstream_source_voidptr();
+ 	public:
+-		bitstream_source_voidptr(const void* data, const size_t len) : 
+-			data_(0), curr_(0), end_(0)
++		bitstream_source_voidptr(const void* data, const size_t len) :
++			data_(0), end_(0), curr_(0)
+ 		{
+ 			data_ = reinterpret_cast&lt;const uint8*&gt;(data);
+ 			end_ = data_ + len;
+
+Modified: trunk/yake/yake/net/netCommon.h
+===================================================================
+--- trunk/yake/yake/net/netCommon.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netCommon.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -61,14 +61,12 @@
+ 	struct NET_API Exception : public std::exception
+ 	{
+ 		Exception(const std::string&amp; msg, const char* file = 0, const int line = 0);
+-		virtual const char* what() const;
++		virtual ~Exception() throw() {}
++		virtual const char* what() const throw();
+ 	private:
+ 		std::string	msg_;
+ 	};
+ 
+-	namespace detail {
+-		class NativeTimer;
+-	}
+ 	class NET_API Timer
+ 	{
+ 	public:
+@@ -81,7 +79,6 @@
+ 		void reset();
+ 		double getTime() const;
+ 	private:
+-		detail::NativeTimer*	timer_;
+ 		double					start_;
+ 		mutable double			time_;
+ 		bool					paused_;
+@@ -89,4 +86,4 @@
+ 
+ } // namespace net
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/netEvent.h
+===================================================================
+--- trunk/yake/yake/net/netEvent.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netEvent.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -93,7 +93,7 @@
+ 			ResourceManager&lt;T&gt;*	owner_;
+ 		};
+ 		handle create()
+-		{ 
++		{
+ 			return handle(this,onCreate());
+ 		}
+ 		void destroy(const handle&amp; h)
+@@ -176,4 +176,4 @@
+ 
+ } // namespace net
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/netPacket.h
+===================================================================
+--- trunk/yake/yake/net/netPacket.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netPacket.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -81,4 +81,4 @@
+ 
+ } // namespace net
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/netPrerequisites.h
+===================================================================
+--- trunk/yake/yake/net/netPrerequisites.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netPrerequisites.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -5,20 +5,20 @@
+ 
+ #ifdef YAKE_NET_EXPORTS
+ #	ifdef NET_DLL
+-#		define NET_API __declspec(dllexport)
++#		define NET_API DLLEXPORT
+ #	else
+ #		define NET_API
+ #	endif
+ #else
+ #	ifdef NET_DLL
+-#		define NET_API __declspec(dllimport)
++#		define NET_API DLLIMPORT
+ #	else
+ #		define NET_API
+ #	endif
+ #	if defined( _DEBUG )
+-#		pragma comment(lib,&quot;net_d.lib&quot;)
++#		pragma comment(lib,&quot;yake_net-vc80-d.lib&quot;)
+ #	else
+-#		pragma comment(lib,&quot;net.lib&quot;)
++#		pragma comment(lib,&quot;yake_net-vc80.lib&quot;)
+ #	endif
+ #endif
+ 
+@@ -30,7 +30,7 @@
+ #include &quot;netTypes.h&quot;
+ 
+ #define NET_ASSERT(X) \
+-	assert(X)
++	YAKE_ASSERT(X)
+ 
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/netTypes.h
+===================================================================
+--- trunk/yake/yake/net/netTypes.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/netTypes.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -12,4 +12,4 @@
+ 
+ } // namespace net
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/net/pch.h
+===================================================================
+--- trunk/yake/yake/net/pch.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/net/pch.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,5 +2,6 @@
+ #define YAKE_NET_PCH_H
+ #pragma once
+ 
++#include &lt;yake/base/yake.h&gt;
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+Modified: trunk/yake/yake/object/ObjectManager.h
+===================================================================
+--- trunk/yake/yake/object/ObjectManager.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/object/ObjectManager.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -52,7 +52,7 @@
+ 		typedef std::map&lt;ClassId,ClassId&gt; ClassIdMap;
+ 
+ 		ObjectManager();
+-		~ObjectManager();
++		virtual ~ObjectManager();
+ 
+ 		// class registration
+ 		void setClassIdGenerationRange(const ClassId min, const ClassId max);
+
+Modified: trunk/yake/yake/physics/yakeAffectorZone.h
+===================================================================
+--- trunk/yake/yake/physics/yakeAffectorZone.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/physics/yakeAffectorZone.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -105,6 +105,7 @@
+ 		BodyGroup				mAffectedBodies;
+ 	public:
+ 		AffectorZone();
++		virtual ~AffectorZone() {}
+ 		void addAffector( SharedPtr&lt;IBodyAffector&gt;&amp; pAffector );
+ 
+ 		void setEnabled( bool enabled );
+@@ -123,7 +124,7 @@
+ 	{
+ 	public:
+ 		AffectorZoneManager( SharedPtr&lt;physics::IWorld&gt;&amp; pWorld );
+-		~AffectorZoneManager();
++		virtual ~AffectorZoneManager();
+ 
+ 		void addAffectorZone( SharedPtr&lt;AffectorZone&gt; &amp; pSpace );
+ 
+
+Modified: trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsSystem.h
+===================================================================
+--- trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsSystem.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/plugins/graphicsOgre/yakeGraphicsSystem.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -40,7 +40,7 @@
+ #endif
+ 
+ #if YAKE_PLATFORM == PLATFORM_WIN32
+-#	define YAKE_USE_OSM
++//#	define YAKE_USE_OSM
+ #	pragma message(&quot;Compiling graphicsOGRE with OSM support.&quot;)
+ #else
+ #	pragma message(&quot;Compiling graphicsOGRE without OSM support.&quot;)
+
+Modified: trunk/yake/yake/samples/common/init_gui.h
+===================================================================
+--- trunk/yake/yake/samples/common/init_gui.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/samples/common/init_gui.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -10,11 +10,11 @@
+ // local
+ #include &quot;initialization.h&quot;
+ 
+-namespace yake 
++namespace yake
+ {
+-namespace samples 
++namespace samples
+ {
+-namespace common 
++namespace common
+ {
+ 
+ // todo: del
+@@ -22,7 +22,7 @@
+ struct create_help &lt;yake::graphics::IGraphicsSystem&gt;
+ {
+ 	static boost::shared_ptr&lt;yake::graphics::IGraphicsSystem&gt; create()
+-	{ return yake::base::templates::create_default&lt;yake::graphics::IGraphicsSystem&gt;(); }
++	{ return yake::templates::create_default&lt;yake::graphics::IGraphicsSystem&gt;(); }
+ };
+ 
+ using namespace yake::base;
+@@ -44,9 +44,9 @@
+ 	//struct graphics_system : return_type_info&lt;graphics_system&gt; {};
+ 	struct gui_system : return_type_info&lt;gui_system&gt;	{};
+ 
+-	struct gui_renderer_adapter 
+-	{ 
+-		typedef std::pair&lt;base::type_info, base::type_info&gt; identifier; 
++	struct gui_renderer_adapter
++	{
++		typedef std::pair&lt;base::type_info, base::type_info&gt; identifier;
+ 	};
+ 
+ 	template &lt;class System&gt;
+
+Modified: trunk/yake/yake/statemachine/fsm_core.h
+===================================================================
+--- trunk/yake/yake/statemachine/fsm_core.h	2006-04-13 18:47:52 UTC (rev 1316)
++++ trunk/yake/yake/statemachine/fsm_core.h	2006-04-23 17:54:49 UTC (rev 1317)
+@@ -2,7 +2,7 @@
+    ------------------------------------------------------------------------------------
+    This file is part of YAKE
+    Copyright (c) The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A>
+    ------------------------------------------------------------------------------------
+    This program is free software; you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License as published by the Free Software
+@@ -135,8 +135,8 @@
+ 		// construction
+ #if defined(FSM_USE_NULL_STATE)
+ 		/** Constructs a machine. Sets the current state to the state type's null state. */
+-		machine() : 
+-			curr_(get_null_state&lt;state_type&gt;()) 
++		machine() :
++			curr_(get_null_state&lt;state_type&gt;())
+ #else
+ 		/** Constructs a machine. */
+ 		machine()
+@@ -181,7 +181,7 @@
+ 		{
+ 			out &lt;&lt; &quot;machine&lt;&gt;::dump()\n&quot;;
+ 			out &lt;&lt; &quot;  current = '&quot; &lt;&lt; curr_ &lt;&lt; &quot;'\n&quot;;
+-			for (state_map::const_iterator it = states_.begin(); it != states_.end(); ++it)
++			for (typename state_map::const_iterator it = states_.begin(); it != states_.end(); ++it)
+ 			{
+ 				out &lt;&lt; &quot;  state '&quot; &lt;&lt; it-&gt;first &lt;&lt; &quot;'\n&quot;;
+ 				const event_state_map&amp; evt2state = it-&gt;second.offgoing_transitions;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000384.html">[Yake-svn] r1316 - in trunk/yake/common/media: . scripts
+</A></li>
+	<LI>Next message: <A HREF="000386.html">[Yake-svn] r1318 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#385">[ date ]</a>
+              <a href="thread.html#385">[ thread ]</a>
+              <a href="subject.html#385">[ subject ]</a>
+              <a href="author.html#385">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

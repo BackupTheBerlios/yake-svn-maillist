@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1274 - in trunk/yake/src/yake/samples: . statemachine statemachine/sampleFsm1
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1274%20-%20in%20trunk/yake/src/yake/samples%3A%20.%20statemachine%20statemachine/sampleFsm1&In-Reply-To=%3C200603152012.k2FKCpGm009145%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000343.html">
+   <LINK REL="Next"  HREF="000345.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1274 - in trunk/yake/src/yake/samples: . statemachine statemachine/sampleFsm1</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1274%20-%20in%20trunk/yake/src/yake/samples%3A%20.%20statemachine%20statemachine/sampleFsm1&In-Reply-To=%3C200603152012.k2FKCpGm009145%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1274 - in trunk/yake/src/yake/samples: . statemachine statemachine/sampleFsm1">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Mar 15 21:12:51 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000343.html">[Yake-svn] r1273 - trunk/yake/src/yake/ent
+</A></li>
+        <LI>Next message: <A HREF="000345.html">[Yake-svn] r1275 - trunk/yake/src/yake/samples/ent/sampleEntFsm
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#344">[ date ]</a>
+              <a href="thread.html#344">[ thread ]</a>
+              <a href="subject.html#344">[ subject ]</a>
+              <a href="author.html#344">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-15 21:12:50 +0100 (Wed, 15 Mar 2006)
+New Revision: 1274
+
+Added:
+   trunk/yake/src/yake/samples/statemachine/
+   trunk/yake/src/yake/samples/statemachine/sampleFsm1/
+   trunk/yake/src/yake/samples/statemachine/sampleFsm1/demo.cpp
+Log:
+initial revision
+
+Added: trunk/yake/src/yake/samples/statemachine/sampleFsm1/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/statemachine/sampleFsm1/demo.cpp	2006-03-15 20:11:38 UTC (rev 1273)
++++ trunk/yake/src/yake/samples/statemachine/sampleFsm1/demo.cpp	2006-03-15 20:12:50 UTC (rev 1274)
+@@ -0,0 +1,80 @@
++//#include &quot;yake/base/yakePrerequisites.h&quot;
++#include &quot;yake/base/yake.h&quot;
++#include &quot;yake/statemachine/fsm_core.h&quot;
++#include &quot;yake/statemachine/fsm_oo_machine.h&quot;
++
++struct test_state_base
++{
++	virtual ~test_state_base() {}
++	virtual void onEnter() {}
++	virtual void onExit() {}
++};
++typedef test_state_base* test_state_base_ptr;
++//namespace yake {
++namespace fsm {
++	template&lt;&gt;
++	inline const test_state_base_ptr&amp; get_null_state()
++	{ 
++		static test_state_base* ms_null = 0;
++		return ms_null; 
++	}
++}
++//}
++struct test_state : public test_state_base
++{
++	test_state(const std::string&amp; name) : name_(name)
++	{}
++	virtual void onEnter()
++	{
++		std::cout &lt;&lt; name_ &lt;&lt; &quot;.onEnter()\n&quot;;
++	}
++	virtual void onExit()
++	{
++		std::cout &lt;&lt; name_ &lt;&lt; &quot;.onExit()\n&quot;;
++	}
++private:
++	std::string	name_;
++};
++
++int main(int argc, char* argv[])
++{
++	using namespace yake;
++	{  // machine demo #1 - 3 states - 2 transitions - 2 events
++		typedef fsm::machine&lt;String,String&gt; machine_t;
++
++		const String ksAwakening = &quot;awakening&quot;;
++		const String ksAlive = &quot;alive&quot;;
++		const String ksDead = &quot;dead&quot;;
++
++		machine_t	m;
++		m.addState( ksAwakening );
++		m.addState( ksAlive );
++		m.addState( ksDead );
++		m.addTransition( ksAwakening, &quot;spawn&quot;, ksAlive );
++		m.addTransition( ksAlive, &quot;die&quot;, ksDead );
++		m.setState( ksAwakening ); // initial state
++
++		m.processEvent( &quot;spawn&quot; );
++		YAKE_LOG_INFORMATION( m.current() );
++		YAKE_ASSERT( m.current() == ksAlive );
++
++		m.processEvent( &quot;die&quot; );
++		YAKE_LOG_INFORMATION( m.current() );
++		YAKE_ASSERT( m.current() == ksDead );
++	}
++	{  // machine with object states with onEnter() and onExit() callback methods.
++		typedef fsm::oomachine&lt;test_state_base,String&gt; machine_t;
++		test_state_base* first = new test_state(&quot;first&quot;);
++		test_state_base* second = new test_state(&quot;second&quot;);
++
++		machine_t machine;
++		machine.addState( first );
++		machine.addState( second );
++		machine.setState( first );
++		machine.addTransition( first, &quot;go&quot;, second );
++		YAKE_ASSERT( machine.current() == first );
++		machine.processEvent(&quot;go&quot;);
++		YAKE_ASSERT( machine.current() == second );
++	}
++}
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000343.html">[Yake-svn] r1273 - trunk/yake/src/yake/ent
+</A></li>
+	<LI>Next message: <A HREF="000345.html">[Yake-svn] r1275 - trunk/yake/src/yake/samples/ent/sampleEntFsm
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#344">[ date ]</a>
+              <a href="thread.html#344">[ thread ]</a>
+              <a href="subject.html#344">[ subject ]</a>
+              <a href="author.html#344">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

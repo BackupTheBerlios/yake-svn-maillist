@@ -1,0 +1,426 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r987 - in trunk/yake/yake: physics plugins/physicsNX plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r987%20-%20in%20trunk/yake/yake%3A%20physics%20plugins/physicsNX%20plugins/physicsODE&In-Reply-To=%3C200510032318.j93NIvH5007859%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000056.html">
+   <LINK REL="Next"  HREF="000058.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r987 - in trunk/yake/yake: physics plugins/physicsNX plugins/physicsODE</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r987%20-%20in%20trunk/yake/yake%3A%20physics%20plugins/physicsNX%20plugins/physicsODE&In-Reply-To=%3C200510032318.j93NIvH5007859%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r987 - in trunk/yake/yake: physics plugins/physicsNX plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Oct  4 01:18:57 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000056.html">[Yake-svn] r986 - in trunk/yake/src/yake: physics plugins/physicsNX plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000058.html">[Yake-svn] r988 - trunk/yake/yake/physics
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#57">[ date ]</a>
+              <a href="thread.html#57">[ thread ]</a>
+              <a href="subject.html#57">[ subject ]</a>
+              <a href="author.html#57">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-04 01:18:46 +0200 (Tue, 04 Oct 2005)
+New Revision: 987
+
+Modified:
+   trunk/yake/yake/physics/yakeAffectorZone.h
+   trunk/yake/yake/physics/yakePhysics.h
+   trunk/yake/yake/physics/yakePhysicsActor.h
+   trunk/yake/yake/physics/yakePhysicsAffectors.h
+   trunk/yake/yake/physics/yakePhysicsBody.h
+   trunk/yake/yake/physics/yakePhysicsBodyGroup.h
+   trunk/yake/yake/physics/yakePhysicsWorld.h
+   trunk/yake/yake/plugins/physicsNX/yakeActorNx.h
+   trunk/yake/yake/plugins/physicsNX/yakeWorldNx.h
+   trunk/yake/yake/plugins/physicsODE/OdeActor.h
+   trunk/yake/yake/plugins/physicsODE/OdeJoint.h
+   trunk/yake/yake/plugins/physicsODE/OdeWorld.h
+Log:
+patch 1309131 (slightly modified)
+
+Modified: trunk/yake/yake/physics/yakeAffectorZone.h
+===================================================================
+--- trunk/yake/yake/physics/yakeAffectorZone.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/physics/yakeAffectorZone.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -96,22 +96,16 @@
+ 	};
+ 	*/
+ 
+-	class AffectorZone
++	class YAKE_PHYSICS_API AffectorZone
+ 	{
+ 	protected:
+-		typedef Vector&lt; SharedPtr&lt;BoundingVolume&gt; &gt; VolumeList;
+-		VolumeList				mVolumes;
+-
+ 		typedef Vector&lt; SharedPtr&lt;physics::IBodyAffector&gt; &gt; AffectorList;
+ 		AffectorList			mAffectors;
+ 
+-		SharedPtr&lt;IWorld&gt;		mWorld;
+ 		BodyGroup				mAffectedBodies;
+ 	public:
+ 		AffectorZone();
+-		void addVolume( SharedPtr&lt;BoundingVolume&gt;&amp; pVolume );
+ 		void addAffector( SharedPtr&lt;IBodyAffector&gt;&amp; pAffector );
+-		void setWorld( SharedPtr&lt;IWorld&gt;&amp; pWorld );
+ 
+ 		void setEnabled( bool enabled );
+ 		bool isEnabled() const;
+@@ -119,25 +113,27 @@
+ 		virtual void update( const real timeElapsed );
+ 
+ 	protected:
+-		void _determineAffectedBodies( const SharedPtr&lt;IWorld&gt; &amp; pWorld );
++		virtual void _determineAffectedBodies() = 0;
+ 	private:
+ 		bool		mEnabled;
+ 		bool		mNeedsUpdate;
+ 	};
+ 
+-	class AffectorZoneManager
++	class YAKE_PHYSICS_API AffectorZoneManager
+ 	{
+ 	public:
++		AffectorZoneManager( SharedPtr&lt;physics::IWorld&gt;&amp; pWorld );
++		~AffectorZoneManager();
++
+ 		void addAffectorZone( SharedPtr&lt;AffectorZone&gt; &amp; pSpace );
+ 
+-		virtual void update( const real timeElapsed )
+-		{
+-			/**@todo
+-			foreach forceSpace
+-				if ((*it)-&gt;isEnabled())
+-					(*it)-&gt;update( upd );
+-			*/
+-		}
++		virtual void update( const real timeElapsed );
++
++	protected:
++		typedef Vector&lt; SharedPtr&lt;AffectorZone&gt; &gt; ZoneList;
++		ZoneList mZones;
++		SharedPtr&lt;physics::IWorld&gt; mWorld;
++		SignalConnection mStepSigConn;
+ 	};
+ 
+ }
+
+Modified: trunk/yake/yake/physics/yakePhysics.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysics.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/physics/yakePhysics.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -40,8 +40,8 @@
+ #include &lt;yake/physics/yakePhysicsActor.h&gt;
+ #include &lt;yake/physics/yakePhysicsBodyGroup.h&gt;
+ #include &lt;yake/physics/yakePhysicsAffectors.h&gt;
+-//#include &lt;yake/physics/yakeAffectorZone.h&gt;
+ #include &lt;yake/physics/yakePhysicsWorld.h&gt;
++#include &lt;yake/physics/yakeAffectorZone.h&gt;
+ #include &lt;yake/physics/yakePhysicsSystem.h&gt;
+ 
+ #endif
+
+Modified: trunk/yake/yake/physics/yakePhysicsActor.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsActor.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/physics/yakePhysicsActor.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -78,18 +78,18 @@
+ 
+ 		virtual IWorld* getCreator() const = 0;
+ 
+-		virtual IShape* createShape( const IShape::Desc&amp; rShapeDesc ) = 0;
++		virtual IShape* createShape( const IShape::Desc&amp; rShapeDesc, real massOrDensity = 0.0f, IBody::quantityType type = IBody::QT_DENSITY ) = 0;
+ 		virtual void destroyShape( IShape* pShape ) = 0;
+ 		virtual IShapePtrList getShapes() const = 0;
+ 
+ 		virtual IBody* getBodyPtr() const = 0;
+ 		virtual IBody&amp; getBody() const = 0;
+ 
+-		//virtual void setPosition(const Vector3&amp; position) = 0;
+-		//virtual Vector3 getPosition() const = 0;
++		virtual void setPosition(const Vector3&amp; position) = 0;
++		virtual Vector3 getPosition() const = 0;
+ 
+-		//virtual void setOrientation( const Quaternion &amp; rkOrientation ) = 0;
+-		//virtual Quaternion getOrientation() const = 0;
++		virtual void setOrientation( const Quaternion &amp; rkOrientation ) = 0;
++		virtual Quaternion getOrientation() const = 0;
+ 
+ 		virtual void setEnabled(const bool enabled) = 0;
+ 		virtual bool isEnabled() const = 0;
+
+Modified: trunk/yake/yake/physics/yakePhysicsAffectors.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsAffectors.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/physics/yakePhysicsAffectors.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -38,7 +38,7 @@
+ 	/** A generic body affector. Basically defines the interface, factory and implements
+ 		some basic and usually common functionality.
+ 	*/
+-	class IBodyAffector
++	class YAKE_PHYSICS_API IBodyAffector
+ 	{
+ 		YAKE_DECLARE_REGISTRY_0( IBodyAffector, String )
+ 	public:
+
+Modified: trunk/yake/yake/physics/yakePhysicsBody.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsBody.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/physics/yakePhysicsBody.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -85,11 +85,14 @@
+ 		
+ 		virtual void onSleeping(const bool sleeping);
+ 	};
++	class IBody;
++	YAKE_PHYSICS_COMMON_POINTERS( IBody );
+ 
+ 	class IActor;
+ 	class IBody : public ListenerManager&lt;IBodyListener&gt;
+ 	{
+ 	public:
++		enum quantityType { QT_MASS, QT_DENSITY };
+ 		struct Desc
+ 		{
+ 			Desc()
+@@ -111,23 +114,26 @@
+ 
+ 		struct MassDesc
+ 		{
+-			MassDesc( real shapeDensity, const Vector3&amp; rOffset = Vector3::kZero ) :
+-					density( shapeDensity ),
+-					offset( rOffset )
++			MassDesc( real massOrDensity, const Vector3&amp; rOffset = Vector3::kZero, quantityType type = QT_DENSITY ) :
++					quantity( massOrDensity ),
++					offset( rOffset ),
++					qType( type )
+ 			{}
+ 
+ 			virtual ~MassDesc() {}
+ 
+-			real 			density; /// For all of them. You can set total mass via setMass
++			real 			quantity; /// For all of them. You can set total mass via setMass
+ 			Vector3		offset; /// Mass can be offseted. TODO Add rotation &quot;offset&quot;?
++			quantityType qType;
+ 		};
+ 
+ 		struct SphereMassDesc : public MassDesc
+ 		{
+ 			SphereMassDesc(	real radiusValue,
+ 								real shapeDensity,
+-								const Vector3&amp; rOffset = Vector3::kZero ) :
+-									MassDesc( shapeDensity, rOffset ),
++								const Vector3&amp; rOffset = Vector3::kZero,
++								quantityType type = QT_DENSITY ) :
++									MassDesc( shapeDensity, rOffset, type ),
+ 							 		radius( radiusValue )
+ 			{}
+ 
+@@ -140,8 +146,9 @@
+ 							real boxSizeY,
+ 							real boxSizeZ,
+ 							real shapeDensity,
+-							const Vector3&amp; rOffset = Vector3::kZero  ) :
+-								MassDesc( shapeDensity, rOffset ),
++							const Vector3&amp; rOffset = Vector3::kZero,
++							quantityType type = QT_DENSITY ) :
++								MassDesc( shapeDensity, rOffset, type ),
+ 								sizeX( boxSizeX ),
+ 								sizeY( boxSizeY ),
+ 								sizeZ( boxSizeZ )
+@@ -157,8 +164,9 @@
+ 			CapsuleMassDesc(	real capRadius,
+ 								real capLength,
+ 								real shapeDensity,
+-								const Vector3&amp; rOffset = Vector3::kZero ) :
+-									MassDesc( shapeDensity, rOffset ),
++								const Vector3&amp; rOffset = Vector3::kZero,
++								quantityType type = QT_DENSITY ) :
++									MassDesc( shapeDensity, rOffset, type ),
+ 									radius( capRadius ),
+ 									length( capLength )
+ 			{}
+@@ -172,8 +180,9 @@
+ 			CylinderMassDesc(	real cylRadius,
+ 								real cylLength,
+ 								real shapeDensity,
+-								const Vector3&amp; rOffset = Vector3::kZero ) :
+-									MassDesc( shapeDensity, rOffset ),
++								const Vector3&amp; rOffset = Vector3::kZero,
++								quantityType type = QT_DENSITY ) :
++									MassDesc( shapeDensity, rOffset, type ),
+ 									radius( cylRadius ),
+ 									length( cylLength )
+ 			{}
+@@ -271,6 +280,7 @@
+ 		*/
+ 		virtual void addLocalTorque( const Vector3&amp; rTorque ) = 0;
+ 	};
++	YAKE_PHYSICS_COMMON_POINTERS( IBody );
+ 
+ }
+ }
+
+Modified: trunk/yake/yake/physics/yakePhysicsBodyGroup.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsBodyGroup.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/physics/yakePhysicsBodyGroup.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -39,10 +39,10 @@
+ 
+ 	class IBody;
+ 
+-	class BodyGroup
++	class YAKE_PHYSICS_API BodyGroup
+ 	{
+ 	public:
+-        typedef Vector&lt;SharedPtr&lt;IBody&gt; &gt; BodyVector;
++        typedef Vector&lt;IBodyPtr&gt; BodyVector;
+ 		typedef BodyVector::iterator iterator;
+ 		typedef BodyVector::const_iterator const_iterator;
+ 		typedef BodyVector::value_type value_type;
+@@ -52,8 +52,8 @@
+ 		BodyGroup();
+ 		~BodyGroup();
+ 
+-		BodyGroup&amp; operator += (SharedPtr&lt;IBody&gt; &amp; rBody);
+-		BodyGroup&amp; operator -= (SharedPtr&lt;IBody&gt; &amp; rBody);
++		BodyGroup&amp; operator += (IBodyPtr rBody);
++		BodyGroup&amp; operator -= (IBodyPtr rBody);
+ 
+ 		iterator begin();
+ 		const_iterator begin() const;
+
+Modified: trunk/yake/yake/physics/yakePhysicsWorld.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsWorld.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/physics/yakePhysicsWorld.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -85,6 +85,7 @@
+ 
+ 		YAKE_MEMBERSIGNAL_PUREINTERFACE( public, void(void), PreStep )
+ 		YAKE_MEMBERSIGNAL_PUREINTERFACE( public, void(real), PostStep )
++		YAKE_MEMBERSIGNAL_PUREINTERFACE( public, void(const real), PreStepInternal )
+ 	};
+ 
+ }
+
+Modified: trunk/yake/yake/plugins/physicsNX/yakeActorNx.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsNX/yakeActorNx.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/plugins/physicsNX/yakeActorNx.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -44,7 +44,7 @@
+ 
+ 		virtual IWorld* getCreator() const;
+ 
+-		virtual IShape* createShape( const IShape::Desc &amp; rkShapeDesc );
++		virtual IShape* createShape( const IShape::Desc &amp; rkShapeDesc, real massOrDensity = 0.0f, IBody::quantityType type = IBody::QT_DENSITY );
+ 		virtual void destroyShape( IShape* pShape );
+ 		virtual IShapePtrList getShapes() const;
+ 
+
+Modified: trunk/yake/yake/plugins/physicsNX/yakeWorldNx.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsNX/yakeWorldNx.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/plugins/physicsNX/yakeWorldNx.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -99,7 +99,7 @@
+ 		void regActor_(NxActor* pNxActor, ActorNx* pActor);
+ 		void unregActor_(NxActor* pNxActor);
+ 
+-		YAKE_MEMBERSIGNAL( public, void(const real), PreStepInternal )
++		YAKE_MEMBERSIGNAL_VIRTUALIMPL( public, void(const real), PreStepInternal )
+ 		YAKE_MEMBERSIGNAL_FIRE_FN1( public, PreStepInternal, const real dt, dt )
+ 
+ 	private:
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeActor.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeActor.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/plugins/physicsODE/OdeActor.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -24,7 +24,7 @@
+ 		virtual Vector3 getPosition() const;
+ 		virtual Quaternion getOrientation() const;
+ 		
+-		virtual IShape* createShape( const IShape::Desc&amp; rShapeDesc );
++		virtual IShape* createShape( const IShape::Desc&amp; rShapeDesc, real massOrDensity = 0.0f, IBody::quantityType type = IBody::QT_DENSITY );
+ 		virtual void destroyShape( IShape* pShape );
+ 		virtual IShapePtrList getShapes() const;
+ 
+@@ -43,6 +43,7 @@
+ 	protected:	
+ 		OdeGeom* createShapeFromDesc( const IShape::Desc&amp; rShapeDesc );
+ 		OdeGeom* createTransformGeomIfNeeded( OdeGeom* pGeom, const Vector3&amp; rOffset, const Quaternion&amp; rRelOrientation );
++		IBody::MassDesc* createMassDescFromShapeDesc( const IShape::Desc&amp; rShapeDesc, real massOrDensity, IBody::quantityType qType );
+ 
+ 		Vector3							mPosition;
+ 		Quaternion						mOrientation;
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeJoint.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeJoint.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/plugins/physicsODE/OdeJoint.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -61,6 +61,11 @@
+ 			virtual void setBreakableTorque( real torque );
+ 			virtual void setConnectedBodiesCollide( bool enabled );
+ 		
++			virtual void setSpring(real);
++			virtual real getSpring() const;
++			virtual void setDamping(real);
++			virtual real getDamping() const;
++
+ 			YAKE_MEMBERSIGNAL_VIRTUALIMPL( public, void, OnBreaking )
+ 			YAKE_MEMBERSIGNAL_FIRE_FN0( public, OnBreaking )
+ 		protected:
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeWorld.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeWorld.h	2005-10-03 23:18:09 UTC (rev 986)
++++ trunk/yake/yake/plugins/physicsODE/OdeWorld.h	2005-10-03 23:18:46 UTC (rev 987)
+@@ -79,6 +79,8 @@
+ 			YAKE_MEMBERSIGNAL_FIRE_FN0( public, PreStep )
+ 			YAKE_MEMBERSIGNAL_VIRTUALIMPL( public, void, PostStep )
+ 			YAKE_MEMBERSIGNAL_FIRE_FN1( public, PostStep, real t, t )
++			YAKE_MEMBERSIGNAL_VIRTUALIMPL( public, void, PreStepInternal )
++			YAKE_MEMBERSIGNAL_FIRE_FN1( public, PreStepInternal, const real dt, dt )
+ 		public:
+ 
+ 			///TODO what are these for?
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000056.html">[Yake-svn] r986 - in trunk/yake/src/yake: physics plugins/physicsNX plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000058.html">[Yake-svn] r988 - trunk/yake/yake/physics
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#57">[ date ]</a>
+              <a href="thread.html#57">[ thread ]</a>
+              <a href="subject.html#57">[ subject ]</a>
+              <a href="author.html#57">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

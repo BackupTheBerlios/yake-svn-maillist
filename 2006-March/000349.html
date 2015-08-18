@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1279 - trunk/yake/src/yake/samples/physics/demo
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1279%20-%20trunk/yake/src/yake/samples/physics/demo&In-Reply-To=%3C200603152050.k2FKo7Vv017945%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000348.html">
+   <LINK REL="Next"  HREF="000350.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1279 - trunk/yake/src/yake/samples/physics/demo</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1279%20-%20trunk/yake/src/yake/samples/physics/demo&In-Reply-To=%3C200603152050.k2FKo7Vv017945%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1279 - trunk/yake/src/yake/samples/physics/demo">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Mar 15 21:50:07 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000348.html">[Yake-svn] r1278 - trunk/yake/scripts/msvc8
+</A></li>
+        <LI>Next message: <A HREF="000350.html">[Yake-svn] r1280 - trunk/yake/src/yake/samples/graphics/demo
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#349">[ date ]</a>
+              <a href="thread.html#349">[ thread ]</a>
+              <a href="subject.html#349">[ subject ]</a>
+              <a href="author.html#349">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-15 21:50:03 +0100 (Wed, 15 Mar 2006)
+New Revision: 1279
+
+Modified:
+   trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+Log:
+
+
+Modified: trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2006-03-15 20:40:14 UTC (rev 1278)
++++ trunk/yake/src/yake/samples/physics/demo/yakeDemo.cpp	2006-03-15 20:50:03 UTC (rev 1279)
+@@ -59,7 +59,7 @@
+ 	Views						mViews;;
+ 	SceneNodes					mSceneNodes;
+ 
+-	Deque&lt; SharedPtr&lt;Library&gt; &gt;	mLibs;
++	Deque&lt; SharedPtr&lt;base::Library&gt; &gt;	mLibs;
+ 
+ 	SharedPtr&lt;graphics::IGraphicsSystem&gt; mGraphics;
+ 	SharedPtr&lt;graphics::IWorld&gt;	mGWorld;
+@@ -180,8 +180,8 @@
+ 		pL-&gt;setType( graphics::ILight::LT_POINT );
+ 		pL-&gt;setDiffuseColour( Color(1,1,1,1) );
+ 		pSN-&gt;setPosition( Vector3(0,50,0) );
+-        pL-&gt;setDiffuseColour(Color(0.35, 0.35, 0.38));
+-        pL-&gt;setSpecularColour(Color(0.9, 0.9, 1));
++		pL-&gt;setDiffuseColour(Color(0.35, 0.35, 0.38));
++		pL-&gt;setSpecularColour(Color(0.9, 0.9, 1));
+ 		pL-&gt;setAttenuation( 8000, 1, 0.0005, 0 );
+ 		pL-&gt;setCastsShadows( true );
+ 	}
+@@ -228,7 +228,7 @@
+ 	SharedPtr&lt;base::Library&gt; pLib = loadLib(&quot;physicsOde&quot; );
+ 	YAKE_ASSERT( pLib ).debug(&quot;Cannot load physics plugin 1.&quot;);
+ 
+-	mPhysics1 = create&lt; physics::IPhysicsSystem &gt;(&quot;ode&quot;);
++	mPhysics1 = templates::create&lt; physics::IPhysicsSystem &gt;(&quot;ode&quot;);
+ 	YAKE_ASSERT( mPhysics1 ).debug(&quot;Cannot create physics system 1.&quot;);
+ 
+ 	mPWorld1 = mPhysics1-&gt;createWorld();
+@@ -239,7 +239,7 @@
+ 	pLib = loadLib(&quot;physicsNX&quot; );
+ 	YAKE_ASSERT( pLib ).debug(&quot;Cannot load physics plugin 2.&quot;);
+ 
+-	mPhysics2 = create&lt; physics::IPhysicsSystem &gt;(&quot;nx&quot;);
++	mPhysics2 = templates::create&lt; physics::IPhysicsSystem &gt;(&quot;nx&quot;);
+ 	YAKE_ASSERT( mPhysics2 ).debug(&quot;Cannot create physics system 2.&quot;);
+ 
+ 	mPWorld2 = mPhysics2-&gt;createWorld();
+@@ -250,7 +250,7 @@
+ 	pLib = loadLib(&quot;graphicsOgre&quot; );
+ 	YAKE_ASSERT( pLib ).debug(&quot;Cannot load graphics plugin.&quot;);
+ 
+-	mGraphics = create_default&lt; graphics::IGraphicsSystem &gt;();
++	mGraphics = templates::create_default&lt; graphics::IGraphicsSystem &gt;();
+ 	YAKE_ASSERT( mGraphics ).debug(&quot;Cannot create graphics system.&quot;);
+ 
+ 	mGWorld = mGraphics-&gt;createWorld();
+@@ -400,12 +400,12 @@
+ 
+ 	RandomNumberGeneratorMT randomiser;
+ 
+-	real lastTime = base::native::getTime();
++	real lastTime = native::getTime();
+ 	while (!mShutdownRequested)
+ 	{
+ 		static uint32 siFrame = 0;
+ 		// timing
+-		real time = base::native::getTime();
++		real time = native::getTime();
+ 		real timeElapsed = time-lastTime;//timer-&gt;getSeconds();
+ 		lastTime = time;
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000348.html">[Yake-svn] r1278 - trunk/yake/scripts/msvc8
+</A></li>
+	<LI>Next message: <A HREF="000350.html">[Yake-svn] r1280 - trunk/yake/src/yake/samples/graphics/demo
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#349">[ date ]</a>
+              <a href="thread.html#349">[ thread ]</a>
+              <a href="subject.html#349">[ subject ]</a>
+              <a href="author.html#349">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

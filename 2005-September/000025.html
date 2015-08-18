@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r955 - in trunk/yake/common/media: . graphics.fx graphics.scenes/arena0 vehicles
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r955%20-%20in%20trunk/yake/common/media%3A%20.%20graphics.fx%20graphics.scenes/arena0%20vehicles&In-Reply-To=%3C200509302134.j8ULYMcV007300%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000024.html">
+   <LINK REL="Next"  HREF="000026.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r955 - in trunk/yake/common/media: . graphics.fx graphics.scenes/arena0 vehicles</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r955%20-%20in%20trunk/yake/common/media%3A%20.%20graphics.fx%20graphics.scenes/arena0%20vehicles&In-Reply-To=%3C200509302134.j8ULYMcV007300%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r955 - in trunk/yake/common/media: . graphics.fx graphics.scenes/arena0 vehicles">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:34:22 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000024.html">[Yake-svn] r954 - trunk/yake/yapp/model
+</A></li>
+        <LI>Next message: <A HREF="000026.html">[Yake-svn] r956 - trunk/yake/common/bin/debug
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#25">[ date ]</a>
+              <a href="thread.html#25">[ thread ]</a>
+              <a href="subject.html#25">[ subject ]</a>
+              <a href="author.html#25">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:34:19 +0200 (Fri, 30 Sep 2005)
+New Revision: 955
+
+Added:
+   trunk/yake/common/media/skybox.zip
+Modified:
+   trunk/yake/common/media/graphics.fx/thruster1.particle
+   trunk/yake/common/media/graphics.scenes/arena0/arena0_export.scene
+   trunk/yake/common/media/vehicles/fordboss.vehicle
+Log:
+added new sample artwork,
+fixed .scene file
+
+Modified: trunk/yake/common/media/graphics.fx/thruster1.particle
+===================================================================
+--- trunk/yake/common/media/graphics.fx/thruster1.particle	2005-09-30 21:33:22 UTC (rev 954)
++++ trunk/yake/common/media/graphics.fx/thruster1.particle	2005-09-30 21:34:19 UTC (rev 955)
+@@ -31,7 +31,7 @@
+ 
+    	affector Scaler
+    	{
+-       	rate 	0.4
++       	rate 	0.1
+    	}
+ 
+ }
+
+Modified: trunk/yake/common/media/graphics.scenes/arena0/arena0_export.scene
+===================================================================
+--- trunk/yake/common/media/graphics.scenes/arena0/arena0_export.scene	2005-09-30 21:33:22 UTC (rev 954)
++++ trunk/yake/common/media/graphics.scenes/arena0/arena0_export.scene	2005-09-30 21:34:19 UTC (rev 955)
+@@ -10,7 +10,7 @@
+     &lt;/externals&gt;
+     &lt;nodes name=&quot;Scene Root&quot; id=&quot;-1&quot;&gt;
+         &lt;node name=&quot;arena0ground&quot; id=&quot;22&quot;&gt;
+-            &lt;entity name=&quot;arena0ground&quot; id=&quot;22&quot; meshfile=&quot;arena0ground.mesh&quot; static=&quot;true&quot; /&gt;
++            &lt;entity name=&quot;arena0ground&quot; id=&quot;22&quot; meshFile=&quot;arena0ground.mesh&quot; static=&quot;true&quot; /&gt;
+         &lt;/node&gt;
+     &lt;/nodes&gt;
+ &lt;/scene&gt;
+
+Added: trunk/yake/common/media/skybox.zip
+===================================================================
+(Binary files differ)
+
+
+Property changes on: trunk/yake/common/media/skybox.zip
+___________________________________________________________________
+Name: svn:mime-type
+   + application/octet-stream
+
+Modified: trunk/yake/common/media/vehicles/fordboss.vehicle
+===================================================================
+--- trunk/yake/common/media/vehicles/fordboss.vehicle	2005-09-30 21:33:22 UTC (rev 954)
++++ trunk/yake/common/media/vehicles/fordboss.vehicle	2005-09-30 21:34:19 UTC (rev 955)
+@@ -5,12 +5,10 @@
+ 		&lt;dimensions x=&quot;1.75&quot; y=&quot;1.0&quot; z=&quot;4.21&quot; /&gt;
+ 		&lt;position x=&quot;0&quot; y=&quot;0.3&quot; z=&quot;0&quot; /&gt;
+ 		&lt;geoms&gt;
+-			&lt;geom type=&quot;box&quot;&gt;
+-				&lt;dimensions mode=&quot;relative&quot; x=&quot;0.9&quot; y=&quot;0.5&quot; z=&quot;0.5&quot; /&gt;
++			&lt;geom type=&quot;box&quot; boxx=&quot;0.9&quot; boxy=&quot;0.5&quot; boxz=&quot;0.5&quot;&gt;
+ 				&lt;position x=&quot;0&quot; y=&quot;0.6&quot; z=&quot;-0.5&quot; /&gt;
+ 			&lt;/geom&gt;
+-			&lt;geom type=&quot;box&quot;&gt;
+-				&lt;dimensions mode=&quot;relative&quot; x=&quot;0.9&quot; y=&quot;0.45&quot; z=&quot;0.9&quot; /&gt;
++			&lt;geom type=&quot;box&quot; boxx=&quot;0.9&quot; boxy=&quot;0.45&quot; boxz=&quot;0.9&quot;&gt;
+ 				&lt;position x=&quot;0&quot; y=&quot;0.15&quot; z=&quot;0&quot; /&gt;
+ 			&lt;/geom&gt;
+ 		&lt;/geoms&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000024.html">[Yake-svn] r954 - trunk/yake/yapp/model
+</A></li>
+	<LI>Next message: <A HREF="000026.html">[Yake-svn] r956 - trunk/yake/common/bin/debug
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#25">[ date ]</a>
+              <a href="thread.html#25">[ thread ]</a>
+              <a href="subject.html#25">[ subject ]</a>
+              <a href="author.html#25">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

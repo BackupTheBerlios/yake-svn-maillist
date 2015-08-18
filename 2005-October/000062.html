@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r992 - trunk/yake/src/yake/plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r992%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200510041903.j94J31Qw022934%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000061.html">
+   <LINK REL="Next"  HREF="000063.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r992 - trunk/yake/src/yake/plugins/physicsODE</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r992%20-%20trunk/yake/src/yake/plugins/physicsODE&In-Reply-To=%3C200510041903.j94J31Qw022934%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r992 - trunk/yake/src/yake/plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Oct  4 21:03:01 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000061.html">[Yake-svn] r991 - trunk/yake/yake/plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000063.html">[Yake-svn] r993 - trunk/yake/src/yake/plugins/physicsNX
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#62">[ date ]</a>
+              <a href="thread.html#62">[ thread ]</a>
+              <a href="subject.html#62">[ subject ]</a>
+              <a href="author.html#62">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-04 21:03:01 +0200 (Tue, 04 Oct 2005)
+New Revision: 992
+
+Modified:
+   trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+   trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+Log:
+modified default to QT_MASS,
+refactored setting masses
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-10-04 19:02:45 UTC (rev 991)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeActor.cpp	2005-10-04 19:03:01 UTC (rev 992)
+@@ -175,31 +175,6 @@
+ 	}
+ 
+ 	//-----------------------------------------------------
+-	IBody::MassDesc* OdeActor::createMassDescFromShapeDesc( IShape::Desc const&amp; rShapeDesc, real massOrDensity, IBody::quantityType qType )
+-	{
+-		IShape::Desc* pShapeDesc = &amp;const_cast&lt;IShape::Desc&amp;&gt;( rShapeDesc );
+-		IBody::MassDesc* result;
+-		
+-		if ( IShape::SphereDesc* pSphereDesc = dynamic_cast&lt;IShape::SphereDesc*&gt;( pShapeDesc ) )
+-		{
+-			result = new IBody::SphereMassDesc( pSphereDesc-&gt;radius, massOrDensity, pSphereDesc-&gt;position, qType );
+-		}
+-		else if ( IShape::BoxDesc* pBoxDesc = dynamic_cast&lt;IShape::BoxDesc*&gt;( pShapeDesc ) )
+-		{
+-			result = new IBody::BoxMassDesc( pBoxDesc-&gt;dimensions.x, pBoxDesc-&gt;dimensions.y, pBoxDesc-&gt;dimensions.z, massOrDensity,
+-				pBoxDesc-&gt;position, qType );
+-		}
+-		else if ( IShape::CapsuleDesc* pCapsuleDesc = dynamic_cast&lt;IShape::CapsuleDesc*&gt;( pShapeDesc ) )
+-		{
+-			result = new IBody::CapsuleMassDesc( pCapsuleDesc-&gt;radius, pCapsuleDesc-&gt;height, massOrDensity, pCapsuleDesc-&gt;position, qType );
+-		}
+-
+-		YAKE_ASSERT( result != 0 ).warning( &quot;Unsupported shape type!&quot; );
+-
+-		return result;
+-	}
+-
+-	//-----------------------------------------------------
+ 	bool operator == (const SharedPtr&lt;OdeGeom&gt;&amp; lhs, const OdeGeom* rhs)
+ 	{
+ 		return (lhs.get() == rhs);
+@@ -406,10 +381,7 @@
+ 
+ 			if (massOrDensity)
+ 			{
+-//@todo clean up! avoid new/delete either by using caches/pools or ...
+-				IBody::MassDesc* desc = createMassDescFromShapeDesc( rShapeDesc, massOrDensity, type );
+-				mBody-&gt;addMass( *desc );
+-				delete desc;
++				mBody-&gt;_applyMassDescFromShapeDesc( rShapeDesc, massOrDensity, type );
+ 			}
+ 		}
+ 		
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2005-10-04 19:02:45 UTC (rev 991)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeBody.cpp	2005-10-04 19:03:01 UTC (rev 992)
+@@ -143,6 +143,30 @@
+ 			dMassTranslate( mass, desc.offset.x, desc.offset.y, desc.offset.z );
+ 		}
+ 		
++		//-----------------------------------------------------
++		void OdeBody::_applyMassDescFromShapeDesc( IShape::Desc const&amp; rShapeDesc, real massOrDensity, IBody::quantityType qType )
++		{
++			const IShape::Desc* pShapeDesc = &amp;( rShapeDesc );
++			
++			if ( const IShape::SphereDesc* pSphereDesc = dynamic_cast&lt;const IShape::SphereDesc*&gt;( pShapeDesc ) )
++			{
++				this-&gt;addMass( IBody::SphereMassDesc( pSphereDesc-&gt;radius, massOrDensity, pSphereDesc-&gt;position, qType ) );
++			}
++			else if ( const IShape::BoxDesc* pBoxDesc = dynamic_cast&lt;const IShape::BoxDesc*&gt;( pShapeDesc ) )
++			{
++				this-&gt;addMass( IBody::BoxMassDesc( pBoxDesc-&gt;dimensions.x, pBoxDesc-&gt;dimensions.y, pBoxDesc-&gt;dimensions.z, massOrDensity,
++					pBoxDesc-&gt;position, qType ) );
++			}
++			else if ( const IShape::CapsuleDesc* pCapsuleDesc = dynamic_cast&lt;const IShape::CapsuleDesc*&gt;( pShapeDesc ) )
++			{
++				this-&gt;addMass( IBody::CapsuleMassDesc( pCapsuleDesc-&gt;radius, pCapsuleDesc-&gt;height, massOrDensity, pCapsuleDesc-&gt;position, qType ) );
++			}
++			else
++			{
++				YAKE_ASSERT( 1 == 0 ).warning( &quot;Unsupported shape type!&quot; );
++			}
++		}
++
+ 		//---------------------------------------------------
+ 		void OdeBody::setMass( const MassDesc&amp; rDesc )
+ 		{
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000061.html">[Yake-svn] r991 - trunk/yake/yake/plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000063.html">[Yake-svn] r993 - trunk/yake/src/yake/plugins/physicsNX
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#62">[ date ]</a>
+              <a href="thread.html#62">[ thread ]</a>
+              <a href="subject.html#62">[ subject ]</a>
+              <a href="author.html#62">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

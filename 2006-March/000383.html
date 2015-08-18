@@ -1,0 +1,656 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1313 - in trunk/yake/scripts/msvc8: . plugins/physics samples/physics
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1313%20-%20in%20trunk/yake/scripts/msvc8%3A%20.%20plugins/physics%20samples/physics&In-Reply-To=%3C200603192232.k2JMWUYu004415%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000382.html">
+   
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1313 - in trunk/yake/scripts/msvc8: . plugins/physics samples/physics</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1313%20-%20in%20trunk/yake/scripts/msvc8%3A%20.%20plugins/physics%20samples/physics&In-Reply-To=%3C200603192232.k2JMWUYu004415%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1313 - in trunk/yake/scripts/msvc8: . plugins/physics samples/physics">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 19 23:32:30 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000382.html">[Yake-svn] r1312 - trunk/yake/yapp/plugins/terrainPhysMgr
+</A></li>
+        
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#383">[ date ]</a>
+              <a href="thread.html#383">[ thread ]</a>
+              <a href="subject.html#383">[ subject ]</a>
+              <a href="author.html#383">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-19 23:32:30 +0100 (Sun, 19 Mar 2006)
+New Revision: 1313
+
+Added:
+   trunk/yake/scripts/msvc8/plugins/physics/terrainPhysMgr.vcproj
+   trunk/yake/scripts/msvc8/samples/physics/samplePhysicsPagingTerrain.vcproj
+Modified:
+   trunk/yake/scripts/msvc8/yake.sln
+Log:
+added terrPhysMgr plugin and sample
+
+Added: trunk/yake/scripts/msvc8/plugins/physics/terrainPhysMgr.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/plugins/physics/terrainPhysMgr.vcproj	2006-03-19 22:31:21 UTC (rev 1312)
++++ trunk/yake/scripts/msvc8/plugins/physics/terrainPhysMgr.vcproj	2006-03-19 22:32:30 UTC (rev 1313)
+@@ -0,0 +1,227 @@
++&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
++&lt;VisualStudioProject
++	ProjectType=&quot;Visual C++&quot;
++	Version=&quot;8,00&quot;
++	Name=&quot;terrainPhysMgr&quot;
++	ProjectGUID=&quot;{6FC81A1C-0463-45EB-94F9-F7D084E3C169}&quot;
++	Keyword=&quot;Win32Proj&quot;
++	&gt;
++	&lt;Platforms&gt;
++		&lt;Platform
++			Name=&quot;Win32&quot;
++		/&gt;
++	&lt;/Platforms&gt;
++	&lt;ToolFiles&gt;
++	&lt;/ToolFiles&gt;
++	&lt;Configurations&gt;
++		&lt;Configuration
++			Name=&quot;Debug|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/debug&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/debug/$(ProjectName)&quot;
++			ConfigurationType=&quot;2&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				Optimization=&quot;0&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ode/include;../../../../dependencies/ogrenew/ogremain/include;../../../..\dependencies\ogreaddons\paginglandscape\PlugIns\PagingLandScape2\include&quot;
++				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_WINDOWS;_USRDLL;YAKEPHYSICSODE_PLSM_EXPORTS&quot;
++				MinimalRebuild=&quot;true&quot;
++				BasicRuntimeChecks=&quot;3&quot;
++				RuntimeLibrary=&quot;3&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;0&quot;
++				PrecompiledHeaderThrough=&quot;yake/plugins/physicsODE/yakePCH.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;4&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;yapp.lib oded.lib physics.lib ogremain_d.lib Plugin_PagingLandScapeSceneManager2_d.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
++				LinkIncremental=&quot;2&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies/ode/lib;../../../../dependencies/lib;&quot;../../../../dependencies/ogrenew/ogremain/lib/$(ConfigurationName)&quot;;&quot;../../../../dependencies/ogreaddons/paginglandscape/plugins/paginglandscape2/bin/$(ConfigurationName)&quot;&quot;
++				ModuleDefinitionFile=&quot;&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;2&quot;
++				ImportLibrary=&quot;../../../../common/lib/debug/$(TargetName).lib&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++		&lt;Configuration
++			Name=&quot;Release|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/release&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/release/$(ProjectName)&quot;
++			ConfigurationType=&quot;2&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/ttl/;../../../../dependencies/boost/;../../../../dependencies/ode/include;../../../../dependencies/ogrenew/ogremain/include&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_WINDOWS;_USRDLL;YAKEPHYSICSODE_PLSM_EXPORTS&quot;
++				RuntimeLibrary=&quot;2&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;0&quot;
++				PrecompiledHeaderThrough=&quot;yake/plugins/physicsODE/yakePCH.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;3&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;ode.lib physics.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).dll&quot;
++				LinkIncremental=&quot;1&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/ode/lib;../../../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;false&quot;
++				SubSystem=&quot;2&quot;
++				OptimizeReferences=&quot;2&quot;
++				EnableCOMDATFolding=&quot;2&quot;
++				ImportLibrary=&quot;../../../../common/lib/release/$(TargetName).lib&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++	&lt;/Configurations&gt;
++	&lt;References&gt;
++	&lt;/References&gt;
++	&lt;Files&gt;
++		&lt;Filter
++			Name=&quot;src&quot;
++			Filter=&quot;cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx&quot;
++			UniqueIdentifier=&quot;{C32CAEC8-F86A-4f69-9F85-D0905FAC6B9F}&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\src\yapp\plugins\terrainPhysMgr\TerrainOdeActor.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\src\yapp\plugins\terrainPhysMgr\TerrainPhysicsManager.cpp&quot;
++				&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++		&lt;Filter
++			Name=&quot;inc&quot;
++			Filter=&quot;h;hpp;hxx;hm;inl;inc;xsd&quot;
++			UniqueIdentifier=&quot;{A1820E11-8F2E-42b8-9DA5-29CC46F7C651}&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\yapp\plugins\terrainPhysMgr\TerrainOdeActor.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\yapp\plugins\terrainPhysMgr\TerrainOdePrerequisites.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\yapp\plugins\terrainPhysMgr\TerrainOdeShape.h&quot;
++				&gt;
++			&lt;/File&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\yapp\plugins\terrainPhysMgr\TerrainPhysicsManager.h&quot;
++				&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++	&lt;/Files&gt;
++	&lt;Globals&gt;
++	&lt;/Globals&gt;
++&lt;/VisualStudioProject&gt;
+
+Added: trunk/yake/scripts/msvc8/samples/physics/samplePhysicsPagingTerrain.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/physics/samplePhysicsPagingTerrain.vcproj	2006-03-19 22:31:21 UTC (rev 1312)
++++ trunk/yake/scripts/msvc8/samples/physics/samplePhysicsPagingTerrain.vcproj	2006-03-19 22:32:30 UTC (rev 1313)
+@@ -0,0 +1,208 @@
++&lt;?xml version=&quot;1.0&quot; encoding=&quot;Windows-1252&quot;?&gt;
++&lt;VisualStudioProject
++	ProjectType=&quot;Visual C++&quot;
++	Version=&quot;8,00&quot;
++	Name=&quot;samplePhysicsPagingTerrain&quot;
++	ProjectGUID=&quot;{1DDC8FAB-4D08-45B1-AFBC-47DED1B16C11}&quot;
++	Keyword=&quot;Win32Proj&quot;
++	&gt;
++	&lt;Platforms&gt;
++		&lt;Platform
++			Name=&quot;Win32&quot;
++		/&gt;
++	&lt;/Platforms&gt;
++	&lt;ToolFiles&gt;
++	&lt;/ToolFiles&gt;
++	&lt;Configurations&gt;
++		&lt;Configuration
++			Name=&quot;Debug|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/debug&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/debug/$(ProjectName)&quot;
++			ConfigurationType=&quot;1&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				Optimization=&quot;0&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/boost/;../../../../dependencies/ttl/;../../../../dependencies/ogrenew/ogremain/include;../../../..\dependencies\ogreaddons\paginglandscape\PlugIns\PagingLandScape2\include;../../../../dependencies/ode/include&quot;
++				PreprocessorDefinitions=&quot;_STLP_DEBUG;WIN32;_DEBUG;_CONSOLE&quot;
++				MinimalRebuild=&quot;true&quot;
++				BasicRuntimeChecks=&quot;3&quot;
++				RuntimeLibrary=&quot;3&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/samples/physics/demo/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;4&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib data.lib input.lib graphics.lib graphicsOgre.lib audio.lib physics.lib Plugin_PagingLandScapeSceneManager2_d.lib terrainPhysMgr.lib  ogremain_d.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
++				LinkIncremental=&quot;2&quot;
++				AdditionalLibraryDirectories=&quot;&quot;../../../../common/lib/$(ConfigurationName)&quot;;../../../../dependencies/lib;&quot;../../../../dependencies/ogreaddons/paginglandscape/plugins/paginglandscape2/bin/$(ConfigurationName)&quot;;&quot;../../../../dependencies/ogrenew/ogremain/lib/$(ConfigurationName)&quot;&quot;
++				GenerateDebugInformation=&quot;true&quot;
++				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
++				SubSystem=&quot;1&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++		&lt;Configuration
++			Name=&quot;Release|Win32&quot;
++			OutputDirectory=&quot;../../../../common/bin/release&quot;
++			IntermediateDirectory=&quot;../../../../common/obj/release/$(ProjectName)&quot;
++			ConfigurationType=&quot;1&quot;
++			InheritedPropertySheets=&quot;$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops&quot;
++			CharacterSet=&quot;2&quot;
++			&gt;
++			&lt;Tool
++				Name=&quot;VCPreBuildEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCustomBuildTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXMLDataGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebServiceProxyGeneratorTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCMIDLTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCCLCompilerTool&quot;
++				AdditionalIncludeDirectories=&quot;../../../../;../../../../dependencies/boost/;../../../../dependencies/ttl/&quot;
++				PreprocessorDefinitions=&quot;WIN32;NDEBUG;_CONSOLE&quot;
++				RuntimeLibrary=&quot;2&quot;
++				RuntimeTypeInfo=&quot;true&quot;
++				UsePrecompiledHeader=&quot;2&quot;
++				PrecompiledHeaderThrough=&quot;yake/samples/physics/demo/pch.h&quot;
++				WarningLevel=&quot;3&quot;
++				Detect64BitPortabilityProblems=&quot;true&quot;
++				DebugInformationFormat=&quot;3&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManagedResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCResourceCompilerTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPreLinkEventTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib data.lib input.lib graphics.lib audio.lib physics.lib&quot;
++				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
++				LinkIncremental=&quot;1&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/lib&quot;
++				GenerateDebugInformation=&quot;false&quot;
++				SubSystem=&quot;1&quot;
++				OptimizeReferences=&quot;2&quot;
++				EnableCOMDATFolding=&quot;2&quot;
++				TargetMachine=&quot;1&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCALinkTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCManifestTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCXDCMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCBscMakeTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCFxCopTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCAppVerifierTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCWebDeploymentTool&quot;
++			/&gt;
++			&lt;Tool
++				Name=&quot;VCPostBuildEventTool&quot;
++			/&gt;
++		&lt;/Configuration&gt;
++	&lt;/Configurations&gt;
++	&lt;References&gt;
++	&lt;/References&gt;
++	&lt;Files&gt;
++		&lt;Filter
++			Name=&quot;inc&quot;
++			&gt;
++		&lt;/Filter&gt;
++		&lt;Filter
++			Name=&quot;src&quot;
++			&gt;
++			&lt;File
++				RelativePath=&quot;..\..\..\..\src\yapp\samples\physics\paging_terrain\yakeDemo.cpp&quot;
++				&gt;
++				&lt;FileConfiguration
++					Name=&quot;Debug|Win32&quot;
++					&gt;
++					&lt;Tool
++						Name=&quot;VCCLCompilerTool&quot;
++						UsePrecompiledHeader=&quot;0&quot;
++					/&gt;
++				&lt;/FileConfiguration&gt;
++			&lt;/File&gt;
++		&lt;/Filter&gt;
++	&lt;/Files&gt;
++	&lt;Globals&gt;
++	&lt;/Globals&gt;
++&lt;/VisualStudioProject&gt;
+
+Modified: trunk/yake/scripts/msvc8/yake.sln
+===================================================================
+--- trunk/yake/scripts/msvc8/yake.sln	2006-03-19 22:31:21 UTC (rev 1312)
++++ trunk/yake/scripts/msvc8/yake.sln	2006-03-19 22:32:30 UTC (rev 1313)
+@@ -9,8 +9,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;graphicsOGRE&quot;, &quot;plugins\graphics\graphicsOgre.vcproj&quot;, &quot;{A2C2A0B2-2EB0-4254-891D-FE93466809CF}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
++		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;physics&quot;, &quot;physics.vcproj&quot;, &quot;{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}&quot;
+@@ -20,8 +20,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;physicsODE&quot;, &quot;plugins\physics\physicsODE.vcproj&quot;, &quot;{2F5124AA-56BD-4909-811A-E79901978C86}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+ 		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
++		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;input&quot;, &quot;input.vcproj&quot;, &quot;{1AF3930A-4E72-4455-AFD0-6B78684105CD}&quot;
+@@ -31,8 +31,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;inputOGRE&quot;, &quot;plugins\input\inputOgre.vcproj&quot;, &quot;{A1A2FE19-7B7E-42F1-808B-8FA5B6AA697E}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 		{1AF3930A-4E72-4455-AFD0-6B78684105CD} = {1AF3930A-4E72-4455-AFD0-6B78684105CD}
++		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;scripting&quot;, &quot;scripting.vcproj&quot;, &quot;{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}&quot;
+@@ -42,8 +42,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;scriptingLua&quot;, &quot;plugins\scripting\scriptingLua.vcproj&quot;, &quot;{41CEA11B-9678-43E5-B2F4-754944D7B461}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
++		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;data&quot;, &quot;data.vcproj&quot;, &quot;{77A59B89-C2B3-429C-8317-ADE0D046CC3B}&quot;
+@@ -53,8 +53,8 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;scriptingBindingsLua&quot;, &quot;plugins\scripting\scriptingLuaBindings.vcproj&quot;, &quot;{CA63F621-0912-4551-B51A-7BD18F491181}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+ 		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
++		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;audio&quot;, &quot;audio.vcproj&quot;, &quot;{42BB6F78-B04C-4968-AA5E-271DC45BEFBB}&quot;
+@@ -74,34 +74,32 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;graphicsBindingsLua&quot;, &quot;plugins\scripting\graphicsLuaBindings.vcproj&quot;, &quot;{2D5E8A7F-96DA-4CC5-BFC8-430916ACF18A}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+ 		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
++		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
++		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
++		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;baseBindingsLua&quot;, &quot;plugins\scripting\baseLuaBindings.vcproj&quot;, &quot;{3867E9A4-41F3-4969-B0A8-40757BCB6C29}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+-		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+ 		{41CEA11B-9678-43E5-B2F4-754944D7B461} = {41CEA11B-9678-43E5-B2F4-754944D7B461}
++		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
++		{D29771DD-715F-452B-B71C-911BACF5956D} = {D29771DD-715F-452B-B71C-911BACF5956D}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;yapp&quot;, &quot;yapp.vcproj&quot;, &quot;{F1116FDF-65C1-4788-AC1F-F339279B937A}&quot;
+ 	ProjectSection(ProjectDependencies) = postProject
+-		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+-		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
+-		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
+-		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
+ 		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
++		{ECC8FA24-93AC-4659-8EBD-26B6F418AC64} = {ECC8FA24-93AC-4659-8EBD-26B6F418AC64}
++		{42BB6F78-B04C-4968-AA5E-271DC45BEFBB} = {42BB6F78-B04C-4968-AA5E-271DC45BEFBB}
++		{77A59B89-C2B3-429C-8317-ADE0D046CC3B} = {77A59B89-C2B3-429C-8317-ADE0D046CC3B}
++		{8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03} = {8A16CDB5-B272-49AD-AF22-B8FD0E5E1A03}
+ 	EndProjectSection
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;raf&quot;, &quot;raf.vcproj&quot;, &quot;{6D6DD5E8-3B81-4C98-B460-B434DEE23EE2}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;msg&quot;, &quot;msg.vcproj&quot;, &quot;{7EB6A55E-D262-4C82-862C-33E831DDF04C}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;entCommon&quot;, &quot;plugins\ent\entCommon.vcproj&quot;, &quot;{9E975777-551F-45F8-85FD-40BE6B0183A4}&quot;
+-EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;ceguiOgreRendererAdapter&quot;, &quot;plugins\gui\ceguiOgreRendererAdapter.vcproj&quot;, &quot;{526DC299-3C9B-46ED-8C16-0490AE5CAE88}&quot;
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;modelLua&quot;, &quot;plugins\model\modelLua.vcproj&quot;, &quot;{8150E623-2456-4152-AC96-D302B1CFF6E9}&quot;
+@@ -124,7 +122,11 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;ent&quot;, &quot;ent.vcproj&quot;, &quot;{08BC40D8-33D8-4677-993A-32599A93A460}&quot;
+ EndProject
+-Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleMsg1&quot;, &quot;samples\msg\sampleMsg1.vcproj&quot;, &quot;{452438E8-F03B-47B9-984B-2CF79D2F6734}&quot;
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;terrainPhysMgr&quot;, &quot;plugins\physics\terrainPhysMgr.vcproj&quot;, &quot;{6FC81A1C-0463-45EB-94F9-F7D084E3C169}&quot;
++	ProjectSection(ProjectDependencies) = postProject
++		{1C674F1C-7DDF-4AC5-A52A-14C31248A9D4} = {1C674F1C-7DDF-4AC5-A52A-14C31248A9D4}
++		{2F5124AA-56BD-4909-811A-E79901978C86} = {2F5124AA-56BD-4909-811A-E79901978C86}
++	EndProjectSection
+ EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+@@ -206,10 +208,6 @@
+ 		{7EB6A55E-D262-4C82-862C-33E831DDF04C}.Debug|Win32.Build.0 = Debug|Win32
+ 		{7EB6A55E-D262-4C82-862C-33E831DDF04C}.Release|Win32.ActiveCfg = Release|Win32
+ 		{7EB6A55E-D262-4C82-862C-33E831DDF04C}.Release|Win32.Build.0 = Release|Win32
+-		{9E975777-551F-45F8-85FD-40BE6B0183A4}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{9E975777-551F-45F8-85FD-40BE6B0183A4}.Debug|Win32.Build.0 = Debug|Win32
+-		{9E975777-551F-45F8-85FD-40BE6B0183A4}.Release|Win32.ActiveCfg = Release|Win32
+-		{9E975777-551F-45F8-85FD-40BE6B0183A4}.Release|Win32.Build.0 = Release|Win32
+ 		{526DC299-3C9B-46ED-8C16-0490AE5CAE88}.Debug|Win32.ActiveCfg = Debug|Win32
+ 		{526DC299-3C9B-46ED-8C16-0490AE5CAE88}.Debug|Win32.Build.0 = Debug|Win32
+ 		{526DC299-3C9B-46ED-8C16-0490AE5CAE88}.Release|Win32.ActiveCfg = Release|Win32
+@@ -242,10 +240,10 @@
+ 		{08BC40D8-33D8-4677-993A-32599A93A460}.Debug|Win32.Build.0 = Debug|Win32
+ 		{08BC40D8-33D8-4677-993A-32599A93A460}.Release|Win32.ActiveCfg = Release|Win32
+ 		{08BC40D8-33D8-4677-993A-32599A93A460}.Release|Win32.Build.0 = Release|Win32
+-		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Debug|Win32.ActiveCfg = Debug|Win32
+-		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Debug|Win32.Build.0 = Debug|Win32
+-		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Release|Win32.ActiveCfg = Release|Win32
+-		{452438E8-F03B-47B9-984B-2CF79D2F6734}.Release|Win32.Build.0 = Release|Win32
++		{6FC81A1C-0463-45EB-94F9-F7D084E3C169}.Debug|Win32.ActiveCfg = Debug|Win32
++		{6FC81A1C-0463-45EB-94F9-F7D084E3C169}.Debug|Win32.Build.0 = Debug|Win32
++		{6FC81A1C-0463-45EB-94F9-F7D084E3C169}.Release|Win32.ActiveCfg = Release|Win32
++		{6FC81A1C-0463-45EB-94F9-F7D084E3C169}.Release|Win32.Build.0 = Release|Win32
+ 	EndGlobalSection
+ 	GlobalSection(SolutionProperties) = preSolution
+ 		HideSolutionNode = FALSE
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000382.html">[Yake-svn] r1312 - trunk/yake/yapp/plugins/terrainPhysMgr
+</A></li>
+	
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#383">[ date ]</a>
+              <a href="thread.html#383">[ thread ]</a>
+              <a href="subject.html#383">[ subject ]</a>
+              <a href="author.html#383">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

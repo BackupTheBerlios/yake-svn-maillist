@@ -1,0 +1,342 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1112 - in trunk/yake: src/yapp/ent yake/physics yapp/base/event yapp/ent
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1112%20-%20in%20trunk/yake%3A%20src/yapp/ent%20yake/physics%20yapp/base/event%20yapp/ent&In-Reply-To=%3C200511022349.jA2NnxGn031398%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000181.html">
+   <LINK REL="Next"  HREF="000182.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1112 - in trunk/yake: src/yapp/ent yake/physics yapp/base/event yapp/ent</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1112%20-%20in%20trunk/yake%3A%20src/yapp/ent%20yake/physics%20yapp/base/event%20yapp/ent&In-Reply-To=%3C200511022349.jA2NnxGn031398%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1112 - in trunk/yake: src/yapp/ent yake/physics yapp/base/event yapp/ent">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov  3 00:49:59 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000181.html">[Yake-svn] r1111 - trunk/yake
+</A></li>
+        <LI>Next message: <A HREF="000182.html">[Yake-svn] r1113 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#183">[ date ]</a>
+              <a href="thread.html#183">[ thread ]</a>
+              <a href="subject.html#183">[ subject ]</a>
+              <a href="author.html#183">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-03 00:49:37 +0100 (Thu, 03 Nov 2005)
+New Revision: 1112
+
+Modified:
+   trunk/yake/src/yapp/ent/yakeObject.cpp
+   trunk/yake/src/yapp/ent/yakeSim.cpp
+   trunk/yake/yake/physics/yakePhysicsActor.h
+   trunk/yake/yake/physics/yakePhysicsAffectors.h
+   trunk/yake/yake/physics/yakePhysicsMaterial.h
+   trunk/yake/yapp/base/event/yakeMessageListener.h
+   trunk/yake/yapp/ent/yakeObject.h
+   trunk/yake/yapp/ent/yakeSim.h
+Log:
+refactored object creator registration
+
+Modified: trunk/yake/src/yapp/ent/yakeObject.cpp
+===================================================================
+--- trunk/yake/src/yapp/ent/yakeObject.cpp	2005-11-02 22:26:53 UTC (rev 1111)
++++ trunk/yake/src/yapp/ent/yakeObject.cpp	2005-11-02 23:49:37 UTC (rev 1112)
+@@ -34,6 +34,17 @@
+ namespace yake {
+ namespace ent {
+ 
++	Object* object_class::createInstance() const
++	{
++		YAKE_ASSERT( !mCreatorFn.empty() )( mName ).debug(&quot;Class has no registered creation function!&quot;);
++		if (mCreatorFn.empty())
++			return 0;
++		return mCreatorFn();
++	}
++	const ObjectCreatorFn&amp; object_class::getCreatorFn() const
++	{
++		return mCreatorFn;
++	}
+ 	void object_class::addParent(object_class* parent)
+ 	{
+ 		YAKE_ASSERT( parent );
+
+Modified: trunk/yake/src/yapp/ent/yakeSim.cpp
+===================================================================
+--- trunk/yake/src/yapp/ent/yakeSim.cpp	2005-11-02 22:26:53 UTC (rev 1111)
++++ trunk/yake/src/yapp/ent/yakeSim.cpp	2005-11-02 23:49:37 UTC (rev 1112)
+@@ -72,7 +72,8 @@
+ 	{
+ 		mNonOwnedBinders.clear();
+ 		mBinders.clear();
+-		mObjectCreators.clear();
++		mObjectClasses.clear();
++		mObjectClassIds.clear();
+ 		mObjects.clear();
+ 		private_::g_sim = 0;
+ 	}
+@@ -120,11 +121,20 @@
+ 	{
+ 		mObjects.clear();
+ 	}
+-	void sim::regEntityCreator( const ObjectClassId&amp; id, const ObjectCreatorFn&amp; creatorFn )
++	void sim::regObjectClass( object_class* theClass )
+ 	{
+-		mObjectCreators[ id ] = creatorFn;
++		YAKE_ASSERT( theClass ).debug(&quot;Trying to register 0 class!&quot;);
++		if (!theClass)
++			return;
++		const ObjectClassId id = theClass-&gt;getName();
++		mObjectClassIds.push_back( id );
++		mObjectClasses[ id ] = theClass;
+ 		mNumericClassIds[ id ] = mLastNumericClassId++;
+ 	}
++	const ObjectClassIdList&amp; sim::getRegisteredObjectClasses() const
++	{
++		return mObjectClassIds;
++	}
+ 	void sim::addEntityVMBinder( scripting::IBinder* pBinder, const bool bTransferOwnership )
+ 	{
+ 		YAKE_ASSERT( pBinder );
+@@ -162,14 +172,15 @@
+ 	}
+ 	Entity* sim::createEntity( const ObjectClassId&amp; id, const StringPairVector&amp; components, const StringVector&amp; scriptFiles )
+ 	{
+-		ObjectCreateMap::const_iterator itFind = mObjectCreators.find( id );
+-		if (itFind == mObjectCreators.end())
++		ObjectClassMap::const_iterator itFind = mObjectClasses.find( id );
++		if (itFind == mObjectClasses.end())
+ 		{
+ 			std::stringstream msg;
+-			msg &lt;&lt; &quot;Could not find creator for object type: &quot; &lt;&lt; id.c_str();
++			msg &lt;&lt; &quot;Could not find creator for object class: &quot; &lt;&lt; id.c_str();
+ 			YAKE_EXCEPT(msg.str());
+ 		}
+-		Object* pObject = (itFind-&gt;second)();
++		YAKE_ASSERT( itFind-&gt;second );
++		Object* pObject = itFind-&gt;second-&gt;createInstance();
+ 		Entity* pEntity = Entity::cast( pObject );
+ 		YAKE_ASSERT( pEntity ).debug(&quot;The created object is an Object but not an Entity!&quot;);
+ 		if (!pEntity)
+
+Modified: trunk/yake/yake/physics/yakePhysicsActor.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsActor.h	2005-11-02 22:26:53 UTC (rev 1111)
++++ trunk/yake/yake/physics/yakePhysicsActor.h	2005-11-02 23:49:37 UTC (rev 1112)
+@@ -68,7 +68,7 @@
+ 		struct Desc
+ 		{
+ 			explicit Desc(const ActorType t) : type(t) {}
+-			explicit Desc(const Desc&amp; desc) {}
++			explicit Desc(const Desc&amp; desc) { this-&gt;shapes = desc.shapes; this-&gt;type = desc.type; }
+ 			virtual ~Desc() {}
+ 			Deque&lt; SharedPtr&lt;IShape::Desc&gt; &gt;		shapes;
+ 			ActorType								type;
+
+Modified: trunk/yake/yake/physics/yakePhysicsAffectors.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsAffectors.h	2005-11-02 22:26:53 UTC (rev 1111)
++++ trunk/yake/yake/physics/yakePhysicsAffectors.h	2005-11-02 23:49:37 UTC (rev 1112)
+@@ -78,7 +78,7 @@
+ 	{
+ 		YAKE_DECLARE_CONCRETE( ConstantDirectionalAccelerationBodyAffector, &quot;yake.constant_directional_acceleration&quot; )
+ 	public:
+-		virtual void applyTo( IBody &amp; rBody, const real timeElapsed )
++		virtual void applyTo( IBody &amp; rBody, const real /*timeElapsed*/ )
+ 		{
+ 			rBody.addForce( mAcceleration * rBody.getMass() );
+ 		}
+
+Modified: trunk/yake/yake/physics/yakePhysicsMaterial.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsMaterial.h	2005-11-02 22:26:53 UTC (rev 1111)
++++ trunk/yake/yake/physics/yakePhysicsMaterial.h	2005-11-02 23:49:37 UTC (rev 1112)
+@@ -51,7 +51,9 @@
+ 				mFriction( friction ),
+ 				mRestitution( restitution ),
+ 				mStaticFriction( staticFriction ),
+-				mRollingFriction( rollingFriction )
++				mRollingFriction( rollingFriction ),
++				mSoftness( softness ),
++				mBounciness( bounciness )
+ 			{}
+ 			
+ 			virtual ~Desc() {}
+
+Modified: trunk/yake/yapp/base/event/yakeMessageListener.h
+===================================================================
+--- trunk/yake/yapp/base/event/yakeMessageListener.h	2005-11-02 22:26:53 UTC (rev 1111)
++++ trunk/yake/yapp/base/event/yakeMessageListener.h	2005-11-02 23:49:37 UTC (rev 1112)
+@@ -50,7 +50,7 @@
+ 		virtual MsgResultCode onMessage( const MessageId id, ParamHolder* pParams );
+ 	};
+ 
+-	inline MsgResultCode MessageListener::onMessage( const MessageId id, ParamHolder* pParams )
++	inline MsgResultCode MessageListener::onMessage( const MessageId /*id*/, ParamHolder* /*pParams*/ )
+ 	{
+ 		return kMsgUnhandled;
+ 	}
+
+Modified: trunk/yake/yapp/ent/yakeObject.h
+===================================================================
+--- trunk/yake/yapp/ent/yakeObject.h	2005-11-02 22:26:53 UTC (rev 1111)
++++ trunk/yake/yapp/ent/yakeObject.h	2005-11-02 23:49:37 UTC (rev 1112)
+@@ -126,8 +126,10 @@
+ 	*/
+ 	struct YAKE_ENT_API object_class
+ 	{
++		object_class(const object_class&amp;);
+ 	public:
+ 		object_class(const String&amp; name) : mName(name) {}
++		object_class(const String&amp; name, const ObjectCreatorFn&amp; creatorFn) : mName(name), mCreatorFn(creatorFn) {}
+ 		bool operator == (const object_class&amp; rhs)
+ 		{ return mName == rhs.getName(); }
+ 		String getName() const
+@@ -140,11 +142,14 @@
+ 		typedef std::vector&lt;object_class*&gt; ClassPtrList;
+ 		const ClassPtrList&amp; getParents() const;
+ 		const ClassPtrList&amp; getChildren() const;
++		const ObjectCreatorFn&amp; getCreatorFn() const;
++		Object* createInstance() const;
+ 	private:
+ 		String				mName;
+ 		PropertyDefMap		mPropDefs;
+ 		ClassPtrList		mParents;
+ 		ClassPtrList		mChilds;
++		ObjectCreatorFn		mCreatorFn;
+ 	};
+ 
+ 	#define DECLARE_OBJECT_BASIC(CLASSNAME) \
+@@ -249,16 +254,25 @@
+ 		static const CLASSNAME* cast( const Object* other ) \
+ 		{  return dynamic_cast&lt;const CLASSNAME*&gt;(other); }
+ 
+-	#define DEFINE_OBJECT_BASIC(CLASSNAME) \
++	#define DEFINE_OBJECT_CLASS_WITH_CREATOR(CLASSNAME) \
+ 		::yake::ent::object_class* CLASSNAME::getClass() \
+ 		{ \
++			static ::yake::ent::object_class g_class(#CLASSNAME,&amp;CLASSNAME::create); \
++			return &amp;g_class; \
++		}
++	#define DEFINE_OBJECT_CLASS_WITHOUT_CREATOR(CLASSNAME) \
++		::yake::ent::object_class* CLASSNAME::getClass() \
++		{ \
+ 			static ::yake::ent::object_class g_class(#CLASSNAME); \
+ 			return &amp;g_class; \
+-		} \
++		}
++
++	#define DEFINE_OBJECT_BASIC(CLASSNAME) \
+ 		::yake::ent::object_class* CLASSNAME::isA() const \
+ 		{ return CLASSNAME::getClass(); }
+ 
+ 	#define DEFINE_OBJECT_ROOT(CLASSNAME) \
++		DEFINE_OBJECT_CLASS_WITHOUT_CREATOR(CLASSNAME) \
+ 		DEFINE_OBJECT_BASIC(CLASSNAME) \
+ 		void CLASSNAME::initEntity(CLASSNAME* pObj) \
+ 		{ \
+@@ -268,20 +282,22 @@
+ 		}
+ 
+ 	#define DEFINE_OBJECT(CLASSNAME) \
++		DEFINE_OBJECT_CLASS_WITH_CREATOR(CLASSNAME) \
+ 		DEFINE_OBJECT_BASIC(CLASSNAME) \
+ 		void CLASSNAME::reg( ::yake::ent::sim&amp; theSim ) \
+ 		{ \
+ 			CLASSNAME::regPropDefs##CLASSNAME(getClass()-&gt;getPropertyDef()); \
+-			theSim.regEntityCreator(#CLASSNAME, &amp;CLASSNAME::create); \
++			theSim.regObjectClass(getClass()); \
+ 		}
+ 
+ 	#define DEFINE_OBJECT_1(CLASSNAME,PARENT0) \
++		DEFINE_OBJECT_CLASS_WITH_CREATOR(CLASSNAME) \
+ 		DEFINE_OBJECT_BASIC(CLASSNAME) \
+ 		void CLASSNAME::reg( ::yake::ent::sim&amp; theSim ) \
+ 		{ \
+ 			getClass()-&gt;addParent(PARENT0::getClass()); \
+ 			CLASSNAME::regPropDefs##CLASSNAME(getClass()-&gt;getPropertyDef()); \
+-			theSim.regEntityCreator(#CLASSNAME, &amp;CLASSNAME::create); \
++			theSim.regObjectClass(getClass()); \
+ 		}
+ 
+ 	template&lt;class T&gt;
+
+Modified: trunk/yake/yapp/ent/yakeSim.h
+===================================================================
+--- trunk/yake/yapp/ent/yakeSim.h	2005-11-02 22:26:53 UTC (rev 1111)
++++ trunk/yake/yapp/ent/yakeSim.h	2005-11-02 23:49:37 UTC (rev 1112)
+@@ -30,6 +30,7 @@
+ namespace yake {
+ namespace ent {
+ 
++	typedef Deque&lt;ObjectClassId&gt; ObjectClassIdList;
+ 	class YAKE_ENT_API sim
+ 	{
+ 	public:
+@@ -43,7 +44,7 @@
+ 		simtime getTime() const;
+ 		real getTimeAsSeconds() const;
+ 		void tick(const real timeElapsed);
+-		void regEntityCreator( const ObjectClassId&amp; id, const ObjectCreatorFn&amp; creatorFn );
++		void regObjectClass( object_class* theClass );
+ 		void addEntityVMBinder( scripting::IBinder* pBinder, const bool bTransferOwnership = true );
+ 		Entity* createEntity(	const ObjectClassId&amp; id, 
+ 								const StringPairVector&amp; components,
+@@ -64,14 +65,17 @@
+ 
+ 		Event&amp; getEvent_onEntitySpawned();
+ 		Event&amp; getEvent_onEntityVMCreated();
++
++		const ObjectClassIdList&amp; getRegisteredObjectClasses() const;
+ 	private:
+ 		scripting::IVM* createEntityVM();
+ 	private:
+-		typedef std::map&lt;ObjectClassId,ObjectCreatorFn&gt; ObjectCreateMap;
++		typedef std::map&lt;ObjectClassId,object_class*&gt; ObjectClassMap;
+ 		typedef std::list&lt;SharedPtr&lt;Object&gt; &gt; ObjectList;
+ 		typedef std::map&lt;ObjectClassId,uint16&gt; ClassIdMap;
+ 
+-		ObjectCreateMap		mObjectCreators;
++		ObjectClassMap		mObjectClasses;
++		ObjectClassIdList	mObjectClassIds;
+ 		ObjectList			mObjects;
+ 		ClassIdMap			mNumericClassIds;
+ 		uint16				mLastNumericClassId;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000181.html">[Yake-svn] r1111 - trunk/yake
+</A></li>
+	<LI>Next message: <A HREF="000182.html">[Yake-svn] r1113 - trunk/yake/yake/base/templates
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#183">[ date ]</a>
+              <a href="thread.html#183">[ thread ]</a>
+              <a href="subject.html#183">[ subject ]</a>
+              <a href="author.html#183">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

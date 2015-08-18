@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1413 - trunk/yake/yake/base/math
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-August/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1413%20-%20trunk/yake/yake/base/math&In-Reply-To=%3C200608022129.k72LTWln002321%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000480.html">
+   <LINK REL="Next"  HREF="000482.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1413 - trunk/yake/yake/base/math</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1413%20-%20trunk/yake/yake/base/math&In-Reply-To=%3C200608022129.k72LTWln002321%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1413 - trunk/yake/yake/base/math">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Wed Aug  2 23:29:33 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000480.html">[Yake-svn] r1412 - trunk/yake/scripts/msvc8
+</A></li>
+        <LI>Next message: <A HREF="000482.html">[Yake-svn] r1414 - trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#481">[ date ]</a>
+              <a href="thread.html#481">[ thread ]</a>
+              <a href="subject.html#481">[ subject ]</a>
+              <a href="author.html#481">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-08-02 23:29:32 +0200 (Wed, 02 Aug 2006)
+New Revision: 1413
+
+Modified:
+   trunk/yake/yake/base/math/yakeGeometry.h
+Log:
+const correctness
+
+Modified: trunk/yake/yake/base/math/yakeGeometry.h
+===================================================================
+--- trunk/yake/yake/base/math/yakeGeometry.h	2006-08-02 21:28:47 UTC (rev 1412)
++++ trunk/yake/yake/base/math/yakeGeometry.h	2006-08-02 21:29:32 UTC (rev 1413)
+@@ -110,9 +110,9 @@
+ 			max = rhs.max;
+ 			return *this;
+ 		}
+-		real getWidth()
++		real getWidth() const
+ 		{ return (max.x - min.x); }
+-		real getHeight()
++		real getHeight() const
+ 		{ return (max.y - min.y); }
+ 	};
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000480.html">[Yake-svn] r1412 - trunk/yake/scripts/msvc8
+</A></li>
+	<LI>Next message: <A HREF="000482.html">[Yake-svn] r1414 - trunk
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#481">[ date ]</a>
+              <a href="thread.html#481">[ thread ]</a>
+              <a href="subject.html#481">[ subject ]</a>
+              <a href="author.html#481">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

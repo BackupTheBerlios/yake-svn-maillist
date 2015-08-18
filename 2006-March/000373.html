@@ -1,0 +1,477 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1303 - in trunk/yake/src/yapp/samples: . physics physics/paging_terrain
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1303%20-%20in%20trunk/yake/src/yapp/samples%3A%20.%20physics%20physics/paging_terrain&In-Reply-To=%3C200603191756.k2JHuRq6012019%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000372.html">
+   <LINK REL="Next"  HREF="000375.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1303 - in trunk/yake/src/yapp/samples: . physics physics/paging_terrain</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1303%20-%20in%20trunk/yake/src/yapp/samples%3A%20.%20physics%20physics/paging_terrain&In-Reply-To=%3C200603191756.k2JHuRq6012019%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1303 - in trunk/yake/src/yapp/samples: . physics physics/paging_terrain">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 19 18:56:27 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000372.html">[Yake-svn] r1302 - in trunk/yake: . common/media/vehicles src/yake/audio src/yake/base src/yake/base/math src/yake/base/native/Linux src/yake/graphics src/yake/plugins/baseLuaBindings src/yake/plugins/graphicsLuaBindings src/yake/plugins/graphicsOgre src/yake/plugins/inputOgre src/yake/plugins/physicsODE src/yake/samples/base/debug src/yake/thread src/yapp src/yapp/base/event src/yapp/loader src/yapp/model src/yapp/plugins src/yapp/plugins/ceguiOgreRendererAdapter src/yapp/plugins/terrainPhysMgr src/yapp/raf src/yapp/samples src/yapp/samples/base/vehicle src/yapp/samples/gui/console src/yapp/samples/misc/cmdrmayhem src/yapp/samples/model/XODE src/yapp/samples/model/dotLink src/yapp/vehicle yake/audio yake/base yake/base/math yake/base/mpl yake/base/native yake/base/templates yake/graphics yake/object yake/physics yake/plugins/graphicsOgre yake/plugins/inputOgre yake/plugins/physicsODE yake/prop yake/samples/common yake/scripting yake/statemachine yake/thread yapp/common yapp/l! oader yapp/model yapp/plugins yapp/plugins/ceguiOgreRendererAdapter yapp/plugins/terrainPhysMgr yapp/raf yapp/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000375.html">[Yake-svn] r1304 - trunk/yake/src/yapp/samples/physics/paging_terrain
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#373">[ date ]</a>
+              <a href="thread.html#373">[ thread ]</a>
+              <a href="subject.html#373">[ subject ]</a>
+              <a href="author.html#373">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-19 18:56:19 +0100 (Sun, 19 Mar 2006)
+New Revision: 1303
+
+Added:
+   trunk/yake/src/yapp/samples/physics/
+   trunk/yake/src/yapp/samples/physics/paging_terrain/
+   trunk/yake/src/yapp/samples/physics/paging_terrain/yakeDemo.cpp
+   trunk/yake/src/yapp/samples/physics/paging_terrain/yakePCH.cpp
+Log:
+patch #1453160 by mj, slightly modified by psy;
+major points includes linux compatibility, OGRE Dagon compatibility, vehicles enhancements, physics enhancements, paging landscape ode&lt;-&gt;ogre physics plugin, and various other fixes.
+
+Added: trunk/yake/src/yapp/samples/physics/paging_terrain/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/physics/paging_terrain/yakeDemo.cpp	2006-03-19 17:54:00 UTC (rev 1302)
++++ trunk/yake/src/yapp/samples/physics/paging_terrain/yakeDemo.cpp	2006-03-19 17:56:19 UTC (rev 1303)
+@@ -0,0 +1,390 @@
++#include &lt;yapp/samples/base/vehicle/yakePCH.h&gt;
++#include &lt;yake/audio/yakeAudio.h&gt;
++#include &lt;yapp/raf/yakeRaf.h&gt;
++#include &lt;yapp/model/yakeModelMovableLink.h&gt;
++#include &lt;yapp/vehicle/yakeVehicle.h&gt;
++#include &lt;yake/input/yakeInput.h&gt;
++
++#include &lt;yapp/vehicle/yakeNativeOde.h&gt;
++
++#include &lt;yake/plugins/graphicsOgre/graphicsOgreCore.h&gt;
++#include &lt;yake/plugins/graphicsOgre/yakeGraphicsSystem.h&gt;
++
++#include &lt;yake/plugins/physicsODE/yakePCH.h&gt;
++#include &lt;yake/plugins/physicsODE/PhysicsSystemODE.h&gt;
++
++#include &lt;yapp/plugins/terrainPhysMgr/TerrainOdeActor.h&gt;
++#include &lt;yapp/plugins/terrainPhysMgr/TerrainPhysicsManager.h&gt;
++
++#include &lt;OgrePagingLandScapeData2DManager.h&gt;
++
++using namespace yake;
++
++/** Configuration of the application */
++struct TheConfiguration : public raf::ApplicationConfiguration
++{
++	virtual StringVector getLibraries()
++	{ return MakeStringVector() &lt;&lt; &quot;graphicsOgre&quot; &lt;&lt; &quot;inputOgre&quot; &lt;&lt; &quot;physicsODE&quot;; }
++
++	virtual StringVector getGraphicsSystems()
++	{ return MakeStringVector() &lt;&lt; &quot;ogre3d&quot;; }
++
++  	virtual StringVector getInputSystems()
++  	{ return MakeStringVector() &lt;&lt; &quot;ogre&quot;; }
++
++	virtual StringVector getPhysicsSystems()
++	{ return MakeStringVector() &lt;&lt; &quot;ode&quot;; }
++};
++
++class VehicleHumanInputController
++{
++public:
++	void setVehicle(vehicle::IVehicle*);
++};
++
++/** Main application state */
++class TheMainState : public raf::RtMainState
++{
++	public:
++	TheMainState(raf::Application&amp; owner) :
++		raf::RtMainState(owner)
++		{
++			enableInstantQuitByKey( input::KC_ESCAPE );
++		}
++
++		~TheMainState()
++		{}
++		
++		void setupTerrain()
++		{
++			YAKE_LOG( &quot;INITIALIZING TERRAIN&quot;);
++
++			Ogre::PagingLandScapeSceneManager * sceneMgr = (Ogre::PagingLandScapeSceneManager *) getSceneMgr();
++			
++			sceneMgr-&gt;setWorldGeometry(&quot;paginglandscape2.cfg&quot;); 
++						
++			pG = new model::Graphical();
++			YAKE_ASSERT( pG);
++			
++			pPh = new model::Physical();
++			YAKE_ASSERT( pPh);
++
++  			sceneMgr-&gt;setOption( &quot;LoadNow&quot;, NULL); 
++// 			sceneMgr-&gt;InitScene();
++// 			sceneMgr-&gt;PagingLandScapeOctreeResize();
++			
++			physics::TerrainPhysicsManager::instance().init( sceneMgr, getPhysicalWorld() );
++		}
++
++		void onMouseMoved( const math::Vector3&amp; rDelta )
++		{
++			getDefaultCamera()-&gt;yaw( -(rDelta.x)*0.13 );
++			getDefaultCamera()-&gt;pitch( -(rDelta.y)*0.13 );
++		}
++
++protected:
++	
++	void createDebugBox( model::complex::Model * model, model::Graphical* pG, model::Physical* pP, math::Vector3  position, math::Vector3  dims)
++	{
++		static int ID = 0; ++ID;
++		
++		/// visual scenenode &amp; entity creation
++		graphics::IEntity* pBoxE = getGraphicalWorld()-&gt;createEntity(&quot;box_1x1x1.mesh&quot;);
++		pBoxE-&gt;setMaterial(&quot;box&quot;);
++				
++		graphics::ISceneNode* pBoxSN = getGraphicalWorld()-&gt;createSceneNode();
++		YAKE_ASSERT( pBoxSN);
++		
++		pBoxSN-&gt;attachEntity( pBoxE );
++		pBoxSN-&gt;setScale( dims);
++		pBoxSN-&gt;setPosition( position );
++				
++		/// Graphical model
++		pG-&gt;addSceneNode( pBoxSN );
++			
++		physics::IActor::Desc debugActorDesc( physics::ACTOR_MOVABLE );
++		physics::IActorPtr pBoxActor = getPhysicalWorld()-&gt;createActor( debugActorDesc);
++		
++		pBoxActor-&gt;createShape( physics::IShape::BoxDesc( dims));
++				
++		pBoxActor-&gt;setPosition( position) ;
++		
++// 		pBoxActor-&gt;getBody().setMass( 0.1);
++	
++		pP-&gt;addActor( pBoxActor, String(&quot;debugBox&quot; ) &lt;&lt; ID);
++				
++		/// Physical model
++		physics::IShapePtrList shapes = pBoxActor-&gt;getShapes();
++		ConstDequeIterator&lt;physics::IShapePtrList&gt; itShape( shapes );
++		const physics::IShapePtr pShape = itShape.getNext();
++		
++ 		model::ModelMovableLink* pLink = new model::ModelMovableLink();
++				
++ 		pLink-&gt;setSource( pShape );
++ 		pLink-&gt;subscribeToPositionChanged( pBoxSN );
++ 		pLink-&gt;subscribeToOrientationChanged( pBoxSN );
++				
++ 		model-&gt;addGraphical( pG);
++		model-&gt;addPhysical( pP );
++		
++ 		model-&gt;addLink( pBoxActor, pBoxSN);
++		
++		physics::TerrainPhysicsManager::instance().placeActorOnTerrain( position, pBoxActor);
++	}
++	
++	virtual void onCreateScene()
++	{
++		YAKE_LOG_INFORMATION(&quot;Creating scene&quot;);
++
++		// create a light
++		graphics::ILight* pLight = getGraphicalWorld()-&gt;createLight();
++		pLight-&gt;setType( graphics::ILight::LT_DIRECTIONAL );
++		pLight-&gt;setDirection( math::Vector3(0,-1,1) );
++		getGraphicalWorld()-&gt;createSceneNode(&quot;lightnode0&quot;)-&gt;attachLight( pLight );
++
++		// position camera and look at the razor
++		getDefaultCamera()-&gt;setNearClipDistance(1);
++		getDefaultCamera()-&gt;setFarClipDistance(100000);
++		
++		getDefaultCamera()-&gt;setPosition(math::Vector3(150, 650, 150));
++		getDefaultCamera()-&gt;lookAt( math::Vector3( 0, 0, 0));
++
++		getPhysicalWorld()-&gt;setGlobalGravity( math::Vector3( 0, -20, 0 ) ); 
++
++		// create ground
++		mGround = new model::complex::Model();
++		
++		math::Vector3 dims( 100, 100, 100);
++		int a = 1500, b = 600;
++		
++		for ( int i = 0; i &lt; 15; i++)
++			createDebugBox( mGround, pG, pPh, math::Vector3( -a + 210*i, b, -a + 210*i), dims);
++	}
++
++	Ogre::SceneManager * getSceneMgr()
++	{
++		graphics::ogre3d::GraphicsSystem* pSys = (graphics::ogre3d::GraphicsSystem *)getApp().getGraphicsSystem();
++			
++		graphics::ogre3d::OgreCore * ogreCore = pSys-&gt;getCore();
++				
++		return ogreCore-&gt;getSceneMgr();
++	}
++		
++	virtual void onDestroyScene()
++	{
++		YAKE_SAFE_DELETE( mGround );
++	}
++
++	virtual void onEnter()
++	{
++		setupTerrain();
++		
++		RtMainState::onEnter();
++		using namespace input;
++
++		//camera controls
++		mActionMap.reg( ACTIONID_A,
++				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_A, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_A, boost::bind(&amp;TheMainState::onCameraLeft,this) );
++		
++		mActionMap.reg( ACTIONID_D,
++				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_D, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_D, boost::bind(&amp;TheMainState::onCameraRight,this) );
++
++		mActionMap.reg( ACTIONID_W,
++				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_W, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_W, boost::bind(&amp;TheMainState::onCameraUp,this) );
++
++		mActionMap.reg( ACTIONID_S,
++				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_S, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_S, boost::bind(&amp;TheMainState::onCameraDown,this) );
++
++		mActionMap.reg( ACTIONID_T,
++				new input::KeyboardActionCondition( getApp().getKeyboard(), KC_T, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_T, boost::bind(&amp;TheMainState::cycleCameraDetailWiews,this) );
++
++		// front wheel controls
++
++		mActionMap.reg( ACTIONID_LEFT,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_COMMA, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_LEFT, boost::bind(&amp;TheMainState::onFrontWheelLeft,this) );
++
++		mActionMap.reg( ACTIONID_RIGHT,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_PERIOD, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_RIGHT, boost::bind(&amp;TheMainState::onFrontWheelRight,this) );
++
++		// thruster controls
++
++		mActionMap.reg( ACTIONID_STRAFE_LEFT,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_LEFT, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_STRAFE_LEFT, boost::bind(&amp;TheMainState::onStrafeLeft,this) );
++
++		mActionMap.reg( ACTIONID_STRAFE_RIGHT,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_RIGHT, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_STRAFE_RIGHT, boost::bind(&amp;TheMainState::onStrafeRight,this) );
++
++		mActionMap.reg( ACTIONID_FORWARD,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_UP, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_FORWARD, boost::bind(&amp;TheMainState::onForward,this) );
++
++		mActionMap.reg( ACTIONID_REVERSE,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_DOWN, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_REVERSE, boost::bind(&amp;TheMainState::onReverse,this) );
++
++		mActionMap.reg( ACTIONID_UP,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_PGUP, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_UP, boost::bind(&amp;TheMainState::onUp,this) );
++		
++		mActionMap.reg( ACTIONID_DOWN,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_PGDOWN, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_DOWN, boost::bind(&amp;TheMainState::onDown,this) );
++	
++	}
++
++	virtual void onExit()
++	{}
++
++	virtual void onFrame(const real timeElapsed)
++	{
++		mActionMap.update();
++
++		ConstDequeIterator&lt; ActionIdList &gt; itAction( mActiveActions );
++		
++		while (itAction.hasMoreElements())
++		{
++ 			const input::ActionId activeId = itAction.getNext();
++
++			 if (activeId == input::ACTIONID_A)
++			{
++				getDefaultCamera()-&gt;translate(  math::Vector3( -2.5, 0,0));
++			}
++			else if (activeId == input::ACTIONID_D)
++			{	
++				getDefaultCamera()-&gt;translate(  math::Vector3( 2.5, 0,0));
++			}
++			else if (activeId == input::ACTIONID_S)
++			{	
++				math::Vector3 currentDir = getDefaultCamera()-&gt;getDirection();
++				currentDir *= -15;
++				
++				getDefaultCamera()-&gt;translate(  currentDir);
++			}
++			else if (activeId == input::ACTIONID_W)
++			{	
++				math::Vector3 currentDir = getDefaultCamera()-&gt;getDirection();
++				currentDir *= 15;
++				
++				getDefaultCamera()-&gt;translate(  currentDir);
++			}
++			else if( activeId == input::ACTIONID_UP)
++			{
++				math::Vector3 dims( 100, 100, 100);
++				int a = 1500, b = 600;
++		
++				for ( int i = 0; i &lt; 15; i++)
++					createDebugBox( mGround, pG, pPh, math::Vector3( -a + 210*i, b, -a + 210*i), dims);
++			}
++		}
++   		mGround-&gt;updatePhysics( timeElapsed);
++ 		mGround-&gt;updateGraphics( timeElapsed);
++		
++		mActiveActions.clear();
++	}
++	
++protected:
++	void onStrafeLeft()
++	{ mActiveActions.insert( input::ACTIONID_STRAFE_LEFT ); }
++
++	void onStrafeRight()
++	{ mActiveActions.insert( input::ACTIONID_STRAFE_RIGHT ); }
++
++	void onForward()
++	{ mActiveActions.insert( input::ACTIONID_FORWARD ); }
++
++	void onReverse()
++	{ mActiveActions.insert( input::ACTIONID_REVERSE ); }
++	
++	void onUp()
++	{ mActiveActions.insert( input::ACTIONID_UP ); }
++	
++	void onDown()
++	{ mActiveActions.insert( input::ACTIONID_DOWN);}
++	
++	void onFrontWheelLeft()
++	{ mActiveActions.insert( input::ACTIONID_LEFT ); }
++	
++	void onFrontWheelRight()
++	{ mActiveActions.insert( input::ACTIONID_RIGHT ); }
++	
++	void onCameraLeft()
++	{ mActiveActions.insert( input::ACTIONID_A); }
++	
++	void onCameraRight()
++	{ mActiveActions.insert( input::ACTIONID_D); }
++
++	void onCameraUp()
++	{ mActiveActions.insert( input::ACTIONID_W); }
++
++	void onCameraDown()
++	{ mActiveActions.insert( input::ACTIONID_S); }
++
++	void cycleCameraDetailWiews()
++	{
++		char currentDetailLevel = getDefaultCamera()-&gt;getDetailLevel();
++//  		currentDetailLevel++;
++//  		if( currentDetailLevel &gt; graphics::ICamera::SDL_SOLID)
++			currentDetailLevel = graphics::SDL_WIREFRAME;
++		
++		getDefaultCamera()-&gt;setDetailLevel ( (graphics::SceneDetailLevel)currentDetailLevel);
++	}
++
++private:
++	model::complex::Model*	mGround;
++	
++	input::ActionMap		mActionMap;
++
++	typedef std::set&lt;input::ActionId&gt; ActionIdList;
++	ActionIdList			mActiveActions;
++	
++	model::Graphical* pG;
++	model::Physical* pPh;
++};
++
++/** The mighty application itself! */
++class TheApp : public raf::ExampleApplication&lt;TheConfiguration&gt;
++{
++public:
++	TheApp() 
++	{
++		mainState = new TheMainState( *this);
++	}
++
++	void onMouseMoved( const math::Vector3&amp; rDelta )
++	{
++		mainState-&gt;onMouseMoved( rDelta);
++	}
++
++	bool onInitialise() 
++	{ 
++ 		getMouseEventGenerator()-&gt;subscribeToMouseMoved( Bind1( &amp;TheApp::onMouseMoved, this ) );
++		return true; 
++	}
++
++protected:
++	TheMainState * mainState;
++		
++	virtual raf::MainState* createMainState()
++	{
++		return mainState;
++	}
++};
++
++int main( int argc, char** argv )
++{
++	// Use default executor for convenience.
++	// It's always possible to manually execute TheApp::initialise() etc.
++	TheApp theApp;
++	
++	return (raf::runApplication( theApp )) ? 0 : 1;
++}
++
+
+Added: trunk/yake/src/yapp/samples/physics/paging_terrain/yakePCH.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/physics/paging_terrain/yakePCH.cpp	2006-03-19 17:54:00 UTC (rev 1302)
++++ trunk/yake/src/yapp/samples/physics/paging_terrain/yakePCH.cpp	2006-03-19 17:56:19 UTC (rev 1303)
+@@ -0,0 +1 @@
++#include &lt;yapp/samples/base/vehicle/yakePCH.h&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000372.html">[Yake-svn] r1302 - in trunk/yake: . common/media/vehicles src/yake/audio src/yake/base src/yake/base/math src/yake/base/native/Linux src/yake/graphics src/yake/plugins/baseLuaBindings src/yake/plugins/graphicsLuaBindings src/yake/plugins/graphicsOgre src/yake/plugins/inputOgre src/yake/plugins/physicsODE src/yake/samples/base/debug src/yake/thread src/yapp src/yapp/base/event src/yapp/loader src/yapp/model src/yapp/plugins src/yapp/plugins/ceguiOgreRendererAdapter src/yapp/plugins/terrainPhysMgr src/yapp/raf src/yapp/samples src/yapp/samples/base/vehicle src/yapp/samples/gui/console src/yapp/samples/misc/cmdrmayhem src/yapp/samples/model/XODE src/yapp/samples/model/dotLink src/yapp/vehicle yake/audio yake/base yake/base/math yake/base/mpl yake/base/native yake/base/templates yake/graphics yake/object yake/physics yake/plugins/graphicsOgre yake/plugins/inputOgre yake/plugins/physicsODE yake/prop yake/samples/common yake/scripting yake/statemachine yake/thread yapp/common yapp/l! oader yapp/model yapp/plugins yapp/plugins/ceguiOgreRendererAdapter yapp/plugins/terrainPhysMgr yapp/raf yapp/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000375.html">[Yake-svn] r1304 - trunk/yake/src/yapp/samples/physics/paging_terrain
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#373">[ date ]</a>
+              <a href="thread.html#373">[ thread ]</a>
+              <a href="subject.html#373">[ subject ]</a>
+              <a href="author.html#373">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1338 - trunk/yake/yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1338%20-%20trunk/yake/yapp/vehicle&In-Reply-To=%3C200606122212.k5CMC9Jv028422%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000405.html">
+   <LINK REL="Next"  HREF="000407.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1338 - trunk/yake/yapp/vehicle</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1338%20-%20trunk/yake/yapp/vehicle&In-Reply-To=%3C200606122212.k5CMC9Jv028422%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1338 - trunk/yake/yapp/vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Jun 13 00:12:09 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000405.html">[Yake-svn] r1337 - trunk/yake/yapp/base
+</A></li>
+        <LI>Next message: <A HREF="000407.html">[Yake-svn] r1339 - trunk/yake/src/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#406">[ date ]</a>
+              <a href="thread.html#406">[ thread ]</a>
+              <a href="subject.html#406">[ subject ]</a>
+              <a href="author.html#406">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-13 00:12:09 +0200 (Tue, 13 Jun 2006)
+New Revision: 1338
+
+Modified:
+   trunk/yake/yapp/vehicle/yakeInterfaces.h
+   trunk/yake/yapp/vehicle/yakeNativeOde.h
+   trunk/yake/yapp/vehicle/yakePrerequisites.h
+   trunk/yake/yapp/vehicle/yakeTemplates.h
+Log:
+ported to new 'model' component
+
+Modified: trunk/yake/yapp/vehicle/yakeInterfaces.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeInterfaces.h	2006-06-12 22:11:26 UTC (rev 1337)
++++ trunk/yake/yapp/vehicle/yakeInterfaces.h	2006-06-12 22:12:09 UTC (rev 1338)
+@@ -29,6 +29,7 @@
+ 
+ #include &lt;yapp/vehicle/yakePrerequisites.h&gt;
+ #include &lt;yapp/vehicle/yakeTemplates.h&gt;
++#include &lt;yake/graphics/yakeGraphics.h&gt;
+ 
+ namespace yake {
+ namespace vehicle {
+
+Modified: trunk/yake/yapp/vehicle/yakeNativeOde.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeNativeOde.h	2006-06-12 22:11:26 UTC (rev 1337)
++++ trunk/yake/yapp/vehicle/yakeNativeOde.h	2006-06-12 22:12:09 UTC (rev 1338)
+@@ -135,7 +135,7 @@
+ 		typedef AssocVector&lt;String,MountPoint*&gt; MountPointList;
+ 		MountPointList		mMountPoints;
+ 
+-		model::complex::Model*	mDebugModel;
++		model::Model*		mDebugModel;
+ 	};
+ 
+ 	class GearBox;
+
+Modified: trunk/yake/yapp/vehicle/yakePrerequisites.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakePrerequisites.h	2006-06-12 22:11:26 UTC (rev 1337)
++++ trunk/yake/yapp/vehicle/yakePrerequisites.h	2006-06-12 22:12:09 UTC (rev 1338)
+@@ -33,5 +33,6 @@
+ #	define YAKE_VEH_API DLLIMPORT
+ #endif
+ 
++#include &lt;yake/model/model.h&gt;
+ 
+ #endif
+
+Modified: trunk/yake/yapp/vehicle/yakeTemplates.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeTemplates.h	2006-06-12 22:11:26 UTC (rev 1337)
++++ trunk/yake/yapp/vehicle/yakeTemplates.h	2006-06-12 22:12:09 UTC (rev 1338)
+@@ -28,6 +28,7 @@
+ #define YAKE_VEHICLE_TEMPLATES_H
+ 
+ #include &quot;yapp/vehicle/yakePrerequisites.h&quot;
++#include &quot;yake/physics/yakePhysics.h&quot;
+ 
+ namespace yake {
+ namespace vehicle {
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000405.html">[Yake-svn] r1337 - trunk/yake/yapp/base
+</A></li>
+	<LI>Next message: <A HREF="000407.html">[Yake-svn] r1339 - trunk/yake/src/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#406">[ date ]</a>
+              <a href="thread.html#406">[ thread ]</a>
+              <a href="subject.html#406">[ subject ]</a>
+              <a href="author.html#406">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

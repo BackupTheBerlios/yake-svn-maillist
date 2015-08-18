@@ -1,0 +1,1391 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1176 - in trunk/yake/yake: . object
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-January/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1176%20-%20in%20trunk/yake/yake%3A%20.%20object&In-Reply-To=%3C200601151817.k0FIHTFW015283%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   
+   <LINK REL="Next"  HREF="000247.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1176 - in trunk/yake/yake: . object</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1176%20-%20in%20trunk/yake/yake%3A%20.%20object&In-Reply-To=%3C200601151817.k0FIHTFW015283%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1176 - in trunk/yake/yake: . object">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Jan 15 19:17:29 CET 2006</I>
+    <P><UL>
+        
+        <LI>Next message: <A HREF="000247.html">[Yake-svn] r1177 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#246">[ date ]</a>
+              <a href="thread.html#246">[ thread ]</a>
+              <a href="subject.html#246">[ subject ]</a>
+              <a href="author.html#246">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-01-15 19:17:26 +0100 (Sun, 15 Jan 2006)
+New Revision: 1176
+
+Added:
+   trunk/yake/yake/object/
+   trunk/yake/yake/object/ClassAndObjectIdManager.h
+   trunk/yake/yake/object/ClassAndObjectIdManager.inl
+   trunk/yake/yake/object/ObjectContainer.h
+   trunk/yake/yake/object/ObjectId.h
+   trunk/yake/yake/object/ObjectId.inl
+   trunk/yake/yake/object/ObjectManager.h
+   trunk/yake/yake/object/ObjectManager.inl
+   trunk/yake/yake/object/common.h
+   trunk/yake/yake/object/pch.h
+   trunk/yake/yake/object/yakeObjects.h
+Log:
+initial revision
+
+Added: trunk/yake/yake/object/ClassAndObjectIdManager.h
+===================================================================
+--- trunk/yake/yake/object/ClassAndObjectIdManager.h	2005-12-07 22:44:06 UTC (rev 1175)
++++ trunk/yake/yake/object/ClassAndObjectIdManager.h	2006-01-15 18:17:26 UTC (rev 1176)
+@@ -0,0 +1,92 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef CLASSANDOBJECTIDMANAGER_H
++#define CLASSANDOBJECTIDMANAGER_H
++
++#include &quot;common.h&quot;
++#include &quot;ObjectId.h&quot;
++
++namespace yake {
++namespace OBJECTS_NAMESPACE {
++
++	template&lt;typename classdata_type,typename objectid_type = ::object::ObjectId&lt;default_objectid_traits&gt; &gt;
++	struct ClassEntryT
++	{
++		// official interface:
++		typedef classdata_type data_type;
++		ClassEntryT();
++		virtual ~ClassEntryT(); // &lt;= virtual so as to allow derived class entries.
++		void setData(const classdata_type&amp;);
++		const classdata_type&amp; getData() const;
++		ResultCode addObjectId(const objectid_type&amp; objId);
++		ResultCode removeObjectId(const objectid_type&amp; objId);
++		typename objectid_type::SerialNo nextSerialNo();
++		typename objectid_type::ObjectIdSet getObjectIds() const;
++		// other things:
++	private:
++		typename objectid_type::ObjectIdSet		ids_;
++		typename objectid_type::SerialNo		lastSerialNo_;
++		classdata_type	data_;
++	};
++
++	template&lt;typename classentry_type,typename objectid_type = ::object::ObjectId&lt;default_objectid_traits&gt; &gt;
++	struct ClassAndObjectIdManager
++	{
++	public:
++		typedef objectid_type ObjectId;
++		// pull in types
++		typedef typename objectid_type::ClassId ClassId;
++		typedef typename objectid_type::ObjectIdSet ObjectIdSet;
++		typedef typename objectid_type::ClassIdSet ClassIdSet;
++
++		ClassAndObjectIdManager();
++		~ClassAndObjectIdManager();
++
++		typedef typename classentry_type::data_type classdata_type;
++		ResultCode registerClassId(const ClassId, const classdata_type&amp; = classdata_type());
++		const ClassIdSet&amp; getRegisteredClasses() const;
++		const classdata_type&amp; getClassData(const ClassId) const; // may throw
++		bool hasClass(const ClassId) const;
++		void clear();
++
++		ObjectId createObjectId(const ClassId);
++		ResultCode addObjectId(const ObjectId&amp;);
++		ObjectIdSet getObjectIds(const ClassId) const;
++		ResultCode removeObjectId(const ObjectId&amp;);
++	private:
++		typedef classentry_type ClassEntry;
++		typedef std::map&lt;ClassId,ClassEntry&gt; ClassMap;
++		ClassMap		classes_;
++		ClassIdSet		classIds_;
++	};
++
++	#include &quot;ClassAndObjectIdManager.inl&quot;
++
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/object/ClassAndObjectIdManager.inl
+===================================================================
+--- trunk/yake/yake/object/ClassAndObjectIdManager.inl	2005-12-07 22:44:06 UTC (rev 1175)
++++ trunk/yake/yake/object/ClassAndObjectIdManager.inl	2006-01-15 18:17:26 UTC (rev 1176)
+@@ -0,0 +1,168 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++
++	template&lt;typename classdata_type,typename objectid_type&gt;
++	typename objectid_type::SerialNo ClassEntryT&lt;classdata_type,objectid_type&gt;::nextSerialNo()
++	{
++		if (lastSerialNo_ == std::numeric_limits&lt;typename objectid_type::SerialNo&gt;::max())
++			return lastSerialNo_;
++		return ++lastSerialNo_;
++	}
++	template&lt;typename classdata_type,typename objectid_type&gt;
++	ClassEntryT&lt;classdata_type,objectid_type&gt;::ClassEntryT() 
++		: lastSerialNo_(0)
++	{
++	}
++	template&lt;typename classdata_type,typename objectid_type&gt;
++	ClassEntryT&lt;classdata_type,objectid_type&gt;::~ClassEntryT()
++	{
++	}
++	template&lt;typename classdata_type,typename objectid_type&gt;
++	ResultCode ClassEntryT&lt;classdata_type,objectid_type&gt;::addObjectId(const objectid_type&amp; objId)
++	{
++	#ifdef _DEBUG // set::insert() doesn't hurt...
++		if (ids_.find( objId ) != ids_.end())
++			return RC_ALREADY_REGISTERED;
++	#endif
++		ids_.insert( objId );
++		return RC_OK;
++	}
++	template&lt;typename classdata_type,typename objectid_type&gt;
++	ResultCode ClassEntryT&lt;classdata_type,objectid_type&gt;::removeObjectId(const objectid_type&amp; objId)
++	{
++		typename objectid_type::ObjectIdSet::iterator itId = ids_.find( objId );
++		if (itId != ids_.end())
++		{
++			ids_.erase( objId );
++			return RC_OK;
++		}
++		return RC_NOT_FOUND;
++	}
++	template&lt;typename classdata_type,typename objectid_type&gt;
++	typename objectid_type::ObjectIdSet ClassEntryT&lt;classdata_type,objectid_type&gt;::getObjectIds() const
++	{
++		return ids_;
++	}
++	template&lt;typename classdata_type,typename objectid_type&gt;
++	void ClassEntryT&lt;classdata_type,objectid_type&gt;::setData(const classdata_type&amp; data)
++	{
++		data_ = data;
++	}
++	template&lt;typename classdata_type,typename objectid_type&gt;
++	const classdata_type&amp; ClassEntryT&lt;classdata_type,objectid_type&gt;::getData() const
++	{
++		return data_;
++	}
++
++	//--------
++
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::ClassAndObjectIdManager()
++	{
++	}
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::~ClassAndObjectIdManager()
++	{
++		clear();
++	}
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	void ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::clear()
++	{
++		classes_.clear();
++		classIds_.clear();
++	}
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	bool ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::hasClass(const ClassId clsId) const
++	{
++		return util::contains(classIds_,clsId);
++	}
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	ResultCode ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::registerClassId(const ClassId clsId, const classdata_type&amp; data)
++	{
++		ClassMap::const_iterator it = classes_.find( clsId );
++		if (it != classes_.end())
++		{
++			if (classIds_.find( clsId ) != classIds_.end())
++				classIds_.insert( clsId );
++			return RC_ALREADY_REGISTERED;
++		}
++		ClassEntry e;
++		e.setData(data);
++		classes_.insert( ClassMap::value_type(clsId,e) );
++		classIds_.insert( clsId );
++		return RC_OK;
++	}
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	const typename objectid_type::ClassIdSet&amp; ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::getRegisteredClasses() const
++	{
++		return classIds_;
++	}
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	objectid_type ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::createObjectId(const typename objectid_type::ClassId clsId)
++	{
++		ClassMap::iterator it = classes_.find( clsId );
++		if (it == classes_.end())
++			return ObjectId::kNull;
++		uint16 no = it-&gt;second.nextSerialNo();
++		if (no == std::numeric_limits&lt;uint16&gt;::max())
++			return ObjectId::kNull;
++		ObjectId id( clsId, no );
++		it-&gt;second.addObjectId( id );
++		return id;
++	}
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	ResultCode ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::addObjectId(const ObjectId&amp; objId)
++	{
++		ClassMap::iterator it = classes_.find( objId.classId() );
++		if (it == classes_.end())
++			return RC_UNKNOWN_CLASS;
++		return it-&gt;second.addObjectId(objId);
++	}
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	typename objectid_type::ObjectIdSet ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::getObjectIds(const ClassId clsId) const
++	{
++		ClassMap::const_iterator it = classes_.find( clsId );
++		if (it == classes_.end())
++			return ObjectIdSet();
++		return it-&gt;second.getObjectIds();
++	}
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	ResultCode ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::removeObjectId(const ObjectId&amp; objId)
++	{
++		ClassMap::iterator it = classes_.find( objId.classId() );
++		if (it == classes_.end())
++			return RC_UNKNOWN_CLASS;
++		return it-&gt;second.removeObjectId( objId );
++	}
++	template&lt;typename classentry_type,typename objectid_type&gt;
++	typename const classentry_type::data_type&amp; ClassAndObjectIdManager&lt;classentry_type,objectid_type&gt;::getClassData(const ClassId clsId) const
++	{
++		ClassMap::const_iterator it = classes_.find( clsId );
++		if (it == classes_.end())
++			throw &quot;ClassAndObjectIdManager&lt;&gt;::getClassData(): Class entry not found!&quot;;
++		return it-&gt;second.getData();
++	}
+\ No newline at end of file
+
+Added: trunk/yake/yake/object/ObjectContainer.h
+===================================================================
+--- trunk/yake/yake/object/ObjectContainer.h	2005-12-07 22:44:06 UTC (rev 1175)
++++ trunk/yake/yake/object/ObjectContainer.h	2006-01-15 18:17:26 UTC (rev 1176)
+@@ -0,0 +1,104 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef OBJECTCONTAINER_H
++#define OBJECTCONTAINER_H
++
++namespace yake {
++namespace OBJECTS_NAMESPACE {
++
++	template&lt;typename object_type,typename objectid_type = ObjectId&lt;default_objectid_traits&gt; &gt;
++	struct ObjectContainer
++	{
++	public:
++		typedef objectid_type ObjectId;
++
++		ObjectContainer();
++		~ObjectContainer();
++
++		bool addObject(const ObjectId&amp;, object_type*);
++		object_type* removeObject(const ObjectId&amp;);
++		//void removeObject(object_type*);
++		//bool destroyObject(const ObjectId&amp;); //&lt;= needs destruction policy?
++		object_type* getObject(const ObjectId&amp;) const;
++	private:
++		typedef std::map&lt;ObjectId,object_type*&gt; IdObjMap;
++		IdObjMap	id2obj_;
++	};
++	template&lt;typename object_type,typename objectid_type&gt;
++	ObjectContainer&lt;object_type,objectid_type&gt;::ObjectContainer()
++	{}
++	template&lt;typename object_type,typename objectid_type&gt;
++	ObjectContainer&lt;object_type,objectid_type&gt;::~ObjectContainer()
++	{
++		assert( id2obj_.empty() );
++	}
++	template&lt;typename object_type,typename objectid_type&gt;
++	bool ObjectContainer&lt;object_type,objectid_type&gt;::addObject(const ObjectId&amp; objId, object_type* obj)
++	{
++		assert( obj );
++		if (!obj)
++			return false;
++		assert( !objId.isNull() );
++		if (objId.isNull())
++			return false;
++		const bool exists = util::map_contains( id2obj_, objId );
++		assert( !exists );
++		if (exists)
++			return false;
++		id2obj_.insert( IdObjMap::value_type(objId,obj) );
++		return true;
++	}
++	template&lt;typename object_type,typename objectid_type&gt;
++	object_type* ObjectContainer&lt;object_type,objectid_type&gt;::removeObject(const ObjectId&amp; objId)
++	{
++		assert( !objId.isNull() );
++		if (objId.isNull())
++			return 0;
++		IdObjMap::iterator it = id2obj_.find( objId );
++		assert( it != id2obj_.end() );
++		if (it == id2obj_.end())
++			return 0;
++		object_type* obj = it-&gt;second;
++		id2obj_.erase( it );
++		return obj;
++	}
++	template&lt;typename object_type,typename objectid_type&gt;
++	object_type* ObjectContainer&lt;object_type,objectid_type&gt;::getObject(const ObjectId&amp; objId) const
++	{
++		assert( !objId.isNull() );
++		if (objId.isNull())
++			return 0;
++		IdObjMap::const_iterator it = id2obj_.find( objId );
++		assert( it != id2obj_.end() );
++		if (it == id2obj_.end())
++			return 0;
++		return it-&gt;second;
++	}
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/object/ObjectId.h
+===================================================================
+--- trunk/yake/yake/object/ObjectId.h	2005-12-07 22:44:06 UTC (rev 1175)
++++ trunk/yake/yake/object/ObjectId.h	2006-01-15 18:17:26 UTC (rev 1176)
+@@ -0,0 +1,96 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef OBJECTID_H
++#define OBJECTID_H
++
++#include &quot;common.h&quot;
++
++namespace yake {
++namespace OBJECTS_NAMESPACE {
++
++	struct default_objectid_traits
++	{
++		typedef uint16 classid_type;
++		typedef uint16 serialno_type;
++		typedef uint32 classid_combined_type;
++		static const size_t kNumClassIdBits = 16;
++		static const size_t kNumSerialNoBits = 16;
++		static const classid_type kFullClassIdMask = 0xffff;
++		static const serialno_type kFullSerialNoMask = 0xffff;
++	};
++
++	template&lt;typename objectid_traits = default_objectid_traits&gt;
++	struct ObjectId
++	{
++	public:
++		typedef objectid_traits traits;
++		typedef typename traits::classid_type ClassId;
++		typedef typename traits::serialno_type SerialNo;
++		typedef typename traits::classid_combined_type CombinedType;
++		typedef ObjectId&lt;traits&gt; this_type;
++
++		static const ObjectId kNull;
++
++		typedef std::vector&lt;ClassId&gt; ClassIdList;
++		typedef std::set&lt;ClassId&gt; ClassIdSet;
++		typedef std::map&lt;ClassId,ClassId&gt; ClassIdMap;
++		typedef std::vector&lt;this_type&gt; ObjectIdList;
++		typedef std::set&lt;this_type&gt; ObjectIdSet;
++
++		ObjectId(const ClassId, const SerialNo);
++		ObjectId(const ObjectId&amp;);
++		ObjectId(const CombinedType = 0); // also default c'tor
++		ObjectId&amp; operator=(const ObjectId&amp;);
++		ObjectId&amp; operator=(const CombinedType);
++		ClassId classId() const;
++		SerialNo serialNo() const;
++		void setClassId(const ClassId);
++		void setSerialNo(const SerialNo);
++		bool operator==(const ObjectId&amp; rhs);
++		bool operator!=(const ObjectId&amp; rhs);
++		bool operator&lt;(const ObjectId&amp; rhs);
++		bool operator&lt;=(const ObjectId&amp; rhs);
++		bool operator&gt;(const ObjectId&amp; rhs);
++		bool operator&gt;=(const ObjectId&amp; rhs);
++		operator CombinedType() const;
++		bool isNull() const;
++	private:
++		CombinedType	id_;
++	};
++
++	#include &quot;ObjectId.inl&quot;
++} // namespace object
++} // namespace yake
++
++template&lt;typename T&gt;
++inline std::ostream&amp; operator &lt;&lt; (std::ostream&amp; os, const ::yake::OBJECTS_NAMESPACE::ObjectId&lt;T&gt;&amp; rhs)
++{
++	os &lt;&lt; &quot;ObjectId(ClassId=&quot; &lt;&lt; std::hex &lt;&lt; &quot;0x&quot; &lt;&lt; rhs.classId() &lt;&lt; &quot;, SerialNo=&quot; &lt;&lt; std::hex &lt;&lt; &quot;0x&quot; &lt;&lt; rhs.serialNo() &lt;&lt; &quot;)&quot; &lt;&lt; std::dec;
++	return os;
++}
++
++#endif
+
+Added: trunk/yake/yake/object/ObjectId.inl
+===================================================================
+--- trunk/yake/yake/object/ObjectId.inl	2005-12-07 22:44:06 UTC (rev 1175)
++++ trunk/yake/yake/object/ObjectId.inl	2006-01-15 18:17:26 UTC (rev 1176)
+@@ -0,0 +1,113 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++template&lt;typename objectid_traits&gt;
++const typename ObjectId&lt;objectid_traits&gt;::this_type ObjectId&lt;objectid_traits&gt;::kNull = ObjectId&lt;objectid_traits&gt;(std::numeric_limits&lt;CombinedType&gt;::max());
++
++template&lt;typename objectid_traits&gt;
++bool ObjectId&lt;objectid_traits&gt;::isNull() const
++{
++	return (*this == kNull);
++}
++template&lt;typename objectid_traits&gt;
++ObjectId&lt;objectid_traits&gt;::ObjectId(const ClassId clsId, const SerialNo no) : id_( no | (clsId&lt;&lt;16) )
++{
++}
++template&lt;typename objectid_traits&gt;
++ObjectId&lt;objectid_traits&gt;::ObjectId(const ObjectId&amp; other) : id_(other.id_)
++{
++}
++template&lt;typename objectid_traits&gt;
++ObjectId&lt;objectid_traits&gt;::ObjectId(const CombinedType id) : id_(id)
++{
++}
++template&lt;typename objectid_traits&gt;
++ObjectId&lt;objectid_traits&gt;&amp; ObjectId&lt;objectid_traits&gt;::operator=(const ObjectId&amp; rhs)
++{
++	id_ = rhs.id_;
++	return *this;
++}
++template&lt;typename objectid_traits&gt;
++ObjectId&lt;objectid_traits&gt;&amp; ObjectId&lt;objectid_traits&gt;::operator=(const CombinedType id)
++{
++	id_ = id;
++	return *this;
++}
++template&lt;typename objectid_traits&gt;
++typename ObjectId&lt;objectid_traits&gt;::ClassId ObjectId&lt;objectid_traits&gt;::classId() const
++{
++	return ((id_&gt;&gt;CombinedType(traits::kNumSerialNoBits)) &amp; traits::kFullClassIdMask);
++}
++template&lt;typename objectid_traits&gt;
++void ObjectId&lt;objectid_traits&gt;::setClassId(const ClassId clsId)
++{
++	id_ = serialNo() | (clsId&lt;&lt;traits::kNumSerialNoBits);
++}
++template&lt;typename objectid_traits&gt;
++typename ObjectId&lt;objectid_traits&gt;::SerialNo ObjectId&lt;objectid_traits&gt;::serialNo() const
++{
++	return (id_ &amp; traits::kFullSerialNoMask);
++}
++template&lt;typename objectid_traits&gt;
++void ObjectId&lt;objectid_traits&gt;::setSerialNo(const SerialNo no)
++{
++	id_ = no | (classId()&lt;&lt;traits::kNumSerialNoBits);
++}
++template&lt;typename objectid_traits&gt;
++bool ObjectId&lt;objectid_traits&gt;::operator==(const ObjectId&amp; rhs)
++{
++	return id_ == rhs.id_;
++}
++template&lt;typename objectid_traits&gt;
++bool ObjectId&lt;objectid_traits&gt;::operator!=(const ObjectId&amp; rhs)
++{
++	return !(*this == rhs);
++}
++template&lt;typename objectid_traits&gt;
++bool ObjectId&lt;objectid_traits&gt;::operator&lt;(const ObjectId&amp; rhs)
++{
++	return (id_ &lt; rhs.id_);
++}
++template&lt;typename objectid_traits&gt;
++bool ObjectId&lt;objectid_traits&gt;::operator&lt;=(const ObjectId&amp; rhs)
++{
++	return (id_ &lt;= rhs.id_);
++}
++template&lt;typename objectid_traits&gt;
++bool ObjectId&lt;objectid_traits&gt;::operator&gt;(const ObjectId&amp; rhs)
++{
++	return (id_ &gt; rhs.id_);
++}
++template&lt;typename objectid_traits&gt;
++bool ObjectId&lt;objectid_traits&gt;::operator&gt;=(const ObjectId&amp; rhs)
++{
++	return (id_ &gt;= rhs.id_);
++}
++template&lt;typename objectid_traits&gt;
++ObjectId&lt;objectid_traits&gt;::operator CombinedType() const
++{
++	return id_;
++}
+
+Added: trunk/yake/yake/object/ObjectManager.h
+===================================================================
+--- trunk/yake/yake/object/ObjectManager.h	2005-12-07 22:44:06 UTC (rev 1175)
++++ trunk/yake/yake/object/ObjectManager.h	2006-01-15 18:17:26 UTC (rev 1176)
+@@ -0,0 +1,178 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef OBJECTMANAGER_H
++#define OBJECTMANAGER_H
++
++namespace yake {
++namespace OBJECTS_NAMESPACE {
++	/**
++		@Remarks Requirements for object_type:
++					- method: ObjectId id() const
++	*/
++	template&lt;typename obj_type,typename objectid_type = ObjectId&lt;default_objectid_traits&gt; &gt;
++	struct ObjectManager
++	{
++	public:
++		typedef obj_type object_type;
++		typedef objectid_type ObjectId;
++		typedef typename objectid_type::ClassId ClassId;
++		typedef typename objectid_type::ClassIdSet ClassIdSet;
++
++		typedef boost::function&lt;object_type*(const ObjectId&amp;)&gt; CreateObjectFn;
++		typedef boost::function&lt;void(object_type*)&gt; DestroyObjectFn;
++		typedef ObjectContainer&lt;object_type&gt; object_ctr_type;
++
++		typedef boost::function&lt;void(object_type*)&gt; AboutToDestroyObjectFn; //@todo use!!
++		typedef boost::function&lt;void(object_type*)&gt; ObjectCreatedFn; //@todo use!!
++
++		typedef std::map&lt;ClassId,ClassId&gt; ClassIdMap;
++
++		ObjectManager();
++		~ObjectManager();
++
++		// class registration
++		void setClassIdGenerationRange(const ClassId min, const ClassId max);
++
++		/** Register class auto-generating an id in the process. */
++		std::pair&lt;ResultCode,ClassId&gt; registerClass(const std::string&amp; name, const CreateObjectFn&amp;, const DestroyObjectFn&amp;);
++		/** Register class with specific id. */
++		ResultCode registerClass(const ClassId clsId, const std::string&amp; name, const CreateObjectFn&amp;, const DestroyObjectFn&amp;);
++		/** Return class id for string id. */
++		std::pair&lt;ResultCode,ClassId&gt; getClassId(const std::string&amp; name) const;
++		/** Return name for class id. */
++		std::pair&lt;ResultCode,std::string&gt; getClassName(const ClassId) const;
++		/** Register class alias to registered class using ClassIds.
++			@Remarks One *cannot* create an alias to an alias.
++				Furthermore the aliasClsId shall not be identical to targetClsId!
++		*/
++		ResultCode registerClassAlias(const ClassId aliasClsId, const ClassId targetClsId);
++		/** Register class alias to registered class using string class id.
++			@Remarks One *cannot* create an alias to an alias.
++				Furthermore &quot;aliasId&quot; shall not be the string id of a registered class!
++		*/
++		ResultCode registerClassAlias(const std::string&amp; aliasName, const ClassId targetClsId);
++
++		const ClassIdSet&amp; getRegisteredClasses() const;
++		const ClassIdMap&amp; getClassAliases() const;
++
++		void unregisterClasses();
++		void unregisterAliases();
++
++		// object management
++		object_type* createObject(const ClassId, const ObjectId&amp; userObjId = ObjectId::kNull);
++		object_type* createObject(const std::string&amp;, const ObjectId&amp; userObjId = ObjectId::kNull);
++		void destroyObject(object_type*);
++		void destroyAllObjects();
++
++	private:
++		uint8 determineClassIdBitsForRange(const ClassId min, const ClassId max) const;
++
++		object_ctr_type					objCtr_;
++
++		struct ClassEntryData
++		{
++			CreateObjectFn	create_;
++			DestroyObjectFn	destroy_;
++			std::string		name_;
++		};
++		typedef ClassAndObjectIdManager&lt;ClassEntryT&lt;ClassEntryData&gt; &gt; TheClassAndObjectIdManager;
++		TheClassAndObjectIdManager		idMgr_;
++
++		ClassIdMap						idAliases_;
++
++		typedef std::map&lt;std::string,ClassId&gt; StringToClassIdMap;
++		StringToClassIdMap				strIdAliases_;
++
++		ClassId							lastClsId_;
++		ClassId							minGenClsId_;
++		ClassId							maxGenClsId_;
++
++		typedef std::map&lt;ObjectId,object_type*&gt; IdObjMap;
++		IdObjMap						objs_;
++	};
++
++#include &quot;ObjectManager.inl&quot;
++
++	template&lt;class objmgr_type&gt;
++	inline std::ostream&amp; dump(std::ostream&amp; out, const objmgr_type&amp; objMgr)
++	{
++		out &lt;&lt; &quot;ObjectManager=\n&quot;;
++		out &lt;&lt; &quot;  classes = \n&quot;;
++		const typename objmgr_type::ClassIdSet&amp; ids = objMgr.getRegisteredClasses();
++		for (typename objmgr_type::ClassIdSet::const_iterator itId = ids.begin(); itId != ids.end(); ++itId)
++		{
++			const std::string name = objMgr.getClassName(*itId).second;
++			out &lt;&lt; &quot;    '&quot; &lt;&lt; (name.empty() ? &quot;(not found)&quot; : name) &lt;&lt; &quot;' 0x&quot; &lt;&lt; std::hex &lt;&lt; *itId &lt;&lt; &quot;\n&quot;;
++		}
++
++		out &lt;&lt; &quot;  aliases = \n&quot;;
++		const typename objmgr_type::ClassIdMap&amp; idMap = objMgr.getClassAliases();
++		for (typename objmgr_type::ClassIdMap::const_iterator it = idMap.begin(); it != idMap.end(); ++it)
++		{
++			const std::string name = objMgr.getClassName(it-&gt;second).second;
++			out &lt;&lt; &quot;    0x&quot; &lt;&lt; std::hex &lt;&lt; it-&gt;first &lt;&lt; &quot; -&gt; 0x&quot; &lt;&lt; it-&gt;second &lt;&lt; &quot; '&quot; &lt;&lt; (name.empty() ? &quot;(not found)&quot; : name) &lt;&lt; &quot;'\n&quot;;
++		}
++		out &lt;&lt; std::dec &lt;&lt; &quot;\n&quot;;
++		return out;
++	}
++
++	template&lt;typename objmgr_type&gt;
++	inline size_t createOptimizedClassIdMap(const objmgr_type&amp; objMgr, size_t&amp; reqBits, typename objmgr_type::ObjectId::ClassIdMap&amp; idMap, const typename objmgr_type::ClassId minId = 0/*, const bool includedAliases = false*/)
++	{
++		typedef typename objmgr_type::ClassId ClassId;
++		typedef typename objmgr_type::ClassIdSet ClassIdSet;
++		typedef typename objmgr_type::ObjectId::ClassIdMap ClassIdMap;
++
++		ClassIdSet ids = objMgr.getRegisteredClasses();
++		idMap.clear();
++		ClassId lastId = minId;
++		for (ClassIdSet::const_iterator itId = ids.begin(); itId != ids.end(); ++itId)
++		{
++			idMap.insert( std::make_pair(lastId++,*itId) );
++		}
++		/*
++		if (includedAliases)
++		{
++			//@todo const ClassIdMap&amp; aliases = objMgr.getClassAliases();
++			for (ClassIdMap::const_iterator it = aliases.begin(); it != aliases.end(); ++it)
++			...
++		}
++		*/
++		reqBits = 0;
++		while (lastId &gt; 0)
++		{
++			++reqBits;
++			lastId = lastId &gt;&gt; 1;
++		}
++		return idMap.size();
++	}
++
++
++} // namespace object
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/object/ObjectManager.inl
+===================================================================
+--- trunk/yake/yake/object/ObjectManager.inl	2005-12-07 22:44:06 UTC (rev 1175)
++++ trunk/yake/yake/object/ObjectManager.inl	2006-01-15 18:17:26 UTC (rev 1176)
+@@ -0,0 +1,319 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++	template&lt;typename obj_type, typename objectid_type&gt;
++	ObjectManager&lt;obj_type,objectid_type&gt;::ObjectManager() : minGenClsId_(0), maxGenClsId_(std::numeric_limits&lt;ClassId&gt;::max())
++	{
++		lastClsId_ = minGenClsId_;
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	ObjectManager&lt;obj_type,objectid_type&gt;::~ObjectManager()
++	{
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	void ObjectManager&lt;obj_type,objectid_type&gt;::unregisterClasses()
++	{
++		assert( objs_.empty() );
++		if (!objs_.empty()) //@TODO is this desirable behaviour?
++			destroyAllObjects();
++
++		unregisterAliases();
++		idMgr_.clear();
++		lastClsId_ = minGenClsId_;
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	void ObjectManager&lt;obj_type,objectid_type&gt;::unregisterAliases()
++	{
++		idAliases_.clear();
++		strIdAliases_.clear();
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	std::pair&lt;ResultCode,typename objectid_type::ClassId&gt; ObjectManager&lt;obj_type,objectid_type&gt;::getClassId(const std::string&amp; id) const
++	{
++		assert( !id.empty() );
++		if (id.empty())
++			return std::make_pair(RC_INVALID_INPUT,0);
++		StringToClassIdMap::const_iterator it = strIdAliases_.find( id );
++		if (it == strIdAliases_.end())
++			return std::make_pair(RC_NOT_FOUND,0);
++		return std::make_pair(RC_OK,it-&gt;second);
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	std::pair&lt;ResultCode,std::string&gt; ObjectManager&lt;obj_type,objectid_type&gt;::getClassName(const ClassId clsId) const
++	{
++		assert( idMgr_.hasClass( clsId ) );
++		if (!idMgr_.hasClass( clsId ))
++			return std::make_pair(RC_NOT_FOUND,&quot;&quot;);
++		return std::make_pair(RC_OK,idMgr_.getClassData( clsId ).name_);
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	ResultCode ObjectManager&lt;obj_type,objectid_type&gt;::registerClass(const ClassId clsId, const std::string&amp; name, const CreateObjectFn&amp; createFn, const DestroyObjectFn&amp; destroyFn)
++	{
++		// check params
++		assert( !name.empty() );
++		if (name.empty())
++			return RC_INVALID_INPUT;
++		assert( !createFn.empty() );
++		if (createFn.empty())
++			return RC_INVALID_INPUT;
++		assert( !destroyFn.empty() );
++		if (destroyFn.empty())
++			return RC_INVALID_INPUT;
++
++		// try to register class
++		ClassEntryData data;
++		data.name_ = name;
++		data.create_ = createFn;
++		data.destroy_ = destroyFn;
++
++		ResultCode rc = idMgr_.registerClassId( clsId, data );
++		assert( rc == RC_OK );
++		if (rc != RC_OK)
++			return rc;
++
++		strIdAliases_.insert( StringToClassIdMap::value_type(name,clsId) );
++
++		return RC_OK;
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	std::pair&lt;ResultCode,typename objectid_type::ClassId&gt; ObjectManager&lt;obj_type,objectid_type&gt;::registerClass(const std::string&amp; name, const CreateObjectFn&amp; createFn, const DestroyObjectFn&amp; destroyFn)
++	{
++		// check params
++		assert( !name.empty() );
++		if (name.empty())
++			return std::make_pair(RC_INVALID_INPUT,0);
++		assert( !createFn.empty() );
++		if (createFn.empty())
++			return std::make_pair(RC_INVALID_INPUT,0);
++		assert( !destroyFn.empty() );
++		if (destroyFn.empty())
++			return std::make_pair(RC_INVALID_INPUT,0);
++
++		// generate class id
++		ClassId clsId = lastClsId_++;
++
++		// try to register class
++		ResultCode rc = this-&gt;registerClass(clsId, name, createFn, destroyFn);
++		if (rc != RC_OK)
++		{
++			--lastClsId_;
++		}
++		return std::make_pair(rc,clsId);
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	ResultCode ObjectManager&lt;obj_type,objectid_type&gt;::registerClassAlias(const ClassId aliasClsId, const ClassId targetClsId)
++	{
++		// check params
++		assert( aliasClsId != targetClsId );
++		if (aliasClsId == targetClsId)
++			return RC_NOT_FOUND;
++		assert( idMgr_.hasClass( targetClsId ) );
++		if (!idMgr_.hasClass( targetClsId ))
++			return RC_NOT_FOUND;
++
++		// check for existing alias
++		assert( !util::map_contains(idAliases_,aliasClsId) );
++		if (util::map_contains(idAliases_,aliasClsId))
++			return RC_ALREADY_EXISTS;
++
++		// register alias
++		idAliases_.insert( std::make_pair( aliasClsId, targetClsId ) );
++		return RC_OK;
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	ResultCode ObjectManager&lt;obj_type,objectid_type&gt;::registerClassAlias(const std::string&amp; aliasName, const ClassId targetClsId)
++	{
++		// check params
++		assert( !aliasName.empty() );
++		if (aliasName.empty())
++			return RC_INVALID_INPUT;
++		assert( idMgr_.hasClass( targetClsId ) );
++		if (!idMgr_.hasClass( targetClsId ))
++			return RC_NOT_FOUND;
++
++		// check for existing alias
++		assert( !util::map_contains(strIdAliases_,aliasName) );
++		if (util::map_contains(strIdAliases_,aliasName))
++			return RC_ALREADY_EXISTS;
++
++		// register alias
++		strIdAliases_.insert( std::make_pair( aliasName, targetClsId ) );
++		return RC_OK;
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	void ObjectManager&lt;obj_type,objectid_type&gt;::setClassIdGenerationRange(const ClassId min, const ClassId max)
++	{
++		//@FIXME make this whole thingy safer...
++		minGenClsId_ = min;
++		maxGenClsId_ = max;
++		lastClsId_ = minGenClsId_;
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	uint8 ObjectManager&lt;obj_type,objectid_type&gt;::determineClassIdBitsForRange(const ClassId min, const ClassId max) const
++	{
++		uint8 count = 0;
++		ClassId curr = max - min;
++		if (curr == 0)
++			return 1;
++		while (curr &gt; 0)
++		{
++			++count;
++			curr = curr &gt;&gt; 1;
++		}
++		return count;
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	const typename ObjectManager&lt;obj_type,objectid_type&gt;::ClassIdSet&amp; ObjectManager&lt;obj_type,objectid_type&gt;::getRegisteredClasses() const
++	{
++		return idMgr_.getRegisteredClasses();
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	const typename ObjectManager&lt;obj_type,objectid_type&gt;::ClassIdMap&amp; ObjectManager&lt;obj_type,objectid_type&gt;::getClassAliases() const
++	{
++		return this-&gt;idAliases_;
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	void ObjectManager&lt;obj_type,objectid_type&gt;::destroyAllObjects()
++	{
++		IdObjMap objs = objs_; // copy!
++		for (IdObjMap::const_iterator it = objs.begin(); it != objs.end(); ++it)
++		{
++			destroyObject( it-&gt;second );
++		}
++		assert( objs_.empty() );
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	void ObjectManager&lt;obj_type,objectid_type&gt;::destroyObject(object_type* obj)
++	{
++		if (!obj)
++			return;
++
++		// erase reference to object
++		assert( !obj-&gt;id().isNull() );
++		if (!obj-&gt;id().isNull())
++		{
++			IdObjMap::iterator it = objs_.find( obj-&gt;id() );
++			if (it != objs_.end())
++				objs_.erase( obj-&gt;id() );
++		}
++
++		// look up class
++		ClassId clsId = obj-&gt;id().classId();
++		if (!idMgr_.hasClass( clsId ))
++		{
++			// try alias
++			ClassIdMap::const_iterator it = idAliases_.find( clsId );
++			assert( it != idAliases_.end() );
++			if (it == idAliases_.end())
++				return; //@FIXME or throw ?
++			clsId = it-&gt;second;
++			assert( idMgr_.hasClass( clsId ) );
++			if (!idMgr_.hasClass( clsId ))
++				return; //@FIXME or throw ?
++		}
++		// try to destroy instance
++		const ClassEntryData&amp; data = idMgr_.getClassData( clsId );
++		assert( !data.destroy_.empty() );
++		if (data.destroy_.empty())
++		{
++			return; //@FIXME or throw ?
++		}
++
++		data.destroy_( obj );
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	typename ObjectManager&lt;obj_type,objectid_type&gt;::object_type* ObjectManager&lt;obj_type,objectid_type&gt;::createObject(const std::string&amp; id, const objectid_type&amp; userObjId = objectid_type::kNull)
++	{
++		// check params
++		assert( !id.empty() );
++		if (id.empty())
++			return 0;
++
++		// look up class id and try to create object if the class id could be found.
++		std::pair&lt;ResultCode,ClassId&gt; ret = this-&gt;getClassId( id );
++		if (ret.first != RC_OK)
++			return 0;
++		return this-&gt;createObject( ret.second, userObjId );
++	}
++	template&lt;typename obj_type, typename objectid_type&gt;
++	typename ObjectManager&lt;obj_type,objectid_type&gt;::object_type* ObjectManager&lt;obj_type,objectid_type&gt;::createObject(const ClassId clsId, const objectid_type&amp; userObjId = objectid_type::kNull)
++	{
++		if (!userObjId.isNull())
++		{
++			assert( clsId == userObjId.classId() );
++		}
++
++		ClassId theClsId = clsId;
++
++		// look up class
++		if (!idMgr_.hasClass( theClsId ))
++		{
++			// try alias
++			ClassIdMap::const_iterator it = idAliases_.find( theClsId );
++			assert( it != idAliases_.end() );
++			if (it == idAliases_.end())
++				return 0;
++			theClsId = it-&gt;second;
++			assert( idMgr_.hasClass( theClsId ) );
++			if (!idMgr_.hasClass( theClsId ))
++				return 0;
++		}
++
++		// try to create instance
++		const ClassEntryData&amp; data = idMgr_.getClassData( theClsId );
++		assert( !data.create_.empty() );
++		if (data.create_.empty())
++			return 0;
++
++		ObjectId objId;
++		if (!userObjId.isNull())
++		{
++			objId = userObjId;
++		}
++		else
++		{
++			objId = idMgr_.createObjectId( theClsId );
++			assert( !objId.isNull() );
++			if (objId.isNull())
++				return 0;
++		}
++		assert( !objId.isNull() );
++		if (objId.isNull())
++			return 0;
++
++		object_type* obj = data.create_( objId );
++		assert( obj );
++		if (!obj)
++		{
++			idMgr_.removeObjectId( objId );
++			return 0;
++		}
++
++		assert( obj-&gt;id() == objId );
++
++		objs_.insert( std::make_pair( obj-&gt;id(), obj ) );
++		return obj;
++	}
+
+Added: trunk/yake/yake/object/common.h
+===================================================================
+--- trunk/yake/yake/object/common.h	2005-12-07 22:44:06 UTC (rev 1175)
++++ trunk/yake/yake/object/common.h	2006-01-15 18:17:26 UTC (rev 1176)
+@@ -0,0 +1,113 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef COMMON_H
++#define COMMON_H
++
++/**
++	All include files needed by this library.
++	This file (&quot;common.h&quot;) could be used in a precompiled header, for example.
++*/
++
++#include &lt;cassert&gt;
++#include &lt;limits&gt;
++#include &lt;iostream&gt;
++#include &lt;vector&gt;
++#include &lt;map&gt;
++#include &lt;set&gt;
++#include &lt;boost/function.hpp&gt;
++#include &lt;boost/bind.hpp&gt;
++
++#define OBJECTS_NAMESPACE object
++
++namespace yake {
++namespace OBJECTS_NAMESPACE {
++
++	/** Common types */
++
++	typedef unsigned __int16 uint16;
++	typedef unsigned __int32 uint32;
++	typedef unsigned __int8 uint8;
++
++	enum ResultCode
++	{
++		RC_OK,
++		RC_ALREADY_EXISTS,
++		RC_ALREADY_REGISTERED = RC_ALREADY_EXISTS,
++		RC_UNKNOWN_CLASS,
++		RC_NOT_FOUND,
++		RC_INVALID_INPUT
++	};
++
++} // namespace object
++
++//--------------------------
++
++namespace util {
++
++	#include &lt;algorithm&gt;
++
++	template&lt;typename T&gt;
++		std::pair&lt;typename T::key_type,typename T::key_type&gt; get_minmax_keys( const T&amp; ctr )
++	{
++		return std::make_pair(
++			ctr.begin()-&gt;first,
++			(--ctr.end())-&gt;second );
++	}
++
++	/** Erases an element from a STL container. Element is identified by value.
++		@return true if element was erased, false if element couldn't be found in the container.
++	*/
++	template&lt;typename T&gt;
++		bool safeErase( T&amp; container, typename const T::value_type value)
++	{
++		typename T::iterator it = std::find(container.begin(), container.end(), value);
++		if (it == container.end())
++			return false;
++		container.erase(it);
++		return true;
++	}
++	/** Determines whether an element is in a given STL or STL-like container.
++		@return true if element was found in the container, false if not.
++	*/
++	template&lt;typename T&gt;
++		bool contains( const T&amp; container, typename const T::value_type&amp; value)
++	{
++		return (container.end() != std::find(container.begin(), container.end(), value));
++	}
++	/** Determines whether an element is in a given STL or STL-like associative container.
++		@return true if element was found in the container, false if not.
++	*/
++	template&lt;typename T&gt;
++		bool map_contains( const T&amp; container, typename const T::key_type key)
++	{
++		return (container.end() != container.find(key));
++	}
++
++} // namespace util
++} // namespace yake
++
++#endif
+
+Added: trunk/yake/yake/object/pch.h
+===================================================================
+--- trunk/yake/yake/object/pch.h	2005-12-07 22:44:06 UTC (rev 1175)
++++ trunk/yake/yake/object/pch.h	2006-01-15 18:17:26 UTC (rev 1176)
+@@ -0,0 +1,33 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef PCH_H
++#define PCH_H
++#pragma once
++
++#include &quot;common.h&quot;
++
++#endif
+
+Added: trunk/yake/yake/object/yakeObjects.h
+===================================================================
+--- trunk/yake/yake/object/yakeObjects.h	2005-12-07 22:44:06 UTC (rev 1175)
++++ trunk/yake/yake/object/yakeObjects.h	2006-01-15 18:17:26 UTC (rev 1176)
+@@ -0,0 +1,36 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_OBJECT_H
++#define YAKE_OBJECT_H
++
++#include &quot;common.h&quot;
++#include &quot;ObjectId.h&quot;
++#include &quot;ClassAndObjectIdManager.h&quot;
++#include &quot;ObjectContainer.h&quot;
++#include &quot;ObjectManager.h&quot;
++
++#endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	
+	<LI>Next message: <A HREF="000247.html">[Yake-svn] r1177 - trunk/yake/scripts/msvc8
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#246">[ date ]</a>
+              <a href="thread.html#246">[ thread ]</a>
+              <a href="subject.html#246">[ subject ]</a>
+              <a href="author.html#246">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1127 - trunk/yake/yake/physics
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1127%20-%20trunk/yake/yake/physics&In-Reply-To=%3C200511092157.jA9LvCJO029782%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000196.html">
+   <LINK REL="Next"  HREF="000198.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1127 - trunk/yake/yake/physics</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1127%20-%20trunk/yake/yake/physics&In-Reply-To=%3C200511092157.jA9LvCJO029782%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1127 - trunk/yake/yake/physics">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  9 22:57:12 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000196.html">[Yake-svn] r1126 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000198.html">[Yake-svn] r1128 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#197">[ date ]</a>
+              <a href="thread.html#197">[ thread ]</a>
+              <a href="subject.html#197">[ subject ]</a>
+              <a href="author.html#197">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-09 22:57:12 +0100 (Wed, 09 Nov 2005)
+New Revision: 1127
+
+Modified:
+   trunk/yake/yake/physics/yakePhysicsPrerequisites.h
+   trunk/yake/yake/physics/yakePhysicsShape.h
+Log:
+fixed trimesh interface
+
+Modified: trunk/yake/yake/physics/yakePhysicsPrerequisites.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsPrerequisites.h	2005-11-09 21:56:37 UTC (rev 1126)
++++ trunk/yake/yake/physics/yakePhysicsPrerequisites.h	2005-11-09 21:57:12 UTC (rev 1127)
+@@ -114,11 +114,11 @@
+ 			Is this OK? Today, it's practically OK and tomorrow it'll be even more as it's part
+ 			of the first Technical Corrigendum.
+ 		*/
+-		typedef Vector&lt;Vector3&gt; Vector3Vector;
++		typedef std::vector&lt;Vector3&gt; Vector3Vector;
+ 		typedef Vector3Vector VertexVector;
+ 		typedef Vector3Vector NormalVector;
+ 		typedef uint32 IndexType;
+-		typedef Vector&lt;IndexType&gt; IndexVector;
++		typedef std::vector&lt;IndexType&gt; IndexVector;
+ 
+ 		TriangleMeshDesc()
+ 		{
+
+Modified: trunk/yake/yake/physics/yakePhysicsShape.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsShape.h	2005-11-09 21:56:37 UTC (rev 1126)
++++ trunk/yake/yake/physics/yakePhysicsShape.h	2005-11-09 21:57:12 UTC (rev 1127)
+@@ -153,9 +153,20 @@
+ 			    const Quaternion&amp; rOrientation = Quaternion::kIdentity
+ 			    ) :
+ 				Desc( ST_TRIANGLE_MESH, rPosition, rOrientation, material_ ),
+-				trimesh_( trimesh )
++				trimesh_( trimesh ),
++				trimeshId_( kTriangleMeshIdNone )
+ 		    {}
+-		    TriangleMeshDesc trimesh_;	
++		    TriMeshDesc(	const TriangleMeshId trimeshId,
++			    // base class:
++			    const String&amp; material_ = &quot;&quot;,
++			    const Vector3&amp; rPosition = Vector3::kZero, 
++			    const Quaternion&amp; rOrientation = Quaternion::kIdentity
++			    ) :
++				Desc( ST_TRIANGLE_MESH, rPosition, rOrientation, material_ ),
++				trimeshId_( trimeshId )
++		    {}
++		    TriangleMeshDesc	trimesh_;
++			TriangleMeshId		trimeshId_;
+ 		};
+ 	public:
+ 		virtual ~IShape() {}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000196.html">[Yake-svn] r1126 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000198.html">[Yake-svn] r1128 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#197">[ date ]</a>
+              <a href="thread.html#197">[ thread ]</a>
+              <a href="subject.html#197">[ subject ]</a>
+              <a href="author.html#197">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

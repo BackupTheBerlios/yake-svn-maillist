@@ -1,0 +1,259 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1345 - in trunk/yake: src/yake/model yake/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1345%20-%20in%20trunk/yake%3A%20src/yake/model%20yake/model&In-Reply-To=%3C200606171333.k5HDXkwD016302%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000411.html">
+   <LINK REL="Next"  HREF="000414.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1345 - in trunk/yake: src/yake/model yake/model</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1345%20-%20in%20trunk/yake%3A%20src/yake/model%20yake/model&In-Reply-To=%3C200606171333.k5HDXkwD016302%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1345 - in trunk/yake: src/yake/model yake/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Sat Jun 17 15:33:46 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000411.html">[Yake-svn] r1344 - trunk/yake/scripts/msvc8
+</A></li>
+        <LI>Next message: <A HREF="000414.html">[Yake-svn] r1346 - in trunk/yake: src/yake/model yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#413">[ date ]</a>
+              <a href="thread.html#413">[ thread ]</a>
+              <a href="subject.html#413">[ subject ]</a>
+              <a href="author.html#413">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-17 15:33:43 +0200 (Sat, 17 Jun 2006)
+New Revision: 1345
+
+Modified:
+   trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+   trunk/yake/src/yake/model/yakeModelManager.cpp
+   trunk/yake/src/yake/model/yakePhysicalCreator.cpp
+   trunk/yake/yake/model/model.h
+   trunk/yake/yake/model/model_component.h
+Log:
+added possibility to specify custom dotScene and XODE parsers as part of the model creation context
+
+Modified: trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-06-12 22:14:25 UTC (rev 1344)
++++ trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-06-17 13:33:43 UTC (rev 1345)
+@@ -64,25 +64,34 @@
+ 
+ 		// Parse DOM and create graphical objects
+ 
+-		yake::data::parser::dotscene::DotSceneParserV1 dsp;
++		data::parser::dotscene::DotSceneParser* parser = ctx.dotSceneParser_;
++		if (!parser)
++			parser = new yake::data::parser::dotscene::DotSceneParserV1();
++		YAKE_ASSERT( parser );
+ 
+ 		Graphical* pGraphical = new Graphical(/**ctx.model_*/);
+ 
+ 		const String namePrefix = _T(&quot;model:&quot;) + ctx.model_-&gt;getName() + _T(&quot;/&quot;)  // model
+ 									+ (name.empty() ? _T(&quot;&quot;) : (name + _T(&quot;/&quot;))); // component
++
+ 		DotSceneListener dotSceneListener( *pGraphical, namePrefix );
+ 		dotSceneListener.reset( pGWorld );
+ 
+-		dsp.subscribeToNodeSignal( Bind1( &amp;DotSceneListener::processSceneNode, &amp;dotSceneListener ) );
+-		dsp.subscribeToEntitySignal( Bind1( &amp;DotSceneListener::processEntity, &amp;dotSceneListener ) );
+-		dsp.subscribeToCameraSignal( Bind1( &amp;DotSceneListener::processCamera, &amp;dotSceneListener ) );
+-		dsp.subscribeToLightSignal( Bind1( &amp;DotSceneListener::processLight, &amp;dotSceneListener ) );
++		parser-&gt;subscribeToNodeSignal( Bind1( &amp;DotSceneListener::processSceneNode, &amp;dotSceneListener ) );
++		parser-&gt;subscribeToEntitySignal( Bind1( &amp;DotSceneListener::processEntity, &amp;dotSceneListener ) );
++		parser-&gt;subscribeToCameraSignal( Bind1( &amp;DotSceneListener::processCamera, &amp;dotSceneListener ) );
++		parser-&gt;subscribeToLightSignal( Bind1( &amp;DotSceneListener::processLight, &amp;dotSceneListener ) );
+ 
+-		if (!dsp.load( ser.getDocumentNode() ))
++		if (!parser-&gt;load( ser.getDocumentNode() ))
+ 		{
+ 			YAKE_SAFE_DELETE( pGraphical );
+ 		}
+ 
++		if (!ctx.dotSceneParser_)
++		{
++			YAKE_SAFE_DELETE( parser );
++		}
++
+ 		ctx.model_-&gt;addComponent( pGraphical, name );
+ 	}
+ 
+
+Modified: trunk/yake/src/yake/model/yakeModelManager.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelManager.cpp	2006-06-12 22:14:25 UTC (rev 1344)
++++ trunk/yake/src/yake/model/yakeModelManager.cpp	2006-06-17 13:33:43 UTC (rev 1345)
+@@ -124,6 +124,14 @@
+ 	{
+ 		ctx_.centralController_ = c;
+ 	}
++	void ModelManager::setCreationContext_DotSceneParser(data::parser::dotscene::DotSceneParser* parser)
++	{
++		ctx_.dotSceneParser_ = parser;
++	}
++	void ModelManager::setCreationContext_XODEParser(data::parser::xode::XODEParser* parser)
++	{
++		ctx_.xodeParser_ = parser;
++	}
+ 
+ } // namespace model
+ } // namespace yake
+
+Modified: trunk/yake/src/yake/model/yakePhysicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakePhysicalCreator.cpp	2006-06-12 22:14:25 UTC (rev 1344)
++++ trunk/yake/src/yake/model/yakePhysicalCreator.cpp	2006-06-17 13:33:43 UTC (rev 1345)
+@@ -64,7 +64,10 @@
+ 
+ 		// Parse DOM and create graphical objects
+ 
+-		yake::data::parser::xode::XODEParserV1 xodeparser;
++		data::parser::xode::XODEParser* xodeparser = ctx.xodeParser_;
++		if (!xodeparser)
++			xodeparser = new data::parser::xode::XODEParserV1();
++		YAKE_ASSERT( xodeparser );
+ 
+ 		Physical* pPhysical = new Physical(/**ctx.model_*/);
+ 
+@@ -72,14 +75,19 @@
+ 									+ (name.empty() ? _T(&quot;&quot;) : (name + _T(&quot;/&quot;))); // component
+ 		XODEListener xodeListener( *pPhysical, pPWorld, namePrefix );
+ 
+-		xodeparser.subscribeToBodySignal( Bind1( &amp;XODEListener::processBody, &amp;xodeListener ) );
+-		xodeparser.subscribeToGeomSignal( Bind1( &amp;XODEListener::processGeom, &amp;xodeListener ) );
++		xodeparser-&gt;subscribeToBodySignal( Bind1( &amp;XODEListener::processBody, &amp;xodeListener ) );
++		xodeparser-&gt;subscribeToGeomSignal( Bind1( &amp;XODEListener::processGeom, &amp;xodeListener ) );
+ 
+-		if (!xodeparser.load( ser.getDocumentNode() ))
++		if (!xodeparser-&gt;load( ser.getDocumentNode() ))
+ 		{
+ 			YAKE_SAFE_DELETE( pPhysical );
+ 		}
+ 
++		if (!ctx.xodeParser_)
++		{
++			YAKE_SAFE_DELETE( xodeparser );
++		}
++
+ 		ctx.model_-&gt;addComponent( pPhysical, name );
+ 	}
+ 
+
+Modified: trunk/yake/yake/model/model.h
+===================================================================
+--- trunk/yake/yake/model/model.h	2006-06-12 22:14:25 UTC (rev 1344)
++++ trunk/yake/yake/model/model.h	2006-06-17 13:33:43 UTC (rev 1345)
+@@ -132,6 +132,8 @@
+ 		void setCreationContext_GraphicalWorld(graphics::IWorld*);
+ 		void setCreationContext_PhysicalWorld(physics::IWorld*);
+ 		void setCreationContext_CentralController(CentralControllerBase*);
++		void setCreationContext_DotSceneParser(data::parser::dotscene::DotSceneParser*);
++		void setCreationContext_XODEParser(data::parser::xode::XODEParser*);
+ 	private:
+ 		ModelManager(const ModelManager&amp;);
+ 		ModelManager&amp; operator=(const ModelManager&amp;);
+
+Modified: trunk/yake/yake/model/model_component.h
+===================================================================
+--- trunk/yake/yake/model/model_component.h	2006-06-12 22:14:25 UTC (rev 1344)
++++ trunk/yake/yake/model/model_component.h	2006-06-17 13:33:43 UTC (rev 1345)
+@@ -30,8 +30,40 @@
+ #include &quot;yake/model/prerequisites.h&quot;
+ 
+ namespace yake {
++	namespace data {
++	namespace parser {
++	namespace dotscene {
++		class DotSceneParser;
++	}
++	namespace xode {
++		class XODEParser;
++	}
++	}
++	}
+ namespace model {
++	//@todo move into private header:
++	struct CentralControllerBase;
++	struct ComponentCreationContext
++	{
++		Model*					model_;
++		graphics::IWorld*		gworld_;
++		physics::IWorld*		pworld_;
+ 
++		CentralControllerBase*	centralController_;
++
++		data::parser::dotscene::DotSceneParser*		dotSceneParser_;
++		data::parser::xode::XODEParser*				xodeParser_;
++
++		ComponentCreationContext() : 
++			model_(0),
++			gworld_(0),
++			pworld_(0),
++			centralController_(0),
++			dotSceneParser_(0),
++			xodeParser_(0)
++		{}
++	};
++
+ 	struct YAKE_MODEL_API ModelComponent //: public Clonable&lt;ModelComponent&gt;
+ 	{
+ 		ModelComponent() {}
+@@ -191,18 +223,6 @@
+ 		}
+ 	};
+ 
+-	//@todo move into private header:
+-
+-	struct CentralControllerBase;
+-	struct ComponentCreationContext
+-	{
+-		Model*					model_;
+-		graphics::IWorld*		gworld_;
+-		physics::IWorld*		pworld_;
+-		CentralControllerBase*	centralController_;
+-		ComponentCreationContext() : model_(0), gworld_(0), pworld_(0), centralController_(0)
+-		{}
+-	};
+ 	struct YAKE_MODEL_API ComponentCreator
+ 	{
+ 		YAKE_DECLARE_REGISTRY_0(ComponentCreator, String);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000411.html">[Yake-svn] r1344 - trunk/yake/scripts/msvc8
+</A></li>
+	<LI>Next message: <A HREF="000414.html">[Yake-svn] r1346 - in trunk/yake: src/yake/model yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#413">[ date ]</a>
+              <a href="thread.html#413">[ thread ]</a>
+              <a href="subject.html#413">[ subject ]</a>
+              <a href="author.html#413">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

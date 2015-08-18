@@ -1,0 +1,344 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1001 - trunk/yake/yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1001%20-%20trunk/yake/yapp/vehicle&In-Reply-To=%3C200510090046.j990kKad032154%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000071.html">
+   <LINK REL="Next"  HREF="000073.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1001 - trunk/yake/yapp/vehicle</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1001%20-%20trunk/yake/yapp/vehicle&In-Reply-To=%3C200510090046.j990kKad032154%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1001 - trunk/yake/yapp/vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Oct  9 02:46:20 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000071.html">[Yake-svn] r1000 - trunk/yake/common/media/vehicles
+</A></li>
+        <LI>Next message: <A HREF="000073.html">[Yake-svn] r1002 - trunk/yake/scripts/yapp
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#72">[ date ]</a>
+              <a href="thread.html#72">[ thread ]</a>
+              <a href="subject.html#72">[ subject ]</a>
+              <a href="author.html#72">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-09 02:46:18 +0200 (Sun, 09 Oct 2005)
+New Revision: 1001
+
+Added:
+   trunk/yake/yapp/vehicle/yakeDotVehicle.h
+Modified:
+   trunk/yake/yapp/vehicle/yakeInterfaces.h
+   trunk/yake/yapp/vehicle/yakeNativeOde.h
+   trunk/yake/yapp/vehicle/yakeTemplates.h
+   trunk/yake/yapp/vehicle/yakeVehicleSystem.h
+Log:
+slight refactoring,
+added basic .vehicle loader
+
+Added: trunk/yake/yapp/vehicle/yakeDotVehicle.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeDotVehicle.h	2005-10-09 00:45:51 UTC (rev 1000)
++++ trunk/yake/yapp/vehicle/yakeDotVehicle.h	2005-10-09 00:46:18 UTC (rev 1001)
+@@ -0,0 +1,72 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_VEHICLE_DOTVEHICLE_H
++#define YAKE_VEHICLE_DOTVEHICLE_H
++
++#include &quot;yakePrerequisites.h&quot;
++#include &quot;yakeTemplates.h&quot;
++
++namespace yake {
++	namespace data {
++		namespace dom {
++			class INode;
++		}
++	}
++namespace vehicle {
++
++	class YAKE_VEH_API DotVehicleParser
++	{
++	public:
++		DotVehicleParser();
++		bool parse( const String&amp; fn );
++		bool parse( const data::dom::INode&amp; rootNode );
++
++		VehicleTemplate* detachCurrentVehicleTpl();
++
++		YAKE_MEMBERSIGNAL(public,void(DotVehicleParser&amp;,const String&amp;),OnVehicleTpl);
++	private:
++		void parseVehicleTpl( const data::dom::INode&amp; n );
++		 void parseChassis( const data::dom::INode&amp; n );
++		  void parseBody( const data::dom::INode&amp; n );
++		  void parseShapeSet( const data::dom::INode&amp; n );
++		   void parseShape( const data::dom::INode&amp; n );
++		   void parseMountPoint( const data::dom::INode&amp; n, VehicleTemplate::MountPointTpl* parentMtPt = 0 );
++		 void parseEngine( const data::dom::INode&amp; n );
++		void parseEngineTpl( const data::dom::INode&amp; n );
++
++		void parsePosition( const data::dom::INode&amp; n, Vector3&amp; ret );
++		void parseOrientation( const data::dom::INode&amp; n, Quaternion&amp; ret );
++		void parseDirection( const data::dom::INode&amp; n, Vector3&amp; ret );
++
++		VehicleTemplate*	mpCurrVehTpl;
++	};
++
++} // namespace vehicle
++} // namespace yake
++
++
++#endif
+
+Modified: trunk/yake/yapp/vehicle/yakeInterfaces.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeInterfaces.h	2005-10-09 00:45:51 UTC (rev 1000)
++++ trunk/yake/yapp/vehicle/yakeInterfaces.h	2005-10-09 00:46:18 UTC (rev 1001)
+@@ -34,6 +34,7 @@
+ namespace vehicle {
+ 
+ 	class IEngine;
++	typedef Deque&lt;IEngine*&gt; IEnginePtrList;
+ 	class IWheel;
+ 	class MountPoint;
+ 	class Mountable;
+@@ -51,8 +52,9 @@
+ 		//virtual void addMountPoint(MountPoint*) = 0;
+ 		//virtual MountPoint* removeMountPoint(MountPoint*) = 0;
+ 
+-		virtual MountPoint* getMountPoint(size_t index) const = 0;
+-		virtual IEngine* getEngineInterface(size_t index) const = 0;
++		virtual MountPoint* getMountPoint(const String&amp; id) const = 0;
++		virtual IEngine* getEngineInterface(const String&amp; id) const = 0;
++		virtual IEnginePtrList getEngineInterfaces() const = 0;
+ 		virtual IWheel* getWheelInterface(size_t index) const = 0;
+ 
+ 		virtual Vector3 getChassisPosition() const = 0;
+
+Modified: trunk/yake/yapp/vehicle/yakeNativeOde.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeNativeOde.h	2005-10-09 00:45:51 UTC (rev 1000)
++++ trunk/yake/yapp/vehicle/yakeNativeOde.h	2005-10-09 00:46:18 UTC (rev 1001)
+@@ -32,12 +32,21 @@
+ namespace yake {
+ namespace vehicle {
+ 
++	class DotVehicleParser;
+ 	class YAKE_VEH_API OdeVehicleSystem : public IVehicleSystem
+ 	{
+ 		YAKE_DECLARE_CONCRETE(OdeVehicleSystem,&quot;ode&quot;);
+ 	public:
+ 		OdeVehicleSystem();
++		~OdeVehicleSystem();
+ 		virtual IVehicle* create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld);
++		virtual bool loadTemplates(const String&amp; fn);
++		virtual IVehicle* create(const String&amp; tpl, physics::IWorld&amp; PWorld);
++	private:
++		void _onVehicleTpl(DotVehicleParser&amp; parser, const String&amp; tplId);
++	private:
++		typedef AssocVector&lt;String,SharedPtr&lt;vehicle::VehicleTemplate&gt; &gt; VehTplList;
++		VehTplList				mVehicleTemplates;
+ 	};
+ 
+ 	class OdeWheel;
+@@ -52,9 +61,10 @@
+ 		//virtual void addMountPoint(MountPoint*);
+ 		//virtual MountPoint* removeMountPoint(MountPoint*);
+ 
+-		virtual MountPoint* getMountPoint(size_t index) const;
++		virtual MountPoint* getMountPoint(const String&amp; id) const;
+ 
+-		virtual IEngine* getEngineInterface(size_t index) const;
++		virtual IEngine* getEngineInterface(const String&amp; id) const;
++		virtual IEnginePtrList getEngineInterfaces() const;
+ 		virtual IWheel* getWheelInterface(size_t index) const;
+ 
+ 		virtual Vector3 getChassisPosition() const;
+@@ -65,8 +75,11 @@
+ 
+ 		YAKE_MEMBERSIGNAL(private,void(real),UpdateThrusterSimulation);
+ 		YAKE_MEMBERSIGNAL(private,void(void),ApplyThrusterToTargets);
++
+ 	private:
+-		typedef Deque&lt;IEngine*&gt; EnginePtrList;
++		void _createMountPoint(const String&amp; id, const VehicleTemplate::MountPointTpl&amp;,MountPoint* parentMtPt = 0);
++	private:
++		typedef AssocVector&lt;String,IEngine*&gt; EnginePtrList;
+ 		EnginePtrList		mEngines; // owner of all engine objects
+ 
+ 		physics::IActorPtr	mpChassis;
+@@ -77,7 +90,7 @@
+ 		typedef Deque&lt;OdeWheel*&gt; WheelList;
+ 		WheelList			mWheels;
+ 
+-		typedef Deque&lt;MountPoint*&gt; MountPointList;
++		typedef AssocVector&lt;String,MountPoint*&gt; MountPointList;
+ 		MountPointList		mMountPoints;
+ 	};
+ 
+
+Modified: trunk/yake/yapp/vehicle/yakeTemplates.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeTemplates.h	2005-10-09 00:45:51 UTC (rev 1000)
++++ trunk/yake/yapp/vehicle/yakeTemplates.h	2005-10-09 00:46:18 UTC (rev 1001)
+@@ -32,36 +32,39 @@
+ namespace yake {
+ namespace vehicle {
+ 
+-	const size_t MPID_NO_PARENT = 0xffffffff;
++	const String MPID_NO_PARENT = String(&quot;&quot;);
+ 	struct VehicleTemplate
+ 	{
++		struct MountPointTpl;
++		typedef AssocVector&lt; String, MountPointTpl &gt; MountPointTplList;
+ 		struct MountPointTpl
+ 		{
+-			Vector3		mPosition;
+-			Quaternion	mOrientation;
+-			Vector3		mDirection;
+-			size_t		mParentMountPointIdx;
+-			bool		mUseDirection;
++			Vector3				mPosition;
++			Quaternion			mOrientation;
++			Vector3				mDirection;
++			bool				mUseDirection;
++			MountPointTplList	mChildren;
+ 			MountPointTpl(
+ 				const Vector3&amp; pos = Vector3::kZero,
+-				const Quaternion rot = Quaternion::kIdentity,
+-				size_t parentMountPoint = MPID_NO_PARENT) :
++				const Quaternion rot = Quaternion::kIdentity) :
+ 				mPosition(pos),
+ 				mOrientation(rot),
+-				mParentMountPointIdx(parentMountPoint),
+ 				mUseDirection(false)
+ 			{}
+ 			MountPointTpl(
+ 				const Vector3&amp; pos,
+-				const Vector3&amp; dir,
+-				size_t parentMountPoint = MPID_NO_PARENT) :
++				const Vector3&amp; dir) :
+ 				mPosition(pos),
+ 				mDirection(dir),
+-				mParentMountPointIdx(parentMountPoint),
+ 				mUseDirection(true)
+ 			{}
++			MountPointTpl&amp; addMountPoint(
++				const Vector3&amp; pos = Vector3::kZero,
++				const Quaternion rot = Quaternion::kIdentity);
++			MountPointTpl&amp; addMountPoint(
++				const Vector3&amp; pos,
++				const Vector3&amp; dir);
+ 		};
+-		typedef Deque&lt; MountPointTpl &gt; MountPointTplList;
+ 		enum GearMode
+ 		{
+ 			GM_FORWARD,
+@@ -83,8 +86,8 @@
+ 		{
+ 			real				minForce;
+ 			real				maxForce;
+-			size_t				mountPtIdx;
+-			ThrusterTpl(real minF = 0., real maxF = 1., size_t mtPt = 0) : minForce(minF), maxForce(maxF), mountPtIdx(mtPt) {}
++			String				mountPt;
++			ThrusterTpl(real minF = 0., real maxF = 1., const String&amp; mtPt = &quot;&quot;) : minForce(minF), maxForce(maxF), mountPt(mtPt) {}
+ 		};
+ 		struct CarEngineTpl : public EngineTpl
+ 		{
+@@ -108,7 +111,7 @@
+ 			{}
+ 		};
+ 
+-		typedef Deque&lt;EngineTpl*&gt; EngineTplList;
++		typedef AssocVector&lt;String,EngineTpl*&gt; EngineTplList;
+ 
+ 		typedef Deque&lt;physics::IShape::Desc*&gt; ShapeTplList;
+ 
+@@ -164,7 +167,7 @@
+ 		{
+ 			ConstVectorIterator&lt; EngineTplList &gt; itEngine( mEngines );
+ 			while (itEngine.hasMoreElements())
+-				delete itEngine.getNext();
++				delete itEngine.getNext().second;
+ 			mEngines.clear();
+ 			ConstVectorIterator&lt; ShapeTplList &gt; itShape( mChassis.mChassisShapes );
+ 			while (itShape.hasMoreElements())
+
+Modified: trunk/yake/yapp/vehicle/yakeVehicleSystem.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeVehicleSystem.h	2005-10-09 00:45:51 UTC (rev 1000)
++++ trunk/yake/yapp/vehicle/yakeVehicleSystem.h	2005-10-09 00:46:18 UTC (rev 1001)
+@@ -37,7 +37,10 @@
+ 	{
+ 		YAKE_DECLARE_REGISTRY_0(IVehicleSystem,String);
+ 	public:
++		virtual ~IVehicleSystem() {}
+ 		virtual IVehicle* create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld) = 0;
++		virtual bool loadTemplates(const String&amp; fn) = 0;
++		virtual IVehicle* create(const String&amp; tpl, physics::IWorld&amp; PWorld) = 0;
+ 	};
+ 
+ } // namespace vehicle
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000071.html">[Yake-svn] r1000 - trunk/yake/common/media/vehicles
+</A></li>
+	<LI>Next message: <A HREF="000073.html">[Yake-svn] r1002 - trunk/yake/scripts/yapp
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#72">[ date ]</a>
+              <a href="thread.html#72">[ thread ]</a>
+              <a href="subject.html#72">[ subject ]</a>
+              <a href="author.html#72">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

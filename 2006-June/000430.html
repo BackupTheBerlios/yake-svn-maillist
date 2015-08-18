@@ -1,0 +1,692 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1362 - in trunk/yake: src/yake/net/detail yake/net yake/net/detail yake/samples/net/roclient
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1362%20-%20in%20trunk/yake%3A%20src/yake/net/detail%20yake/net%20yake/net/detail%20yake/samples/net/roclient&In-Reply-To=%3C200606212057.k5LKvfi9008078%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000429.html">
+   <LINK REL="Next"  HREF="000431.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1362 - in trunk/yake: src/yake/net/detail yake/net yake/net/detail yake/samples/net/roclient</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1362%20-%20in%20trunk/yake%3A%20src/yake/net/detail%20yake/net%20yake/net/detail%20yake/samples/net/roclient&In-Reply-To=%3C200606212057.k5LKvfi9008078%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1362 - in trunk/yake: src/yake/net/detail yake/net yake/net/detail yake/samples/net/roclient">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Jun 21 22:57:41 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000429.html">[Yake-svn] r1361 - trunk/yake
+</A></li>
+        <LI>Next message: <A HREF="000431.html">[Yake-svn] r1363 - in trunk/yake: src/yake/net/detail src/yake/samples/net src/yake/samples/net/packet src/yake/samples/net/roclient src/yake/samples/net/roserver yake/net yake/net/detail yake/samples/net yake/samples/net/packet yake/samples/net/roclient yake/samples/net/roserver
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#430">[ date ]</a>
+              <a href="thread.html#430">[ thread ]</a>
+              <a href="subject.html#430">[ subject ]</a>
+              <a href="author.html#430">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-21 22:57:41 +0200 (Wed, 21 Jun 2006)
+New Revision: 1362
+
+Modified:
+   trunk/yake/src/yake/net/detail/netCommon.cpp
+   trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp
+   trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp
+   trunk/yake/src/yake/net/detail/netEventConnection.cpp
+   trunk/yake/yake/net/detail/netEnetClientPacketConnection.h
+   trunk/yake/yake/net/detail/netEnetServerPacketConnection.h
+   trunk/yake/yake/net/netCommon.h
+   trunk/yake/yake/net/netPacket.h
+   trunk/yake/yake/samples/net/roclient/pch.h
+Log:
+cleanup, various improvements,
+two step connection
+
+Modified: trunk/yake/src/yake/net/detail/netCommon.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netCommon.cpp	2006-06-21 19:00:39 UTC (rev 1361)
++++ trunk/yake/src/yake/net/detail/netCommon.cpp	2006-06-21 20:57:41 UTC (rev 1362)
+@@ -134,16 +134,16 @@
+ 	// SendOptions
+ 	//-------------------------------------------------------------------------
+ 	SendOptions::SendOptions() :
+-		peerId(0xffffffff),
+-		reliability(R_RELIABLE),
+-		ordering(O_ORDERED),
+-		channelId(0)
++		peerId_(PEERID_BROADCAST),
++		reliability_(R_RELIABLE),
++		ordering_(O_ORDERED),
++		channelId_(0)
+ 	{}
+ 	SendOptions::SendOptions(const SendOptions&amp; other) :
+-		peerId(other.peerId),
+-		reliability(other.reliability),
+-		ordering(other.ordering),
+-		channelId(other.channelId)
++		peerId_(other.peerId_),
++		reliability_(other.reliability_),
++		ordering_(other.ordering_),
++		channelId_(other.channelId_)
+ 	{}
+ 	SendOptions::~SendOptions()
+ 	{}
+@@ -151,32 +151,48 @@
+ 	{
+ 		if (this == &amp;rhs)
+ 			return *this;
+-		peerId = rhs.peerId;
+-		reliability = rhs.reliability;
+-		ordering = rhs.ordering;
+-		channelId = rhs.channelId;
++		peerId_ = rhs.peerId_;
++		reliability_ = rhs.reliability_;
++		ordering_ = rhs.ordering_;
++		channelId_ = rhs.channelId_;
+ 		return *this;
+ 	}
+-	SendOptions&amp; SendOptions::setPeerId(const PeerId id)
++	SendOptions&amp; SendOptions::peerId(const PeerId id)
+ 	{
+-		peerId = id;
++		peerId_ = id;
+ 		return *this;
+ 	}
+-	SendOptions&amp; SendOptions::setReliability(const Reliability rel)
++	SendOptions&amp; SendOptions::reliability(const Reliability rel)
+ 	{
+-		reliability = rel;
++		reliability_ = rel;
+ 		return *this;
+ 	}
+-	SendOptions&amp; SendOptions::setOrdering(const Ordering ord)
++	SendOptions&amp; SendOptions::ordering(const Ordering ord)
+ 	{
+-		ordering = ord;
++		ordering_ = ord;
+ 		return *this;
+ 	}
+-	SendOptions&amp; SendOptions::setChannel(const ChannelId id)
++	SendOptions&amp; SendOptions::channel(const ChannelId id)
+ 	{
+-		channelId = id;
++		channelId_ = id;
+ 		return *this;
+ 	}
++	PeerId SendOptions::getPeerId() const
++	{
++		return peerId_;
++	}
++	Reliability SendOptions::getReliability() const
++	{
++		return reliability_;
++	}
++	Ordering SendOptions::getOrdering() const
++	{
++		return ordering_;
++	}
++	ChannelId SendOptions::getChannel() const
++	{
++		return channelId_;
++	}
+ 
+ 	//-------------------------------------------------------------------------
+ 	// NativeTimer &amp; Timer
+
+Modified: trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp	2006-06-21 19:00:39 UTC (rev 1361)
++++ trunk/yake/src/yake/net/detail/netEnetClientPacketConnection.cpp	2006-06-21 20:57:41 UTC (rev 1362)
+@@ -11,8 +11,14 @@
+ 	}
+ namespace impl {
+ 
+-	EnetClientPacketConnection::EnetClientPacketConnection() : m_host(0), m_ready(false), m_id(0), m_waitingForConnect(false),
+-			m_peer(0), m_serverPeer(0), lastPacketReceivedCbHandle_(0)
++	EnetClientPacketConnection::EnetClientPacketConnection() : 
++		m_host(0), 
++		m_ready(false), 
++		m_id(0), 
++		m_waitingForConnect(false),
++		m_peer(0), 
++		m_serverPeer(0), 
++		lastPacketReceivedCbHandle_(0)
+ 	{
+ 	}
+ 	EnetClientPacketConnection::~EnetClientPacketConnection()
+@@ -34,7 +40,7 @@
+ 	{
+ 		timeOutFnList_.push_back( fn );
+ 	}
+-	void EnetClientPacketConnection::connect(const Address&amp; addr)
++	void EnetClientPacketConnection::connect(const Address&amp; addr, const bool doBlock, const uint32 timeOut)
+ 	{
+ 		NET_ASSERT( !m_ready );
+ 		if (m_ready)
+@@ -83,6 +89,13 @@
+ 
+ 		m_connTimer.reset();
+ 		m_id = UpdateThread::instance().add( boost::bind(&amp;EnetClientPacketConnection::update,this) );
++
++		if (doBlock)
++		{
++			//@todo timeout
++			while (m_waitingForConnect &amp;&amp; !m_ready)
++				net::native::sleep(10);
++		}
+ 	}
+ 	void EnetClientPacketConnection::disconnect()
+ 	{
+@@ -99,7 +112,7 @@
+ 			if (m_serverPeer)
+ 			{
+ 				boost::mutex::scoped_lock enetLock(getEnetMtx());
+-				enet_peer_disconnect( m_serverPeer );
++				enet_peer_disconnect( m_serverPeer, 0 /*@todo data*/ );
+ 			}
+ 			Timer timer;
+ 			timer.start();
+@@ -149,16 +162,16 @@
+ 			{
+ 			case ENET_EVENT_TYPE_CONNECT:
+ 				NET_ASSERT( event.peer );
+-				NET_LOG(&quot;net_packet_client: connected to &quot; &lt;&lt; ipToString(event.peer-&gt;address.host) &lt;&lt; &quot;:&quot; &lt;&lt; event.peer-&gt;address.port &lt;&lt; &quot;.&quot;);
++				NET_LOG(&quot;net_packet_client: (stage1) connected to &quot; &lt;&lt; ipToString(event.peer-&gt;address.host) &lt;&lt; &quot;:&quot; &lt;&lt; event.peer-&gt;address.port &lt;&lt; &quot;.&quot;);
+ 				{
+ 					m_serverPeer = event.peer;
+-					m_waitingForConnect = false;
+-					m_ready = true;
++					m_ready = true; // we can now start sending packets
+ 
+ 					const uint32 host = event.peer-&gt;address.host;
+ 					m_serverIp = ipToString( host );
+ 
+-					this-&gt;fireCallback_Started();
++					const uint8 tmp = 0x7F;
++					this-&gt;send(&amp;tmp,1,SendOptions().reliability(R_RELIABLE));
+ 				}
+ 				break;
+ 			case ENET_EVENT_TYPE_RECEIVE:
+@@ -166,8 +179,14 @@
+ 				NET_ASSERT( m_serverPeer );
+ 				NET_ASSERT( event.packet-&gt;dataLength &gt; 0 );
+ 				NET_ASSERT( event.packet-&gt;data );
+-				if (event.packet)
++				if (m_waitingForConnect)
+ 				{
++					NET_LOG(&quot;net_packet_client: (stage2) connected to &quot; &lt;&lt; ipToString(event.peer-&gt;address.host) &lt;&lt; &quot;:&quot; &lt;&lt; event.peer-&gt;address.port &lt;&lt; &quot;.&quot;);
++					m_waitingForConnect = false;
++					this-&gt;fireCallback_Started();
++				}
++				else if (event.packet)
++				{
+ 					this-&gt;fireCallback_PacketReceived(0,event.packet-&gt;data,event.packet-&gt;dataLength,ChannelId(event.channelID));
+ 				}
+ 				{
+@@ -188,11 +207,11 @@
+ 	}
+ 	void EnetClientPacketConnection::send( const void* dataPtr, const size_t dataSize, const net::SendOptions&amp; opt )
+ 	{
+-		this-&gt;sendBroadcast( dataPtr, dataSize, opt.reliability, opt.ordering, opt.channelId );
++		this-&gt;sendBroadcast( dataPtr, dataSize, opt.getReliability(), opt.getOrdering(), opt.getChannel() );
+ 	}
+ 	void EnetClientPacketConnection::send(const PeerId, const void* dataPtr, const size_t dataSize, const SendOptions&amp; opt )
+ 	{
+-		this-&gt;sendBroadcast( dataPtr, dataSize, opt.reliability, opt.ordering, opt.channelId );
++		this-&gt;sendBroadcast( dataPtr, dataSize, opt.getReliability(), opt.getOrdering(), opt.getChannel() );
+ 	}
+ 	void EnetClientPacketConnection::sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering ord, const ChannelId channel)
+ 	{
+
+Modified: trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp	2006-06-21 19:00:39 UTC (rev 1361)
++++ trunk/yake/src/yake/net/detail/netEnetServerPacketConnection.cpp	2006-06-21 20:57:41 UTC (rev 1362)
+@@ -126,7 +126,7 @@
+ 						boost::mutex::scoped_lock enetLock(getEnetMtx());
+ 						// try to gracefully disconnect clients
+ 						for (size_t i=0; i&lt;m_host-&gt;peerCount; ++i)
+-							enet_peer_disconnect( &amp;m_host-&gt;peers[i] );
++							enet_peer_disconnect( &amp;m_host-&gt;peers[i], 0 /*@todo data*/ );
+ 					}
+ 					Timer timer;
+ 					timer.start();
+@@ -174,7 +174,7 @@
+ 		// disconnect enet client
+ 		{
+ 			boost::mutex::scoped_lock enetLock(getEnetMtx());
+-			enet_peer_disconnect( itFindClient-&gt;second-&gt;peer );
++			enet_peer_disconnect( itFindClient-&gt;second-&gt;peer, 0 /*@todo data*/ );
+ 		}
+ 	}
+ 	EnetServerPacketConnection::ClientState EnetServerPacketConnection::getClientState(ENetPeer* peer) const
+@@ -218,7 +218,7 @@
+ 			switch(event.type)
+ 			{
+ 			case ENET_EVENT_TYPE_CONNECT:
+-				NET_LOG(&quot;net_packet_server: new client connected.&quot;);
++				NET_LOG(&quot;net_packet_server: new client attempts to connect.&quot;);
+ 				NET_ASSERT( event.peer );
+ 				if (event.peer &amp;&amp; state != S_STOPPING)
+ 				{
+@@ -235,12 +235,12 @@
+ 						enet_peer_reset( event.peer ); // hard!
+ 					}
+ 
+-					PeerId peerId = 0xffffffff;
++					PeerId peerId = PEERID_BROADCAST;
+ 					{
+ 						boost::mutex::scoped_lock lockClients(m_clientsMtx);
+ 
+ 						Client* c = new Client();
+-						c-&gt;state = CS_CONNECTED;
++						c-&gt;state = CS_CONNECTING;
+ 						c-&gt;peer = event.peer;
+ 						c-&gt;id = m_nextPeerId++;
+ 						peerId = c-&gt;id;
+@@ -251,40 +251,56 @@
+ 						m_id2client.insert( std::make_pair( c-&gt;id, c ) );
+ 					}
+ 
+-					fireCallback_ClientConnected( peerId, Address(host,event.peer-&gt;address.port) );
++					const uint8 tmp = 0x7F;
++					this-&gt;send(peerId,&amp;tmp,1,SendOptions().reliability(R_RELIABLE));
+ 				}
+ 				break;
+ 			case ENET_EVENT_TYPE_RECEIVE:
+ 				NET_ASSERT( event.packet );
+ 				NET_ASSERT( event.peer );
+ 				NET_ASSERT( event.peer-&gt;data );
+-				if (getClientState( event.peer ) == CS_CONNECTED
+-					&amp;&amp; state != S_STOPPING)
+ 				{
+-					// create packet object
+-					NET_ASSERT( event.packet-&gt;dataLength &gt; 0 );
+-					NET_ASSERT( event.packet-&gt;data );
+-
+-					// get &quot;id&quot;
+-					PeerId peerId = 0xffffffff;
++					const ClientState cs = getClientState( event.peer );
++					if (cs == CS_CONNECTING)
+ 					{
++						const std::string host = ipToStringCached( event.peer-&gt;address.host );
++						NET_LOG(&quot;net_packet_server: client finished connecting: '&quot; &lt;&lt; host &lt;&lt; &quot;:&quot; &lt;&lt; event.peer-&gt;address.port &lt;&lt; &quot;'.&quot;);
+ 						boost::mutex::scoped_lock lockClients(m_clientsMtx);
+-						peerId = (reinterpret_cast&lt;Client*&gt;(event.peer-&gt;data))-&gt;id;
++						PeerToClientMap::iterator it = m_clients.find(event.peer);
++						NET_ASSERT( it != m_clients.end() );
++						NET_ASSERT( it-&gt;second );
++						Client* c = it-&gt;second;
++						c-&gt;state = CS_CONNECTED;
++						fireCallback_ClientConnected( c-&gt;id, Address(host,event.peer-&gt;address.port) );
++						// throw away the packet. =&gt; don't inform callbacks.
+ 					}
++					else if (cs == CS_CONNECTED &amp;&amp; state != S_STOPPING)
++					{
++						// create packet object
++						NET_ASSERT( event.packet-&gt;dataLength &gt; 0 );
++						NET_ASSERT( event.packet-&gt;data );
+ 
+-					fireCallback_PacketReceived(peerId,event.packet-&gt;data,event.packet-&gt;dataLength,event.channelID);
++						// get &quot;id&quot;
++						PeerId peerId = PEERID_BROADCAST;
++						{
++							boost::mutex::scoped_lock lockClients(m_clientsMtx);
++							peerId = (reinterpret_cast&lt;Client*&gt;(event.peer-&gt;data))-&gt;id;
++						}
++
++						fireCallback_PacketReceived(peerId,event.packet-&gt;data,event.packet-&gt;dataLength,event.channelID);
++					}
++					{
++						// destroy enet packet
++						boost::mutex::scoped_lock enetLock(getEnetMtx());
++						enet_packet_destroy( event.packet );
++					}
+ 				}
+-				{
+-					// destroy enet packet
+-					boost::mutex::scoped_lock enetLock(getEnetMtx());
+-					enet_packet_destroy( event.packet );
+-				}
+ 				break;
+ 			case ENET_EVENT_TYPE_DISCONNECT:
+ 				{
+ 					NET_ASSERT( event.peer );
+ 					uint32 host = event.peer ? event.peer-&gt;address.host : 0;
+-					PeerId peerId = 0xffffffff;
++					PeerId peerId = PEERID_BROADCAST;
+ 					if (event.peer)
+ 					{
+ 						boost::mutex::scoped_lock lockClients(m_clientsMtx);
+@@ -313,15 +329,16 @@
+ 	}
+ 	void EnetServerPacketConnection::send( const void* dataPtr, const size_t dataSize, const net::SendOptions&amp; opt )
+ 	{
+-		if (opt.peerId != 0xffffffff)
+-			this-&gt;sendTo( opt.peerId, dataPtr, dataSize, opt.reliability, opt.ordering, opt.channelId );
++		const PeerId peerId = opt.getPeerId();
++		if (peerId != PEERID_BROADCAST)
++			this-&gt;sendTo( peerId, dataPtr, dataSize, opt.getReliability(), opt.getOrdering(), opt.getChannel() );
+ 		else
+-			this-&gt;sendBroadcast( dataPtr, dataSize, opt.reliability, opt.ordering, opt.channelId );
++			this-&gt;sendBroadcast( dataPtr, dataSize, opt.getReliability(), opt.getOrdering(), opt.getChannel() );
+ 	}
+ 	void EnetServerPacketConnection::send(const PeerId peerId, const void* dataPtr, const size_t dataSize, const SendOptions&amp; opt )
+ 	{
+ 		SendOptions options = opt;
+-		options.setPeerId( peerId );
++		options.peerId( peerId );
+ 		send( dataPtr, dataSize, options );
+ 	}
+ 	void EnetServerPacketConnection::sendTo(const PeerId clientId, const void* dataPtr, const size_t dataSize, const Reliability rel, const Ordering, const ChannelId channel)
+
+Modified: trunk/yake/src/yake/net/detail/netEventConnection.cpp
+===================================================================
+--- trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-06-21 19:00:39 UTC (rev 1361)
++++ trunk/yake/src/yake/net/detail/netEventConnection.cpp	2006-06-21 20:57:41 UTC (rev 1362)
+@@ -133,9 +133,7 @@
+ 	}
+ 	void EventConnection::sendEvent(const PeerId peerId, const NetEvent&amp; evt, const SendOptions&amp; opt)
+ 	{
+-		SendOptions options = opt;
+-		options.setPeerId(peerId);
+-		this-&gt;sendEvent( evt, options );
++		this-&gt;sendEvent( evt, SendOptions(opt).peerId(peerId) );
+ 	}
+ 	void EventConnection::sendEvent(const NetEvent&amp; evt, const SendOptions&amp; opt)
+ 	{
+
+Modified: trunk/yake/yake/net/detail/netEnetClientPacketConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEnetClientPacketConnection.h	2006-06-21 19:00:39 UTC (rev 1361)
++++ trunk/yake/yake/net/detail/netEnetClientPacketConnection.h	2006-06-21 20:57:41 UTC (rev 1362)
+@@ -11,7 +11,7 @@
+ 		EnetClientPacketConnection();
+ 		virtual ~EnetClientPacketConnection();
+ 
+-		virtual void connect( const Address&amp; );
++		virtual void connect( const Address&amp;, const bool doBlock, const uint32 timeOut );
+ 		virtual void disconnect();
+ 
+ 		virtual void send(const void*, const size_t, const SendOptions&amp; opt = SendOptions());
+
+Modified: trunk/yake/yake/net/detail/netEnetServerPacketConnection.h
+===================================================================
+--- trunk/yake/yake/net/detail/netEnetServerPacketConnection.h	2006-06-21 19:00:39 UTC (rev 1361)
++++ trunk/yake/yake/net/detail/netEnetServerPacketConnection.h	2006-06-21 20:57:41 UTC (rev 1362)
+@@ -16,6 +16,19 @@
+ 
+ 		virtual void setAllowedClientIps(const std::vector&lt;std::string&gt;&amp;);
+ 
++		virtual size_t getNumConnectedClients() const
++		{
++			boost::mutex::scoped_lock lockClients(m_clientsMtx);
++			PeerToClientMap::const_iterator itEnd = m_clients.end();
++			size_t count = 0;
++			for (PeerToClientMap::const_iterator it = m_clients.begin(); it != itEnd; ++it)
++			{
++				if (it-&gt;second-&gt;state == CS_CONNECTED)
++					++count;
++			}
++			return count;
++		}
++
+ 		virtual void disconnect( const PeerId client );
+ 
+ 		virtual void send(const void*, const size_t, const SendOptions&amp; opt = SendOptions());
+@@ -112,6 +125,7 @@
+ 
+ 		enum ClientState
+ 		{
++			CS_CONNECTING,
+ 			CS_CONNECTED,
+ 			CS_DISCONNECTING,
+ 			CS_DEAD
+@@ -123,6 +137,13 @@
+ 			PeerId		id;
+ 			uint32		host;
+ 			//Address		addr;
++
++			/*
++			void onConnectStage1(...);
++			void onConnectStage2(...);
++			void onConnected(...);
++			void onDisconnected();
++			*/
+ 		};
+ 		typedef std::map&lt;ENetPeer*,Client*&gt; PeerToClientMap;
+ 		PeerToClientMap			m_clients; // access only via update()
+
+Modified: trunk/yake/yake/net/netCommon.h
+===================================================================
+--- trunk/yake/yake/net/netCommon.h	2006-06-21 19:00:39 UTC (rev 1361)
++++ trunk/yake/yake/net/netCommon.h	2006-06-21 20:57:41 UTC (rev 1362)
+@@ -5,20 +5,31 @@
+ 
+ namespace net {
+ 
++	/** Used to define packet transport channels. */
+ 	typedef uint8 ChannelId;
++
++	/** Used to identify network peers. */
+ 	typedef uint32 PeerId;
++	const PeerId PEERID_BROADCAST = 0xffffffff;
+ 
++	/** Specifies the reliability method a packet will be transferred with. */
+ 	enum Reliability
+ 	{
+ 		R_RELIABLE = 0,
+ 		R_UNRELIABLE
+ 	};
++	/** Specifies the ordering method a packet will be transferred with. */
+ 	enum Ordering
+ 	{
+ 		O_ORDERED = 0,
+ 		O_UNORDERED
+ 	};
+ 
++	/** Represents a specifically configured set of options.
++		It used for specifying additional information and hints
++		when sending data/packets.
++		Usage example: conn.send(buf.data(),buf.size(), SendOptions().setOrdering(O_ORDERED).setReliability(R_RELIABLED));
++	*/
+ 	struct NET_API SendOptions
+ 	{
+ 		SendOptions();
+@@ -26,19 +37,30 @@
+ 		~SendOptions();
+ 		SendOptions&amp; operator=(const SendOptions&amp;);
+ 
+-		SendOptions&amp; setPeerId(const PeerId);
+-		SendOptions&amp; setReliability(const Reliability);
+-		SendOptions&amp; setOrdering(const Ordering);
+-		SendOptions&amp; setChannel(const ChannelId);
++		/** Set the target peer id.
++			@Remarks This setting is ignored by broadcast functions!
++		*/
++		SendOptions&amp; peerId(const PeerId);
++		SendOptions&amp; reliability(const Reliability);
++		SendOptions&amp; ordering(const Ordering);
++		SendOptions&amp; channel(const ChannelId);
+ 
+-		PeerId			peerId;
+-		Reliability		reliability;
+-		Ordering		ordering;
+-		ChannelId		channelId;
++		PeerId getPeerId() const;
++		Reliability getReliability() const;
++		Ordering getOrdering() const;
++		ChannelId getChannel() const;
++	private:
++		PeerId			peerId_;
++		Reliability		reliability_;
++		Ordering		ordering_;
++		ChannelId		channelId_;
+ 	};
+ 
++	/** Represents a network address (IP + port pair).
++	*/
+ 	struct NET_API Address
+ 	{
++		/** Initializes the IP with &quot;127.0.0.1&quot;. */
+ 		Address(const uint16 port);
+ 		Address(const std::string&amp; ip = std::string(&quot;127.0.0.1&quot;), const uint16 port = 0);
+ 		Address(const Address&amp;);
+@@ -54,12 +76,20 @@
+ 		uint16			port_;
+ 	};
+ 
++	/** Converts the 32-bit integer representation of an IPv4 IP
++		to a string representation.
++	*/
+ 	NET_API std::string ipToString(const uint32);
+ 
+ 	namespace native {
++		/** Sleeps the active thread for a certain number of milliseconds.
++			This also yields the thread! (For example, a Win32 implementation
++			may use ::Sleep().)
++		*/
+ 		NET_API void sleep(const uint32 ms);
+ 	} // namespace native
+ 
++	/** Represents an exception in the network component. */
+ 	struct NET_API Exception : public std::exception
+ 	{
+ 		Exception(const std::string&amp; msg, const char* file = 0, const int line = 0);
+@@ -69,6 +99,8 @@
+ 		std::string	msg_;
+ 	};
+ 
++	/** Cross-platform timer interface.
++	*/
+ 	class NET_API Timer
+ 	{
+ 	public:
+
+Modified: trunk/yake/yake/net/netPacket.h
+===================================================================
+--- trunk/yake/yake/net/netPacket.h	2006-06-21 19:00:39 UTC (rev 1361)
++++ trunk/yake/yake/net/netPacket.h	2006-06-21 20:57:41 UTC (rev 1362)
+@@ -5,6 +5,8 @@
+ 
+ 	typedef std::vector&lt;uint8&gt; byte_chunk;
+ 
++	/** Interface for packet sending objects.
++	*/
+ 	class NET_API IPacketSender
+ 	{
+ 	public:
+@@ -31,6 +33,8 @@
+ 	};
+ #pragma warning(pop)
+ 
++	/** Interface for packet receiving objects.
++	*/
+ 	class NET_API IPacketReceiver
+ 	{
+ 	public:
+@@ -40,6 +44,8 @@
+ 		virtual CallbackConnection addPacketReceivedCallback( const OnPacketReceivedFn&amp;) = 0;
+ 	};
+ 
++	/** Interface for packet sending and receiving objects (connections).
++	*/
+ 	class NET_API IPacketConnection : public IPacketSender, public IPacketReceiver
+ 	{
+ 	public:
+@@ -48,17 +54,23 @@
+ 		virtual void addStartedCallback(const OnStartedFn&amp;) = 0;
+ 	};
+ 
++	/** A packet connection interface specific to packet servers.
++		Packet servers manage zero or more connected clients.
++		@see IClientPacketConnection
++	*/
+ 	class NET_API IServerPacketConnection : public IPacketConnection
+ 	{
+ 	public:
+ 
+-		/*** May throw exception. */
++		/*** @Remarks May throw exception. */
+ 		virtual void start( const Address&amp;, const size_t ) = 0;
+ 		virtual void stop() = 0;
+ 
+ 		virtual void setAllowedClientIps(const std::vector&lt;std::string&gt;&amp;) = 0;
+ 		//virtual void setAllowedClientIps(const std::vector&lt;uint32&gt;&amp;) = 0;
+ 
++		virtual size_t getNumConnectedClients() const = 0;
++
+ 		virtual void disconnect( const PeerId ) = 0;
+ 
+ 		typedef boost::function&lt;void(const PeerId, const Address&amp;)&gt; OnClientConnectedFn;
+@@ -68,15 +80,21 @@
+ 		virtual void addClientConnectedCallback(const OnClientConnectedFn&amp;) = 0;
+ 		virtual void addClientDisconnectedCallback(const OnClientDisconnectedFn&amp;) = 0;
+ 	};
++	/** A packet connection interface specific to packet clients.
++		Packet clients manage a single connection to a packet server.
++		@see IClientPacketConnection
++	*/
+ 	class NET_API IClientPacketConnection : public IPacketConnection
+ 	{
+ 	public:
+-		virtual void connect( const Address&amp; ) = 0;
++		virtual void connect( const Address&amp;, const bool doBlock = false, const uint32 timeOut = 2000 ) = 0;
+ 		virtual void disconnect() = 0;
+ 
+ 		virtual void addTimeOutCallback(const OnTimeOutFn&amp;) = 0;
+ 	};
++	/** @Remarks User code is responsible for destroying the connection objects!*/
+ 	NET_API IServerPacketConnection* createServerPacketConnection();
++	/** @Remarks User code is responsible for destroying the connection objects!*/
+ 	NET_API IClientPacketConnection* createClientPacketConnection();
+ 
+ } // namespace net
+
+Modified: trunk/yake/yake/samples/net/roclient/pch.h
+===================================================================
+--- trunk/yake/yake/samples/net/roclient/pch.h	2006-06-21 19:00:39 UTC (rev 1361)
++++ trunk/yake/yake/samples/net/roclient/pch.h	2006-06-21 20:57:41 UTC (rev 1362)
+@@ -4,4 +4,4 @@
+ #include &lt;boost/function.hpp&gt;
+ #include &lt;boost/bind.hpp&gt;
+ 
+-#endif
+\ No newline at end of file
++#endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000429.html">[Yake-svn] r1361 - trunk/yake
+</A></li>
+	<LI>Next message: <A HREF="000431.html">[Yake-svn] r1363 - in trunk/yake: src/yake/net/detail src/yake/samples/net src/yake/samples/net/packet src/yake/samples/net/roclient src/yake/samples/net/roserver yake/net yake/net/detail yake/samples/net yake/samples/net/packet yake/samples/net/roclient yake/samples/net/roserver
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#430">[ date ]</a>
+              <a href="thread.html#430">[ thread ]</a>
+              <a href="subject.html#430">[ subject ]</a>
+              <a href="author.html#430">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

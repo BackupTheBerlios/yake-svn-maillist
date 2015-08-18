@@ -1,0 +1,385 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1349 - in trunk/yake/src/yake: model samples/model/dotScene
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1349%20-%20in%20trunk/yake/src/yake%3A%20model%20samples/model/dotScene&In-Reply-To=%3C200606201810.k5KIAi8a002612%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000416.html">
+   <LINK REL="Next"  HREF="000418.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1349 - in trunk/yake/src/yake: model samples/model/dotScene</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1349%20-%20in%20trunk/yake/src/yake%3A%20model%20samples/model/dotScene&In-Reply-To=%3C200606201810.k5KIAi8a002612%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1349 - in trunk/yake/src/yake: model samples/model/dotScene">codeandroid at berlios.de
+       </A><BR>
+    <I>Tue Jun 20 20:10:44 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000416.html">[Yake-svn] r1348 - trunk/yake/yake/model
+</A></li>
+        <LI>Next message: <A HREF="000418.html">[Yake-svn] r1350 - trunk/yake/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#417">[ date ]</a>
+              <a href="thread.html#417">[ thread ]</a>
+              <a href="subject.html#417">[ subject ]</a>
+              <a href="author.html#417">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-20 20:10:25 +0200 (Tue, 20 Jun 2006)
+New Revision: 1349
+
+Modified:
+   trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+   trunk/yake/src/yake/model/yakeModelManager.cpp
+   trunk/yake/src/yake/model/yakePhysical.cpp
+   trunk/yake/src/yake/model/yakePhysicalCreator.cpp
+   trunk/yake/src/yake/samples/model/dotScene/demo.cpp
+Log:
+added signals,
+Physical can now manage physics::IBodyAffectors and their targets,
+various comments
+
+Modified: trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-06-20 18:06:58 UTC (rev 1348)
++++ trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-06-20 18:10:25 UTC (rev 1349)
+@@ -74,6 +74,7 @@
+ 		YAKE_ASSERT( parser );
+ 
+ 		Graphical* pGraphical = new Graphical(/**ctx.model_*/);
++		ctx.sigPreInit_(ctx,*pGraphical);
+ 
+ 		const String namePrefix = _T(&quot;model:&quot;) + ctx.model_-&gt;getName() + _T(&quot;/&quot;)  // model
+ 									+ (name.empty() ? _T(&quot;&quot;) : (name + _T(&quot;/&quot;))); // component
+@@ -91,12 +92,13 @@
+ 			YAKE_SAFE_DELETE( pGraphical );
+ 		}
+ 
+-		ctx.model_-&gt;addComponent( pGraphical, name );
+-
+ 		conn1.disconnect();
+ 		conn2.disconnect();
+ 		conn3.disconnect();
+ 		conn4.disconnect();
++
++		ctx.sigPostInit_(ctx,*pGraphical);
++		ctx.model_-&gt;addComponent( pGraphical, name );
+ 	}
+ 
+ } // namespace model
+
+Modified: trunk/yake/src/yake/model/yakeModelManager.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelManager.cpp	2006-06-20 18:06:58 UTC (rev 1348)
++++ trunk/yake/src/yake/model/yakeModelManager.cpp	2006-06-20 18:10:25 UTC (rev 1349)
+@@ -37,6 +37,30 @@
+ 	ModelManager::~ModelManager()
+ 	{
+ 	}
++	SignalConnection ModelManager::subscribeToModelCreatedSignal(const ModelCreatedSignal::slot_type&amp; slot)
++	{
++		return sigModelCreatedSignal_.connect(slot);
++	}
++	SignalConnection ModelManager::subscribeToPreCreateModelComponent(const PreCreateModelComponent::slot_type&amp; slot)
++	{
++		return sigPreCreateModelComponent_.connect(slot);
++	}
++	SignalConnection ModelManager::subscribeToPostCreateModelComponent(const PostCreateModelComponent::slot_type&amp; slot)
++	{
++		return sigPostCreateModelComponent_.connect(slot);
++	}
++	SignalConnection ModelManager::subscribeToModelInitializedSignal(const ModelInitializedSignal::slot_type&amp; slot)
++	{
++		return sigModelInitializedSignal_.connect(slot);
++	}
++	SignalConnection ModelManager::subscribeToComponentPreInitializeSignal(const ComponentPreInitializeSignal::slot_type&amp; slot)
++	{
++		return ctx_.sigPreInit_.connect( slot );
++	}
++	SignalConnection ModelManager::subscribeToComponentPostInitializeSignal(const ComponentPostInitializeSignal::slot_type&amp; slot)
++	{
++		return ctx_.sigPostInit_.connect( slot );
++	}
+ 	namespace detail {
+ 		void extractParams(const String&amp; params, StringMap&amp; out)
+ 		{
+@@ -54,19 +78,27 @@
+ 	{
+ 		models_.clear();
+ 	}
+-	/// graphics/dotScene:name=gfx;file=bla.scene|physics/dotXODE...
+-	Model* ModelManager::createModel(const String&amp; modelName, const String&amp; def)
++	/**
++	list of components:
++		component #1
++			type=graphics/dotScene
++			name=gfx
++			file=...
++			...
++		component #2
++			type=physics/dotXODE
++			name=...
++			...
++	*/
++	Model* ModelManager::createModel(const String&amp; modelName, const ModelComponentDescList&amp; compDescList)
+ 	{
++		// Validate name
+ 		YAKE_ASSERT( !modelName.empty() );
+ 		YAKE_ASSERT( models_.find(modelName) == models_.end() )(modelName).debug(&quot;Model with that name already exists.&quot;);
+ 		if (models_.find(modelName) != models_.end())
+ 			return 0;
+ 
+-		Vector&lt;String&gt; defComponents = split&lt;String&gt;(def, &quot;|&quot;);
+-		YAKE_ASSERT(!defComponents.empty())(modelName)(def);
+-		if (defComponents.empty())
+-			return 0;
+-
++		// Create model object
+ 		Model* m = new Model();
+ 		m-&gt;setName( modelName );
+ 		models_.insert( std::make_pair(modelName,SharedPtr&lt;Model&gt;(m)) );
+@@ -74,27 +106,20 @@
+ 
+ 		sigModelCreatedSignal_(*m,ctx_);
+ 
+-		ConstVectorIterator&lt;Vector&lt;String&gt; &gt; itDef( defComponents );
+-		while (itDef.hasMoreElements())
++		// Create components (if any)
++		ConstVectorIterator&lt;ModelComponentDescList&gt; itCompDesc(compDescList);
++		while (itCompDesc.hasMoreElements())
+ 		{
+-			const String&amp; defC = itDef.getNextRef();
++			const ModelComponent::Desc&amp; desc = itCompDesc.getNextRef();
+ 
+-			// Split e.g. &quot;gfx=graphics/dotScene:file=blah.scene&quot; into &quot;gfx&quot; and &quot;file=graphics/dotScene:blah.scene&quot;
+-			Vector&lt;String&gt; defTypeRest = split&lt;String&gt;( defC, &quot;:&quot; );
+-			YAKE_ASSERT( defTypeRest.size() == 2 )(modelName)(def);
++			const String&amp; type = desc.type; // e.g. &quot;graphics/dotScene&quot; or &quot;physics/XODE&quot; etc
++			const StringMap&amp; params = desc.params;
+ 
+-			const String type = defTypeRest.front(); // e.g. &quot;graphics/dotScene&quot; or &quot;physics/XODE&quot; etc
+-
+-			// Extract parameters.
+-			StringMap params;
+-			detail::extractParams( defTypeRest.back(), params );
+-
+ 			// Extract parameter 'name'.
+ 			StringMap::const_iterator itParam = params.find(&quot;name&quot;);
+ 			const String name = (itParam == params.end()) ? _T(&quot;&quot;) : itParam-&gt;second;
+ 
+ 			// Create component.
+-
+ #ifdef YAKE_DEBUG
+ 			if (!name.empty())
+ 			{
+@@ -117,6 +142,44 @@
+ 		sigModelInitializedSignal_(*m,ctx_);
+ 		return m;
+ 	}
++	/// graphics/dotScene:name=gfx;file=bla.scene|physics/dotXODE...
++	Model* ModelManager::createModel(const String&amp; modelName, const String&amp; def)
++	{
++		// Validate name
++		YAKE_ASSERT( !modelName.empty() );
++		YAKE_ASSERT( models_.find(modelName) == models_.end() )(modelName).debug(&quot;Model with that name already exists.&quot;);
++		if (models_.find(modelName) != models_.end())
++			return 0;
++
++		// Split components string
++		Vector&lt;String&gt; defComponents = split&lt;String&gt;(def, &quot;|&quot;);
++
++		// Create ModelComponentDescList.
++		ModelComponentDescList compDescList;
++		ConstVectorIterator&lt;Vector&lt;String&gt; &gt; itDef( defComponents );
++		while (itDef.hasMoreElements())
++		{
++			const String&amp; defC = itDef.getNextRef();
++
++			// Split e.g. &quot;gfx=graphics/dotScene:file=blah.scene&quot; into &quot;gfx&quot; and &quot;file=graphics/dotScene:blah.scene&quot;
++			Vector&lt;String&gt; defTypeRest = split&lt;String&gt;( defC, &quot;:&quot; );
++			YAKE_ASSERT( defTypeRest.size() == 2 )(modelName)(def);
++
++			const String type = defTypeRest.front(); // e.g. &quot;graphics/dotScene&quot; or &quot;physics/XODE&quot; etc
++
++			// Extract parameters.
++			StringMap params;
++			detail::extractParams( defTypeRest.back(), params );
++
++			// Extract parameter 'name'.
++			StringMap::const_iterator itParam = params.find(&quot;name&quot;);
++			const String name = (itParam == params.end()) ? _T(&quot;&quot;) : itParam-&gt;second;
++
++			// Create component description.
++			compDescList.push_back( ModelComponent::Desc(name,type,params) );
++		}
++		return this-&gt;createModel(modelName,compDescList);
++	}
+ 	void ModelManager::setCreationContext_GraphicalWorld(graphics::IWorld* w)
+ 	{
+ 		ctx_.gworld_ = w;
+
+Modified: trunk/yake/src/yake/model/yakePhysical.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakePhysical.cpp	2006-06-20 18:06:58 UTC (rev 1348)
++++ trunk/yake/src/yake/model/yakePhysical.cpp	2006-06-20 18:10:25 UTC (rev 1349)
+@@ -67,6 +67,11 @@
+ 		YAKE_LOG(String(&quot;Physical::addBody(&quot;) + xpath + _T(&quot;)&quot;));
+ 		this-&gt;_add&lt;physics::IBody&gt;(body,bodies_,xpath);
+ 	}
++	void Physical::addAffector(physics::IBodyAffector* affector, const String&amp; xpath)
++	{
++		YAKE_LOG(String(&quot;Physical::addAffector(&quot;) + xpath + _T(&quot;)&quot;));
++		this-&gt;_add&lt;physics::IBodyAffector&gt;(affector,affectors_,xpath);
++	}
+ 	physics::IActor* Physical::getActor(const yake::String&amp; xpath) const
+ 	{
+ 		return this-&gt;_get(actors_,xpath);
+@@ -79,6 +84,45 @@
+ 	{
+ 		return this-&gt;_get(bodies_,xpath);
+ 	}
++	physics::IBodyAffector* Physical::getAffector(const String&amp; xpath) const
++	{
++		return this-&gt;_get(affectors_,xpath);
++	}
++	void Physical::addAffectorTargetBody(physics::IBodyAffector* affector,physics::IBody* target)
++	{
++		//@todo test for existence of affector in affectorTargetMap_.
++		YAKE_ASSERT( affector );
++		YAKE_ASSERT( target );
++		affectorTargetMap_[affector] += target;
++	}
++	void Physical::addAffectorTargetBody(physics::IBodyAffector* affector,const String&amp; bodyXPath)
++	{
++		//@todo test for existence of affector in affectorTargetMap_.
++		YAKE_ASSERT( affector );
++		YAKE_ASSERT( !bodyXPath.empty() );
++		physics::IBodyPtr body = this-&gt;getBody( bodyXPath );
++		YAKE_ASSERT( body );
++		this-&gt;addAffectorTargetBody(affector,body);
++	}
++	void Physical::addAffectorTargetActor(physics::IBodyAffector* affector,const String&amp; actorXPath)
++	{
++		//@todo test for existence of affector in affectorTargetMap_.
++		YAKE_ASSERT( affector );
++		YAKE_ASSERT( !actorXPath.empty() );
++		physics::IActorPtr actor = this-&gt;getActor(actorXPath);
++		YAKE_ASSERT( actor );
++		physics::IBodyPtr body = actor-&gt;getBodyPtr();
++		YAKE_ASSERT( body );
++		this-&gt;addAffectorTargetBody(affector,body);
++	}
++	void Physical::updateAffectors(const real dt)
++	{
++		AffectorTargetMap::iterator itEnd = affectorTargetMap_.end();
++		for (AffectorTargetMap::iterator it = affectorTargetMap_.begin(); it != itEnd; ++it)
++		{
++			it-&gt;first-&gt;applyTo(it-&gt;second,dt);
++		}
++	}
+ 
+ } // namespace model
+ } // namespace yake
+
+Modified: trunk/yake/src/yake/model/yakePhysicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakePhysicalCreator.cpp	2006-06-20 18:06:58 UTC (rev 1348)
++++ trunk/yake/src/yake/model/yakePhysicalCreator.cpp	2006-06-20 18:10:25 UTC (rev 1349)
+@@ -74,6 +74,7 @@
+ 		YAKE_ASSERT( xodeparser );
+ 
+ 		Physical* pPhysical = new Physical(/**ctx.model_*/);
++		ctx.sigPreInit_(ctx,*pPhysical);
+ 
+ 		const String namePrefix = _T(&quot;model:&quot;) + ctx.model_-&gt;getName() + _T(&quot;/&quot;)  // model
+ 									+ (name.empty() ? _T(&quot;&quot;) : (name + _T(&quot;/&quot;))); // component
+@@ -87,10 +88,11 @@
+ 			YAKE_SAFE_DELETE( pPhysical );
+ 		}
+ 
+-		ctx.model_-&gt;addComponent( pPhysical, name );
+-
+ 		conn2.disconnect();
+ 		conn1.disconnect();
++
++		ctx.sigPostInit_(ctx,*pPhysical);
++		ctx.model_-&gt;addComponent( pPhysical, name );
+ 	}
+ 
+ } // namespace model
+
+Modified: trunk/yake/src/yake/samples/model/dotScene/demo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/model/dotScene/demo.cpp	2006-06-20 18:06:58 UTC (rev 1348)
++++ trunk/yake/src/yake/samples/model/dotScene/demo.cpp	2006-06-20 18:10:25 UTC (rev 1349)
+@@ -45,6 +45,14 @@
+ 	{
+ 		std::cout &lt;&lt; &quot;MB: &quot; &lt;&lt; static_cast&lt;int&gt;(btn) &lt;&lt; std::endl;
+ 	}
++	void onModelComponent_preInit(const model::ComponentCreationContext&amp; ctx, model::ModelComponent&amp;)
++	{
++		YAKE_LOG(&quot;demo: onModelComponent_preInit()&quot;);
++	}
++	void onModelComponent_postInit(const model::ComponentCreationContext&amp; ctx, model::ModelComponent&amp;)
++	{
++		YAKE_LOG(&quot;demo: onModelComponent_postInit()&quot;);
++	}
+ 	int createCameraViewportPair( real sx, real sy, real w, real h, int z )
+ 	{
+ 		graphics::ICamera* pC = mGWorld-&gt;createCamera();
+@@ -121,11 +129,19 @@
+ 		setupScene();
+ 
+ 		//mGWorld-&gt;setShadowsEnabled( true );
++
++		// create a model manager and set up the model creation context.
+ 		model::ModelManager modelMgr;
+ 		modelMgr.setCreationContext_GraphicalWorld( mGWorld.get() );
+ 		modelMgr.setCreationContext_PhysicalWorld( mPWorld.get() );
+ 		modelMgr.setCreationContext_CentralController( this );
+ 
++		// just for demo purposes:
++		modelMgr.subscribeToComponentPreInitializeSignal( Bind2(&amp;TheApp::onModelComponent_preInit,this) );
++		modelMgr.subscribeToComponentPostInitializeSignal( Bind2(&amp;TheApp::onModelComponent_postInit,this) );
++
++		// create models :)
++
+ 		model::Model* m = modelMgr.createModel(&quot;m1&quot;,&quot;graphics/dotScene:name=gfx;file=../../media/samples/dotScene/DotScene1.scene&quot;);
+ 		YAKE_ASSERT( m );
+ 		((model::Graphical*)m-&gt;getComponentByTag(&quot;gfx&quot;))-&gt;translate(Vector3(40,20,0));
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000416.html">[Yake-svn] r1348 - trunk/yake/yake/model
+</A></li>
+	<LI>Next message: <A HREF="000418.html">[Yake-svn] r1350 - trunk/yake/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#417">[ date ]</a>
+              <a href="thread.html#417">[ thread ]</a>
+              <a href="subject.html#417">[ subject ]</a>
+              <a href="author.html#417">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

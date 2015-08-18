@@ -1,0 +1,640 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1260 - in trunk/yake/yake: . msg
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1260%20-%20in%20trunk/yake/yake%3A%20.%20msg&In-Reply-To=%3C200603122218.k2CMIta4013235%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000329.html">
+   <LINK REL="Next"  HREF="000331.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1260 - in trunk/yake/yake: . msg</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1260%20-%20in%20trunk/yake/yake%3A%20.%20msg&In-Reply-To=%3C200603122218.k2CMIta4013235%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1260 - in trunk/yake/yake: . msg">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 12 23:18:55 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000329.html">[Yake-svn] r1259 - in trunk/yake/src/yake/samples: . msg msg/sampleMsg1
+</A></li>
+        <LI>Next message: <A HREF="000331.html">[Yake-svn] r1261 - trunk/yake/yake/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#330">[ date ]</a>
+              <a href="thread.html#330">[ thread ]</a>
+              <a href="subject.html#330">[ subject ]</a>
+              <a href="author.html#330">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-12 23:18:54 +0100 (Sun, 12 Mar 2006)
+New Revision: 1260
+
+Added:
+   trunk/yake/yake/msg/
+   trunk/yake/yake/msg/listener.h
+   trunk/yake/yake/msg/listener_mgr.h
+   trunk/yake/yake/msg/message.h
+   trunk/yake/yake/msg/prerequisites.h
+   trunk/yake/yake/msg/processors.h
+   trunk/yake/yake/msg/router.h
+   trunk/yake/yake/msg/yakeMessage.h
+Log:
+initial revision
+
+Added: trunk/yake/yake/msg/listener.h
+===================================================================
+--- trunk/yake/yake/msg/listener.h	2006-03-12 22:16:28 UTC (rev 1259)
++++ trunk/yake/yake/msg/listener.h	2006-03-12 22:18:54 UTC (rev 1260)
+@@ -0,0 +1,91 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MSG_LISTENER_H
++#define YAKE_MSG_LISTENER_H
++
++#include &quot;yake/msg/prerequisites.h&quot;
++
++MSG_NAMESPACE_BEGIN
++
++	struct listener_base
++	{
++		listener_base(const std::string&amp; msgTypeName) : msgTypeName_(msgTypeName) {}
++		void execute(const message_base&amp; msg)
++		{ doExecute(msg); }
++		const std::string&amp; msgTypeName() const
++		{ return msgTypeName_; }
++		void destroy()
++		{
++			assert( this );
++			delete this;
++		}
++	protected:
++		virtual void doExecute(const message_base&amp;) = 0;
++	private:
++		std::string		msgTypeName_;
++	};
++	/*
++	enum ListenerResult
++	{
++		LR_UNHANDLED,
++		LR_HANDLED,
++		LR_FAILED
++	};
++	*/
++	template&lt;typename MsgType&gt;
++	struct listener : public listener_base
++	{
++		typedef boost::function&lt;void(const MsgType&amp;)&gt; HandlerFn;
++
++		listener(const HandlerFn&amp; fn) : listener_base(typeid(MsgType).name()),fn_(fn)
++		{}
++	protected:
++		virtual void doExecute(const message_base&amp; msgbase)
++		{
++			try {
++				fn_( static_cast&lt;const MsgType&amp;&gt;(boost::any_cast&lt;MsgType&gt;(msgbase.value())) );
++			}
++			catch( boost::bad_any_cast&amp; e )
++			{
++				std::cerr &lt;&lt; &quot;msg.exception: &quot; &lt;&lt; e.what() &lt;&lt; &quot;\n&quot;;
++			}
++			catch( ...)
++			{
++				std::cerr &lt;&lt; &quot;msg.exception: unhandled exception\n&quot;;
++			}
++		}
++	private:
++		HandlerFn			fn_;
++	};
++
++	template&lt;typename T&gt;
++	listener&lt;T&gt;* makeListener(const boost::function&lt;void(const T&amp;)&gt;&amp; fn)
++	{ return new listener&lt;T&gt;(fn); }
++
++MSG_NAMESPACE_END
++
++#endif
+
+Added: trunk/yake/yake/msg/listener_mgr.h
+===================================================================
+--- trunk/yake/yake/msg/listener_mgr.h	2006-03-12 22:16:28 UTC (rev 1259)
++++ trunk/yake/yake/msg/listener_mgr.h	2006-03-12 22:18:54 UTC (rev 1260)
+@@ -0,0 +1,68 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MSG_LISTENER_MGR_H
++#define YAKE_MSG_LISTENER_MGR_H
++
++#include &quot;yake/msg/prerequisites.h&quot;
++
++MSG_NAMESPACE_BEGIN
++
++	namespace detail {
++		typedef std::deque&lt;boost::shared_ptr&lt;listener_base&gt; &gt; listener_list;
++		typedef std::map&lt;std::string,listener_list&gt; listener_map;
++
++		struct msg_listener_mgr
++		{
++			bool add(listener_base* l)
++			{
++				assert(l);
++				if (!l)
++					return false;
++				listeners_[l-&gt;msgTypeName()].push_back( boost::shared_ptr&lt;listener_base&gt;(l) );
++				return true;
++			}
++			void process(message_base* msg)
++			{
++				assert( msg );
++				listener_map::const_iterator itMsgType = listeners_.find(msg-&gt;msgTypeName());
++				if (itMsgType == listeners_.end())
++					return;
++				const listener_list&amp; l = itMsgType-&gt;second;
++				for (listener_list::const_iterator it = l.begin(); it != l.end(); ++it)
++					(*it)-&gt;execute(*msg);
++				MSG_NAMESPACE::destroyMessage(msg);
++			}
++		private:
++			typedef MSG_NAMESPACE::detail::listener_list listener_list;
++			typedef MSG_NAMESPACE::detail::listener_map listener_map;
++			listener_map	listeners_;
++		};
++	}
++
++MSG_NAMESPACE_END
++
++#endif
+
+Added: trunk/yake/yake/msg/message.h
+===================================================================
+--- trunk/yake/yake/msg/message.h	2006-03-12 22:16:28 UTC (rev 1259)
++++ trunk/yake/yake/msg/message.h	2006-03-12 22:18:54 UTC (rev 1260)
+@@ -0,0 +1,92 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MSG_MESSAGE_H
++#define YAKE_MSG_MESSAGE_H
++
++#include &quot;yake/msg/prerequisites.h&quot;
++
++MSG_NAMESPACE_BEGIN
++
++	struct message_base
++	{
++	private:
++		message_base(const message_base&amp;);
++		message_base&amp; operator=(const message_base&amp;);
++	public:
++		template&lt;typename T&gt;
++		message_base(const T&amp; value) : value_(value), msgTypeName_(typeid(T).name())
++		{}
++		const boost::any&amp; value() const
++		{ return value_; }
++		const std::string&amp; msgTypeName() const
++		{ return msgTypeName_; }
++	protected:
++		boost::any		value_;
++	private:
++		std::string		msgTypeName_;
++	};
++	template&lt;typename T&gt;
++	struct message : public message_base
++	{
++		message(const T&amp; v) : message_base(v)
++		{}
++		message() : message_base(T())
++		{}
++		void setValue(const T&amp; v)
++		{ value_ = v; } //@todo add type mismatch tests
++	};
++
++	struct DefaultMessageAllocator
++	{
++		DefaultMessageAllocator&amp; instance();
++		template&lt;typename T&gt;
++		static message&lt;T&gt;* create(const T&amp; v)
++		{
++			return new message&lt;T&gt;(v);
++		}
++		template&lt;typename MsgType&gt;
++		static void destroy(const MsgType* msg)
++		{
++			assert( msg );
++			delete msg;
++		}
++	};
++
++	template&lt;typename T&gt;
++	message&lt;T&gt;* makeMessage(const T&amp; v)
++	{ 
++		return DefaultMessageAllocator::create&lt;T&gt;(v); 
++	}
++	template&lt;typename T&gt;
++	void destroyMessage(T* msg)
++	{ 
++		return DefaultMessageAllocator::destroy(msg); 
++	}
++
++MSG_NAMESPACE_END
++
++#endif
+
+Added: trunk/yake/yake/msg/prerequisites.h
+===================================================================
+--- trunk/yake/yake/msg/prerequisites.h	2006-03-12 22:16:28 UTC (rev 1259)
++++ trunk/yake/yake/msg/prerequisites.h	2006-03-12 22:18:54 UTC (rev 1260)
+@@ -0,0 +1,47 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MSG_PREREQUISITES_H
++#define YAKE_MSG_PREREQUISITES_H
++
++#define MSG_NAMESPACE ::yake::msg
++#define MSG_NAMESPACE_BEGIN namespace yake { namespace msg {
++#define MSG_NAMESPACE_END }}
++
++/*
++#include &lt;cassert&gt;
++#include &lt;vector&gt;
++#include &lt;deque&gt;
++#include &lt;map&gt;
++#include &lt;string&gt;
++#include &lt;boost/shared_ptr.hpp&gt;
++#include &lt;boost/bind.hpp&gt;
++#include &lt;boost/function.hpp&gt;
++#include &lt;boost/any.hpp&gt;
++#include &lt;boost/pool/object_pool.hpp&gt;
++*/
++
++#endif
+
+Added: trunk/yake/yake/msg/processors.h
+===================================================================
+--- trunk/yake/yake/msg/processors.h	2006-03-12 22:16:28 UTC (rev 1259)
++++ trunk/yake/yake/msg/processors.h	2006-03-12 22:18:54 UTC (rev 1260)
+@@ -0,0 +1,111 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MSG_PROCESSORS_H
++#define YAKE_MSG_PROCESSORS_H
++
++#include &quot;yake/msg/prerequisites.h&quot;
++
++MSG_NAMESPACE_BEGIN
++
++	struct ImmediateProcessor : public detail::msg_listener_mgr
++	{
++		typedef detail::listener_map listener_map;
++		typedef detail::listener_list listener_list;
++
++		void onPost(message_base* msg)
++		{
++			assert(msg);
++			this-&gt;process(msg);
++		}
++	};
++	struct SingleQueuedProcessor : public detail::msg_listener_mgr
++	{
++		typedef detail::listener_map listener_map;
++		typedef detail::listener_list listener_list;
++
++		SingleQueuedProcessor() : isProcessing_(false)
++		{}
++		void onPost(message_base* msg)
++		{
++			assert(!isProcessing_);
++			assert(msg);
++			q_.push_back(msg); //@todo sort by msg type!?
++		}
++		void processMessages()
++		{
++			assert( !isProcessing_ );
++			isProcessing_ = true;
++			for (msg_q::const_iterator it = q_.begin(); it != q_.end(); ++it)
++			{
++				message_base* msg = *it;
++				assert( msg );
++				this-&gt;process(msg);
++			}
++			q_.clear();
++			isProcessing_ = false;
++		}
++	private:
++		typedef std::deque&lt;message_base*&gt; msg_q;
++		msg_q		q_;
++		bool		isProcessing_;
++	};
++	struct DoubleQueuedProcessor : public detail::msg_listener_mgr
++	{
++		typedef detail::listener_map listener_map;
++		typedef detail::listener_list listener_list;
++
++		DoubleQueuedProcessor() : q_(&amp;q1_), isProcessing_(false) {}
++		void onPost(message_base* msg)
++		{
++			assert(msg);
++			q_-&gt;push_back(msg); //@todo sort by msg type!?
++		}
++		void processMessages()
++		{
++			assert( !isProcessing_ );
++			isProcessing_ = true;
++			msg_q* procQ = q_;
++			q_ = (q_ == &amp;q1_) ? &amp;q2_ : &amp;q1_;
++			for (msg_q::const_iterator it = procQ-&gt;begin(); it != procQ-&gt;end(); ++it)
++			{
++				message_base* msg = *it;
++				assert( msg );
++				this-&gt;process(msg);
++			}
++			procQ-&gt;clear();
++			isProcessing_ = false;
++		}
++	private:
++		typedef std::deque&lt;message_base*&gt; msg_q;
++		msg_q		q1_,q2_;
++		msg_q*	q_;
++		bool		isProcessing_;
++	};
++
++MSG_NAMESPACE_END
++
++#endif
+
+Added: trunk/yake/yake/msg/router.h
+===================================================================
+--- trunk/yake/yake/msg/router.h	2006-03-12 22:16:28 UTC (rev 1259)
++++ trunk/yake/yake/msg/router.h	2006-03-12 22:18:54 UTC (rev 1260)
+@@ -0,0 +1,75 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MSG_ROUTER_H
++#define YAKE_MSG_ROUTER_H
++
++#include &quot;yake/msg/prerequisites.h&quot;
++
++MSG_NAMESPACE_BEGIN
++
++	template&lt;typename T_processor&gt;
++	struct router : public T_processor
++	{
++		router();
++
++		template&lt;typename T&gt;
++		void postMessage(const T&amp; v)
++		{ this-&gt;post( MSG_NAMESPACE::makeMessage(v) ); }
++
++		void post(message_base* msg)
++		{
++			this-&gt;onPost(msg);
++		}
++
++
++		router&amp; operator &lt;&lt; (listener_base*);
++
++	private:
++		// disallow:
++		router(const router&amp;);
++		router&amp; operator=(const router&amp;);
++		//...
++	private:
++		typedef detail::listener_list listener_list;
++		typedef detail::listener_map listener_map;
++	};
++	template&lt;typename T_processor&gt;
++	router&lt;T_processor&gt;::router()
++	{}
++	template&lt;typename T_processor&gt;
++	router&lt;T_processor&gt;&amp; router&lt;T_processor&gt;::operator &lt;&lt; (listener_base* l)
++	{
++		assert(l);
++		if (!l)
++			return *this;
++		this-&gt;add(l);
++		return *this;
++	}
++
++MSG_NAMESPACE_END
++
++#endif
+
+Added: trunk/yake/yake/msg/yakeMessage.h
+===================================================================
+--- trunk/yake/yake/msg/yakeMessage.h	2006-03-12 22:16:28 UTC (rev 1259)
++++ trunk/yake/yake/msg/yakeMessage.h	2006-03-12 22:18:54 UTC (rev 1260)
+@@ -0,0 +1,37 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_MESSAGE_H
++#define YAKE_MESSAGE_H
++
++#include &quot;yake/msg/prerequisites.h&quot;
++#include &quot;yake/msg/message.h&quot;
++#include &quot;yake/msg/listener.h&quot;
++#include &quot;yake/msg/listener_mgr.h&quot;
++#include &quot;yake/msg/router.h&quot;
++#include &quot;yake/msg/processors.h&quot;
++
++#endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000329.html">[Yake-svn] r1259 - in trunk/yake/src/yake/samples: . msg msg/sampleMsg1
+</A></li>
+	<LI>Next message: <A HREF="000331.html">[Yake-svn] r1261 - trunk/yake/yake/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#330">[ date ]</a>
+              <a href="thread.html#330">[ thread ]</a>
+              <a href="subject.html#330">[ subject ]</a>
+              <a href="author.html#330">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

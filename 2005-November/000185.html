@@ -1,0 +1,406 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1117 - trunk/yake
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1117%20-%20trunk/yake&In-Reply-To=%3C200511092031.jA9KVgID024550%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000184.html">
+   <LINK REL="Next"  HREF="000186.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1117 - trunk/yake</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1117%20-%20trunk/yake&In-Reply-To=%3C200511092031.jA9KVgID024550%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1117 - trunk/yake">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  9 21:31:42 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000184.html">[Yake-svn] r1116 - trunk/yake
+</A></li>
+        <LI>Next message: <A HREF="000186.html">[Yake-svn] r1118 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#185">[ date ]</a>
+              <a href="thread.html#185">[ thread ]</a>
+              <a href="subject.html#185">[ subject ]</a>
+              <a href="author.html#185">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-09 21:31:36 +0100 (Wed, 09 Nov 2005)
+New Revision: 1117
+
+Modified:
+   trunk/yake/SConstruct
+   trunk/yake/build.py
+   trunk/yake/buildspec.xml
+Log:
+patch 1350326 by mj
+
+Modified: trunk/yake/SConstruct
+===================================================================
+--- trunk/yake/SConstruct	2005-11-09 20:30:56 UTC (rev 1116)
++++ trunk/yake/SConstruct	2005-11-09 20:31:36 UTC (rev 1117)
+@@ -9,12 +9,13 @@
+ 	&quot;&quot;&quot;
+ 
+ title = &quot;Builder for Yake&quot;
+-last_modified = &quot;on 22/10/2004 by Nikita Buida (mj)&quot;
++last_modified = &quot;on 01/11/2005 by Nikita Buida (mj)&quot;
+ 
++
+ print title
+ print 'This file was last modified ', last_modified
+ 
+-print &quot;&quot;&quot;
++Help( &quot;&quot;&quot;
+ 	Usage.
+ 		Issue 
+ 			% scons
+@@ -27,16 +28,16 @@
+ 		
+ 		That's it. Enjoy. Find some bugs, improve program, send a patch ;)
+ 	
+-&quot;&quot;&quot;
++&quot;&quot;&quot; )
+ 
+ import build
+ 
+ import os
+ import os.path
+-
++import sys
+ import glob
+ 
+-cc_flags = '-DGCC_3_1 -DEXT_HASH'
++cc_flags = '-DGCC_3_1 -DEXT_HASH -DYAKE_DEBUG -DYAKE_DEBUG_BUILD'
+ 
+ lib_includes = build.commonIncludes
+ build_dir = build.commonPaths['ObjectDir']
+@@ -51,6 +52,9 @@
+ 
+ env = Environment( CCFLAGS = cc_flags )
+ 
++#######################################################
++# utility functions
++#######################################################
+ def CollectSources( path ):
+ 	sources = glob.glob( path + '/' + '*.cpp' )
+ 	sources_build = []
+@@ -70,6 +74,8 @@
+ 	bin_name = bin_build_dir + '/' + name
+ 	return env.Program( bin_name, bin_src, CPPPATH = lib_includes, LIBS = link_to, LIBPATH = lib_dir )
+ 
++######################################################
++
+ #Library add handling
+ libadds = {}
+ 
+@@ -83,28 +89,37 @@
+ 	return result
+ 			
+ 
+-#Collection of libraries to install
+-yakeLibs = []
++# if command line target is specified
++if len( COMMAND_LINE_TARGETS ) &lt;&gt; 0 and 'install' not in COMMAND_LINE_TARGETS:
++    print 'COMMAND_LINE_TARGETS: ', map(str, COMMAND_LINE_TARGETS)
++    object_name = str( COMMAND_LINE_TARGETS[0] )
++    object = env.Object( build_dir + '/' + object_name, CPPPATH = lib_includes )
++    env.Alias( object_name, object ) 
++else:
++    # else continue with normal build or install
++    #Collection of libraries to install
++    yakeLibs = []
+ 
+ 
+-#reading shared libs
+-for name, buildentity in build.sharedLibs.iteritems():
+-	libadd = processLibadds( buildentity.libadd )
++    #reading shared libs
++    for name, buildentity in build.sharedLibs.iteritems():
++    	libadd = processLibadds( buildentity.libadd )
+ 	ent_name = str(name)
+ 	yakeLibs.append( BuildLibrary( ent_name, str(buildentity.src), libadd ))
+ 	libadds[ ent_name ] = libadd + [ ent_name ]
+ 
+-#reading programs libs
+-for name, buildentity in build.programs.iteritems():
+-	print name, buildentity, buildentity.src, buildentity.libadd
++    #reading programs libs
++    for name, buildentity in build.programs.iteritems():
++	
++	if not build.quiet:
++	    print name, buildentity, buildentity.src, buildentity.libadd
++	
+ 	libadd = processLibadds( buildentity.libadd )
+ 	ent_name = str(name)
+ 	BuildProgram( ent_name, str(buildentity.src), libadd )
+ 
+-############################################################
+-#                   INSTALL                                #
+-############################################################
+-env.Install( lib_install_dir, yakeLibs )
+-env.Alias( 'install', lib_install_dir ) 
++    #handle install
++    env.Install( lib_install_dir, yakeLibs )
++    env.Alias( 'install', lib_install_dir )
+ 
+ 
+
+Modified: trunk/yake/build.py
+===================================================================
+--- trunk/yake/build.py	2005-11-09 20:30:56 UTC (rev 1116)
++++ trunk/yake/build.py	2005-11-09 20:31:36 UTC (rev 1117)
+@@ -1,5 +1,7 @@
+ #!/usr/bin/python
+ 
++# global variable controlling verboseness
++quiet = True
+ 
+ # Dictionary with common paths
+ commonPaths = { 'ObjectDir':'obj' }
+@@ -14,23 +16,31 @@
+ programs = {}
+ 
+ def setCommonLibInstallDir( dir ):
++    if not quiet:
+ 	print 'Setting common lib install dir to', dir
+-	commonPaths['LibInstallDir'] = str(dir)
++	
++    commonPaths['LibInstallDir'] = str(dir)
+ 
+ 
+ def setCommonProgramInstallDir( dir ):
++    if not quiet:
+ 	print 'Setting common program install dir to', dir
+-	commonPaths['ProgramInstallDir'] = str(dir)
+ 
++    commonPaths['ProgramInstallDir'] = str(dir)
+ 
++
+ def setCommonObjectDir( dir ):
++    if not quiet:
+ 	print 'Setting common object dir to', dir
+-	commonPaths['ObjectDir'] = str(dir)
+ 
++    commonPaths['ObjectDir'] = str(dir)
++
+ def setCommonLibDir( dir ):
++    if not quiet:
+ 	print 'Setting common lib dir to', dir
+-	commonPaths['LibDir'] = str(dir)
+ 
++    commonPaths['LibDir'] = str(dir)
++
+ class BuildEntity:
+ 	&quot;&quot;&quot; Class representing build entity (program, lib, shared lib)&quot;&quot;&quot;
+ 	src = ''
+@@ -47,17 +57,23 @@
+ 	for idx in range( elems.length ):
+ 		val = elems.item( idx ).firstChild.nodeValue
+ 		val_list.append( str(val) )
+-		print val
++		if not quiet:
++		    print val
+ 	return val_list
+ 
+ def readListsFromElement( src_elem ):
+ 	&quot;&quot;&quot; Reads all lists defined as &lt;List&gt;...&lt;/List&gt; into listsSet storage  &quot;&quot;&quot;
+-	print 'Reading lists...'
++	if not quiet:
++	    print 'Reading lists...'
++
+ 	lists = src_elem.getElementsByTagName( 'List' )
+ 	for idx in range( lists.length ):
+ 		lst = lists.item( idx )
+ 		lst_name = lst.attributes.item(0).nodeValue #only one name
+-		print 'Adding list', lst_name
++		
++		if not quiet:
++		    print 'Adding list', lst_name
++		
+ 		items = readAllTextElemsToList( lst, 'item' )
+ 		listsSet[ lst_name ] = items
+ 
+@@ -67,12 +83,13 @@
+ 
+ 
+ def readSharedLibsInstructions( src_element ):
+-	&quot;&quot;&quot; Reads shared libs build instructions &quot;&quot;&quot;
++    &quot;&quot;&quot; Reads shared libs build instructions &quot;&quot;&quot;
+ 	
++    if not quiet:
+ 	print 'Reading shared libs build instructions...'
+ 
+-	so_libs = src_element.getElementsByTagName( 'BuildSharedLibrary' )
+-	for idx in range( so_libs.length ):
++    so_libs = src_element.getElementsByTagName( 'BuildSharedLibrary' )
++    for idx in range( so_libs.length ):
+ 		so_lib = so_libs.item( idx )
+ 		lib_name = ''
+ 		lib_src = ''
+@@ -80,10 +97,12 @@
+ 			attr = so_lib.attributes.item( at_idx )
+ 			if attr.name == 'name':
+ 				lib_name = attr.nodeValue
+-				print 'Library:', lib_name
++				if not quiet:
++				    print 'Library:', lib_name
+ 			elif attr.name == 'src':	
+ 				lib_src = attr.nodeValue
+-				print 'Library src:', lib_src
++				if not quiet:
++				    print 'Library src:', lib_src
+ 
+ 		libadds = []
+ 		
+@@ -91,10 +110,11 @@
+ 
+ 		for la in libadds_spec:
+ 			if listsSet.has_key( la ):
++			    if not quiet:
+ 				print 'Loading libadd from list', la, 'it is:', listsSet[ la ]
+-				libadds = libadds + listsSet[ la ] 
++			    libadds = libadds + listsSet[ la ] 
+ 			else: 
+-				libadds.append( la )
++			    libadds.append( la )
+ 
+ 
+ 		lib = BuildEntity()
+@@ -107,7 +127,8 @@
+ def readProgramInstructions( src_element ):
+ 	&quot;&quot;&quot; Reads program build instructions &quot;&quot;&quot;
+ 	
+-	print 'Reading program build instructions...'
++	if not quiet:
++	    print 'Reading program build instructions...'
+ 
+ 	so_libs = src_element.getElementsByTagName( 'BuildProgram' )
+ 	for idx in range( so_libs.length ):
+@@ -118,10 +139,12 @@
+ 			attr = so_lib.attributes.item( at_idx )
+ 			if attr.name == 'name':
+ 				lib_name = attr.nodeValue
+-				print 'Program:', lib_name
++				if not quiet:
++				    print 'Program:', lib_name
+ 			elif attr.name == 'src':	
+ 				lib_src = attr.nodeValue
+-				print 'Program src:', lib_src
++				if not quiet:
++				    print 'Program src:', lib_src
+ 
+ 		libadds = []
+ 		
+@@ -129,7 +152,8 @@
+ 
+ 		for la in libadds_spec:
+ 			if listsSet.has_key( la ):
+-				print 'Loading libadd from list', la, 'it is:', listsSet[ la ]
++				if not quiet:
++				    print 'Loading libadd from list', la, 'it is:', listsSet[ la ]
+ 				libadds = libadds + listsSet[ la ] 
+ 			else: 
+ 				libadds.append( la )
+@@ -143,10 +167,11 @@
+ 		
+ 
+ def readBuildInstructions( src_element ):
+-
++    if not quiet:
+ 	print 'Reading build instructions...'
+-	readSharedLibsInstructions( src_element )
+-	readProgramInstructions( src_element )	
++    
++    readSharedLibsInstructions( src_element )
++    readProgramInstructions( src_element )	
+ 	
+ 
+ 
+@@ -156,22 +181,23 @@
+ 
+ dom = xml.dom.minidom.parse( 'buildspec.xml' )
+ 
+-print 'Reading root element', dom.documentElement.tagName
++if not quiet:
++    print 'Reading root element', dom.documentElement.tagName
+ 
+ common = dom.documentElement.getElementsByTagName( 'Common' )[0] #assuming only one Common
+ 
+ commonAttribs = common.attributes
+ 
+ for at_index in range( commonAttribs.length ):
+-	at = commonAttribs.item( at_index )
++    at = commonAttribs.item( at_index )
+ 
+-	if at.name == 'LibInstallDir':
++    if at.name == 'LibInstallDir':
+ 		setCommonLibInstallDir( at.nodeValue )
+-	elif at.name == 'ProgramInstallDir':
++    elif at.name == 'ProgramInstallDir':
+ 		setCommonProgramInstallDir( at.nodeValue )
+-	elif at.name == 'ObjectDir':
++    elif at.name == 'ObjectDir':
+ 		setCommonObjectDir( at.nodeValue )
+-	elif at.name == 'LibDir':
++    elif at.name == 'LibDir':
+ 		setCommonLibDir( at.nodeValue )
+ 
+ commonIncludes = readAllTextElemsToList( common, 'include' )
+
+Modified: trunk/yake/buildspec.xml
+===================================================================
+--- trunk/yake/buildspec.xml	2005-11-09 20:30:56 UTC (rev 1116)
++++ trunk/yake/buildspec.xml	2005-11-09 20:31:36 UTC (rev 1117)
+@@ -253,6 +253,7 @@
+ 		src=&quot;src/yapp/vehicle&quot;
+ 	&gt;
+ 		&lt;libadd&gt;yappBase&lt;/libadd&gt;
++		&lt;libadd&gt;yakephysicsODE&lt;/libadd&gt;
+ 	&lt;/BuildSharedLibrary&gt;
+ 
+ 	&lt;BuildSharedLibrary
+@@ -282,6 +283,7 @@
+ 		src=&quot;src/yapp/plugins/modelLuaBindings&quot;
+ 	&gt;
+ 		&lt;libadd&gt;yappEnt&lt;/libadd&gt;
++		&lt;libadd&gt;luabind&lt;/libadd&gt;
+ 	&lt;/BuildSharedLibrary&gt;
+ 
+ &lt;!-- SAMPLES --&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000184.html">[Yake-svn] r1116 - trunk/yake
+</A></li>
+	<LI>Next message: <A HREF="000186.html">[Yake-svn] r1118 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#185">[ date ]</a>
+              <a href="thread.html#185">[ thread ]</a>
+              <a href="subject.html#185">[ subject ]</a>
+              <a href="author.html#185">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

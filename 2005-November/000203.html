@@ -1,0 +1,213 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1133 - trunk/yake/src/yake/samples/graphics/demo
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1133%20-%20trunk/yake/src/yake/samples/graphics/demo&In-Reply-To=%3C200511100013.jAA0DJsJ009811%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000202.html">
+   <LINK REL="Next"  HREF="000204.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1133 - trunk/yake/src/yake/samples/graphics/demo</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1133%20-%20trunk/yake/src/yake/samples/graphics/demo&In-Reply-To=%3C200511100013.jAA0DJsJ009811%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1133 - trunk/yake/src/yake/samples/graphics/demo">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov 10 01:13:19 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000202.html">[Yake-svn] r1132 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+        <LI>Next message: <A HREF="000204.html">[Yake-svn] r1134 - trunk/yake/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#203">[ date ]</a>
+              <a href="thread.html#203">[ thread ]</a>
+              <a href="subject.html#203">[ subject ]</a>
+              <a href="author.html#203">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-10 01:13:08 +0100 (Thu, 10 Nov 2005)
+New Revision: 1133
+
+Modified:
+   trunk/yake/src/yake/samples/graphics/demo/yakeGraphicsDemo.cpp
+Log:
+ownership management for graphics objects
+
+Modified: trunk/yake/src/yake/samples/graphics/demo/yakeGraphicsDemo.cpp
+===================================================================
+--- trunk/yake/src/yake/samples/graphics/demo/yakeGraphicsDemo.cpp	2005-11-10 00:12:13 UTC (rev 1132)
++++ trunk/yake/src/yake/samples/graphics/demo/yakeGraphicsDemo.cpp	2005-11-10 00:13:08 UTC (rev 1133)
+@@ -34,11 +34,10 @@
+ 
+ 	struct SimpleOne {
+ 		graphics::ISceneNode*			pSN;
+-		graphics::IEntity*				pE;
+ 	};
+ 	SimpleOne							mNinja;
+ 	SimpleOne							mGround;
+-	SharedPtr&lt;graphics::ILight&gt;			mSunLight;
++	graphics::ILight*					mSunLight;
+ 	SharedPtr&lt;graphics::ISceneNode&gt;		mSunLightNode;
+ 
+ 	SimpleSpline						mCamPath;
+@@ -147,38 +146,38 @@
+ 	void setupNinja()
+ 	{
+ 		// setup NINJA
+-		mNinja.pSN = mGWorld-&gt;createSceneNode();
++		mNinja.pSN = mGWorld-&gt;createSceneNode(&quot;sn_ninja&quot;);
+ 		YAKE_ASSERT( mNinja.pSN );
+ 
+-		mNinja.pE = mGWorld-&gt;createEntity(&quot;ninja.mesh&quot;);
+-		//mNinja.pE = mGWorld-&gt;createEntity(&quot;box_1x1x1.mesh&quot;);
+-		YAKE_ASSERT( mNinja.pE );
+-		mNinja.pE-&gt;setCastsShadow( true );
++		graphics::IEntity* pE = mGWorld-&gt;createEntity(&quot;ninja.mesh&quot;);
++		//pE = mGWorld-&gt;createEntity(&quot;box_1x1x1.mesh&quot;);
++		YAKE_ASSERT( pE );
++		pE-&gt;setCastsShadow( true );
+ 
+-		mNinja.pSN-&gt;attachEntity( mNinja.pE );
++		mNinja.pSN-&gt;attachEntity( pE );
+ 		mNinja.pSN-&gt;setPosition( Vector3(0,0,-200) );
+ 	}
+ 
+ 	void setupGround()
+ 	{
+ 		// create entity
+-		mGround.pE = mGWorld-&gt;createEntity(&quot;plane_1x1.mesh&quot;);
+-		YAKE_ASSERT( mGround.pE );
+-		mGround.pE-&gt;setCastsShadow( false  );
++		graphics::IEntity* pE = mGWorld-&gt;createEntity(&quot;plane_1x1.mesh&quot;);
++		YAKE_ASSERT( pE );
++		pE-&gt;setCastsShadow( false  );
+ 
+ 		// create scene node and attach entity to node
+-		mGround.pSN = mGWorld-&gt;createSceneNode();
++		mGround.pSN = mGWorld-&gt;createSceneNode(&quot;sn_ground&quot;);
+ 		YAKE_ASSERT( mGround.pSN );
+-		mGround.pSN-&gt;attachEntity( mGround.pE );
++		mGround.pSN-&gt;attachEntity( pE );
+ 		mGround.pSN-&gt;setScale( Vector3(100,1,100) );
+ 	}
+ 
+ 	void setupLights()
+ 	{
+ 		// fixed light (sun)
+-		mSunLight.reset( mGWorld-&gt;createLight() );
+-		mSunLightNode.reset( mGWorld-&gt;createSceneNode() );
+-		mSunLightNode-&gt;attachLight( mSunLight.get() );
++		mSunLight = mGWorld-&gt;createLight();
++		mSunLightNode.reset( mGWorld-&gt;createSceneNode(&quot;sn_sunlight&quot;) );
++		mSunLightNode-&gt;attachLight( mSunLight );
+ 
+ 		mSunLight-&gt;setType(ILight::LT_SPOT);
+ 		//mSunLight-&gt;setType(ILight::LT_DIRECTIONAL);
+@@ -191,7 +190,7 @@
+ 
+ 		// movable light 1
+ 		YAKE_ASSERT(0==mLightOneNode);
+-		mLightOneNode = mGWorld-&gt;createSceneNode();
++		mLightOneNode = mGWorld-&gt;createSceneNode(&quot;sn_lightOne&quot;);
+ 		YAKE_ASSERT( mLightOneNode );
+ 		mLightOne = mGWorld-&gt;createLight();
+ 		YAKE_ASSERT( mLightOne );
+@@ -213,7 +212,7 @@
+ 	{
+ 		// cube
+ 		graphics::ISceneNode* node = 0;
+-        node = mGWorld-&gt;createSceneNode();
++        node = mGWorld-&gt;createSceneNode(&quot;sn_cube&quot;);
+ 		YAKE_ASSERT( node );
+ 		graphics::IEntity* ent = 0;
+         ent = mGWorld-&gt;createEntity( &quot;cube.mesh&quot; );
+@@ -227,7 +226,7 @@
+ 		// Floor plane
+ 		ent = mGWorld-&gt;createEntity(&quot;plane_1x1.mesh&quot;);
+ 		YAKE_ASSERT( ent );
+-		node = mGWorld-&gt;createSceneNode();
++		node = mGWorld-&gt;createSceneNode(&quot;sn_plane&quot;);
+ 		YAKE_ASSERT( node );
+ 		node-&gt;attachEntity( ent );
+ 		node-&gt;setScale( Vector3(1000,1,1000) );
+@@ -237,7 +236,7 @@
+ 		// column
+ 		ent = mGWorld-&gt;createEntity(&quot;column.mesh&quot;);
+ 		YAKE_ASSERT( ent );
+-		node = mGWorld-&gt;createSceneNode();
++		node = mGWorld-&gt;createSceneNode(&quot;sn_col1&quot;);
+ 		YAKE_ASSERT( node );
+ 		node-&gt;attachEntity( ent );
+ 		ent-&gt;setMaterial(&quot;Examples/Athene/Basic&quot;);
+@@ -247,7 +246,7 @@
+ 		// column
+ 		ent = mGWorld-&gt;createEntity(&quot;column.mesh&quot;);
+ 		YAKE_ASSERT( ent );
+-		node = mGWorld-&gt;createSceneNode();
++		node = mGWorld-&gt;createSceneNode(&quot;sn_col2&quot;);
+ 		YAKE_ASSERT( node );
+ 		node-&gt;attachEntity( ent );
+ 		ent-&gt;setMaterial(&quot;Examples/Rockwall&quot;);
+@@ -257,7 +256,7 @@
+ 		// column
+ 		ent = mGWorld-&gt;createEntity(&quot;column.mesh&quot;);
+ 		YAKE_ASSERT( ent );
+-		node = mGWorld-&gt;createSceneNode();
++		node = mGWorld-&gt;createSceneNode(&quot;sn_col3&quot;);
+ 		YAKE_ASSERT( node );
+ 		node-&gt;attachEntity( ent );
+ 		ent-&gt;setMaterial(&quot;Examples/Rockwall&quot;);
+@@ -267,7 +266,7 @@
+ 		// column
+ 		ent = mGWorld-&gt;createEntity(&quot;column.mesh&quot;);
+ 		YAKE_ASSERT( ent );
+-		node = mGWorld-&gt;createSceneNode();
++		node = mGWorld-&gt;createSceneNode(&quot;sn_col4&quot;);
+ 		YAKE_ASSERT( node );
+ 		node-&gt;attachEntity( ent );
+ 		ent-&gt;setMaterial(&quot;Examples/Rockwall&quot;);
+@@ -391,7 +390,7 @@
+ 		}
+ 
+ 		mSunLightNode.reset();
+-		mSunLight.reset();
++		mSunLight = 0; // destroyed automatically by destroying the node it's attached to.
+ 
+ 		YAKE_SAFE_DELETE( mLightOneNode );
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000202.html">[Yake-svn] r1132 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+	<LI>Next message: <A HREF="000204.html">[Yake-svn] r1134 - trunk/yake/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#203">[ date ]</a>
+              <a href="thread.html#203">[ thread ]</a>
+              <a href="subject.html#203">[ subject ]</a>
+              <a href="author.html#203">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

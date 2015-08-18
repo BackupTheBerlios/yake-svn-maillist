@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r963 - trunk/yake/yake/graphics
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r963%20-%20trunk/yake/yake/graphics&In-Reply-To=%3C200509302139.j8ULdsSZ008106%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000032.html">
+   <LINK REL="Next"  HREF="000034.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r963 - trunk/yake/yake/graphics</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r963%20-%20trunk/yake/yake/graphics&In-Reply-To=%3C200509302139.j8ULdsSZ008106%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r963 - trunk/yake/yake/graphics">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:39:54 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000032.html">[Yake-svn] r962 - trunk/yake/yake/base/templates
+</A></li>
+        <LI>Next message: <A HREF="000034.html">[Yake-svn] r964 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#33">[ date ]</a>
+              <a href="thread.html#33">[ thread ]</a>
+              <a href="subject.html#33">[ subject ]</a>
+              <a href="author.html#33">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:39:53 +0200 (Fri, 30 Sep 2005)
+New Revision: 963
+
+Modified:
+   trunk/yake/yake/graphics/yakeGraphicalWorld.h
+Log:
+added skybox support,
+improved particle system interfaces
+
+Modified: trunk/yake/yake/graphics/yakeGraphicalWorld.h
+===================================================================
+--- trunk/yake/yake/graphics/yakeGraphicalWorld.h	2005-09-30 21:39:03 UTC (rev 962)
++++ trunk/yake/yake/graphics/yakeGraphicalWorld.h	2005-09-30 21:39:53 UTC (rev 963)
+@@ -51,6 +51,13 @@
+ 	public:
+ 		virtual ~IParticleSystem();
+ 		virtual void setVisible( bool visible ) = 0;
++		virtual size_t getNumEmitters() const = 0;
++		virtual void setEmissionRate( const size_t emitter, const real particlesPerSec ) = 0;
++		virtual real getEmissionRate( const size_t emitter ) const = 0;
++		virtual void setMinVelocity( const size_t emitter, const real vel ) = 0;
++		virtual real getMinVelocity( const size_t emitter ) const = 0;
++		virtual void setMaxVelocity( const size_t emitter, const real vel ) = 0;
++		virtual real getMaxVelocity( const size_t emitter ) const = 0;
+ 	};
+ 
+ 	class IEntity;
+@@ -404,6 +411,8 @@
+ 	public:
+ 		virtual ~IWorld();
+ 
++		virtual void setSkyBox( const String&amp; name ) = 0;
++
+ 		virtual ILight* createLight() = 0;
+ 		virtual ICamera* createCamera() = 0;
+ 
+@@ -442,6 +451,13 @@
+ 		YAKE_MEMBERSIGNAL_PUREINTERFACE( public, void(real), PostRender );
+ 	};
+ 
++	class YAKE_GRAPHICS_INTERFACE_API IFx
++	{
++		YAKE_DECLARE_REGISTRY_01(IFx, String, IWorld&amp;);
++	public:
++		virtual ~IFx() {}
++	};
++
+ } // graphics
+ } // yake
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000032.html">[Yake-svn] r962 - trunk/yake/yake/base/templates
+</A></li>
+	<LI>Next message: <A HREF="000034.html">[Yake-svn] r964 - trunk/yake/src/yake/plugins/graphicsOgre
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#33">[ date ]</a>
+              <a href="thread.html#33">[ thread ]</a>
+              <a href="subject.html#33">[ subject ]</a>
+              <a href="author.html#33">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

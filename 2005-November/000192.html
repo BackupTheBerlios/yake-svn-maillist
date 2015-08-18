@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1122 - trunk/yake/yake/plugins/physicsODE
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1122%20-%20trunk/yake/yake/plugins/physicsODE&In-Reply-To=%3C200511092104.jA9L47ts023062%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000191.html">
+   <LINK REL="Next"  HREF="000193.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1122 - trunk/yake/yake/plugins/physicsODE</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1122%20-%20trunk/yake/yake/plugins/physicsODE&In-Reply-To=%3C200511092104.jA9L47ts023062%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1122 - trunk/yake/yake/plugins/physicsODE">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  9 22:04:07 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000191.html">[Yake-svn] r1121 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000193.html">[Yake-svn] r1123 - trunk/yake/yake/plugins/physicsNX
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#192">[ date ]</a>
+              <a href="thread.html#192">[ thread ]</a>
+              <a href="subject.html#192">[ subject ]</a>
+              <a href="author.html#192">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-09 22:04:06 +0100 (Wed, 09 Nov 2005)
+New Revision: 1122
+
+Modified:
+   trunk/yake/yake/plugins/physicsODE/OdeActor.h
+Log:
+patch 1350326 by mj
+
+Modified: trunk/yake/yake/plugins/physicsODE/OdeActor.h
+===================================================================
+--- trunk/yake/yake/plugins/physicsODE/OdeActor.h	2005-11-09 21:03:23 UTC (rev 1121)
++++ trunk/yake/yake/plugins/physicsODE/OdeActor.h	2005-11-09 21:04:06 UTC (rev 1122)
+@@ -69,6 +69,10 @@
+ 		void _collide( OdeActor* pOther, dGeomID geomA, dGeomID geomB, dJointGroup* pContactJointGroup );
+ 	
+ 	protected:	
++		static const int MAX_CONTACTS= 40;
++
++		IBody::MassDesc* createMassDescFromShapeDesc( const IShape::Desc&amp; rShapeDesc, real massOrDensity, IBody::quantityType qType );
++		
+ 		OdeGeom* createShapeFromDesc( const IShape::Desc&amp; rShapeDesc );
+ 		OdeGeom* createTransformGeomIfNeeded( OdeGeom* pGeom, const Vector3&amp; rOffset, const Quaternion&amp; rRelOrientation );
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000191.html">[Yake-svn] r1121 - trunk/yake/src/yake/plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000193.html">[Yake-svn] r1123 - trunk/yake/yake/plugins/physicsNX
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#192">[ date ]</a>
+              <a href="thread.html#192">[ thread ]</a>
+              <a href="subject.html#192">[ subject ]</a>
+              <a href="author.html#192">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,491 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1144 - trunk/yake/src/yapp/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1144%20-%20trunk/yake/src/yapp/model&In-Reply-To=%3C200511100028.jAA0SEJx016854%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000213.html">
+   <LINK REL="Next"  HREF="000215.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1144 - trunk/yake/src/yapp/model</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1144%20-%20trunk/yake/src/yapp/model&In-Reply-To=%3C200511100028.jAA0SEJx016854%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1144 - trunk/yake/src/yapp/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov 10 01:28:14 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000213.html">[Yake-svn] r1143 - trunk/yake/src/yapp/loader
+</A></li>
+        <LI>Next message: <A HREF="000215.html">[Yake-svn] r1145 - trunk/yake/src/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#214">[ date ]</a>
+              <a href="thread.html#214">[ thread ]</a>
+              <a href="subject.html#214">[ subject ]</a>
+              <a href="author.html#214">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-10 01:28:11 +0100 (Thu, 10 Nov 2005)
+New Revision: 1144
+
+Added:
+   trunk/yake/src/yapp/model/yakeGraphicalDataImporter.cpp
+   trunk/yake/src/yapp/model/yakePhysicalDataImporter.cpp
+Log:
+patch 1350326 by mj (reformatted by psy)
+
+Added: trunk/yake/src/yapp/model/yakeGraphicalDataImporter.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeGraphicalDataImporter.cpp	2005-11-10 00:27:15 UTC (rev 1143)
++++ trunk/yake/src/yapp/model/yakeGraphicalDataImporter.cpp	2005-11-10 00:28:11 UTC (rev 1144)
+@@ -0,0 +1,202 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright  2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++
++#include &lt;yapp/base/yappPCH.h&gt;
++#include &lt;yapp/base/yapp.h&gt;
++#include &lt;yapp/loader/yakeDotScene.h&gt;
++#include &lt;yapp/model/yakeGraphicalDataImporter.h&gt; 
++
++namespace yake {
++namespace model {
++	
++	//-----------------------------------------------------
++	void DotSceneListener::processSceneNode( const SceneNodeDesc desc )
++	{
++		YAKE_LOG( &quot;Processing scene node &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
++				
++		graphics::ISceneNode* pSN = mGWorld-&gt;createSceneNode( desc.name );
++
++		graphics::ISceneNode* parentSN = 0;
++		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
++		{
++			parentSN = mSceneNodes[ desc.parentNodeName ];
++			parentSN-&gt;addChildNode( pSN );
++		}
++		
++		pSN-&gt;setName( desc.name );
++		pSN-&gt;setPosition( desc.transform.position );
++		pSN-&gt;setOrientation( desc.transform.rotation );
++		pSN-&gt;setScale( desc.transform.scale );
++		
++		mSceneNodes[ desc.name ] = pSN;
++
++		mOwner.addSceneNode( pSN, parentSN ? false : true );
++		
++		// look if this node is tracked
++		// TODO current scheme allows node to be tracked by only one target
++		TrackerMap::iterator end = mTrackersTargets.end();
++		for( TrackerMap::iterator trackRecord = mTrackersTargets.begin(); trackRecord != end; ++trackRecord )
++		{
++			if ( trackRecord-&gt;second == desc.name )
++			{
++				YAKE_LOG( &quot;Setting track target for camera &quot; + trackRecord-&gt;first + &quot; ...&quot; );
++			
++				CameraInfo info = mCameras[ trackRecord-&gt;first ];
++				
++				YAKE_LOG( &quot;Camera info found. Acquiring camera...&quot; );
++				
++				graphics::ICamera* tracker = info.camera;
++				
++				YAKE_LOG( &quot;Got camera. Setting orientation...&quot; );
++				
++				tracker-&gt;lookAt( pSN-&gt;getPosition( graphics::ISceneNode::TS_WORLD ) );
++				
++				YAKE_LOG( &quot;Orientation was set up...&quot; );
++				
++				// cleaning up
++				mTrackersTargets.erase( trackRecord );
++				break;
++			}
++		}
++	}
++	
++	//-----------------------------------------------------
++	void DotSceneListener::processEntity( const EntityDesc desc )
++	{
++		YAKE_LOG( &quot;Processing entity &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
++		
++		graphics::IEntity* pEntity = mGWorld-&gt;createEntity( desc.meshFile );
++
++		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
++		{
++			graphics::ISceneNode* parentSN = mSceneNodes[ desc.parentNodeName ];
++			
++			parentSN-&gt;attachEntity( pEntity );
++		}
++		
++		pEntity-&gt;setCastsShadow( desc.castsShadows );
++		
++		EntityInfo info;
++		
++		info.entity = pEntity;
++		info.parentSceneNode = desc.parentNodeName;
++		
++		mEntities[ desc.name ] = info;
++	}
++	
++	//-----------------------------------------------------
++	void DotSceneListener::processCamera( const CameraDesc desc )
++	{
++		YAKE_LOG( &quot;Processing camera &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
++		
++		graphics::ICamera* pCamera = mGWorld-&gt;createCamera();
++
++		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
++		{
++			graphics::ISceneNode* parentSN = mSceneNodes[ desc.parentNodeName ];
++			
++			parentSN-&gt;attachCamera( pCamera );
++		}
++		
++		pCamera-&gt;setName( desc.name );
++		pCamera-&gt;setFOV( Math::DegreesToRadians( desc.fov ) );
++		pCamera-&gt;setAspectRatio( desc.aspectRatio );
++		pCamera-&gt;setProjectionType( desc.projectionType );
++		pCamera-&gt;setNearClipDistance( desc.clipping.nearClip );
++		pCamera-&gt;setFarClipDistance( desc.clipping.farClip );
++		
++	//	pCamera-&gt;setDirection( desc.normal );
++		
++		pCamera-&gt;setPosition( Vector3() );
++		pCamera-&gt;setOrientation( Quaternion::kIdentity );
++		
++		
++		if ( desc.trackTargetName != &quot;&quot; )
++		{
++			YAKE_LOG( &quot;Saving tracking record for camera &quot; + desc.name + &quot; ... &quot; );
++			
++			mTrackersTargets.insert( TrackerMap::value_type( desc.name, desc.trackTargetName ) );
++		}
++		
++		CameraInfo info;
++		
++		info.camera = pCamera;
++		info.parentSceneNode = desc.parentNodeName;
++		
++		mCameras[ desc.name ] = info;
++	}
++	
++	//-----------------------------------------------------
++	void DotSceneListener::processLight( const LightDesc desc )
++	{
++		YAKE_LOG( &quot;Processing light &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
++		
++		graphics::ILight* pLight = mGWorld-&gt;createLight();
++
++		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
++		{
++			graphics::ISceneNode* parentSN = mSceneNodes[ desc.parentNodeName ];
++			
++			parentSN-&gt;attachLight( pLight );
++		}
++		
++		pLight-&gt;setName( desc.name );
++		pLight-&gt;setType( desc.type );
++		pLight-&gt;setCastsShadows( desc.castsShadows );
++		
++		if ( desc.castsShadows )
++		{
++			YAKE_LOG( &quot;  light casts shadows&quot; );
++		}
++		else
++		{
++			YAKE_LOG( &quot;  light doesn't cast shadows&quot; );
++		}
++		
++		pLight-&gt;setDiffuseColour( desc.diffuseColor );
++		pLight-&gt;setSpecularColour( desc.specularColor );
++		pLight-&gt;setAttenuation( desc.attenuation.range,
++								desc.attenuation.constant,
++								desc.attenuation.linear,
++								desc.attenuation.quadratic );
++		
++		if ( desc.type == graphics::ILight::LT_SPOT )
++			pLight-&gt;setSpotlightRange( desc.range.inner, desc.range.outer, desc.range.falloff );
++		
++		if ( desc.type != graphics::ILight::LT_POINT )
++			pLight-&gt;setDirection( desc.normal );
++		
++		LightInfo info;
++		
++		info.light = pLight;
++		info.parentSceneNode = desc.parentNodeName;
++		
++		mLights[ desc.name ] = info;
++	}
++
++} // model
++} // yake
+
+Added: trunk/yake/src/yapp/model/yakePhysicalDataImporter.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakePhysicalDataImporter.cpp	2005-11-10 00:27:15 UTC (rev 1143)
++++ trunk/yake/src/yapp/model/yakePhysicalDataImporter.cpp	2005-11-10 00:28:11 UTC (rev 1144)
+@@ -0,0 +1,206 @@
++/*
++------------------------------------------------------------------------------------
++This file is part of YAKE
++Copyright  2004 The YAKE Team
++For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++------------------------------------------------------------------------------------
++This program is free software; you can redistribute it and/or modify it under
++the terms of the GNU Lesser General Public License as published by the Free Software
++Foundation; either version 2 of the License, or (at your option) any later
++version.
++
++This program is distributed in the hope that it will be useful, but WITHOUT
++ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++You should have received a copy of the GNU Lesser General Public License along with
++this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++<A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++------------------------------------------------------------------------------------
++If you are interested in another license model contact the Yake Team via
++E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++For more information see the LICENSE file in the root directory of the
++source code distribution.
++------------------------------------------------------------------------------------
++*/
++
++#include &lt;yapp/base/yappPCH.h&gt;
++#include &lt;yapp/base/yapp.h&gt;
++#include &lt;yapp/model/yakePhysicalDataImporter.h&gt; 
++
++namespace yake {
++namespace model {
++
++	//-----------------------------------------------------
++	void XODEListener::processBody( const XODEParser::BodyDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;XODE listener: processing body description...&quot; );
++
++		// create actor
++		physics::IActorPtr pDynActor = physicalWorld_-&gt;createActor( physics::ACTOR_DYNAMIC );
++		YAKE_ASSERT( pDynActor != NULL ).error( &quot;Failed to create actor!&quot; );
++
++		// set transform. TODO what about scale?
++		pDynActor-&gt;setPosition( desc.transform_.position_ );
++		pDynActor-&gt;setOrientation( desc.transform_.rotation_ );
++
++		// adding to collection
++		ActorInfo info;
++		info.actor_ = pDynActor;
++		info.parentName_ = desc.parentName_;
++
++		actors_[ desc.name_ ] = info;
++
++		// filling owner model
++		owner_.addActor( pDynActor, desc.name_ );
++
++		YAKE_LOG( &quot;XODE listener: Success.&quot; );
++	}
++
++	//-----------------------------------------------------
++	void XODEListener::processGeom( const XODEParser::GeomDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;XODE listener: processing geom description...&quot; );
++
++		physics::IActorPtr parentActor = NULL;
++
++		// search for parent in actors
++		ActorMap::iterator actor = actors_.find( desc.parentName_ );
++
++		if ( actor != actors_.end() )
++		{
++			// parent actor found!
++			parentActor = actor-&gt;second.actor_;
++		}
++		else
++		{
++			// create static actor
++			parentActor = physicalWorld_-&gt;createActor( physics::ACTOR_STATIC );
++
++			// add to collection
++			ActorInfo info;
++			info.actor_ = parentActor;
++			info.parentName_ = &quot;&quot;; // FIXME what should be here? a space perhaps?
++
++			actors_[ desc.parentName_ ] = info; 
++		}
++
++		IShape* shape = parentActor-&gt;createShape( *desc.shape_ );
++
++		GeomInfo info;
++		info.shape_ = shape;
++		info.parentName_ = desc.parentName_;
++
++		// add to collection 
++		geoms_[ desc.name_ ] = info;
++
++		YAKE_LOG( &quot;XODE listener: Success.&quot; );
++	}
++
++	//-----------------------------------------------------
++	void XODEListener::processMaterial( const XODEParser::MaterialDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;XODE listener: processing material description...&quot; );
++
++		IMaterial* material = physicalWorld_-&gt;createMaterial( desc.material_, desc.name_ );
++
++		// find parent
++		GeomMap::iterator shape = geoms_.find( desc.parentName_ );
++
++		if ( shape != geoms_.end() )
++		{
++			YAKE_LOG( &quot;XODE listener: shape found! Applying material...&quot; );
++
++			// apply material to shape
++			shape-&gt;second.shape_-&gt;setMaterial( material );
++		}
++
++		MaterialInfo info;
++		info.material_ = material;
++		info.parentName_ = desc.parentName_;
++
++		// add to collection
++		materials_[ desc.name_ ] = info;
++
++		YAKE_LOG( &quot;XODE listener: Success.&quot; );
++	}
++
++	//-----------------------------------------------------
++	void XODEListener::processMass( const XODEParser::MassDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;XODE listener: processing mass description...&quot; );
++
++		// search for parent in actors
++		ActorMap::iterator actor = actors_.find( desc.parentName_ );
++
++		if ( actor != actors_.end() )
++		{
++			// parent actor found!
++			IBody&amp; body = actor-&gt;second.actor_-&gt;getBody();
++
++			YAKE_LOG( &quot;XODE listener: owner body found. Adding mass...&quot; );
++
++			body.addMass( *desc.mass_ );
++
++			// TODO process mass... add to collection etc.
++		}
++
++		YAKE_LOG( &quot;XODE listener: Success.&quot; );
++	}
++
++	//-----------------------------------------------------
++	void XODEListener::processJoint( const XODEParser::JointDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;XODE listener: processing joint description...&quot; );
++
++		// storing joint description for further processing...
++		jointDescriptions_.push_back( desc );
++
++		YAKE_LOG( &quot;XODE listener: Success.&quot; );
++	}
++
++	//-----------------------------------------------------
++	void XODEListener::postprocess()
++	{
++		// create joints here
++		YAKE_LOG( &quot;XODE listener: postprocessing...&quot; );
++
++		// TODO only implemented creation of joint connecting dynamic objects
++
++		JointDescVector::iterator end = jointDescriptions_.end();
++		for( JointDescVector::iterator i = jointDescriptions_.begin(); i != end; ++i )
++		{
++			XODEParser::JointDesc&amp; desc = *i;
++
++			// search for connected actors
++
++			YAKE_LOG( &quot;XODE listener: searching for actors [0]: &quot; + desc.parentName_ + &quot;, [1]: &quot; + desc.otherBody_ );
++
++			ActorMap::iterator actor0 = actors_.find( desc.parentName_ );
++			ActorMap::iterator actor1 = actors_.find( desc.otherBody_ );
++
++			if ( actor0 == actors_.end() || actor1 == actors_.end() )
++			{
++				YAKE_LOG( &quot;XODE listener: Failed to find actors... :( &quot; );
++				continue;
++			}
++
++			desc.joint_-&gt;actor0 = actor0-&gt;second.actor_;
++			desc.joint_-&gt;actor1 = actor1-&gt;second.actor_;
++
++			IJointPtr joint = physicalWorld_-&gt;createJoint( *desc.joint_ );
++
++			JointInfo info;
++			info.joint_ = joint;
++			info.parentName_ = desc.parentName_;
++
++			// add to collection
++			joints_[ desc.name_ ] = info;
++		}
++
++		YAKE_LOG( &quot;XODE listener: finished postprocessing.&quot; );
++	}
++
++} // model
++} // yake
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000213.html">[Yake-svn] r1143 - trunk/yake/src/yapp/loader
+</A></li>
+	<LI>Next message: <A HREF="000215.html">[Yake-svn] r1145 - trunk/yake/src/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#214">[ date ]</a>
+              <a href="thread.html#214">[ thread ]</a>
+              <a href="subject.html#214">[ subject ]</a>
+              <a href="author.html#214">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

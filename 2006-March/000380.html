@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1310 - trunk/yake/yapp/plugins/terrainPhysMgr
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1310%20-%20trunk/yake/yapp/plugins/terrainPhysMgr&In-Reply-To=%3C200603192230.k2JMUbH8004172%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000379.html">
+   <LINK REL="Next"  HREF="000381.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1310 - trunk/yake/yapp/plugins/terrainPhysMgr</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1310%20-%20trunk/yake/yapp/plugins/terrainPhysMgr&In-Reply-To=%3C200603192230.k2JMUbH8004172%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1310 - trunk/yake/yapp/plugins/terrainPhysMgr">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Mar 19 23:30:37 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000379.html">[Yake-svn] r1309 - trunk/yake/yake/plugins/physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000381.html">[Yake-svn] r1311 - trunk/yake/yapp/raf
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#380">[ date ]</a>
+              <a href="thread.html#380">[ thread ]</a>
+              <a href="subject.html#380">[ subject ]</a>
+              <a href="author.html#380">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-19 23:30:37 +0100 (Sun, 19 Mar 2006)
+New Revision: 1310
+
+Modified:
+   trunk/yake/yapp/plugins/terrainPhysMgr/TerrainOdeActor.h
+   trunk/yake/yapp/plugins/terrainPhysMgr/TerrainOdeShape.h
+   trunk/yake/yapp/plugins/terrainPhysMgr/TerrainPhysicsManager.h
+Log:
+fixed includes and dll interface
+
+Modified: trunk/yake/yapp/plugins/terrainPhysMgr/TerrainOdeActor.h
+===================================================================
+--- trunk/yake/yapp/plugins/terrainPhysMgr/TerrainOdeActor.h	2006-03-19 22:29:25 UTC (rev 1309)
++++ trunk/yake/yapp/plugins/terrainPhysMgr/TerrainOdeActor.h	2006-03-19 22:30:37 UTC (rev 1310)
+@@ -30,6 +30,7 @@
+ #include &lt;map&gt;
+ #include &lt;vector&gt;
+ 
++#include &lt;yapp/plugins/terrainPhysMgr/TerrainOdePrerequisites.h&gt;
+ #include &lt;yake/plugins/physicsODE/yakePCH.h&gt;
+ 
+ #include &lt;yake/plugins/physicsODE/OdeWorld.h&gt;
+@@ -50,7 +51,7 @@
+ 		class OdeGeom;
+ 		class Ogre::PagingLandScapeTileInfo;
+ 		
+-		class YAKE_PHYSICSODE_API TerrainCollisionDetectionActor : public OdeActor
++		class YAKE_PHYSICSPLSM_API TerrainCollisionDetectionActor : public OdeActor
+ 		{
+ 			public:
+ 				TerrainCollisionDetectionActor( OdeWorld* pOdeWorld );
+
+Modified: trunk/yake/yapp/plugins/terrainPhysMgr/TerrainOdeShape.h
+===================================================================
+--- trunk/yake/yapp/plugins/terrainPhysMgr/TerrainOdeShape.h	2006-03-19 22:29:25 UTC (rev 1309)
++++ trunk/yake/yapp/plugins/terrainPhysMgr/TerrainOdeShape.h	2006-03-19 22:30:37 UTC (rev 1310)
+@@ -27,6 +27,7 @@
+ #ifndef YAKE_TERRAIN_ODESHAPES_H
+ #define YAKE_TERRAIN_ODESHAPES_H
+ 
++#include &lt;yapp/plugins/terrainPhysMgr/TerrainOdePrerequisites.h&gt;
+ #include &lt;yake/plugins/physicsODE/OdeShapes.h&gt;
+ 
+ #include &quot;OgreRenderQueue.h&quot;
+@@ -42,7 +43,7 @@
+ namespace yake {
+ namespace physics {
+ 
+-	class YAKE_PHYSICSODE_API OdeTerrainCollisionBox : public OdeBox
++	class YAKE_PHYSICSPLSM_API OdeTerrainCollisionBox : public OdeBox
+ 	{
+ 		public:
+ 			OdeTerrainCollisionBox( dSpace* pSpace, OdeActor* pOwner, real sizex, real sizey, real sizez, Ogre::PagingLandScapeTileInfo * _tileInfo) : 
+
+Modified: trunk/yake/yapp/plugins/terrainPhysMgr/TerrainPhysicsManager.h
+===================================================================
+--- trunk/yake/yapp/plugins/terrainPhysMgr/TerrainPhysicsManager.h	2006-03-19 22:29:25 UTC (rev 1309)
++++ trunk/yake/yapp/plugins/terrainPhysMgr/TerrainPhysicsManager.h	2006-03-19 22:30:37 UTC (rev 1310)
+@@ -27,6 +27,8 @@
+ #ifndef __TERRAIN_PHYS_MANAGER
+ #define  __TERRAIN_PHYS_MANAGER
+ 
++#include &lt;yapp/plugins/terrainPhysMgr/TerrainOdePrerequisites.h&gt;
++#include &lt;yapp/plugins/terrainPhysMgr/TerrainOdePrerequisites.h&gt;
+ #include &lt;yake/base/yakePCH.h&gt;
+ 
+ #include &lt;Ogre.h&gt;
+@@ -52,7 +54,7 @@
+ 	class TerrainCollisionDetectionActor;
+ 	class TerrainCollisionActor;
+ 		
+-	class PLSMTerrainPhysicsManager
++	class YAKE_PHYSICSPLSM_API PLSMTerrainPhysicsManager
+ 	{
+ 		protected:
+ 			void pageLoaded( Ogre::PagingLandscapeEvent* event);
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000379.html">[Yake-svn] r1309 - trunk/yake/yake/plugins/physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000381.html">[Yake-svn] r1311 - trunk/yake/yapp/raf
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#380">[ date ]</a>
+              <a href="thread.html#380">[ thread ]</a>
+              <a href="subject.html#380">[ subject ]</a>
+              <a href="author.html#380">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,442 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1145 - trunk/yake/src/yapp/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1145%20-%20trunk/yake/src/yapp/model&In-Reply-To=%3C200511100029.jAA0TR6l017521%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000214.html">
+   <LINK REL="Next"  HREF="000216.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1145 - trunk/yake/src/yapp/model</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1145%20-%20trunk/yake/src/yapp/model&In-Reply-To=%3C200511100029.jAA0TR6l017521%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1145 - trunk/yake/src/yapp/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Nov 10 01:29:27 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000214.html">[Yake-svn] r1144 - trunk/yake/src/yapp/model
+</A></li>
+        <LI>Next message: <A HREF="000216.html">[Yake-svn] r1146 - trunk/yake/src/yapp/vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#215">[ date ]</a>
+              <a href="thread.html#215">[ thread ]</a>
+              <a href="subject.html#215">[ subject ]</a>
+              <a href="author.html#215">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-10 01:29:25 +0100 (Thu, 10 Nov 2005)
+New Revision: 1145
+
+Modified:
+   trunk/yake/src/yapp/model/yakeGraphical.cpp
+Log:
+patch 1350326 by mj
+
+Modified: trunk/yake/src/yapp/model/yakeGraphical.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeGraphical.cpp	2005-11-10 00:28:11 UTC (rev 1144)
++++ trunk/yake/src/yapp/model/yakeGraphical.cpp	2005-11-10 00:29:25 UTC (rev 1145)
+@@ -26,8 +26,9 @@
+ */
+ #include &lt;yapp/base/yappPCH.h&gt;
+ #include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/loader/yakeDotScene.h&gt;
++#include &lt;yapp/model/yakeGraphicalDataImporter.h&gt;
+ 
++
+ namespace yake {
+ namespace model {
+ 
+@@ -43,6 +44,7 @@
+ 		}
+ 		mNodes.clear();
+ 	}
++
+ 	//-----------------------------------------------------
+ 	void Graphical::addSceneNode( graphics::ISceneNode* pSceneNode, bool bTransferOwnership )
+ 	{
+@@ -55,6 +57,7 @@
+ 		e.pSN = pSceneNode;
+ 		mNodes.push_back( e );
+ 	}
++
+ 	//-----------------------------------------------------
+ 	Graphical::SceneNodeList Graphical::getSceneNodes(bool bRecursive /*= false*/) const
+ 	{
+@@ -69,6 +72,7 @@
+ 		}
+ 		return nodes;
+ 	}
++
+ 	//-----------------------------------------------------
+ 	graphics::ISceneNode* Graphical::getSceneNode(const String &amp; rName, bool bRecursive /*= false*/)
+ 	{
+@@ -87,6 +91,7 @@
+ 		}
+ 		return 0;
+ 	}
++
+ 	//-----------------------------------------------------
+ 	void Graphical::setPosition( const Vector3&amp; pos )
+ 	{
+@@ -99,9 +104,11 @@
+ 				pNode-&gt;setPosition( pos );
+ 		}
+ 	}
++
+ 	//-----------------------------------------------------
+-	void Graphical::fromDotScene(const String &amp; fn, graphics::IWorld* pGWorld)
++	void Graphical::fromDotScene(const String&amp; fn, graphics::IWorld* pGWorld)
+ 	{
++		//TODO make this method somewhat deprecated...
+ 		YAKE_ASSERT( pGWorld );
+ 	
+ 		// 1. read dotscene file into DOM
+@@ -114,7 +121,7 @@
+ 
+ 		yake::data::parser::dotscene::DotSceneParserV1 dsp;
+ 		
+-		Graphical::DotSceneListener dotSceneListener(*this);
++		DotSceneListener dotSceneListener( *this );
+ 		dotSceneListener.reset( pGWorld );
+ 		
+ 		dsp.subscribeToNodeSignal( Bind1( &amp;DotSceneListener::processSceneNode, &amp;dotSceneListener ) );
+@@ -124,301 +131,5 @@
+ 		
+ 		dsp.load( ser.getDocumentNode() );
+ 	}
+-	
+-/*	
+-	//-----------------------------------------------------
+-	Graphical::NameList Graphical::getAllSceneNodes()
+-	{
+-		YAKE_LOG( &quot;INFO: Getting all scene nodes&quot; );
+-
+-		NameList list;
+-		
+-		DotSceneListener::SceneNodeMap::iterator i = mDotSceneListener.mSceneNodes.begin();
+-		DotSceneListener::SceneNodeMap::iterator end = mDotSceneListener.mSceneNodes.end();
+-		
+-		for( ; i != end; ++i )
+-		{
+-			YAKE_LOG( &quot; Adding to list: &quot; + i-&gt;first );
+-			
+-			list.push_back( i-&gt;first );
+-		}
+-		
+-		return list;
+-	}
+-
+-	//-----------------------------------------------------
+-	Graphical::NameList Graphical::getAllCameras()
+-	{
+-		NameList list;
+-		
+-		DotSceneListener::CameraMap::iterator i = mDotSceneListener.mCameras.begin();
+-		DotSceneListener::CameraMap::iterator end = mDotSceneListener.mCameras.end();
+-		
+-		for( ; i != end; ++i )
+-		{
+-			list.push_back( i-&gt;first );
+-		}
+-		
+-		return list;
+-	}
+-	
+-	//-----------------------------------------------------
+-	Graphical::NameList Graphical::getAllEntities()
+-	{
+-		NameList list;
+-		
+-		DotSceneListener::EntityMap::iterator i = mDotSceneListener.mEntities.begin();
+-		DotSceneListener::EntityMap::iterator end = mDotSceneListener.mEntities.end();
+-		
+-		for( ; i != end; ++i )
+-		{
+-			list.push_back( i-&gt;first );
+-		}
+-		
+-		return list;
+-	}
+-	
+-	//-----------------------------------------------------
+-	Graphical::NameList Graphical::getAllLights()
+-	{
+-		NameList list;
+-		
+-		DotSceneListener::LightMap::iterator i = mDotSceneListener.mLights.begin();
+-		DotSceneListener::LightMap::iterator end = mDotSceneListener.mLights.end();
+-		
+-		for( ; i != end; ++i )
+-		{
+-			list.push_back( i-&gt;first );
+-		}
+-		
+-		return list;
+-	}
+-	
+-	//-----------------------------------------------------
+-	graphics::ISceneNode* Graphical::getSceneNode( String name )
+-	{
+-		graphics::ISceneNode* result = NULL;
+-		
+-		result = mDotSceneListener.mSceneNodes[ name ];
+-		
+-		return result;
+-	}
+-	
+-	//-----------------------------------------------------
+-	graphics::IEntity* Graphical::getEntity( String name )
+-	{
+-		graphics::IEntity* result = NULL;
+-		
+-		result = mDotSceneListener.mEntities[ name ].entity;
+-		
+-		return result;
+-	}
+-	
+-	//-----------------------------------------------------
+-	graphics::ICamera* Graphical::getCamera( String name )
+-	{
+-		graphics::ICamera* result = NULL;
+-		
+-		result = mDotSceneListener.mCameras[ name ].camera;
+-		
+-		return result;
+-	}
+-	
+-	//-----------------------------------------------------
+-	graphics::ILight* Graphical::getLight( String name )
+-	{
+-		graphics::ILight* result = NULL;
+-		
+-		result = mDotSceneListener.mLights[ name ].light;
+-		
+-		return result;
+-	}
+-
+-	//-----------------------------------------------------
+-	graphics::ISceneNode* Graphical::getParentForEntity( String name )
+-	{
+-		String parentName = mDotSceneListener.mEntities[ name ].parentSceneNode;
+-		return getSceneNode( parentName );
+-	}
+-	
+-	//-----------------------------------------------------
+-	graphics::ISceneNode* Graphical::getParentForLight( String name )
+-	{
+-		String parentName = mDotSceneListener.mLights[ name ].parentSceneNode;
+-		return getSceneNode( parentName );
+-	}
+-	
+-	//-----------------------------------------------------
+-	graphics::ISceneNode* Graphical::getParentForCamera( String name )
+-	{
+-		String parentName = mDotSceneListener.mCameras[ name ].parentSceneNode;
+-		return getSceneNode( parentName );
+-	}
+-*/
+-
+-	//-----------------------------------------------------
+-	void Graphical::DotSceneListener::processSceneNode( const SceneNodeDesc desc )
+-	{
+-		YAKE_LOG( &quot;Processing scene node &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
+-				
+-		graphics::ISceneNode* pSN = mGWorld-&gt;createSceneNode( desc.name );
+-
+-		graphics::ISceneNode* parentSN = 0;
+-		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
+-		{
+-			parentSN = mSceneNodes[ desc.parentNodeName ];
+-			parentSN-&gt;addChildNode( pSN );
+-		}
+-		
+-		pSN-&gt;setName( desc.name );
+-		pSN-&gt;setPosition( desc.transform.position );
+-		pSN-&gt;setOrientation( desc.transform.rotation );
+-		pSN-&gt;setScale( desc.transform.scale );
+-		
+-		mSceneNodes[ desc.name ] = pSN;
+-
+-		mOwner.addSceneNode( pSN, parentSN ? false : true );
+-		
+-		// look if this node is tracked
+-		// TODO current scheme allows node to be tracked by only one target
+-		TrackerMap::iterator end = mTrackersTargets.end();
+-		for( TrackerMap::iterator trackRecord = mTrackersTargets.begin(); trackRecord != end; ++trackRecord )
+-		{
+-			if ( trackRecord-&gt;second == desc.name )
+-			{
+-				YAKE_LOG( &quot;Setting track target for camera &quot; + trackRecord-&gt;first + &quot; ...&quot; );
+-			
+-				CameraInfo info = mCameras[ trackRecord-&gt;first ];
+-				
+-				YAKE_LOG( &quot;Camera info found. Acquiring camera...&quot; );
+-				
+-				graphics::ICamera* tracker = info.camera;
+-				
+-				YAKE_LOG( &quot;Got camera. Setting orientation...&quot; );
+-				
+-				tracker-&gt;lookAt( pSN-&gt;getPosition( graphics::ISceneNode::TS_WORLD ) );
+-				
+-				YAKE_LOG( &quot;Orientation was set up...&quot; );
+-				
+-				// cleaning up
+-				mTrackersTargets.erase( trackRecord );
+-				break;
+-			}
+-		}
+-	}
+-	
+-	//-----------------------------------------------------
+-	void Graphical::DotSceneListener::processEntity( const EntityDesc desc )
+-	{
+-		YAKE_LOG( &quot;Processing entity &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
+-		
+-		graphics::IEntity* pEntity = mGWorld-&gt;createEntity( desc.meshFile );
+-
+-		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
+-		{
+-			graphics::ISceneNode* parentSN = mSceneNodes[ desc.parentNodeName ];
+-			
+-			parentSN-&gt;attachEntity( pEntity );
+-		}
+-		
+-		pEntity-&gt;setCastsShadow( desc.castsShadows );
+-		
+-		EntityInfo info;
+-		
+-		info.entity = pEntity;
+-		info.parentSceneNode = desc.parentNodeName;
+-		
+-		mEntities[ desc.name ] = info;
+-	}
+-	
+-	//-----------------------------------------------------
+-	void Graphical::DotSceneListener::processCamera( const CameraDesc desc )
+-	{
+-		YAKE_LOG( &quot;Processing camera &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
+-		
+-		graphics::ICamera* pCamera = mGWorld-&gt;createCamera();
+-
+-		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
+-		{
+-			graphics::ISceneNode* parentSN = mSceneNodes[ desc.parentNodeName ];
+-			
+-			parentSN-&gt;attachCamera( pCamera );
+-		}
+-		
+-		pCamera-&gt;setName( desc.name );
+-		pCamera-&gt;setFOV( Math::DegreesToRadians( desc.fov ) );
+-		pCamera-&gt;setAspectRatio( desc.aspectRatio );
+-		pCamera-&gt;setProjectionType( desc.projectionType );
+-		pCamera-&gt;setNearClipDistance( desc.clipping.nearClip );
+-		pCamera-&gt;setFarClipDistance( desc.clipping.farClip );
+-		
+-	//	pCamera-&gt;setDirection( desc.normal );
+-		
+-		pCamera-&gt;setPosition( Vector3() );
+-		pCamera-&gt;setOrientation( Quaternion::kIdentity );
+-		
+-		
+-		if ( desc.trackTargetName != &quot;&quot; )
+-		{
+-			YAKE_LOG( &quot;Saving tracking record for camera &quot; + desc.name + &quot; ... &quot; );
+-			
+-			mTrackersTargets.insert( TrackerMap::value_type( desc.name, desc.trackTargetName ) );
+-		}
+-		
+-		CameraInfo info;
+-		
+-		info.camera = pCamera;
+-		info.parentSceneNode = desc.parentNodeName;
+-		
+-		mCameras[ desc.name ] = info;
+-	}
+-	
+-	//-----------------------------------------------------
+-	void Graphical::DotSceneListener::processLight( const LightDesc desc )
+-	{
+-		YAKE_LOG( &quot;Processing light &quot; + desc.name + &quot; with parent node &quot; + desc.parentNodeName );
+-		
+-		graphics::ILight* pLight = mGWorld-&gt;createLight();
+-
+-		if ( desc.parentNodeName != yake::data::parser::dotscene::DotSceneParserV1::ROOT_NODE_NAME )
+-		{
+-			graphics::ISceneNode* parentSN = mSceneNodes[ desc.parentNodeName ];
+-			
+-			parentSN-&gt;attachLight( pLight );
+-		}
+-		
+-		pLight-&gt;setName( desc.name );
+-		pLight-&gt;setType( desc.type );
+-		pLight-&gt;setCastsShadows( desc.castsShadows );
+-		
+-		if ( desc.castsShadows )
+-		{
+-			YAKE_LOG( &quot;  light casts shadows&quot; );
+-		}
+-		else
+-		{
+-			YAKE_LOG( &quot;  light doesn't cast shadows&quot; );
+-		}
+-		
+-		pLight-&gt;setDiffuseColour( desc.diffuseColor );
+-		pLight-&gt;setSpecularColour( desc.specularColor );
+-		pLight-&gt;setAttenuation( desc.attenuation.range,
+-								desc.attenuation.constant,
+-								desc.attenuation.linear,
+-								desc.attenuation.quadratic );
+-		
+-		if ( desc.type == graphics::ILight::LT_SPOT )
+-			pLight-&gt;setSpotlightRange( desc.range.inner, desc.range.outer, desc.range.falloff );
+-		
+-		if ( desc.type != graphics::ILight::LT_POINT )
+-			pLight-&gt;setDirection( desc.normal );
+-		
+-		LightInfo info;
+-		
+-		info.light = pLight;
+-		info.parentSceneNode = desc.parentNodeName;
+-		
+-		mLights[ desc.name ] = info;
+-	}
+ }
+ }
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000214.html">[Yake-svn] r1144 - trunk/yake/src/yapp/model
+</A></li>
+	<LI>Next message: <A HREF="000216.html">[Yake-svn] r1146 - trunk/yake/src/yapp/vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#215">[ date ]</a>
+              <a href="thread.html#215">[ thread ]</a>
+              <a href="subject.html#215">[ subject ]</a>
+              <a href="author.html#215">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

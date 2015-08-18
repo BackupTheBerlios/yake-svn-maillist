@@ -1,0 +1,177 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1272 - trunk/yake/yake/ent
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1272%20-%20trunk/yake/yake/ent&In-Reply-To=%3C200603152005.k2FK5NTo004733%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000341.html">
+   <LINK REL="Next"  HREF="000343.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1272 - trunk/yake/yake/ent</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1272%20-%20trunk/yake/yake/ent&In-Reply-To=%3C200603152005.k2FK5NTo004733%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1272 - trunk/yake/yake/ent">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Mar 15 21:05:23 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000341.html">[Yake-svn] r1271 - trunk/yake/yake/statemachine
+</A></li>
+        <LI>Next message: <A HREF="000343.html">[Yake-svn] r1273 - trunk/yake/src/yake/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#342">[ date ]</a>
+              <a href="thread.html#342">[ thread ]</a>
+              <a href="subject.html#342">[ subject ]</a>
+              <a href="author.html#342">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-15 21:04:26 +0100 (Wed, 15 Mar 2006)
+New Revision: 1272
+
+Modified:
+   trunk/yake/yake/ent/component.h
+   trunk/yake/yake/ent/component_holder.h
+   trunk/yake/yake/ent/object.h
+Log:
+renamed Co to Component,
+containment instead of inheritance for Object
+
+Modified: trunk/yake/yake/ent/component.h
+===================================================================
+--- trunk/yake/yake/ent/component.h	2006-03-15 20:03:29 UTC (rev 1271)
++++ trunk/yake/yake/ent/component.h	2006-03-15 20:04:26 UTC (rev 1272)
+@@ -33,12 +33,10 @@
+ namespace yake {
+ namespace ent {
+ 
+-	struct Co;
+-
+ #define DECL_CO(CLASS,DESC) \
+ 	DECL_CLASS_RTTI(CLASS,DESC) \
+ public: \
+-	static CLASS* cast(::yake::ent::Co*);
++	static CLASS* cast(::yake::ent::Component*);
+ 
+ #define IMPL_CO(CLASS) \
+ 	IMPL_CLASS_RTTI(CLASS)
+@@ -46,11 +44,11 @@
+ #define IMPL_CO_1(CLASS,PARENT1) \
+ 	IMPL_CLASS_RTTI_1(CLASS,PARENT1)
+ 
+-	struct YAKE_ENT_API Co : public PropHolder&lt;Co&gt;
++	struct YAKE_ENT_API Component : public PropHolder&lt;Component&gt;
+ 	{
+-		virtual ~Co() {}
++		virtual ~Component() {}
+ 
+-		DECL_CO(Co,&quot;Component base&quot;)
++		DECL_CO(Component,&quot;Component base&quot;)
+ 	public:
+ 	};
+ 
+
+Modified: trunk/yake/yake/ent/component_holder.h
+===================================================================
+--- trunk/yake/yake/ent/component_holder.h	2006-03-15 20:03:29 UTC (rev 1271)
++++ trunk/yake/yake/ent/component_holder.h	2006-03-15 20:04:26 UTC (rev 1272)
+@@ -36,12 +36,12 @@
+ 	struct YAKE_ENT_API CoHolder
+ 	{
+ 		// operations
+-		void addCo(const CoTag&amp;, Co*);
+-		Co* removeCo(const Co*);
+-		Co* removeCo(const CoTag&amp;);
+-		Co* getCo(const CoTag&amp;) const;
++		void addComponent(const CoTag&amp;, Component*);
++		Component* removeComponent(const Component*);
++		Component* removeComponent(const CoTag&amp;);
++		Component* getComponent(const CoTag&amp;) const;
+ 	private:
+-		typedef std::map&lt;CoTag,Co*&gt; TagCoMap;
++		typedef std::map&lt;CoTag,Component*&gt; TagCoMap;
+ 		TagCoMap	components_;
+ 	};
+ 
+
+Modified: trunk/yake/yake/ent/object.h
+===================================================================
+--- trunk/yake/yake/ent/object.h	2006-03-15 20:03:29 UTC (rev 1271)
++++ trunk/yake/yake/ent/object.h	2006-03-15 20:04:26 UTC (rev 1272)
+@@ -83,7 +83,9 @@
+ 		ObjectId				id_;
+ 	};
+ 
+-	struct YAKE_ENT_API Entity : public Object, public CoHolder, public VMHolder
++	/** @todo Do not publicly inherit from CoHolder and VMHolder!?
++	*/
++	struct YAKE_ENT_API Entity : public Object, public CoHolder
+ 	{
+ 		DECL_OBJECT(Entity,&quot;Entity&quot;)
+ 		Entity() {}
+@@ -93,6 +95,7 @@
+ 		typedef object_fsm::event_type fsm_event_type;
+ 
+ 		// id operations
++		
+ 		void setId(const ObjectId&amp; id);
+ 		const ObjectId&amp; getId() const;
+ 
+@@ -106,6 +109,14 @@
+ 		{ return m_.current(); }
+ 
+ 		// VM operations
++
++		boost::signals::connection subsribeToVmAttached(const VMHolder::VmAttachedSignal::slot_type&amp;);
++		boost::signals::connection subscribeToVmDetached(const VMHolder::VmDetachedSignal::slot_type&amp;);
++
++		bool attachVM(scripting::IVM*,const std::string&amp; tag);
++		scripting::IVM* detachVM(const std::string&amp; tag);
++		scripting::IVM* getVM(const std::string&amp; tag) const;
++
+ 		scripting::IVM* getFsmVM() const
+ 		{
+ 			 return this-&gt;getVM(&quot;main&quot;);
+@@ -120,6 +131,7 @@
+ 		void onExit(const object_fsm&amp;, const object_fsm::state_type&amp; state);
+ 	private:
+ 		object_fsm			m_;
++		VMHolder				vms_;
+ 	};
+ 
+ } // namespace ent
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000341.html">[Yake-svn] r1271 - trunk/yake/yake/statemachine
+</A></li>
+	<LI>Next message: <A HREF="000343.html">[Yake-svn] r1273 - trunk/yake/src/yake/ent
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#342">[ date ]</a>
+              <a href="thread.html#342">[ thread ]</a>
+              <a href="subject.html#342">[ subject ]</a>
+              <a href="author.html#342">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1293 - trunk/yake/yapp/raf
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1293%20-%20trunk/yake/yapp/raf&In-Reply-To=%3C200603162234.k2GMYasF019198%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000363.html">
+   <LINK REL="Next"  HREF="000364.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1293 - trunk/yake/yapp/raf</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1293%20-%20trunk/yake/yapp/raf&In-Reply-To=%3C200603162234.k2GMYasF019198%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1293 - trunk/yake/yapp/raf">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Mar 16 23:34:36 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000363.html">[Yake-svn] r1292 - trunk/yake/src/yapp/raf
+</A></li>
+        <LI>Next message: <A HREF="000364.html">[Yake-svn] r1294 - trunk/yake/yake/msg
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#362">[ date ]</a>
+              <a href="thread.html#362">[ thread ]</a>
+              <a href="subject.html#362">[ subject ]</a>
+              <a href="author.html#362">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-16 23:34:35 +0100 (Thu, 16 Mar 2006)
+New Revision: 1293
+
+Modified:
+   trunk/yake/yapp/raf/pch.h
+   trunk/yake/yapp/raf/yakeApplicationState.h
+   trunk/yake/yapp/raf/yakeRaf.h
+Log:
+ported to new yake::statemachine
+
+Modified: trunk/yake/yapp/raf/pch.h
+===================================================================
+--- trunk/yake/yapp/raf/pch.h	2006-03-16 22:34:24 UTC (rev 1292)
++++ trunk/yake/yapp/raf/pch.h	2006-03-16 22:34:35 UTC (rev 1293)
+@@ -32,6 +32,8 @@
+ #include &lt;yake/audio/yakeAudio.h&gt;
+ #include &lt;yake/scripting/yakeScriptingSystem.h&gt;
+ #include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/ent/yakeEnt.h&gt;
++#include &lt;yake/statemachine/fsm_core.h&gt;
++#include &lt;yake/statemachine/fsm_oo_machine.h&gt;
++#include &lt;yake/ent/ent.h&gt;
+ 
+-#include &lt;yapp/raf/yakePrerequisites.h&gt;
+\ No newline at end of file
++#include &lt;yapp/raf/yakePrerequisites.h&gt;
+
+Modified: trunk/yake/yapp/raf/yakeApplicationState.h
+===================================================================
+--- trunk/yake/yapp/raf/yakeApplicationState.h	2006-03-16 22:34:24 UTC (rev 1292)
++++ trunk/yake/yapp/raf/yakeApplicationState.h	2006-03-16 22:34:35 UTC (rev 1293)
+@@ -31,12 +31,10 @@
+ namespace raf {
+ 	class Application;
+ 
+-	typedef YAKE_RAF_API state::Machine&lt;String&gt; AppMachine;
+-
+ 	/** Application states of the application state machine are represented by derived
+ 		classes of this type.
+ 	*/
+-	class YAKE_RAF_API ApplicationState : public yake::state::State
++	class YAKE_RAF_API ApplicationState
+ 	{
+ 		ApplicationState();
+ 	public:
+@@ -45,11 +43,40 @@
+ 
+ 		Application&amp; getApp();
+ 		const Application&amp; getApp() const;
++
++		virtual void onEnter() {}
++		virtual void onStep() {}
++		virtual void onExit() {}
+ 	private:
+ 		Application&amp;	mOwner;
+ 	};
+ 	typedef ApplicationState* ApplicationStatePtr;
+ 
++	class YAKE_RAF_API AppMachine
++	{
++	private:
++		AppMachine(const AppMachine&amp;);
++		AppMachine&amp; operator=(const AppMachine&amp;);
++	public:
++		AppMachine();
++		~AppMachine();
++
++		typedef String event_type;
++		void addState(const String&amp;, ApplicationState*);
++		void setState(const String&amp;);
++		void addTransition(const String&amp;, const event_type&amp;, const String&amp;);
++		void processEvent(const event_type&amp;);
++		//const String&amp; currentName() const;
++
++		void step();
++	private:
++		typedef fsm::oomachine&lt;ApplicationState,String&gt; fsm_type;
++		fsm_type						machine_;
++
++		typedef AssocVector&lt;String,SharedPtr&lt;ApplicationState&gt; &gt; state_map;
++		state_map					states_;
++	};
++
+ 	/** Main state base class */
+ 	class YAKE_RAF_API MainState : public ApplicationState
+ 	{
+@@ -65,4 +92,14 @@
+ } // namespace raf
+ } // namespace yake
+ 
++namespace fsm {
++	template &lt;&gt;
++	inline const yake::raf::ApplicationStatePtr&amp; get_null_state&lt;yake::raf::ApplicationState*&gt;()
++	{
++		static yake::raf::ApplicationStatePtr ms_null = 0;
++		return ms_null;
++	}
++}
++
++
+ #endif
+
+Modified: trunk/yake/yapp/raf/yakeRaf.h
+===================================================================
+--- trunk/yake/yapp/raf/yakeRaf.h	2006-03-16 22:34:24 UTC (rev 1292)
++++ trunk/yake/yapp/raf/yakeRaf.h	2006-03-16 22:34:35 UTC (rev 1293)
+@@ -28,7 +28,7 @@
+ #define YAKE_RAF_H
+ 
+ #include &lt;yapp/raf/yakePrerequisites.h&gt;
+-#include &lt;yapp/statemachine/yakeFiniteStateMachine.h&gt;
++#include &lt;yake/statemachine/fsm_oo_machine.h&gt;
+ #include &lt;yapp/raf/yakeApplicationState.h&gt;
+ #include &lt;yapp/raf/yakeRtApplicationState.h&gt;
+ #include &lt;yapp/raf/yakeApplication.h&gt;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000363.html">[Yake-svn] r1292 - trunk/yake/src/yapp/raf
+</A></li>
+	<LI>Next message: <A HREF="000364.html">[Yake-svn] r1294 - trunk/yake/yake/msg
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#362">[ date ]</a>
+              <a href="thread.html#362">[ thread ]</a>
+              <a href="subject.html#362">[ subject ]</a>
+              <a href="author.html#362">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,295 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1285 - in trunk/yake/scripts/msvc8: . samples/audio samples/base samples/data samples/ent samples/misc samples/model samples/scripting
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-March/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1285%20-%20in%20trunk/yake/scripts/msvc8%3A%20.%20samples/audio%20samples/base%20samples/data%20samples/ent%20samples/misc%20samples/model%20samples/scripting&In-Reply-To=%3C200603152100.k2FL0VON024053%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000354.html">
+   <LINK REL="Next"  HREF="000356.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1285 - in trunk/yake/scripts/msvc8: . samples/audio samples/base samples/data samples/ent samples/misc samples/model samples/scripting</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1285%20-%20in%20trunk/yake/scripts/msvc8%3A%20.%20samples/audio%20samples/base%20samples/data%20samples/ent%20samples/misc%20samples/model%20samples/scripting&In-Reply-To=%3C200603152100.k2FL0VON024053%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1285 - in trunk/yake/scripts/msvc8: . samples/audio samples/base samples/data samples/ent samples/misc samples/model samples/scripting">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Mar 15 22:00:31 CET 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000354.html">[Yake-svn] r1284 - trunk/yake/yake/base/native
+</A></li>
+        <LI>Next message: <A HREF="000356.html">[Yake-svn] r1286 - trunk/yake/yapp/samples/misc/scripted
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#355">[ date ]</a>
+              <a href="thread.html#355">[ thread ]</a>
+              <a href="subject.html#355">[ subject ]</a>
+              <a href="author.html#355">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-03-15 22:00:29 +0100 (Wed, 15 Mar 2006)
+New Revision: 1285
+
+Modified:
+   trunk/yake/scripts/msvc8/samples.sln
+   trunk/yake/scripts/msvc8/samples/audio/sampleAudio1.vcproj
+   trunk/yake/scripts/msvc8/samples/base/sampleDebug.vcproj
+   trunk/yake/scripts/msvc8/samples/data/sampleDataMisc.vcproj
+   trunk/yake/scripts/msvc8/samples/ent/sampleEntFsm.vcproj
+   trunk/yake/scripts/msvc8/samples/misc/sampleScriptedGraphics.vcproj
+   trunk/yake/scripts/msvc8/samples/model/sampleDotLink.vcproj
+   trunk/yake/scripts/msvc8/samples/model/sampleSync1.vcproj
+   trunk/yake/scripts/msvc8/samples/model/sampleXODE.vcproj
+   trunk/yake/scripts/msvc8/samples/scripting/sampleScriptingLua.vcproj
+Log:
+various fixes
+
+Modified: trunk/yake/scripts/msvc8/samples/audio/sampleAudio1.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/audio/sampleAudio1.vcproj	2006-03-15 20:59:24 UTC (rev 1284)
++++ trunk/yake/scripts/msvc8/samples/audio/sampleAudio1.vcproj	2006-03-15 21:00:29 UTC (rev 1285)
+@@ -64,6 +64,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib audio.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;2&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/$(ConfigurationName);../../../../dependencies/lib&quot;
+@@ -142,6 +143,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib audio.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;1&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/$(ConfigurationName);../../../../dependencies/lib&quot;
+
+Modified: trunk/yake/scripts/msvc8/samples/base/sampleDebug.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/base/sampleDebug.vcproj	2006-03-15 20:59:24 UTC (rev 1284)
++++ trunk/yake/scripts/msvc8/samples/base/sampleDebug.vcproj	2006-03-15 21:00:29 UTC (rev 1285)
+@@ -65,7 +65,7 @@
+ 				Name=&quot;VCLinkerTool&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;2&quot;
+-				AdditionalLibraryDirectories=&quot;../../../../dependencies/lib&quot;
++				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies/lib&quot;
+ 				GenerateDebugInformation=&quot;true&quot;
+ 				ProgramDatabaseFile=&quot;$(OutDir)/$(ProjectName).pdb&quot;
+ 				SubSystem=&quot;1&quot;
+
+Modified: trunk/yake/scripts/msvc8/samples/data/sampleDataMisc.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/data/sampleDataMisc.vcproj	2006-03-15 20:59:24 UTC (rev 1284)
++++ trunk/yake/scripts/msvc8/samples/data/sampleDataMisc.vcproj	2006-03-15 21:00:29 UTC (rev 1285)
+@@ -63,6 +63,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib data.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;2&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/$(ConfigurationName);../../../../dependencies/lib&quot;
+@@ -140,6 +141,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
++				AdditionalDependencies=&quot;base.lib data.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;1&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/$(ConfigurationName);../../../../dependencies/lib&quot;
+
+Modified: trunk/yake/scripts/msvc8/samples/ent/sampleEntFsm.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/ent/sampleEntFsm.vcproj	2006-03-15 20:59:24 UTC (rev 1284)
++++ trunk/yake/scripts/msvc8/samples/ent/sampleEntFsm.vcproj	2006-03-15 21:00:29 UTC (rev 1285)
+@@ -63,7 +63,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib vehicle.lib&quot;
++				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib scripting.lib ent.lib entlua.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;2&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies/lib&quot;
+@@ -142,7 +142,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.lib vehicle.lib&quot;
++				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib scripting.lib ent.lib entlua.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;1&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/lib&quot;
+
+Modified: trunk/yake/scripts/msvc8/samples/misc/sampleScriptedGraphics.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/misc/sampleScriptedGraphics.vcproj	2006-03-15 20:59:24 UTC (rev 1284)
++++ trunk/yake/scripts/msvc8/samples/misc/sampleScriptedGraphics.vcproj	2006-03-15 21:00:29 UTC (rev 1285)
+@@ -63,7 +63,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib input.lib data.lib graphics.lib yapp.lib audio.lib physics.lib scripting.lib scriptingLua.lib scriptingBindingsLua.lib luabindd.lib luad.lib&quot;
++				AdditionalDependencies=&quot;base.lib input.lib data.lib graphics.lib yapp.lib audio.lib physics.lib scripting.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;2&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies/luabind/lib;../../../../dependencies/lua/lib;../../../../dependencies/lib&quot;
+@@ -143,7 +143,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib input.lib data.lib graphics.lib yapp.lib audio.lib physics.lib scripting.lib scriptingLua.lib scriptingBindingsLua.lib luabind.lib lua.lib&quot;
++				AdditionalDependencies=&quot;base.lib input.lib data.lib graphics.lib yapp.lib audio.lib physics.lib scripting.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;1&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/luabind/lib;../../../../dependencies/lua/lib;../../../../dependencies/lib&quot;
+
+Modified: trunk/yake/scripts/msvc8/samples/model/sampleDotLink.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/model/sampleDotLink.vcproj	2006-03-15 20:59:24 UTC (rev 1284)
++++ trunk/yake/scripts/msvc8/samples/model/sampleDotLink.vcproj	2006-03-15 21:00:29 UTC (rev 1285)
+@@ -2,7 +2,7 @@
+ &lt;VisualStudioProject
+ 	ProjectType=&quot;Visual C++&quot;
+ 	Version=&quot;8,00&quot;
+-	Name=&quot;sampleDotLink&quot;
++	Name=&quot;sampleModelDotLink&quot;
+ 	ProjectGUID=&quot;{1C76B4C7-8ECE-4C0D-81B4-B65707F96510}&quot;
+ 	Keyword=&quot;Win32Proj&quot;
+ 	&gt;
+
+Modified: trunk/yake/scripts/msvc8/samples/model/sampleSync1.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/model/sampleSync1.vcproj	2006-03-15 20:59:24 UTC (rev 1284)
++++ trunk/yake/scripts/msvc8/samples/model/sampleSync1.vcproj	2006-03-15 21:00:29 UTC (rev 1285)
+@@ -2,7 +2,7 @@
+ &lt;VisualStudioProject
+ 	ProjectType=&quot;Visual C++&quot;
+ 	Version=&quot;8,00&quot;
+-	Name=&quot;sampleSync1&quot;
++	Name=&quot;sampleModelSync1&quot;
+ 	ProjectGUID=&quot;{A2E804D9-C95C-47EB-87AB-FAA8A6CAC21B}&quot;
+ 	Keyword=&quot;Win32Proj&quot;
+ 	&gt;
+
+Modified: trunk/yake/scripts/msvc8/samples/model/sampleXODE.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/model/sampleXODE.vcproj	2006-03-15 20:59:24 UTC (rev 1284)
++++ trunk/yake/scripts/msvc8/samples/model/sampleXODE.vcproj	2006-03-15 21:00:29 UTC (rev 1285)
+@@ -2,7 +2,7 @@
+ &lt;VisualStudioProject
+ 	ProjectType=&quot;Visual C++&quot;
+ 	Version=&quot;8,00&quot;
+-	Name=&quot;sampleXODE&quot;
++	Name=&quot;sampleModelXODE&quot;
+ 	ProjectGUID=&quot;{0FCB117D-9915-40AE-A86D-99C3D6EB7B2C}&quot;
+ 	Keyword=&quot;Win32Proj&quot;
+ 	&gt;
+@@ -63,7 +63,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib&quot;
++				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.kib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;2&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies/lib&quot;
+@@ -142,7 +142,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib&quot;
++				AdditionalDependencies=&quot;base.lib graphics.lib physics.lib audio.lib data.lib input.lib yapp.lib scripting.kib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;1&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/lib&quot;
+
+Modified: trunk/yake/scripts/msvc8/samples/scripting/sampleScriptingLua.vcproj
+===================================================================
+--- trunk/yake/scripts/msvc8/samples/scripting/sampleScriptingLua.vcproj	2006-03-15 20:59:24 UTC (rev 1284)
++++ trunk/yake/scripts/msvc8/samples/scripting/sampleScriptingLua.vcproj	2006-03-15 21:00:29 UTC (rev 1285)
+@@ -63,7 +63,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;input.lib graphics.lib audio.lib scripting.lib luad.lib luabindd.lib&quot;
++				AdditionalDependencies=&quot;base.lib scripting.lib audio.lib graphics.lib physics.lib input.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;2&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/debug;../../../../dependencies\lua\lib;../../../../dependencies\luabind\lib;../../../../dependencies/lib&quot;
+@@ -142,7 +142,7 @@
+ 			/&gt;
+ 			&lt;Tool
+ 				Name=&quot;VCLinkerTool&quot;
+-				AdditionalDependencies=&quot;input.lib graphics.lib audio.lib scripting.lib&quot;
++				AdditionalDependencies=&quot;base.lib scripting.lib audio.lib graphics.lib physics.lib input.lib&quot;
+ 				OutputFile=&quot;$(OutDir)/$(ProjectName).exe&quot;
+ 				LinkIncremental=&quot;1&quot;
+ 				AdditionalLibraryDirectories=&quot;../../../../common/lib/release;../../../../dependencies/lib&quot;
+
+Modified: trunk/yake/scripts/msvc8/samples.sln
+===================================================================
+--- trunk/yake/scripts/msvc8/samples.sln	2006-03-15 20:59:24 UTC (rev 1284)
++++ trunk/yake/scripts/msvc8/samples.sln	2006-03-15 21:00:29 UTC (rev 1285)
+@@ -45,6 +45,10 @@
+ EndProject
+ Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleFsm1&quot;, &quot;samples\statemachine\sampleFsm1.vcproj&quot;, &quot;{F270D584-0E4B-4FF0-8EDB-4D098BE49D43}&quot;
+ EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleEvents&quot;, &quot;samples\base\sampleEvents.vcproj&quot;, &quot;{CD6F13A0-F399-411A-9766-0F8E02761D90}&quot;
++EndProject
++Project(&quot;{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}&quot;) = &quot;sampleDebug&quot;, &quot;samples\base\sampleDebug.vcproj&quot;, &quot;{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}&quot;
++EndProject
+ Global
+ 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+ 		Debug|Win32 = Debug|Win32
+@@ -139,6 +143,14 @@
+ 		{F270D584-0E4B-4FF0-8EDB-4D098BE49D43}.Debug|Win32.Build.0 = Debug|Win32
+ 		{F270D584-0E4B-4FF0-8EDB-4D098BE49D43}.Release|Win32.ActiveCfg = Release|Win32
+ 		{F270D584-0E4B-4FF0-8EDB-4D098BE49D43}.Release|Win32.Build.0 = Release|Win32
++		{CD6F13A0-F399-411A-9766-0F8E02761D90}.Debug|Win32.ActiveCfg = Debug|Win32
++		{CD6F13A0-F399-411A-9766-0F8E02761D90}.Debug|Win32.Build.0 = Debug|Win32
++		{CD6F13A0-F399-411A-9766-0F8E02761D90}.Release|Win32.ActiveCfg = Release|Win32
++		{CD6F13A0-F399-411A-9766-0F8E02761D90}.Release|Win32.Build.0 = Release|Win32
++		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Debug|Win32.ActiveCfg = Debug|Win32
++		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Debug|Win32.Build.0 = Debug|Win32
++		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Release|Win32.ActiveCfg = Release|Win32
++		{BCA46ED8-E97C-49D0-A521-FA8E7CEB885A}.Release|Win32.Build.0 = Release|Win32
+ 	EndGlobalSection
+ 	GlobalSection(SolutionProperties) = preSolution
+ 		HideSolutionNode = FALSE
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000354.html">[Yake-svn] r1284 - trunk/yake/yake/base/native
+</A></li>
+	<LI>Next message: <A HREF="000356.html">[Yake-svn] r1286 - trunk/yake/yapp/samples/misc/scripted
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#355">[ date ]</a>
+              <a href="thread.html#355">[ thread ]</a>
+              <a href="subject.html#355">[ subject ]</a>
+              <a href="author.html#355">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,449 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1402 - trunk/yake/src/yake/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-July/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1402%20-%20trunk/yake/src/yake/model&In-Reply-To=%3C200607261856.k6QIu62S007826%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000469.html">
+   <LINK REL="Next"  HREF="000471.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1402 - trunk/yake/src/yake/model</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1402%20-%20trunk/yake/src/yake/model&In-Reply-To=%3C200607261856.k6QIu62S007826%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1402 - trunk/yake/src/yake/model">codeandroid at mail.berlios.de
+       </A><BR>
+    <I>Wed Jul 26 20:56:06 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000469.html">[Yake-svn] r1401 - trunk/yake/common/media/vehicles
+</A></li>
+        <LI>Next message: <A HREF="000471.html">[Yake-svn] r1403 - trunk/yake/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#470">[ date ]</a>
+              <a href="thread.html#470">[ thread ]</a>
+              <a href="subject.html#470">[ subject ]</a>
+              <a href="author.html#470">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-07-26 20:56:00 +0200 (Wed, 26 Jul 2006)
+New Revision: 1402
+
+Added:
+   trunk/yake/src/yake/model/yakeModelComponent.cpp
+Modified:
+   trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+   trunk/yake/src/yake/model/yakeLinkCreator.cpp
+   trunk/yake/src/yake/model/yakeModelManager.cpp
+   trunk/yake/src/yake/model/yakePhysicalCreator.cpp
+Log:
+cleaned up interfaces for model and component creation contexts
+
+Modified: trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-07-19 22:09:36 UTC (rev 1401)
++++ trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-07-26 18:56:00 UTC (rev 1402)
+@@ -56,7 +56,7 @@
+ 	void GraphicalFromDotSceneCreator::create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
+ 	{
+ 		// Verify validity of creation context
+-		graphics::IWorld* pGWorld = ctx.gworld_;
++		graphics::IWorld* pGWorld = ctx.getGraphicalWorld();
+ 		YAKE_ASSERT( pGWorld );
+ 		if (!pGWorld)
+ 			return;
+@@ -69,11 +69,7 @@
+ 			return;
+ 		const String fn = itParam-&gt;second;
+ 
+-		itParam = params.find(&quot;name&quot;);
+-		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
+-		if (itParam == params.end())
+-			return;
+-		const String name = itParam-&gt;second;
++		const String name = ctx.getName().empty() ? uniqueName::create(&quot;graphical_&quot;) : ctx.getName();
+ 
+ 		// Read dotscene file into DOM
+ 
+@@ -83,15 +79,15 @@
+ 
+ 		// Parse DOM and create graphical objects
+ 
+-		data::parser::dotscene::DotSceneParser* parser = ctx.dotSceneParser_;
++		data::parser::dotscene::DotSceneParser* parser = ctx.getDotSceneParser();
+ 		if (!parser)
+ 			parser = defaultParser_.get();
+ 		YAKE_ASSERT( parser );
+ 
+ 		Graphical* pGraphical = new Graphical(/**ctx.model_*/);
+-		ctx.sigPreInit_(ctx,*pGraphical);
++		ctx.sigPreInit(ctx,*pGraphical);
+ 
+-		const String namePrefix = _T(&quot;model:&quot;) + ctx.model_-&gt;getName() + _T(&quot;/&quot;)  // model
++		const String namePrefix = _T(&quot;model:&quot;) + ctx.getModel().getName() + _T(&quot;/&quot;)  // model
+ 									+ (name.empty() ? _T(&quot;&quot;) : (name + _T(&quot;/&quot;))); // component
+ 
+ 		DotSceneListener dotSceneListener( *pGraphical, namePrefix );
+@@ -112,8 +108,8 @@
+ 		conn3.disconnect();
+ 		conn4.disconnect();
+ 
+-		ctx.sigPostInit_(ctx,*pGraphical);
+-		ctx.model_-&gt;addComponent( pGraphical, name );
++		ctx.sigPostInit(ctx,*pGraphical);
++		ctx.getModel().addComponent( pGraphical, name );
+ 	}
+ 
+ 	//-----------------------------------------------------
+@@ -137,14 +133,9 @@
+ 	{
+ 		// Extract parameters
+ 
+-		StringMap::const_iterator itParam = params.find(&quot;name&quot;);
+-		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
+-		if (itParam == params.end())
+-			return;
+-		const String name = itParam-&gt;second;
++		const String name = ctx.getName().empty() ? uniqueName::create(&quot;graphical_&quot;) : ctx.getName();
+ 
+-		YAKE_ASSERT( ctx.model_ );
+-		ctx.model_-&gt;addComponent( new Graphical(), name );
++		ctx.getModel().addComponent( new Graphical(), name );
+ 	}
+ } // namespace model
+ } // namespace yake
+
+Modified: trunk/yake/src/yake/model/yakeLinkCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeLinkCreator.cpp	2006-07-19 22:09:36 UTC (rev 1401)
++++ trunk/yake/src/yake/model/yakeLinkCreator.cpp	2006-07-26 18:56:00 UTC (rev 1402)
+@@ -64,7 +64,8 @@
+ 		// Parse DOM and create graphical objects
+ 
+ 		DotLinkLoader dotLinkLoader;
+-		if (!dotLinkLoader.load( *ser.getDocumentNode(), *ctx.model_, *ctx.centralController_ ))
++		YAKE_ASSERT(ctx.getCentralController());
++		if (!dotLinkLoader.load( *ser.getDocumentNode(), ctx.getModel(), *ctx.getCentralController() ))
+ 		{
+ 			//@todo Report error!
+ 		}
+
+Added: trunk/yake/src/yake/model/yakeModelComponent.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelComponent.cpp	2006-07-19 22:09:36 UTC (rev 1401)
++++ trunk/yake/src/yake/model/yakeModelComponent.cpp	2006-07-26 18:56:00 UTC (rev 1402)
+@@ -0,0 +1,84 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++
++	ComponentCreationContext::ComponentCreationContext(ModelCreationContext&amp; modelCtx, const String&amp; name) : 
++		modelCtx_(modelCtx),
++		name_(name)
++	{}
++	const String&amp; ComponentCreationContext::getName() const
++	{
++		return name_;
++	}
++	Model&amp; ComponentCreationContext::getModel() const
++	{
++		YAKE_ASSERT( modelCtx_.model_ )(name_).fatal(&quot;Cannot dereference 0 model.&quot;);
++		return *modelCtx_.model_;
++	}
++	graphics::IWorld* ComponentCreationContext::getGraphicalWorld() const
++	{
++		return modelCtx_.gworld_;
++	}
++	physics::IWorld* ComponentCreationContext::getPhysicalWorld() const
++	{
++		return modelCtx_.pworld_;
++	}
++	CentralControllerBase* ComponentCreationContext::getCentralController() const
++	{
++		return modelCtx_.centralController_;
++	}
++	data::parser::dotscene::DotSceneParser* ComponentCreationContext::getDotSceneParser() const
++	{
++		return modelCtx_.dotSceneParser_;
++	}
++	data::parser::xode::XODEParser* ComponentCreationContext::getXODEParser() const
++	{
++		return modelCtx_.xodeParser_;
++	}
++	bool ComponentCreationContext::getParamValue(const String&amp; key, boost::any&amp; out) const
++	{
++		ModelCreationContext::ParamMap::const_iterator it = modelCtx_.params_.find(key);
++		if (it == modelCtx_.params_.end())
++			return false;
++		out = it-&gt;second;
++		return true;
++	}
++	void ComponentCreationContext::sigPreInit(const ComponentCreationContext&amp; compCtx,ModelComponent&amp; comp) const
++	{
++		modelCtx_.sigPreInitComponent_(compCtx,comp);
++	}
++	void ComponentCreationContext::sigPostInit(const ComponentCreationContext&amp; compCtx,ModelComponent&amp; comp) const
++	{
++		modelCtx_.sigPostInitComponent_(compCtx,comp);
++	}
++} // namespace model
++} // namespace yake
+
+Modified: trunk/yake/src/yake/model/yakeModelManager.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelManager.cpp	2006-07-19 22:09:36 UTC (rev 1401)
++++ trunk/yake/src/yake/model/yakeModelManager.cpp	2006-07-26 18:56:00 UTC (rev 1402)
+@@ -41,11 +41,11 @@
+ 	{
+ 		return sigModelCreatedSignal_.connect(slot);
+ 	}
+-	SignalConnection ModelManager::subscribeToPreCreateModelComponent(const PreCreateModelComponent::slot_type&amp; slot)
++	SignalConnection ModelManager::subscribeToPreCreateComponent(const PreCreateModelComponent::slot_type&amp; slot)
+ 	{
+ 		return sigPreCreateModelComponent_.connect(slot);
+ 	}
+-	SignalConnection ModelManager::subscribeToPostCreateModelComponent(const PostCreateModelComponent::slot_type&amp; slot)
++	SignalConnection ModelManager::subscribeToPostCreateComponent(const PostCreateModelComponent::slot_type&amp; slot)
+ 	{
+ 		return sigPostCreateModelComponent_.connect(slot);
+ 	}
+@@ -53,13 +53,13 @@
+ 	{
+ 		return sigModelInitializedSignal_.connect(slot);
+ 	}
+-	SignalConnection ModelManager::subscribeToComponentPreInitializeSignal(const ComponentPreInitializeSignal::slot_type&amp; slot)
++	SignalConnection ModelManager::subscribeToPreInitializeComponentSignal(const PreInitializeComponentSignal::slot_type&amp; slot)
+ 	{
+-		return ctx_.sigPreInit_.connect( slot );
++		return modelCtx_.sigPreInitComponent_.connect( slot );
+ 	}
+-	SignalConnection ModelManager::subscribeToComponentPostInitializeSignal(const ComponentPostInitializeSignal::slot_type&amp; slot)
++	SignalConnection ModelManager::subscribeToPostInitializeComponentSignal(const PostInitializeComponentSignal::slot_type&amp; slot)
+ 	{
+-		return ctx_.sigPostInit_.connect( slot );
++		return modelCtx_.sigPostInitComponent_.connect( slot );
+ 	}
+ 	namespace detail {
+ 		void extractParams(const String&amp; params, StringMap&amp; out)
+@@ -102,9 +102,9 @@
+ 		Model* m = new Model();
+ 		m-&gt;setName( modelName );
+ 		models_.insert( std::make_pair(modelName,SharedPtr&lt;Model&gt;(m)) );
+-		ctx_.model_ = m;
++		modelCtx_.model_ = m;
+ 
+-		sigModelCreatedSignal_(*m,ctx_);
++		sigModelCreatedSignal_(*m,modelCtx_);
+ 
+ 		// Create components (if any)
+ 		ConstVectorIterator&lt;ModelComponentDescList&gt; itCompDesc(compDescList);
+@@ -127,12 +127,14 @@
+ 			}
+ #endif
+ 
+-			sigPreCreateModelComponent_(*m,ctx_,type);
+-			creatorMgr_.create( type, ctx_, params );
+-			sigPostCreateModelComponent_(*m,ctx_,type);
++			ComponentCreationContext compCtx( modelCtx_, name );
++
++			sigPreCreateModelComponent_(*m,compCtx,type);
++			creatorMgr_.create( type, compCtx, params );
++			sigPostCreateModelComponent_(*m,compCtx,type);
+ 		}
+-		ctx_.model_ = 0;
+-		sigModelInitializedSignal_(*m,ctx_);
++		modelCtx_.model_ = 0;
++		sigModelInitializedSignal_(*m,modelCtx_);
+ 		return m;
+ 	}
+ 	/// graphics/dotScene:name=gfx;file=bla.scene|physics/dotXODE...
+@@ -175,30 +177,30 @@
+ 	}
+ 	void ModelManager::setCreationContext_GraphicalWorld(graphics::IWorld* w)
+ 	{
+-		ctx_.gworld_ = w;
++		modelCtx_.gworld_ = w;
+ 	}
+ 	void ModelManager::setCreationContext_PhysicalWorld(physics::IWorld* w)
+ 	{
+-		ctx_.pworld_ = w;
++		modelCtx_.pworld_ = w;
+ 	}
+ 	void ModelManager::setCreationContext_CentralController(CentralControllerBase* c)
+ 	{
+-		ctx_.centralController_ = c;
++		modelCtx_.centralController_ = c;
+ 	}
+ 	void ModelManager::setCreationContext_DotSceneParser(data::parser::dotscene::DotSceneParser* parser)
+ 	{
+-		ctx_.dotSceneParser_ = parser;
++		modelCtx_.dotSceneParser_ = parser;
+ 	}
+ 	void ModelManager::setCreationContext_XODEParser(data::parser::xode::XODEParser* parser)
+ 	{
+-		ctx_.xodeParser_ = parser;
++		modelCtx_.xodeParser_ = parser;
+ 	}
+ 	void ModelManager::setCreationContext_NamedParameter(const String&amp; name, const boost::any&amp; value)
+ 	{
+ 		YAKE_ASSERT( !name.empty() );
+ 		if (name.empty())
+ 			return;
+-		ctx_.params_[ name ] = value;
++		modelCtx_.params_[ name ] = value;
+ 	}
+ 
+ } // namespace model
+
+Modified: trunk/yake/src/yake/model/yakePhysicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakePhysicalCreator.cpp	2006-07-19 22:09:36 UTC (rev 1401)
++++ trunk/yake/src/yake/model/yakePhysicalCreator.cpp	2006-07-26 18:56:00 UTC (rev 1402)
+@@ -55,7 +55,7 @@
+ 	void PhysicalFromXODECreator::create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
+ 	{
+ 		// Verify validity of creation context
+-		physics::IWorld* pPWorld = ctx.pworld_;
++		physics::IWorld* pPWorld = ctx.getPhysicalWorld();
+ 		YAKE_ASSERT( pPWorld );
+ 		if (!pPWorld)
+ 			return;
+@@ -68,11 +68,7 @@
+ 			return;
+ 		const String fn = itParam-&gt;second;
+ 
+-		itParam = params.find(&quot;name&quot;);
+-		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
+-		if (itParam == params.end())
+-			return;
+-		const String name = itParam-&gt;second;
++		const String name = ctx.getName().empty() ? uniqueName::create(&quot;physical_&quot;) : ctx.getName();
+ 
+ 		// Read XML file into DOM
+ 
+@@ -82,31 +78,39 @@
+ 
+ 		// Parse DOM and create graphical objects
+ 
+-		data::parser::xode::XODEParser* xodeparser = ctx.xodeParser_;
++		data::parser::xode::XODEParser* xodeparser = ctx.getXODEParser();
+ 		if (!xodeparser)
+ 			xodeparser = defaultParser_.get();
+ 		YAKE_ASSERT( xodeparser );
+ 
+ 		Physical* pPhysical = new Physical(/**ctx.model_*/);
+-		ctx.sigPreInit_(ctx,*pPhysical);
++		ctx.sigPreInit(ctx,*pPhysical);
+ 
+-		const String namePrefix = _T(&quot;model:&quot;) + ctx.model_-&gt;getName() + _T(&quot;/&quot;)  // model
++		const String namePrefix = _T(&quot;model:&quot;) + ctx.getModel().getName() + _T(&quot;/&quot;)  // model
+ 									+ (name.empty() ? _T(&quot;&quot;) : (name + _T(&quot;/&quot;))); // component
+ 		XODEListener xodeListener( *pPhysical, pPWorld, namePrefix );
+ 
+ 		SignalConnection conn1 = xodeparser-&gt;subscribeToBodySignal( Bind1( &amp;XODEListener::processBody, &amp;xodeListener ) );
+ 		SignalConnection conn2 = xodeparser-&gt;subscribeToGeomSignal( Bind1( &amp;XODEListener::processGeom, &amp;xodeListener ) );
++		SignalConnection conn3 = xodeparser-&gt;subscribeToMassSignal( Bind1( &amp;XODEListener::processMass, &amp;xodeListener ) );
++		SignalConnection conn4 = xodeparser-&gt;subscribeToJointSignal( Bind1( &amp;XODEListener::processJoint, &amp;xodeListener ) );
++		SignalConnection conn5 = xodeparser-&gt;subscribeToMaterialSignal( Bind1( &amp;XODEListener::processMaterial, &amp;xodeListener ) );
++		SignalConnection conn6 = xodeparser-&gt;subscribeToParseEndedSignal( Bind0( &amp;XODEListener::postprocess, &amp;xodeListener ) );
+ 
+ 		if (!xodeparser-&gt;load( ser.getDocumentNode() ))
+ 		{
+ 			YAKE_SAFE_DELETE( pPhysical );
+ 		}
+ 
++		conn6.disconnect();
++		conn5.disconnect();
++		conn4.disconnect();
++		conn3.disconnect();
+ 		conn2.disconnect();
+ 		conn1.disconnect();
+ 
+-		ctx.sigPostInit_(ctx,*pPhysical);
+-		ctx.model_-&gt;addComponent( pPhysical, name );
++		ctx.sigPostInit(ctx,*pPhysical);
++		ctx.getModel().addComponent( pPhysical, name );
+ 	}
+ 
+ 	//-----------------------------------------------------
+@@ -129,14 +133,9 @@
+ 	{
+ 		// Extract parameters
+ 
+-		StringMap::const_iterator itParam = params.find(&quot;name&quot;);
+-		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
+-		if (itParam == params.end())
+-			return;
+-		const String name = itParam-&gt;second;
++		const String name = ctx.getName().empty() ? uniqueName::create(&quot;physical_&quot;) : ctx.getName();
+ 
+-		YAKE_ASSERT( ctx.model_ );
+-		ctx.model_-&gt;addComponent( new Physical(), name );
++		ctx.getModel().addComponent( new Physical(), name );
+ 	}
+ } // namespace model
+ } // namespace yake
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000469.html">[Yake-svn] r1401 - trunk/yake/common/media/vehicles
+</A></li>
+	<LI>Next message: <A HREF="000471.html">[Yake-svn] r1403 - trunk/yake/yake/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#470">[ date ]</a>
+              <a href="thread.html#470">[ thread ]</a>
+              <a href="subject.html#470">[ subject ]</a>
+              <a href="author.html#470">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

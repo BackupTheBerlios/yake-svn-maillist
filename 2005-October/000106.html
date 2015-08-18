@@ -1,0 +1,401 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1035 - in trunk/yake/src: yake/plugins/physicsODE yapp/samples/base/vehicle yapp/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1035%20-%20in%20trunk/yake/src%3A%20yake/plugins/physicsODE%20yapp/samples/base/vehicle%20yapp/vehicle&In-Reply-To=%3C200510192305.j9JN5IWB021312%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000105.html">
+   <LINK REL="Next"  HREF="000107.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1035 - in trunk/yake/src: yake/plugins/physicsODE yapp/samples/base/vehicle yapp/vehicle</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1035%20-%20in%20trunk/yake/src%3A%20yake/plugins/physicsODE%20yapp/samples/base/vehicle%20yapp/vehicle&In-Reply-To=%3C200510192305.j9JN5IWB021312%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1035 - in trunk/yake/src: yake/plugins/physicsODE yapp/samples/base/vehicle yapp/vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Thu Oct 20 01:05:18 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000105.html">[Yake-svn] r1034 - in trunk/yake/scripts/yapp: . samples/misc
+</A></li>
+        <LI>Next message: <A HREF="000107.html">[Yake-svn] r1036 - trunk/yake/yapp/vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#106">[ date ]</a>
+              <a href="thread.html#106">[ thread ]</a>
+              <a href="subject.html#106">[ subject ]</a>
+              <a href="author.html#106">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-20 01:04:42 +0200 (Thu, 20 Oct 2005)
+New Revision: 1035
+
+Modified:
+   trunk/yake/src/yake/plugins/physicsODE/OdeHinge2Joint.cpp
+   trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp
+   trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp
+   trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+   trunk/yake/src/yapp/vehicle/yakeOdeEngine.cpp
+Log:
+improvements for ground vehicles
+
+Modified: trunk/yake/src/yake/plugins/physicsODE/OdeHinge2Joint.cpp
+===================================================================
+--- trunk/yake/src/yake/plugins/physicsODE/OdeHinge2Joint.cpp	2005-10-19 23:04:08 UTC (rev 1034)
++++ trunk/yake/src/yake/plugins/physicsODE/OdeHinge2Joint.cpp	2005-10-19 23:04:42 UTC (rev 1035)
+@@ -96,26 +96,26 @@
+ 		{
+ 			if (axisIndex == 0)
+ 			{
+-				static_cast&lt;dUniversalJoint*&gt;(mOdeJoint)-&gt;setParam( dParamVel, mVelTarget[0] );
+-				static_cast&lt;dUniversalJoint*&gt;(mOdeJoint)-&gt;setParam( dParamVel, mMaxForce[0] );
++				static_cast&lt;dHinge2Joint*&gt;(mOdeJoint)-&gt;setParam( dParamVel, mVelTarget[0] );
++				static_cast&lt;dHinge2Joint*&gt;(mOdeJoint)-&gt;setParam( dParamFMax, mMaxForce[0] );
+ 			}
+ 			else if (axisIndex == 1)
+ 			{
+-				static_cast&lt;dUniversalJoint*&gt;(mOdeJoint)-&gt;setParam( dParamVel2, mVelTarget[1] );
+-				static_cast&lt;dUniversalJoint*&gt;(mOdeJoint)-&gt;setParam( dParamVel2, mMaxForce[1] );
++				static_cast&lt;dHinge2Joint*&gt;(mOdeJoint)-&gt;setParam( dParamVel2, mVelTarget[1] );
++				static_cast&lt;dHinge2Joint*&gt;(mOdeJoint)-&gt;setParam( dParamFMax2, mMaxForce[1] );
+ 			}
+ 		}
+ 		else
+ 		{
+ 			if (axisIndex == 0)
+ 			{
+-				static_cast&lt;dUniversalJoint*&gt;(mOdeJoint)-&gt;setParam( dParamVel, 0 );
+-				static_cast&lt;dUniversalJoint*&gt;(mOdeJoint)-&gt;setParam( dParamVel, 0 );
++				static_cast&lt;dHinge2Joint*&gt;(mOdeJoint)-&gt;setParam( dParamVel, 0 );
++				static_cast&lt;dHinge2Joint*&gt;(mOdeJoint)-&gt;setParam( dParamFMax, 0 );
+ 			}
+ 			else if (axisIndex == 1)
+ 			{
+-				static_cast&lt;dUniversalJoint*&gt;(mOdeJoint)-&gt;setParam( dParamVel2, 0 );
+-				static_cast&lt;dUniversalJoint*&gt;(mOdeJoint)-&gt;setParam( dParamVel2, 0 );
++				static_cast&lt;dHinge2Joint*&gt;(mOdeJoint)-&gt;setParam( dParamVel2, 0 );
++				static_cast&lt;dHinge2Joint*&gt;(mOdeJoint)-&gt;setParam( dParamFMax2, 0 );
+ 			}
+ 		}
+ 	}
+
+Modified: trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp	2005-10-19 23:04:08 UTC (rev 1034)
++++ trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp	2005-10-19 23:04:42 UTC (rev 1035)
+@@ -31,6 +31,12 @@
+ 
+ const real razorMeshScale = 0.1;
+ 
++class VehicleHumanInputController
++{
++public:
++	void setVehicle(vehicle::IVehicle*);
++};
++
+ /** Main application state */
+ class TheMainState : public raf::RtMainState
+ {
+
+Modified: trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp	2005-10-19 23:04:08 UTC (rev 1034)
++++ trunk/yake/src/yapp/vehicle/yakeDotVehicle.cpp	2005-10-19 23:04:42 UTC (rev 1035)
+@@ -167,11 +167,53 @@
+ 				StringUtil::parseReal( pForcesN-&gt;getAttributeValueAs&lt;String&gt;(&quot;max&quot;) ),
+ 				mtPt );
+ 		}
++		else if (type == &quot;CarEngine&quot;)
++		{
++			String axle = n.getAttributeValueAs&lt;String&gt;(&quot;axle&quot;);
++			YAKE_ASSERT( !axle.empty() );
++
++			VehicleTemplate::CarEngineTpl* tpl = new VehicleTemplate::CarEngineTpl();
++
++			parseRPM( *tpl, *n.getNodeByName(&quot;rpm&quot;) );
++			parseGearBox( *tpl, *n.getNodeByName(&quot;gearBox&quot;) );
++
++			mpCurrVehTpl-&gt;mEngines[ id ] = tpl;
++		}
+ 		else
+ 		{
+-			YAKE_ASSERT( 1==0 &amp;&amp; &quot;Unhandled engine type!&quot; );
++			YAKE_ASSERT( 1==0 &amp;&amp; &quot;DotVehicleParser::parseEngine: Unhandled engine type!&quot; );
+ 		}
+ 	}
++	void DotVehicleParser::parseRPM( vehicle::VehicleTemplate::CarEngineTpl&amp; tpl, const data::dom::INode&amp; n )
++	{
++		tpl.rpmMin_ = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;min&quot;) );
++		tpl.rpmMax_ = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;max&quot;) );
++		tpl.rpmRedline_ = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;redline&quot;) );
++		//tpl.rpmDieOff_ = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;dieoff&quot;) );
++		//tpl.rpmRise_ = StringUtil::parseReal( n.getAttributeValueAs&lt;String&gt;(&quot;rise&quot;) );
++	}
++	void DotVehicleParser::parseGearBox( vehicle::VehicleTemplate::CarEngineTpl&amp; tpl, const data::dom::INode&amp; n )
++	{
++		NodeList nodes = n.getNodes();
++		ConstVectorIterator&lt; NodeList &gt; itN( nodes );
++		while (itN.hasMoreElements())
++		{
++			INode* pN = itN.getNext().get();
++			const String name = pN-&gt;getName();
++			if (name != &quot;gear&quot;)
++				continue;
++			const String mode = StringUtil::toLowerCase( pN-&gt;getAttributeValueAs&lt;String&gt;(&quot;mode&quot;) );
++			VehicleTemplate::GearMode gm = VehicleTemplate::GM_FORWARD;
++			if (mode == &quot;forward&quot;)
++				gm = VehicleTemplate::GM_FORWARD;
++			else if (mode == &quot;reverse&quot;)
++				gm = VehicleTemplate::GM_REVERSE;
++			else if (mode == &quot;neutral&quot;)
++				gm = VehicleTemplate::GM_NEUTRAL;
++			const real ratio = StringUtil::parseReal( pN-&gt;getAttributeValueAs&lt;String&gt;(&quot;ratio&quot;) );
++			tpl.gears_.push_back( vehicle::VehicleTemplate::GearTpl(ratio,gm) );
++		}
++	}
+ 	void DotVehicleParser::parseMountPoint( const data::dom::INode&amp; n, VehicleTemplate::MountPointTpl* parentMtPt /*= 0*/ )
+ 	{
+ 		YAKE_ASSERT( mpCurrVehTpl );
+
+Modified: trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2005-10-19 23:04:08 UTC (rev 1034)
++++ trunk/yake/src/yapp/vehicle/yakeNativeOde.cpp	2005-10-19 23:04:42 UTC (rev 1035)
+@@ -146,9 +146,26 @@
+ 			pEngine-&gt;updateSimulation(timeElapsed);
+ 		}
+ 		//
+-		mSigUpdateThrusterSimulation( timeElapsed );
++		mSigUpdateEngineSimulation( timeElapsed );
+ 		mSigApplyThrusterToTargets();
++		_applyDriveTorqueToAxles( timeElapsed );
+ 	}
++	void GenericVehicle::_applyDriveTorqueToAxles( real timeElapsed )
++	{
++		ConstDequeIterator&lt; AxleList &gt; itAxle( mAxles );
++		while (itAxle.hasMoreElements())
++		{
++			CarEngineWheelsPair cewp = itAxle.getNext().second;
++
++			const real torque = timeElapsed * cewp.first-&gt;getDriveTorque();
++			ConstDequeIterator&lt; Deque&lt;OdeWheel*&gt; &gt; itWheel( cewp.second );
++			while (itWheel.hasMoreElements())
++			{
++				OdeWheel* pW = itWheel.getNext();
++				pW-&gt;_applyDriveTq( torque );
++			}
++		}
++	}
+ 	MountPoint* GenericVehicle::getMountPoint(const String&amp; id) const
+ 	{
+ 		YAKE_ASSERT( !id.empty() );
+@@ -278,6 +295,11 @@
+ 				pEngine-&gt;setParamMaxRPM( carEngineTpl-&gt;rpmMax_ );
+ 				pEngine-&gt;setParamMinRPM( carEngineTpl-&gt;rpmMin_ );
+ 				pEngine-&gt;setParamRedlineRPM( carEngineTpl-&gt;rpmRedline_ );
++				pEngine-&gt;getGearBox().setFromTemplate( carEngineTpl-&gt;gears_ );
++				subscribeToUpdateEngineSimulation(
++					boost::bind( &amp;GenericCarEngine::updateSimulation, pEngine, _1 ) );
++
++				mAxles[ carEngineTpl-&gt;axle_ ] = std::make_pair( pEngine, Deque&lt;OdeWheel*&gt;() );
+ 			}
+ 			else
+ 			{
+@@ -291,7 +313,7 @@
+ 					pEngine-&gt;setMinimumForce( thrusterTpl-&gt;minForce );
+ 					pEngine-&gt;setMaximumForce( thrusterTpl-&gt;maxForce );
+ 					pEngine-&gt;setThrottle(0.);
+-					subscribeToUpdateThrusterSimulation(
++					subscribeToUpdateEngineSimulation(
+ 						boost::bind( &amp;GenericThruster::updateSimulation, pEngine, _1 ) );
+ 
+ 					// the thruster is attached to a mount point, create wrapper:
+@@ -331,6 +353,8 @@
+ 				mSteeringGroups[ wheelTpl.mSteeringGroup ].push_back( pW );
+ 			}
+ 
++			mAxles[ wheelTpl.mAxle ].second.push_back( pW );
++
+ 			mWheels[ wtp.first ] = pW;
+ 		}
+ 	}
+@@ -370,7 +394,8 @@
+ 		mpWheel(0),
+ 		mRadius(tpl.mRadius),
+ 		mTargetSteer(0),
+-		mCurrSteer(0)
++		mCurrSteer(0),
++		mBrakeRatio(real(0.))
+ 	{
+ 		{
+ 			physics::OdeWorld* pW = dynamic_cast&lt;physics::OdeWorld*&gt;( &amp;PWorld );
+@@ -418,14 +443,15 @@
+ 				mpJoint-&gt;setLimits( 1,  0.0, 0.0 );
+ 			}
+ 
+-			physics::OdeHinge2Joint* pJ = static_cast&lt;physics::OdeHinge2Joint*&gt;( mpJoint );
+-			dJointID jID = pJ-&gt;_getOdeJoint()-&gt;id();
++			//physics::OdeHinge2Joint* pJ = static_cast&lt;physics::OdeHinge2Joint*&gt;( mpJoint );
++			//dJointID jID = pJ-&gt;_getOdeJoint()-&gt;id();
+ 
+-			dJointSetHinge2Param( jID, dParamSuspensionERP, 0.95 );
+-			dJointSetHinge2Param( jID, dParamSuspensionCFM, 0.2 );
++			//dJointSetHinge2Param( jID, dParamSuspensionERP, 0.95 );
++			//dJointSetHinge2Param( jID, dParamSuspensionCFM, 0.2 );
+ 
+-			dJointSetHinge2Param( jID, dParamStopERP, 0.95 );
+-			dJointSetHinge2Param( jID, dParamStopCFM, 0.1 );
++			//dJointSetHinge2Param( jID, dParamStopERP, 0.95 );
++			//dJointSetHinge2Param( jID, dParamStopCFM, 0.1 );
++
+ 			//dJointSetHinge2Param( hinges_[i], dParamStopERP, (!(i&amp;2) ? FRONT_TURN_ERP : REAR_TURN_ERP) );
+ 			//dJointSetHinge2Param( hinges_[i], dParamStopCFM, (!(i&amp;2) ? FRONT_TURN_CFM : REAR_TURN_CFM) );
+ 		}
+@@ -445,6 +471,14 @@
+ 		mpWheel-&gt;getCreator()-&gt;destroyActor( mpWheel );
+ 		mpWheel = 0;
+ 	}
++	void OdeWheel::brake(const real ratio)
++	{
++		mBrakeRatio = ratio;
++		if (mBrakeRatio &gt; 1.)
++			mBrakeRatio = 1.;
++		else if (mBrakeRatio &lt; 0.)
++			mBrakeRatio = 0.;
++	}
+ 	void OdeWheel::setSteering( const real s )
+ 	{
+ 		mTargetSteer = s;
+@@ -475,6 +509,49 @@
+ 		YAKE_ASSERT( mpWheel );
+ 		return mpWheel-&gt;getOrientation();
+ 	}
++	void OdeWheel::_applyDriveTq( const real tq )
++	{
++		//std::cout &lt;&lt; &quot;DTQ=&quot; &lt;&lt; tq &lt;&lt; &quot;\n&quot;;
++		//_applyTq( Vector3::kUnitX * tq );
++
++		if (mBrakeRatio &gt; 0.01)
++			_applyBrakeTq( Vector3::kUnitX * mBrakeRatio * 1.5 );
++
++		const real targetVel = tq &lt; 0. ? -80 : 80;
++		_applyMotor( targetVel, - tq / 50. );
++	}
++	void OdeWheel::_applyTq( const Vector3&amp; torque )
++	{
++		mpWheel-&gt;getBody().addTorque( mpWheel-&gt;getOrientation() * torque );
++	}
++	void OdeWheel::_applyBrakeTq( const Vector3 &amp; torque )
++	{
++		Vector3 linVel = mpWheel-&gt;getBody().getLinearVelocity();
++		Vector3 dir = mpWheel-&gt;getOrientation() * Vector3::kUnitX;
++		if (dir.dotProduct(linVel) &gt; 0)
++		{
++			std::cout &lt;&lt; &quot;BRK+\n&quot;;
++			mpWheel-&gt;getBody().addLocalTorque( torque );
++		}
++		else
++		{
++			std::cout &lt;&lt; &quot;BRK-\n&quot;;
++			mpWheel-&gt;getBody().addLocalTorque( -torque );
++		}
++	}
++	void OdeWheel::_applyMotor( real velocity, real fmax )
++	{
++		if (mpJoint-&gt;getType() == physics::JT_HINGE)
++		{
++			mpJoint-&gt;setMotor( 0, velocity, fmax );
++			mpJoint-&gt;setMotorEnabled( 0, true );
++		}
++		else if (mpJoint-&gt;getType() == physics::JT_HINGE2)
++		{
++			mpJoint-&gt;setMotor( 1, velocity, fmax );
++			mpJoint-&gt;setMotorEnabled( 1, true );
++		}
++	}
+ #endif // YAKE_VEHICLE_USE_ODE
+ 	//-----------------------------------------------------
+ 	// Class: GenericThruster
+
+Modified: trunk/yake/src/yapp/vehicle/yakeOdeEngine.cpp
+===================================================================
+--- trunk/yake/src/yapp/vehicle/yakeOdeEngine.cpp	2005-10-19 23:04:08 UTC (rev 1034)
++++ trunk/yake/src/yapp/vehicle/yakeOdeEngine.cpp	2005-10-19 23:04:42 UTC (rev 1035)
+@@ -34,31 +34,6 @@
+ 	//-----------------------------------------------------
+ 	// Class: GearBox
+ 	//-----------------------------------------------------
+-	class GearBox
+-	{
+-	public:
+-		enum GearMode {
+-			GM_REVERSE,
+-			GM_NEUTRAL,
+-			GM_FORWARD
+-		};
+-		void setSpeed( uint8 numGears );
+-		uint8 getSpeed() const;
+-
+-		void setGearRatio( uint8 gear, real ratio );
+-		void setGearMode( uint8 gear, const GearMode mode );
+-		real getGearRatio( uint8 gear );
+-
+-		void setFromTemplate( const VehicleTemplate::GearTplList &amp; gears );
+-	private:
+-		struct Gear
+-		{
+-			real		ratio_;
+-			GearMode	mode_;
+-		};
+-		typedef Vector&lt; Gear &gt; GearList;
+-		GearList	mGears;
+-	};
+ 	void GearBox::setSpeed(uint8 numGears)
+ 	{
+ 		mGears.resize( numGears );
+@@ -151,6 +126,11 @@
+ 		real engineTorque = mThrottle * getMaxTorque( mCurrentRPM );
+ 		mDriveTorque = engineTorque * mGearRatio * mDifferentialRatio * 0.75/*just a guess*/;
+ 	}
++	GearBox&amp; GenericCarEngine::getGearBox()
++	{
++		YAKE_ASSERT( mpGearBox );
++		return *mpGearBox;
++	}
+ 	void GenericCarEngine::setThrottle( real throttle )
+ 	{
+ 		mThrottle = throttle;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000105.html">[Yake-svn] r1034 - in trunk/yake/scripts/yapp: . samples/misc
+</A></li>
+	<LI>Next message: <A HREF="000107.html">[Yake-svn] r1036 - trunk/yake/yapp/vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#106">[ date ]</a>
+              <a href="thread.html#106">[ thread ]</a>
+              <a href="subject.html#106">[ subject ]</a>
+              <a href="author.html#106">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

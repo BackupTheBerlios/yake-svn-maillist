@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r949 - trunk/yake/common/media/graphics.fx
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r949%20-%20trunk/yake/common/media/graphics.fx&In-Reply-To=%3C200509292321.j8TNLWlo015701%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000018.html">
+   <LINK REL="Next"  HREF="000022.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r949 - trunk/yake/common/media/graphics.fx</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r949%20-%20trunk/yake/common/media/graphics.fx&In-Reply-To=%3C200509292321.j8TNLWlo015701%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r949 - trunk/yake/common/media/graphics.fx">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 01:21:32 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000018.html">[Yake-svn] r948 - trunk/yake/dependencies
+</A></li>
+        <LI>Next message: <A HREF="000022.html">[Yake-svn] r950 - trunk/yake/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#20">[ date ]</a>
+              <a href="thread.html#20">[ thread ]</a>
+              <a href="subject.html#20">[ subject ]</a>
+              <a href="author.html#20">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 01:21:28 +0200 (Fri, 30 Sep 2005)
+New Revision: 949
+
+Added:
+   trunk/yake/common/media/graphics.fx/thruster1.particle
+Log:
+initial revision
+
+Added: trunk/yake/common/media/graphics.fx/thruster1.particle
+===================================================================
+--- trunk/yake/common/media/graphics.fx/thruster1.particle	2005-09-27 19:25:10 UTC (rev 948)
++++ trunk/yake/common/media/graphics.fx/thruster1.particle	2005-09-29 23:21:28 UTC (rev 949)
+@@ -0,0 +1,37 @@
++// exhaust - fire (and smoke?)
++// source: OGRE3D
++thruster1
++{
++    	material        	Examples/Flare
++    	particle_width  	25
++    	particle_height 	25
++    	cull_each       	false
++    	quota           	200
++    	billboard_type  	point
++    
++    	// Area emitter
++    	emitter Point
++    	{
++			angle               		5
++        	emission_rate       		100
++			time_to_live    0.5
++			direction       0 0 1
++			velocity_min    250
++			velocity_max    300
++			colour_range_start  1 1 0.5
++			colour_range_end    1 0.8 0.3
++	}
++
++	affector ColourFader
++	{
++		red -0.25
++		green -1
++		blue -1
++	}
++
++   	affector Scaler
++   	{
++       	rate 	0.4
++   	}
++
++}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000018.html">[Yake-svn] r948 - trunk/yake/dependencies
+</A></li>
+	<LI>Next message: <A HREF="000022.html">[Yake-svn] r950 - trunk/yake/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#20">[ date ]</a>
+              <a href="thread.html#20">[ thread ]</a>
+              <a href="subject.html#20">[ subject ]</a>
+              <a href="author.html#20">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,171 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1042 - trunk/yake/yake/physics
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1042%20-%20trunk/yake/yake/physics&In-Reply-To=%3C200510292223.j9TMNHNF020363%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000112.html">
+   <LINK REL="Next"  HREF="000114.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1042 - trunk/yake/yake/physics</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1042%20-%20trunk/yake/yake/physics&In-Reply-To=%3C200510292223.j9TMNHNF020363%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1042 - trunk/yake/yake/physics">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Oct 30 00:23:17 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000112.html">[Yake-svn] r1041 - in trunk/yake/yake/plugins: physicsNX physicsODE
+</A></li>
+        <LI>Next message: <A HREF="000114.html">[Yake-svn] r1043 - trunk/yake/yapp/loader
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#113">[ date ]</a>
+              <a href="thread.html#113">[ thread ]</a>
+              <a href="subject.html#113">[ subject ]</a>
+              <a href="author.html#113">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-30 00:23:17 +0200 (Sun, 30 Oct 2005)
+New Revision: 1042
+
+Modified:
+   trunk/yake/yake/physics/yakePhysicsShape.h
+   trunk/yake/yake/physics/yakePhysicsWorld.h
+Log:
+materials can now be named,
+shapes' properties can be queried
+
+Modified: trunk/yake/yake/physics/yakePhysicsShape.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsShape.h	2005-10-29 22:23:06 UTC (rev 1041)
++++ trunk/yake/yake/physics/yakePhysicsShape.h	2005-10-29 22:23:17 UTC (rev 1042)
+@@ -70,11 +70,11 @@
+ 			Desc(	const ShapeType type_,
+ 					const Vector3&amp; rPosition = Vector3::kZero, 
+ 					const Quaternion&amp; rOrientation = Quaternion::kIdentity,
+-					IMaterialPtr material_ = 0 ) :
++					const String&amp; material_ = &quot;&quot; ) :
+ 				type( type_ ),
+ 				position( rPosition ),
+ 				orientation( rOrientation ),
+-				pMaterial( material_ )
++				material( material_ )
+ 			{}
+ 
+ 			virtual ~Desc() {}
+@@ -83,13 +83,13 @@
+ 			ShapeType	type; // superfluous as shape type is determined by dynamic_cast on Desc struct...
+ 			Vector3		position;
+ 			Quaternion	orientation;
+-			IMaterialPtr	pMaterial;
++			String		material;
+ 		};
+ 		struct SphereDesc : Desc
+ 		{
+ 			SphereDesc(	real radius_ = real(1.),
+ 						// base class:
+-						IMaterialPtr material_ = 0,
++						const String&amp; material_ = &quot;&quot;,
+ 						const Vector3&amp; rPosition = Vector3::kZero, 
+ 						const Quaternion&amp; rOrientation = Quaternion::kIdentity
+ 						 ) :
+@@ -102,7 +102,7 @@
+ 		{
+ 			BoxDesc(	const Vector3&amp; rDimensions = Vector3(1,1,1),
+ 						// base class:
+-						IMaterialPtr material_ = 0,
++						const String&amp; material_ = &quot;&quot;,
+ 						const Vector3&amp; rPosition = Vector3::kZero, 
+ 						const Quaternion&amp; rOrientation = Quaternion::kIdentity
+ 						 ) :
+@@ -116,7 +116,7 @@
+ 			PlaneDesc(	const Vector3&amp; rNormal = Vector3(0,1,0),
+ 						const real d_ = real(1.),
+ 						// base class:
+-						IMaterialPtr material_ = 0,
++						const String&amp; material_ = &quot;&quot;,
+ 						const Vector3&amp; rPosition = Vector3::kZero, 
+ 						const Quaternion&amp; rOrientation = Quaternion::kIdentity
+ 						 ) :
+@@ -132,7 +132,7 @@
+ 			CapsuleDesc(const real height_ = real(2.),
+ 						const real radius_ = real(1.),
+ 						// base class:
+-						IMaterialPtr material_ = 0,
++						const String&amp; material_ = &quot;&quot;,
+ 						const Vector3&amp; rPosition = Vector3::kZero, 
+ 						const Quaternion&amp; rOrientation = Quaternion::kIdentity
+ 						 ) :
+@@ -148,7 +148,7 @@
+ 		{
+ 			TriMeshDesc(	const TriangleMeshId meshId_,
+ 							// base class:
+-							IMaterialPtr material_ = 0,
++							const String&amp; material_ = &quot;&quot;,
+ 							const Vector3&amp; rPosition = Vector3::kZero, 
+ 							const Quaternion&amp; rOrientation = Quaternion::kIdentity
+ 						 ) :
+@@ -161,6 +161,12 @@
+ 		virtual ~IShape() {}
+ 
+ 		virtual ShapeType getType() const = 0;
++
++		//virtual Vector3 getDerivedPosition() const = 0;
++		//virtual Quaternion getDerivedOrientation() const = 0;
++
++		virtual Vector3 getPropertyVector3(const String&amp;) const = 0;
++		virtual real getPropertyReal(const String&amp;) const = 0;
+ 	};
+ 	YAKE_PHYSICS_COMMON_POINTERS( IShape );
+ 
+
+Modified: trunk/yake/yake/physics/yakePhysicsWorld.h
+===================================================================
+--- trunk/yake/yake/physics/yakePhysicsWorld.h	2005-10-29 22:23:06 UTC (rev 1041)
++++ trunk/yake/yake/physics/yakePhysicsWorld.h	2005-10-29 22:23:17 UTC (rev 1042)
+@@ -62,7 +62,8 @@
+ 			return createActor( desc ); 
+ 		}
+ 		virtual IAvatarPtr createAvatar( const IAvatar::Desc&amp; rkAvatarDesc ) = 0;
+-		virtual IMaterialPtr createMaterial( const IMaterial::Desc&amp; rkMatDesc ) = 0;
++		virtual IMaterialPtr createMaterial( const IMaterial::Desc&amp; rkMatDesc, const String&amp; id = &quot;&quot; ) = 0;
++		virtual IMaterialPtr getMaterial( const String&amp; id ) const = 0;
+ 		virtual void destroyJoint( IJointPtr pJoint ) = 0;
+ 		virtual void destroyActor( IActorPtr pActor ) = 0;
+ 		virtual void destroyAvatar( IAvatarPtr pAvatar ) = 0;
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000112.html">[Yake-svn] r1041 - in trunk/yake/yake/plugins: physicsNX physicsODE
+</A></li>
+	<LI>Next message: <A HREF="000114.html">[Yake-svn] r1043 - trunk/yake/yapp/loader
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#113">[ date ]</a>
+              <a href="thread.html#113">[ thread ]</a>
+              <a href="subject.html#113">[ subject ]</a>
+              <a href="author.html#113">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

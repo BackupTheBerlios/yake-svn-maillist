@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r932 - trunk/yake/yake/base/templates
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r932%20-%20trunk/yake/yake/base/templates&In-Reply-To=%3C200509252145.j8PLjZeW005319%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000002.html">
+   <LINK REL="Next"  HREF="000004.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r932 - trunk/yake/yake/base/templates</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r932%20-%20trunk/yake/yake/base/templates&In-Reply-To=%3C200509252145.j8PLjZeW005319%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r932 - trunk/yake/yake/base/templates">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Sep 25 23:45:35 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000002.html">[Yake-svn] r931 - trunk/yake/yake/base/templates
+</A></li>
+        <LI>Next message: <A HREF="000004.html">[Yake-svn] r933 - trunk/yake/yapp/loader
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#3">[ date ]</a>
+              <a href="thread.html#3">[ thread ]</a>
+              <a href="subject.html#3">[ subject ]</a>
+              <a href="author.html#3">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-25 23:45:34 +0200 (Sun, 25 Sep 2005)
+New Revision: 932
+
+Modified:
+   trunk/yake/yake/base/templates/yakeAlgorithms.h
+Log:
+added two functions for convenience
+
+Modified: trunk/yake/yake/base/templates/yakeAlgorithms.h
+===================================================================
+--- trunk/yake/yake/base/templates/yakeAlgorithms.h	2005-09-23 20:42:26 UTC (rev 931)
++++ trunk/yake/yake/base/templates/yakeAlgorithms.h	2005-09-25 21:45:34 UTC (rev 932)
+@@ -41,9 +41,20 @@
+ //============================================================================
+ namespace yake {
+ 
++template&lt;class ContainerT&gt;
++	typename ContainerT::const_iterator find(const ContainerT&amp; ctr, const typename ContainerT::value_type&amp; v)
++{
++	return std::find( ctr.begin(), ctr.end(), v );
++}
++template&lt;class ContainerT&gt;
++	typename ContainerT::iterator find(ContainerT&amp; ctr, const typename ContainerT::value_type&amp; v)
++{
++	return std::find( ctr.begin(), ctr.end(), v );
++}
++
+ /** Performs an operation operation for each element in a container [ begin, end - 1 ]. */
+-template&lt; typename Iterator, typename Operation &gt;
+-YAKE_API void ForEach( Iterator begin, Iterator end, Operation operation );
++//template&lt; typename Iterator, typename Operation &gt;
++//YAKE_BASE_API void ForEach( Iterator begin, Iterator end, Operation operation );
+ 
+ } // yake
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000002.html">[Yake-svn] r931 - trunk/yake/yake/base/templates
+</A></li>
+	<LI>Next message: <A HREF="000004.html">[Yake-svn] r933 - trunk/yake/yapp/loader
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#3">[ date ]</a>
+              <a href="thread.html#3">[ thread ]</a>
+              <a href="subject.html#3">[ subject ]</a>
+              <a href="author.html#3">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

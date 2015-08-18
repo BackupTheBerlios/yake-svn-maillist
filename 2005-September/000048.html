@@ -1,0 +1,973 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r978 - trunk/yake/src/yapp/samples/base/vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r978%20-%20trunk/yake/src/yapp/samples/base/vehicle&In-Reply-To=%3C200509302148.j8ULm05i009173%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000047.html">
+   <LINK REL="Next"  HREF="000049.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r978 - trunk/yake/src/yapp/samples/base/vehicle</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r978%20-%20trunk/yake/src/yapp/samples/base/vehicle&In-Reply-To=%3C200509302148.j8ULm05i009173%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r978 - trunk/yake/src/yapp/samples/base/vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:48:00 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000047.html">[Yake-svn] r977 - trunk/yake/scripts/yapp/samples/base
+</A></li>
+        <LI>Next message: <A HREF="000049.html">[Yake-svn] r979 - in trunk/yake/yapp: . vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#48">[ date ]</a>
+              <a href="thread.html#48">[ thread ]</a>
+              <a href="subject.html#48">[ subject ]</a>
+              <a href="author.html#48">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:48:00 +0200 (Fri, 30 Sep 2005)
+New Revision: 978
+
+Modified:
+   trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp
+   trunk/yake/src/yapp/samples/base/vehicle/yakePCH.cpp
+Log:
+refactoring of yake::vehicle
+
+Modified: trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp	2005-09-30 21:46:54 UTC (rev 977)
++++ trunk/yake/src/yapp/samples/base/vehicle/yakeDemo.cpp	2005-09-30 21:48:00 UTC (rev 978)
+@@ -1,694 +1,253 @@
+-//****************************************************************************
+-//**
+-//**    Sample
+-//**
+-//**	Simpler than simple sample! Beware!
+-//**	It's WIP towards a real sample :)
+-//**
+-//**	When running, press ESC to exit.
+-//**
+-//**	You may want to try to use A and D for steering,
+-//**	W for accelerating and RETURN and SHIFT to
+-//**	shift up / down.
+-//**
+-//****************************************************************************
+-
+-//============================================================================
+-//    IMPLEMENTATION HEADERS
+-//============================================================================
+ #include &lt;yapp/samples/base/vehicle/yakePCH.h&gt;
+-#include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/model/yakeModel.h&gt;
++#include &lt;yake/audio/yakeAudio.h&gt;
++#include &lt;yapp/raf/yakeRaf.h&gt;
+ #include &lt;yapp/model/yakeModelMovableLink.h&gt;
+-#include &lt;yapp/loader/yakeDotLinkLoader.h&gt;
+-#include &lt;yake/samples/data/demo/yakeDotScene.h&gt; // temporarily
+-#include &lt;yapp/samples/common/yakeHelper.h&gt;
+-#include &lt;yapp/common/yakePawn.h&gt;
+-#include &lt;yapp/model/yakeVehicleSystem.h&gt;
++#include &lt;yapp/vehicle/yakeVehicle.h&gt;
++#include &lt;yake/input/yakeInput.h&gt;
+ 
+-#define PROFILER_BEGINFRAME
+-#define PROFILER_ENDFRAME
+-#define PROFILER_DESTROY
+-#define PROFILERMANAGER_DESTROY
+-/*
+-#include &lt;yake/base/templates/yakeObjectLink.h&gt;
+-#include &lt;yake/samples/common/yakeModelLink.h&gt; // temporarily
+-#include &lt;yake/samples/common/yakeXODE.h&gt; // temporarily
+-#include &lt;yake/samples/graphics/Profiler.h&gt;
+-*/
+-#pragma warning( disable: 4305 ) // truncation from 'double' to 'float'
++// temporary stuff (until factory registration issues have been sorted out):
++#include &lt;yapp/vehicle/yakeNativeOde.h&gt;
+ 
+ using namespace yake;
+-using namespace yake::base::templates;
+-using namespace yake::base::math;
+-using namespace yake::graphics;
+-using namespace yake::data;
+ 
+-using namespace yapp;
+-using namespace yake::app;
++/** Configuration of the application */
++struct TheConfiguration : public raf::ApplicationConfiguration
++{
++	virtual StringVector getLibraries()
++	{ return MakeStringVector() &lt;&lt; &quot;graphicsOgre&quot; &lt;&lt; &quot;inputOgre&quot; &lt;&lt; &quot;physicsNx&quot;; }
+ 
+-namespace yake {
+-	struct LocalHumanInputData
+-	{
+-		input::InputSystem*				pInputSystem_;
+-		input::KeyboardEventGenerator*	pKeyboardEventGenerator_;
+-		input::MouseEventGenerator*		pMouseEventGenerator_;
+-		const input::KeyboardDevice*			pKeyboard_;
+-		LocalHumanInputData(
+-			input::InputSystem* pInputSystem,
+-			input::KeyboardEventGenerator* pKeyboardEventGenerator,
+-			input::MouseEventGenerator* pMouseEventGenerator,
+-			const input::KeyboardDevice* pKeyboard ) :
+-					pInputSystem_( pInputSystem ),
+-					pKeyboardEventGenerator_( pKeyboardEventGenerator ),
+-					pMouseEventGenerator_( pMouseEventGenerator ),
+-					pKeyboard_( pKeyboard )
+-		{
+-		}
+-		bool isValid() const
+-		{
+-			return (pInputSystem_ &amp;&amp; pKeyboardEventGenerator_ &amp;&amp; pMouseEventGenerator_ );
+-		}
+-	};
+-	class GameControl
+-	{
+-	public:
+-		GameControl( const LocalHumanInputData &amp; gatherInputData ) :
+-		  mLastTime( native::getTime() ),
+-		  mLocalHumanInputData( gatherInputData )
+-		{}
+-		typedef Signal1&lt;void(const real)&gt; VoidRealSignal;
+-		typedef Signal0&lt;void&gt; VoidSignal;
++	//virtual StringVector getScriptingSystems()
++	//{ return MakeStringVector() &lt;&lt; &quot;lua&quot;; }
+ 
+-		typedef VoidSignal SenseSignal;
+-		void subscribeToSense(const SenseSignal::slot_type &amp; slot)
+-		{ mSense.connect( slot ); }
++	virtual StringVector getGraphicsSystems()
++	{ return MakeStringVector() &lt;&lt; &quot;ogre3d&quot;; }
+ 
+-		typedef VoidSignal ThinkSignal;
+-		void subscribeToThink(const ThinkSignal::slot_type &amp; slot)
+-		{ mThink.connect( slot ); }
++	virtual StringVector getInputSystems()
++	{ return MakeStringVector() &lt;&lt; &quot;ogre&quot;; }
+ 
+-		typedef VoidSignal ActStepSignal;
+-		void subscribeToActStep(const ActStepSignal::slot_type &amp; slot)
+-		{ mActStep.connect( slot ); }
++	virtual StringVector getPhysicsSystems()
++	{ return MakeStringVector() &lt;&lt; &quot;nx&quot;; }
++};
+ 
+-		typedef VoidRealSignal PhysicsStepSignal;
+-		void subscribeToPhysicsStep(const PhysicsStepSignal::slot_type &amp; slot)
+-		{ mPhysicsStep.connect( slot ); }
+-
+-		typedef VoidRealSignal PostPhysicsStepSignal;
+-		void subscribeToPostPhysicsStep(const PostPhysicsStepSignal::slot_type &amp; slot)
+-		{ mPostPhysicsStep.connect( slot ); }
+-
+-		typedef VoidRealSignal RenderStepSignal;
+-		void subscribeToRenderStep(const RenderStepSignal::slot_type &amp; slot)
+-		{ mRenderStep.connect( slot ); }
+-
+-		void update()
+-		{
+-			//sense
+-			mSense();
+-			//think about it, make decisions
+-			mThink();
+-			//act depending on decisions
+-			mActStep();
+-
+-			//timing
+-			static bool firstFrame = true;
+-			real currentTime = native::getTime();
+-			real timeElapsed = currentTime - mLastTime;
+-			if (firstFrame)
+-			{
+-				firstFrame = false;
+-				timeElapsed = 0.0;
+-			}
+-
+-			//update physics
+-			mPhysicsStep( timeElapsed );
+-			//update graphics/audio/... from physics
+-			mPostPhysicsStep( timeElapsed );
+-			//render
+-			mRenderStep( timeElapsed ),
+-
+-			// prepare for next frame
+-			mLastTime = currentTime;
+-		}
+-		const LocalHumanInputData&amp; getLocalHumanInputData() const
+-		{ return mLocalHumanInputData; }
+-	private:
+-		LocalHumanInputData		mLocalHumanInputData;
+-		real					mLastTime;
+-		SenseSignal				mSense;
+-		ThinkSignal				mThink;
+-		ActStepSignal			mActStep;
+-		PhysicsStepSignal		mPhysicsStep;
+-		PostPhysicsStepSignal	mPostPhysicsStep;
+-		RenderStepSignal		mRenderStep;
+-	private:
+-		task::TaskManager		mTaskMgr;
+-	};
+-	class PawnVisual : public model::VisualComponent
+-	{
+-	public:
+-		void attachModel( model::complex::Model* pComplex )
+-		{
+-			YAKE_ASSERT( pComplex );
+-			mComplex = pComplex;
+-		}
+-	private:
+-		model::complex::Model*	mComplex;
+-	};
+-	class PawnLocalHumanInput : public model::InputComponent
+-	{
+-	public:
+-		PawnLocalHumanInput( GameControl&amp; gameCtrl ) : mpGameCtrl(&amp;gameCtrl), mPull(false)
+-		{
+-		}
+-		void update()
+-		{
+-			YAKE_ASSERT( mpGameCtrl );
+-			YAKE_ASSERT( mpGameCtrl-&gt;getLocalHumanInputData().isValid() );
+-			if (mpGameCtrl-&gt;getLocalHumanInputData().pKeyboard_-&gt;isKeyDown( input::KC_UP ))
+-				mPull = true;
+-			else
+-				mPull = false;
+-		}
+-		bool isPulling() const
+-		{ return mPull; }
+-	private:
+-		GameControl*	mpGameCtrl;
+-		bool			mPull;
+-	};
+-	class PawnControl : public model::ActorControl
+-	{
+-	public:
+-		PawnControl( PawnLocalHumanInput* pLHI ) : mLHI(pLHI)
+-		{
+-		}
+-		void setControlledMovable( physics::IActor* pMovable )
+-		{
+-			mMovable = pMovable;
+-		}
+-		void update()
+-		{
+-			YAKE_ASSERT( mMovable );
+-			if (!mLHI)
+-				return;
+-			if (mLHI-&gt;isPulling())
+-			{
+-				mMovable-&gt;getBody()-&gt;addForce( Vector3(0,20,0) );
+-			}
+-		}
+-	private:
+-		physics::IActor*		mMovable;
+-		PawnLocalHumanInput*	mLHI;
+-	};
+-}
+-
+-class TheApp : public yake::exapp::ExampleApplication
++/** Main application state */
++class TheMainState : public raf::RtMainState
+ {
+-//private:
+ public:
+-	task::TaskManager					mTaskMgr;
+-	//@{ tasks
+-	// task: render
+-	class RenderTask : public task::DefTask
++	TheMainState(raf::Application&amp; owner) :
++		raf::RtMainState(owner),
++		mVehicle(0),
++		mComplex(0)
++	{}
++	~TheMainState()
+ 	{
+-	private:
+-		IWorld*	mWorld;
+-	public:
+-		RenderTask( IWorld* pWorld );
+-		virtual void execute(real timeElapsed);
+-	};
+-	RenderTask*							mRenderTask;
+-
+-	// task: physics
+-	class PhysicsTask : public task::DefTask
+-	{
+-	private:
+-		physics::IWorld*	mWorld;
+-	public:
+-		PhysicsTask( physics::IWorld* pWorld );
+-		virtual void execute(real timeElapsed);
+-	};
+-	PhysicsTask*						mPhysicsTask;
+-
+-	// task: input
+-	class InputTask : public task::DefTask
+-	{
+-	private:
+-		TheApp*	mApp;
+-		//::yake::app::model::complex::vehicle::LandVehicle*	mCar;
+-	public:
+-		InputTask( 	TheApp* theApp/*, model::complex::vehicle::LandVehicle* theCar*/ );
+-		virtual void execute(real timeElapsed);
+-	};
+-	InputTask*							mInputTask;
+-	//@}
+-
+-	//@{ name worlds
+-	SharedPtr&lt; IWorld &gt;			mGWorld;
+-	physics::IWorld*						mPWorld;
+-	audio::IWorld*							mpAWorld;
+-	//@}
+-
+-	Vector&lt;std::pair&lt;IViewport*,ICamera*&gt; &gt;	mVPs; /// Viewport / Camera pairs
+-
+-	//@{ audio related
+-	audio::IListener*					mpAListener;
+-	audio::ISource*						mpASource;
+-	audio::ISoundData*					mpAData;
+-	//@}
+-
+-	//@{ testing stuff
+-	graphics::ISceneNode*				mLightOneNode;
+-	graphics::IParticleSystem*			mSmoke;
+-
+-	struct SimpleOne {
+-		graphics::ISceneNode*			pSN;
+-		graphics::IEntity*				pE;
+-		physics::IActor*		pCO;
+-		model::MovableUpdateController	updCtrl;
+-	};
+-	SimpleOne								mGround;
+-	//@}
+-	//@{ name controllable entities
+-	model::Pawn*							mPawn1;
+-	model::vehicle::Vehicle*				mVehicle1;
+-	//@}
+-public:
+-	TheApp() : ExampleApplication( true /*graphics*/,
+-									true /*physics*/,
+-									false /*scripting*/,
+-									true /*input*/,
+-									false /*script bindings*/,
+-									false /*audio*/),
+-				mLightOneNode(0),
+-				mRenderTask(0),
+-				mPhysicsTask(0),
+-				mInputTask(0),
+-				mPawn1(0),
+-				mVehicle1(0)
+-	{
+ 	}
+-	void onKey(const yake::input::KeyboardEvent &amp; e)
++private:
++	void _createThrusterVisual(size_t mtPtIdx, graphics::ISceneNode&amp; parentSN)
+ 	{
+-		if (e.keyCode == input::KC_ESCAPE)
+-			requestShutdown();
++		graphics::ISceneNode* pSN = parentSN.createChildNode();
++		graphics::IParticleSystem* pPS = getGraphicalWorld()-&gt;createParticleSystem(&quot;thruster1&quot;);
++		pSN-&gt;attachParticleSystem( pPS );
++		mComplex-&gt;addLink( mVehicle-&gt;getMountPoint(mtPtIdx), pSN );
++		_regThrusterPs( mtPtIdx, *pPS );
+ 	}
+-	void onMB(uint8 btn)
++protected:
++	virtual void onCreateScene()
+ 	{
+-	}
+-	int createCameraViewportPair( real sx, real sy, real w, real h, int z )
+-	{
+-		ICamera* pC = mGWorld-&gt;createCamera();
+-		YAKE_ASSERT( pC );
+-		pC-&gt;setNearClipDistance( 1. );
++		YAKE_LOG_INFORMATION(&quot;Creating scene&quot;);
+ 
+-		// used for shadows
+-		// incase infinite far distance is not supported
+-		//pC-&gt;setFarClipDistance( 2000. );
++		// create a light
++		graphics::ILight* pLight = getGraphicalWorld()-&gt;createLight();
++		pLight-&gt;setType( graphics::ILight::LT_DIRECTIONAL );
++		pLight-&gt;setDirection( Vector3(0,-1,1) );
++		getGraphicalWorld()-&gt;createSceneNode(&quot;lightnode0&quot;)-&gt;attachLight( pLight );
+ 
+-		mVPs.push_back( std::pair&lt;IViewport*,ICamera*&gt;(mGWorld-&gt;createViewport( pC ), pC) );
+-		size_t idx = mVPs.size()-1;
+-		YAKE_ASSERT( mVPs.back().first );
+-		mVPs.back().first-&gt;setDimensions( sx, sy, w, h );
+-		mVPs.back().first-&gt;setZ( z );
+-		return static_cast&lt;int&gt;(idx);
+-	}
++		// position camera and look at the ninja
++		getDefaultCamera()-&gt;setFixedYawAxis(Vector3::kUnitY);
++		getDefaultCamera()-&gt;setPosition(Vector3(100,20,-400));
++		getDefaultCamera()-&gt;lookAt(Vector3(0,100,0));
+ 
+-	void setupDotScene()
+-	{
+-		// dotScene test
++		// vehicle
++		SharedPtr&lt;vehicle::IVehicleSystem&gt; pVS = //create&lt;vehicle::IVehicleSystem&gt;(&quot;ode&quot;);
++			SharedPtr&lt;vehicle::IVehicleSystem&gt;(new vehicle::OdeVehicleSystem());
++		vehicle::VehicleTemplate tpl;
++		tpl.mChassis.mChassisShapes.push_back(
++			new physics::IShape::BoxDesc(Vector3(1,1,2)) );
++		// mount point 0 for right thruster
++		tpl.mMountPoints.push_back(
++			vehicle::VehicleTemplate::MountPointTpl( Vector3(80,0,0), Vector3(1,0,0) ) );
++		// mount point 1 for left thruster
++		tpl.mMountPoints.push_back(
++			vehicle::VehicleTemplate::MountPointTpl( Vector3(-80,0,0), Vector3(-1,0,0) ) );
++		// mount point 2 for rear thruster
++		tpl.mMountPoints.push_back(
++			vehicle::VehicleTemplate::MountPointTpl( Vector3(0,0,-80), Vector3(0,0,-1) ) );
++		// mount point 3 for front thruster
++		tpl.mMountPoints.push_back(
++			vehicle::VehicleTemplate::MountPointTpl( Vector3(0,0,70), Vector3(0,0,1) ) );
++		// upward mount point - at center of vehicle
++		// thrusters
++		tpl.mEngines.push_back( new vehicle::VehicleTemplate::ThrusterTpl(0.,10.,0) );
++		tpl.mEngines.push_back( new vehicle::VehicleTemplate::ThrusterTpl(0.,10.,1) );
++		tpl.mEngines.push_back( new vehicle::VehicleTemplate::ThrusterTpl(0.,20.,2) );
++		tpl.mEngines.push_back( new vehicle::VehicleTemplate::ThrusterTpl(0.,20.,3) );
++		mVehicle = pVS-&gt;create( tpl, *getPhysicalWorld() );
+ 
+-		// 1. read dotscene file into DOM
++		//pV-&gt;getChassisPosition();
+ 
+-		dom::xml::XmlSerializer ser;
+-		ser.parse(&quot;../../media/graphics.scenes/arena0/arena0_export.scene&quot;, false);
++		// create container (e.g. for graphical objects and links)
++		mComplex = new model::complex::Model();
++		model::Graphical* pG = new model::Graphical();
++		mComplex-&gt;addGraphical( SharedPtr&lt;model::Graphical&gt;(pG) );
+ 
+-		// 2. parse DOM and create graphical scene
++		// create visuals
++		// - ship body
++		graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode(&quot;root&quot;);
++		pSN-&gt;attachEntity( getGraphicalWorld()-&gt;createEntity(&quot;razor.mesh&quot;) );
++		pG-&gt;addSceneNode(pSN);
+ 
+-		yake::data::serializer::dotscene::DotSceneSerializerV1 dss;
+-		dss.load( ser.getDocumentNode(), mGWorld.get() );
++		// - thruster visuals
++		_createThrusterVisual( 0, *pSN );
++		_createThrusterVisual( 1, *pSN );
++		_createThrusterVisual( 2, *pSN );
++		_createThrusterVisual( 3, *pSN );
+ 
+-		// create a root scene node for newly loaded scene
+-		graphics::ISceneNode* pSN = mGWorld-&gt;createSceneNode();
+-		YAKE_ASSERT( pSN );
++		// create visual &lt;-&gt; physics links
++		mComplex-&gt;addLink( mVehicle-&gt;getChassisMovable(), pSN );
+ 
+-		// copy free root scene nodes into a parent scene node for newly loaded scene
+-		yake::data::serializer::dotscene::SceneNodeList nodes = dss.getRootLevelSceneNodes();
+-		for (yake::data::serializer::dotscene::SceneNodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+-		{
+-			pSN-&gt;addChildNode( *it );
+-		}
++		// sky box
++		getGraphicalWorld()-&gt;setSkyBox(&quot;Examples/SpaceSkyBox&quot;);
+ 	}
+-	void setupGround()
++	virtual void onDestroyScene()
+ 	{
+-		// setup GROUND
+-
+-		// setup physical representation
+-		mGround.pCO = mPWorld-&gt;createMesh( &quot;../../media/graphics.scenes/arena0/arena0ground.physics&quot; );
+-		//mGround.pCO = mPWorld-&gt;createPlane( Vector3(0, 1, 0), 0 );
+-		YAKE_ASSERT( mGround.pCO );
+-		mGround.pCO-&gt;setFriction( 1.5 );
+-		mGround.pCO-&gt;setFriction2( 1.5 );
+-
+-		// create entity
+-		mGround.pE = 0;
+-		mGround.pSN = 0;
+-
+-		/*
+-		mGround.pE = mGWorld-&gt;createEntity(&quot;plane_1x1.mesh&quot;);
+-		YAKE_ASSERT( mGround.pE );
+-		mGround.pE-&gt;setMaterial(&quot;Examples/BumpyMetal&quot;);
+-		mGround.pE-&gt;setCastsShadow( false  );
+-
+-		// create scene node and attach entity to node
+-		mGround.pSN = mGWorld-&gt;createSceneNode();
+-		YAKE_ASSERT( mGround.pSN );
+-		mGround.pSN-&gt;attachEntity( mGround.pE );
+-		mGround.pSN-&gt;setScale(Vector3(100,1,100));
+-		*/
++		YAKE_SAFE_DELETE( mComplex );
++		YAKE_SAFE_DELETE( mVehicle );
+ 	}
+-	void setupLights()
++	virtual void onEnter()
+ 	{
+-		if (mLightOneNode)
+-			return;
+-		mLightOneNode = mGWorld-&gt;createSceneNode();
+-		YAKE_ASSERT( mLightOneNode );
+-		graphics::ILight* pL = mGWorld-&gt;createLight();
+-		YAKE_ASSERT( pL );
+-		mLightOneNode-&gt;attachLight( pL );
+-		//pL-&gt;setType( graphics::ILight::LT_POINT );
+-		//pL-&gt;setType( graphics::ILight::LT_SPOT );
+-		//pL-&gt;setSpotlightRange( 80, 100, 1 );
+-		pL-&gt;setType( graphics::ILight::LT_DIRECTIONAL );
+-		Vector3 n(-1,-1,0);
+-		n.normalise();
+-		pL-&gt;setDirection( n );
+-		pL-&gt;setCastsShadow( true );
+-		pL-&gt;setDiffuseColour( Color(0.75, 0.75, 0.78) );
+-		pL-&gt;setAttenuation( 8000, 1, 0.0005, 0 );
+-		pL-&gt;setSpecularColour( Color(0.9, 0.9, 1) );
+-		mLightOneNode-&gt;setPosition(Vector3(0,50,0));
+-	}
++		RtMainState::onEnter();
++		using namespace input;
++		mActionMap.reg( ACTIONID_STRAFE_LEFT,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_LEFT, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_STRAFE_LEFT, boost::bind(TheMainState::onStrafeLeft,this) );
+ 
+-	model::Pawn* setupPawn(GameControl &amp; gameCtrl)
+-	{
+-		// - model
+-		model::complex::Model* pComplex = new model::complex::Model();
++		mActionMap.reg( ACTIONID_STRAFE_RIGHT,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_RIGHT, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_STRAFE_RIGHT, boost::bind(TheMainState::onStrafeRight,this) );
+ 
+-		// - add physical representation
+-		model::Physical* pPhysical = new model::Physical();
+-		pComplex-&gt;addPhysical( SharedPtr&lt;model::Physical&gt;( pPhysical ), &quot;basePhysical&quot; );
++		mActionMap.reg( ACTIONID_FORWARD,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_UP, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_FORWARD, boost::bind(TheMainState::onForward,this) );
+ 
+-		physics::IActor* pCO = mPWorld-&gt;createSphere( 2 );
+-		YAKE_ASSERT( pCO );
+-		pCO-&gt;setPosition( Vector3(0,15,-10) );
+-		pCO-&gt;getBody()-&gt;setMass( 1 );
+-		pPhysical-&gt;addComplex( SharedPtr&lt;physics::IActor&gt;( pCO ), &quot;base&quot; );
+-
+-		// - add graphical representation
+-		model::Graphical* pGraphical = new model::Graphical();
+-		pComplex-&gt;addGraphical( SharedPtr&lt;model::Graphical&gt;( pGraphical ), &quot;baseGraphical&quot; );
+-
+-		graphics::ISceneNode* pSN = mGWorld-&gt;createSceneNode();
+-		graphics::IEntity* pE = mGWorld-&gt;createEntity(&quot;sphere_d1.mesh&quot;);
+-		pSN-&gt;attachEntity( pE );
+-		pGraphical-&gt;addSceneNode( pSN, &quot;base&quot;, true );
+-		pSN-&gt;setPosition( Vector3(0,5,0) );
+-
+-		// - model link
+-		/*
+-		//SharedPtr&lt;app::model::ModelMovableLink&gt; pMML = create&lt;app::model::ModelMovableLink&gt;(&quot;yake.movable&quot;);
+-		SharedPtr&lt;app::model::IObjectController&gt; pMML = ::yake::createModelMovableLink( pCO, pSN, true, true );
+-		pComplex-&gt;addController( pMML );
+-		*/
+-		app::model::DotLinkLoader dll;
+-		dll.load( &quot;../../media/dotlink_test.link&quot;, *pComplex );
+-
+-		// -- Pawn
+-		model::Pawn* pPawn = new model::Pawn();
+-
+-		PawnVisual* pVis = new PawnVisual();
+-		pPawn-&gt;addComponent( pVis, &quot;defaultVis&quot; );
+-		pPawn-&gt;setModel( pComplex );
+-
+-		PawnLocalHumanInput* pRawInput = new PawnLocalHumanInput(gameCtrl);
+-		pPawn-&gt;addComponent( pRawInput, &quot;defaultInput&quot; );
+-
+-		PawnControl* pCtrl = new PawnControl(pRawInput);
+-		pPawn-&gt;addComponent( pCtrl, &quot;defaultCtrl&quot; );
+-		pPawn-&gt;setMovable( pCO );
+-		pCtrl-&gt;setControlledMovable( pCO );
+-
+-		gameCtrl.subscribeToPostPhysicsStep( Bind1( &amp;model::Pawn::onPostPhysics, pPawn ) );
+-		gameCtrl.subscribeToSense( boost::bind( &amp;model::Pawn::onSense, pPawn ) );
+-		gameCtrl.subscribeToThink( boost::bind( &amp;model::Pawn::onThink, pPawn ) );
+-		gameCtrl.subscribeToActStep( boost::bind( &amp;model::Pawn::onAct, pPawn ) );
+-
+-		return pPawn;
++		mActionMap.reg( ACTIONID_REVERSE,
++			new input::KeyboardActionCondition( getApp().getKeyboard(), KC_DOWN, KAM_CONTINUOUS ) );
++		mActionMap.subscribeToActionId( ACTIONID_REVERSE, boost::bind(TheMainState::onReverse,this) );
+ 	}
+-
+-	void setupVehicle(GameControl &amp; gameCtrl)
++	virtual void onExit()
+ 	{
+-		if (mVehicle1)
+-			return;
+-		SharedPtr&lt;model::vehicle::IVehicleSystem&gt; pVS = create&lt;model::vehicle::IVehicleSystem&gt;(&quot;yake.native&quot;);
+-		mVehicle1 = pVS-&gt;createVehicle(&quot;../../media/vehicles/fordboss.vehicle&quot;, mPWorld, mGWorld.get() );
+-		gameCtrl.subscribeToActStep( boost::bind( &amp;model::vehicle::Vehicle::act, mVehicle1 ) );
+ 	}
+-	void cleanupVehicle()
++	virtual void onFrame(const real timeElapsed)
+ 	{
+-		YAKE_SAFE_DELETE( mVehicle1 );
+-	}
++		getApp().getInputSystem()-&gt;update();
++		getApp().getKeyboardEventGenerator()-&gt;update();
++		getApp().getMouseEventGenerator()-&gt;update();
++		mActionMap.update();
+ 
+-	virtual void run()
+-	{
+-		// setup event input generators
+-		mKeyboardEventGenerator.subscribeToKeyDown( Bind1( TheApp::onKey, this ) );
+-		mMouseEventGenerator.subscribeToMouseButtonDown( Bind1( TheApp::onMB, this ) );
+-
+-		// graphics
+-		mGWorld = getGraphicsSystem().createWorld();
+-		YAKE_ASSERT( mGWorld );
+-
+-		createCameraViewportPair( 0.0, 0.0, 1, 1, 10 );
+-		//createCameraViewportPair( 0.0, 0.0, 0.5, 0.5, 10 );
+-		//createCameraViewportPair( 0.5, 0.0, 0.5, 0.5, 11 );
+-		//createCameraViewportPair( 0.0, 0.5, 0.5, 0.5, 12 );
+-		//createCameraViewportPair( 0.5, 0.5, 0.5, 0.5, 13 );
+-
+-		if (mVPs[0].second)
++		for (size_t i=0; i&lt;4; ++i)
+ 		{
+-			mVPs[0].second-&gt;translate( Vector3(0,1.6,20) );
+-			//mVPs[0].second-&gt;pitch(-30);
+-			mVPs[0].second-&gt;lookAt( Vector3(0,0,0) );
++			mVehicle-&gt;getEngineInterface(i)-&gt;setThrottle(
++				mVehicle-&gt;getEngineInterface(i)-&gt;getThrottle() - timeElapsed * 1.7 );
+ 		}
+-		if (mVPs.size() &gt; 1 &amp;&amp; mVPs[1].second)
+-			mVPs[1].second-&gt;setPosition( Vector3(0,2,-80) );
+-		if (mVPs.size() &gt; 2 &amp;&amp; mVPs[2].second)
++		ConstDequeIterator&lt; ActionIdList &gt; itAction( mActiveActions );
++		while (itAction.hasMoreElements())
+ 		{
+-			mVPs[2].second-&gt;translate( Vector3(0,15,30) );
+-			mVPs[2].second-&gt;pitch(-30);
++			const input::ActionId activeId = itAction.getNext();
++			if (activeId == input::ACTIONID_STRAFE_LEFT)
++				mVehicle-&gt;getEngineInterface(1)-&gt;setThrottle(1.);
++			else if (activeId == input::ACTIONID_STRAFE_RIGHT)
++				mVehicle-&gt;getEngineInterface(0)-&gt;setThrottle(1.);
++			else if (activeId == input::ACTIONID_FORWARD)
++				mVehicle-&gt;getEngineInterface(2)-&gt;setThrottle(1.);
++			else if (activeId == input::ACTIONID_REVERSE)
++				mVehicle-&gt;getEngineInterface(3)-&gt;setThrottle(1.);
+ 		}
+-		if (mVPs.size() &gt; 3 &amp;&amp; mVPs[3].second)
+-		{
+-			mVPs[3].second-&gt;setPosition( Vector3(0,50,0) );
+-			mVPs[3].second-&gt;pitch(-90);
+-		}
+ 
+-		mGWorld-&gt;setShadowsEnabled( false );
++		mVehicle-&gt;updateSimulation( timeElapsed );
++		mComplex-&gt;updatePhysics( timeElapsed );
+ 
+-		// physics
+-		mPWorld = getPhysicsSystem().createWorld();
+-		YAKE_ASSERT( mPWorld );
+-		//mPWorld-&gt;setGlobalGravity( Vector3(0,-9.81,0) );
+-		mPWorld-&gt;setGlobalGravity( Vector3(0,-9.81,0) );
++		_updateThrusterPs();
++		getDefaultCamera()-&gt;lookAt(mVehicle-&gt;getChassisPosition());
++		mComplex-&gt;updateGraphics( timeElapsed );
+ 
+-		// audio
+-		//setupAudio();
+-
+-		LocalHumanInputData gatherInputData( &amp;getInputSystem(), &amp;mKeyboardEventGenerator, &amp;mMouseEventGenerator, getKeyboard() );
+-		GameControl gameCtrl(gatherInputData);
+-
+-		// objects
+-		setupLights();
+-		//setupNinja();
+-		setupGround();
+-		setupDotScene();
+-		//setupCar();
+-		setupVehicle(gameCtrl);
+-
+-		/*CameraFollowController cfc( mVPs[0].second, mVPs[0].second, dbgChassis );
+-		mVPs[0].second-&gt;setFixedYawEnabled( true );
+-		mVPs[0].second-&gt;setFixedYawAxis( Vector3(0,1,0) );
+-		mVPs[0].second-&gt;setPosition( Vector3(10,2,30) );*/
+-
+-		// tasks
+-		mRenderTask = new RenderTask( mGWorld.get() );
+-		YAKE_ASSERT( mRenderTask );
+-		mTaskMgr.addTask( mRenderTask );
+-
+-		mPhysicsTask = new PhysicsTask( mPWorld );
+-		YAKE_ASSERT( mPhysicsTask );
+-		mTaskMgr.addTask( mPhysicsTask );
+-
+-		mInputTask = new InputTask( this );
+-		YAKE_ASSERT( mInputTask );
+-		mTaskMgr.addTask( mInputTask );
+-
+-		// main loop
+-		mPawn1 = setupPawn(gameCtrl);
+-		//gameCtrl.subscribeToGatherInputStep( Bind1( &amp;InputTask::execute, mInputTask ) );
+-		gameCtrl.subscribeToPhysicsStep( Bind1( &amp;PhysicsTask::execute, mPhysicsTask ) );
+-		gameCtrl.subscribeToRenderStep( Bind1( &amp;RenderTask::execute, mRenderTask ) );
+-		real lastTime = base::native::getTime();
+-		while (!shutdownRequested())
+-		{
+-			getInputSystem().update();
+-			mMouseEventGenerator.update();
+-			mKeyboardEventGenerator.update();
+-
+-			gameCtrl.update();
+-		}
+-		mRenderTask = 0;
+-		mPhysicsTask = 0;
+-		mInputTask = 0;
+-
+-		// clean up (FIXME: still incomplete)
+-		// TODO: use a yake::base::State for handling all scene specific stuff...
+-
+-		cleanupVehicle();
+-
+-		YAKE_SAFE_DELETE( mLightOneNode );
+-
+-		//YAKE_SAFE_DELETE( mCar );
+-		//YAKE_SAFE_DELETE( mCarModel ); is done by destructor of mCar
+-
+-		YAKE_SAFE_DELETE( mPWorld );
+-		mGWorld.reset();
+-
+-		//profiler::ProfilerManager::instance().getProfiler(&quot;default&quot;).logToCout();
+-		PROFILER_DESTROY;
+-		PROFILERMANAGER_DESTROY;
++		mActiveActions.clear();
+ 	}
+-};
+-
+-	TheApp::RenderTask::RenderTask(IWorld* pWorld) :
+-		DefTask( -1, task::TASKPRIO_HIGH ),
+-		mWorld(pWorld)
++protected:
++	void onStrafeLeft()
++	{ mActiveActions.insert( input::ACTIONID_STRAFE_LEFT ); }
++	void onStrafeRight()
++	{ mActiveActions.insert( input::ACTIONID_STRAFE_RIGHT ); }
++	void onForward()
++	{ mActiveActions.insert( input::ACTIONID_FORWARD ); }
++	void onReverse()
++	{ mActiveActions.insert( input::ACTIONID_REVERSE ); }
++private:
++	void _regThrusterPs(size_t idx, graphics::IParticleSystem&amp; ps)
+ 	{
+-		YAKE_ASSERT( mWorld );
++		mEmitterMinVel[ idx ] = ps.getMinVelocity(0);
++		mEmitterMaxVel[ idx ] = ps.getMaxVelocity(0);
++		mEmitterEmissionRate[ idx ] = ps.getEmissionRate(0);
++		mThrusterPs[ idx ] = &ps;
+ 	}
+-	void TheApp::RenderTask::execute(real timeElapsed)
++	void _updateThrusterPs()
+ 	{
+-		YAKE_ASSERT( mWorld );
+-		mWorld-&gt;render( timeElapsed );
+-		//std::cout &lt;&lt; &quot;render(&quot; &lt;&lt; timeElapsed &lt;&lt; &quot;)!\n&quot;;
+-	}
+-
+-	TheApp::PhysicsTask::PhysicsTask(physics::IWorld* pWorld) :
+-		DefTask( -1, task::TASKPRIO_HIGH+1 ),
+-		mWorld(pWorld)
+-	{
+-		YAKE_ASSERT( mWorld );
+-	}
+-	void TheApp::PhysicsTask::execute(real timeElapsed)
+-	{
+-		//std::cout &lt;&lt; &quot;physics(&quot; &lt;&lt; timeElapsed &lt;&lt; &quot;)!\n&quot;;
+-		YAKE_ASSERT( mWorld );
+-		mWorld-&gt;update( timeElapsed );
+-	}
+-
+-	TheApp::InputTask::InputTask(
+-			TheApp* theApp ) :
+-		DefTask( -1, task::TASKPRIO_HIGH+2 ),
+-		mApp(theApp)
+-	{
+-		YAKE_ASSERT( mApp );
+-	}
+-	void TheApp::InputTask::execute(real timeElapsed)
+-	{
+-		//std::cout &lt;&lt; &quot;input(&quot; &lt;&lt; timeElapsed &lt;&lt; &quot;)!\n&quot;;
+-		YAKE_ASSERT( mApp );
+-
+-		// handle input
+-		mApp-&gt;getInputSystem().update();
+-		mApp-&gt;mMouseEventGenerator.update();
+-		mApp-&gt;mKeyboardEventGenerator.update();
+-
+-		//
+-		YAKE_ASSERT( mApp-&gt;getKeyboard() );
+-		if (mApp-&gt;getKeyboard())
++		ConstDequeIterator&lt; ThrusterPsMap &gt; itM( mThrusterPs );
++		while (itM.hasMoreElements())
+ 		{
+-			static iCam = 0;
+-			real distance = -5. * timeElapsed;
+-			if (mApp-&gt;getKeyboard()-&gt;isKeyDown(input::KC_LEFT))
+-				mApp-&gt;mVPs[iCam].second-&gt;translate( Vector3(distance, 0, 0) );
+-			if (mApp-&gt;getKeyboard()-&gt;isKeyDown(input::KC_RIGHT))
+-				mApp-&gt;mVPs[iCam].second-&gt;translate( Vector3(-distance, 0, 0) );
+-			if (mApp-&gt;getKeyboard()-&gt;isKeyDown(input::KC_UP))
+-				mApp-&gt;mVPs[iCam].second-&gt;translate( Vector3(0, 0, distance) );
+-			if (mApp-&gt;getKeyboard()-&gt;isKeyDown(input::KC_DOWN))
+-				mApp-&gt;mVPs[iCam].second-&gt;translate( Vector3(0, 0, -distance) );
++			std::pair&lt;size_t,graphics::IParticleSystem*&gt; p = itM.getNext();
++			size_t idxMtPt = p.first;
++			graphics::IParticleSystem* ps = p.second;
++			const real throttle = mVehicle-&gt;getEngineInterface(idxMtPt)-&gt;getThrottle();
+ 
+-/*
+-			if (mApp-&gt;getKeyboard()-&gt;isKeyDown(input::KC_A))
+-				mCar-&gt;setSteer( -0.7 );
+-			else if (mApp-&gt;getKeyboard()-&gt;isKeyDown(input::KC_D))
+-				mCar-&gt;setSteer( 0.7 );
+-			else
+-				mCar-&gt;setSteer( 0 );
++			real rate = throttle * mEmitterEmissionRate[ idxMtPt ];
++			ps-&gt;setEmissionRate( 0, rate );
+ 
+-			if (mApp-&gt;getKeyboard()-&gt;isKeyDown(input::KC_W))
+-			{
+-				mCar-&gt;getEngine()-&gt;setThrottle(
+-					mCar-&gt;getEngine()-&gt;getThrottle() + timeElapsed );
+-			}
+-			else
+-				mCar-&gt;getEngine()-&gt;setThrottle(
+-					mCar-&gt;getEngine()-&gt;getThrottle() - 2. * timeElapsed );
+-			static real last = 0.;
+-			last -= timeElapsed;
+-			if (last &lt; 0. &amp;&amp; mApp-&gt;getKeyboard()-&gt;isKeyDown(input::KC_RETURN))
+-			{
+-				mCar-&gt;getEngine()-&gt;shiftGearUp();
+-				last = 0.2;
+-			}
+-			if (last &lt; 0. &amp;&amp; mApp-&gt;getKeyboard()-&gt;isKeyDown(input::KC_RSHIFT))
+-			{
+-				mCar-&gt;getEngine()-&gt;shiftGearDown();
+-				last = 0.2;
+-			}
+-			if (mApp-&gt;getKeyboard()-&gt;isKeyDown(input::KC_SPACE))
+-				mCar-&gt;brake( 0, 1. );
+-			else
+-				mCar-&gt;brake( 0, 0. );
+-			*/
++			real vel = throttle * mEmitterMaxVel[ idxMtPt ];
++			ps-&gt;setMaxVelocity( 0, vel );
++
++			vel = throttle * mEmitterMinVel[ idxMtPt ];
++			ps-&gt;setMinVelocity( 0, vel );
+ 		}
+ 	}
+-//============================================================================
+-//    IMPLEMENTATION FUNCTIONS
+-//============================================================================
++private:
++	vehicle::IVehicle*		mVehicle;
++	model::complex::Model*	mComplex;
++	typedef AssocVector&lt;size_t,real&gt; EmitterRealMap;
++	EmitterRealMap			mEmitterMinVel;
++	EmitterRealMap			mEmitterMaxVel;
++	EmitterRealMap			mEmitterEmissionRate;
++	typedef AssocVector&lt;size_t,graphics::IParticleSystem*&gt; ThrusterPsMap;
++	ThrusterPsMap			mThrusterPs;
++	input::ActionMap		mActionMap;
+ 
+-int main()
++	typedef std::set&lt;input::ActionId&gt; ActionIdList;
++	ActionIdList			mActiveActions;
++};
++
++/** The mighty application itself! */
++class TheApp : public raf::ExampleApplication&lt;TheConfiguration&gt;
+ {
+-	try
++public:
++	TheApp() {}
++protected:
++	virtual raf::MainState* createMainState()
+ 	{
+-		std::cout &lt;&lt; std::endl &lt;&lt; &quot;A simple vehicle demo :) provided for YAKE by Stephan Kaiser&quot; &lt;&lt; std::endl;
+-		TheApp theApp;
+-		theApp.initialise();
+-		theApp.run();
++		return new TheMainState(*this);
+ 	}
+-	catch (const yake::base::Exception &amp; e)
+-	{
+-		std::cout &lt;&lt; std::endl &lt;&lt; e.what() &lt;&lt; std::endl;
+-	}
+-#if defined( YAKE_DEBUG_BUILD )
+-	std::cout &lt;&lt; std::endl &lt;&lt; &quot;Waiting for you...&quot;;
+-	std::cin.get();
+-#endif
++};
+ 
+-	return 0;
+-}
+\ No newline at end of file
++int main( int argc, char** argv )
++{
++	// Use default executor for convenience.
++	// It's always possible to manually execute TheApp::initialise() etc.
++	return (raf::runApplication( TheApp() )) ? 0 : 1;
++}
++
+
+Modified: trunk/yake/src/yapp/samples/base/vehicle/yakePCH.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/base/vehicle/yakePCH.cpp	2005-09-30 21:46:54 UTC (rev 977)
++++ trunk/yake/src/yapp/samples/base/vehicle/yakePCH.cpp	2005-09-30 21:48:00 UTC (rev 978)
+@@ -1,2 +1 @@
+ #include &lt;yapp/samples/base/vehicle/yakePCH.h&gt;
+-
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000047.html">[Yake-svn] r977 - trunk/yake/scripts/yapp/samples/base
+</A></li>
+	<LI>Next message: <A HREF="000049.html">[Yake-svn] r979 - in trunk/yake/yapp: . vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#48">[ date ]</a>
+              <a href="thread.html#48">[ thread ]</a>
+              <a href="subject.html#48">[ subject ]</a>
+              <a href="author.html#48">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

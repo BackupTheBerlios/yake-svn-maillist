@@ -1,0 +1,2236 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1334 - in trunk/yake/src/yake: loader model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2006-June/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1334%20-%20in%20trunk/yake/src/yake%3A%20loader%20model&In-Reply-To=%3C200606122127.k5CLRGD2023521%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000401.html">
+   <LINK REL="Next"  HREF="000403.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1334 - in trunk/yake/src/yake: loader model</H1>
+    <B>codeandroid at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1334%20-%20in%20trunk/yake/src/yake%3A%20loader%20model&In-Reply-To=%3C200606122127.k5CLRGD2023521%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1334 - in trunk/yake/src/yake: loader model">codeandroid at berlios.de
+       </A><BR>
+    <I>Mon Jun 12 23:27:16 CEST 2006</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000401.html">[Yake-svn] r1333 - trunk/yake/src/yake/samples/model/dotScene
+</A></li>
+        <LI>Next message: <A HREF="000403.html">[Yake-svn] r1335 - in trunk/yake/yake: loader model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#402">[ date ]</a>
+              <a href="thread.html#402">[ thread ]</a>
+              <a href="subject.html#402">[ subject ]</a>
+              <a href="author.html#402">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2006-06-12 23:27:15 +0200 (Mon, 12 Jun 2006)
+New Revision: 1334
+
+Added:
+   trunk/yake/src/yake/loader/yakeXODEParser.cpp
+   trunk/yake/src/yake/model/yakeDotLinkLoader.cpp
+   trunk/yake/src/yake/model/yakeLinkCreator.cpp
+   trunk/yake/src/yake/model/yakeModelLink.cpp
+   trunk/yake/src/yake/model/yakeModelMovableLink.cpp
+   trunk/yake/src/yake/model/yakePhysicalCreator.cpp
+   trunk/yake/src/yake/model/yakeXODEListener.cpp
+Modified:
+   trunk/yake/src/yake/model/yakeComponentCreatorManager.cpp
+   trunk/yake/src/yake/model/yakeGraphical.cpp
+   trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+   trunk/yake/src/yake/model/yakeModel.cpp
+   trunk/yake/src/yake/model/yakeModelManager.cpp
+   trunk/yake/src/yake/model/yakePhysical.cpp
+Log:
+added physics/XODE and model/dotLink support
+
+Added: trunk/yake/src/yake/loader/yakeXODEParser.cpp
+===================================================================
+--- trunk/yake/src/yake/loader/yakeXODEParser.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/loader/yakeXODEParser.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -0,0 +1,1169 @@
++/*
++	 ------------------------------------------------------------------------------------
++	 This file is part of YAKE
++	 Copyright	2004 The YAKE Team
++	 For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++	 ------------------------------------------------------------------------------------
++	 This program is free software; you can redistribute it and/or modify it under
++	 the terms of the GNU Lesser General Public License as published by the Free Software
++	 Foundation; either version 2 of the License, or (at your option) any later
++	 version.
++ 
++	 This program is distributed in the hope that it will be useful, but WITHOUT
++	 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++	 FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++ 
++	 You should have received a copy of the GNU Lesser General Public License along with
++	 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++	 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++	 <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++	 ------------------------------------------------------------------------------------
++	 If you are interested in another license model contact the Yake Team via
++	 E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++	 For more information see the LICENSE file in the root directory of the
++	 source code distribution.
++	 ------------------------------------------------------------------------------------
++*/
++#include &lt;yake/loader/pch.h&gt;
++#include &lt;yake/loader/loader.h&gt;
++
++namespace yake {
++namespace data {
++namespace parser {
++namespace xode {
++    using namespace physics;
++
++    //------------------------------------------------------
++    XODEParser::XODEParser() 
++    {}
++
++    //------------------------------------------------------
++    bool XODEParser::load( const NodeSharedPtr docNode )
++    {
++		YAKE_LOG( &quot;XODE: load()&quot; );
++
++		YAKE_ASSERT( docNode.get() );
++
++		mDocNode = docNode;
++
++		YAKE_LOG( &quot;*******************&quot; );
++		YAKE_LOG( &quot;* Parsing xode... *&quot; );
++		YAKE_LOG( &quot;*******************&quot; );
++
++		readXODE( mDocNode );
++
++		return true;
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readXODE( const NodeSharedPtr pNode )
++    {
++		YAKE_ASSERT( pNode );
++
++		const String name = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
++		YAKE_LOG( &quot;XODE: parsing &quot; + name );
++
++		// Assuming single world in .xode
++		NodeSharedPtr pWorldNode = pNode-&gt;getNodeByName( &quot;world&quot; );
++		YAKE_ASSERT( pWorldNode );
++
++		YAKE_LOG( &quot;XODE: finding world ... &quot; + String( pWorldNode.get() ? &quot;Yes!&quot; : &quot;No :(&quot; ) );
++
++		readWorld( pWorldNode );
++
++		// parse completed. Firing signal!
++		sigParseEnded_();
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readWorld( const NodeSharedPtr pWorldNode )
++    {
++	// Assuming single space in &lt;world&gt;
++	NodeSharedPtr pSpaceNode = pWorldNode-&gt;getNodeByName( &quot;space&quot; );
++	YAKE_ASSERT( pSpaceNode );
++
++	YAKE_LOG( &quot;XODE: finding space... &quot; + String( pSpaceNode.get() ? &quot;Yes!&quot; : &quot;No :(&quot; ) );
++
++	readSpace( pSpaceNode, &quot;world&quot; );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::reset()
++    {
++	//TODO is this really needed?
++	mDocNode.reset();
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readSpace( const NodeSharedPtr pSpaceNode, const String&amp; parent )
++    {
++	YAKE_LOG( &quot;XODE: reading space ...&quot; );
++
++	const dom::NodeList&amp; nodes = pSpaceNode-&gt;getNodes();
++	for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
++	{
++	    String nodeName =
++		yake::StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    if ( nodeName == &quot;body&quot; )
++	    {
++		readBody( *it, parent );
++	    }
++	    else if ( nodeName == &quot;geom&quot; )
++	    {
++		readGeom( *it, parent );
++	    }
++	    else if ( nodeName == &quot;bodygroup&quot; )
++	    {
++		//TODO bodygroup reading here
++		YAKE_LOG( &quot;XODE: Bodygroup is not yet implemented in parser&quot; ); 
++	    }
++	    else if ( nodeName == &quot;joint&quot; )
++	    {
++		readJoint( *it, parent );
++	    }
++	}
++    }
++
++    /// Utility functor for use with std::find_if
++    //------------------------------------------------------
++    class NodeHunter : public std::unary_function&lt;XODEParser::NodeSharedPtr&amp;,bool&gt;
++    {
++	public:
++	    NodeHunter( const String&amp; rNodeName ) : nodeName_( rNodeName )
++	    {}
++
++	    bool operator()( const XODEParser::NodeSharedPtr&amp; pNode )
++	    {
++		return pNode-&gt;getName() == nodeName_;
++	    }
++
++	private:
++	    String nodeName_;
++    };
++
++    //------------------------------------------------------
++    void XODEParser::readVector3( const NodeSharedPtr pVecNode, math::Vector3&amp; rVec )
++    {
++	real x = StringUtil::parseReal( pVecNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
++	real y = StringUtil::parseReal( pVecNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
++	real z = StringUtil::parseReal( pVecNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
++
++	rVec = math::Vector3( x, y, z );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readScale( const NodeSharedPtr pScaleNode, math::Vector3&amp; rScale )
++    {
++	readVector3( pScaleNode, rScale );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readPosition( const NodeSharedPtr pPosNode, math::Vector3&amp; rPos )
++    {
++	readVector3( pPosNode, rPos );
++    }
++
++    //------------------------------------------------------
++    /**
++     * Reads quaternion from pQuatNode to rQuat
++     * Ignores aformat attribute
++     * @param pQuatNode
++     * @param rQuat
++     */
++    void XODEParser::readQuaternion( const NodeSharedPtr pQuatNode, math::Quaternion&amp; rQuat )
++    {
++	real x = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
++	real y = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
++	real z = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
++	real w = StringUtil::parseReal( pQuatNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;w&quot; ) );
++
++	rQuat = math::Quaternion( w, x, y, z );
++    }
++
++    //------------------------------------------------------
++    /**
++     *	Reads angle and axis x, y, z attributes and spawns quaternion with them in rRot
++     * @param pRotNode
++     * @param rRot
++     */
++    void XODEParser::readAxisAngleRot( const NodeSharedPtr pRotNode, math::Quaternion&amp; rRot )
++    {
++	real x = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
++	real y = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
++	real z = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
++	real angle = StringUtil::parseReal( pRotNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;angle&quot; ) );
++
++	rRot.FromAngleAxis( angle, math::Vector3( x, y, z ) );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readRotation( const NodeSharedPtr pRotNode, math::Quaternion&amp; rRot )
++    {
++	const dom::NodeList&amp; nodes = pRotNode-&gt;getNodes();
++
++	for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
++	{
++	    String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    if ( nodeName == &quot;quaternion&quot; )
++	    {
++		readQuaternion( *it, rRot );
++	    }
++	    else if ( nodeName == &quot;euler&quot; )
++	    {
++		YAKE_ASSERT( false ).error( &quot;euler is NYI&quot; );
++	    }
++	    else if ( nodeName == &quot;axisangle&quot; )
++	    {
++		readAxisAngleRot( *it, rRot );
++	    }
++	}
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readTransform( const NodeSharedPtr pTransformNode, Transform&amp; rTrans )
++    {
++	const dom::NodeList&amp; nodes = pTransformNode-&gt;getNodes();
++
++	for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
++	{
++	    String nodeName =
++		StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    if ( nodeName == &quot;position&quot; )
++	    {
++		readPosition( *it, rTrans.position_ );
++	    }
++	    else if ( nodeName == &quot;rotation&quot; )
++	    {
++		readRotation( *it, rTrans.rotation_ );
++	    }
++	    else if ( nodeName == &quot;scale&quot; )
++	    {
++		readScale( *it, rTrans.scale_ );
++	    }
++	    else if ( nodeName == &quot;matrix4f&quot; )
++	    {
++		YAKE_ASSERT( false ).error( &quot;matrix4f is NYI&quot; );
++	    }
++	}
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readMassShape( const NodeSharedPtr pMShapeNode, const String&amp; parent,
++	    const Transform&amp; rParentTransform )
++    {
++	real density = 0; //default ...
++
++	// if density is provided...
++	String strDensity = pMShapeNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;density&quot; );
++	if ( !strDensity.empty() ) 
++	{
++	    density = StringUtil::parseReal( strDensity );
++	    YAKE_LOG( &quot;XODE: reading mass_shape with density = &quot; + strDensity + &quot; &quot; );
++	}
++
++	const dom::NodeList&amp; nodes = pMShapeNode-&gt;getNodes();
++	for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it)
++	{
++	    String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    YAKE_LOG( &quot;XODE: reading mass_shape that is &quot; + nodeName + &quot; &quot; );
++
++	    IBody::MassDesc* physicsMassDesc = NULL;
++
++	    if ( nodeName == &quot;cylinder&quot; )
++	    {
++		real radius, length;
++		readCylinder( *it, radius, length );
++
++		physicsMassDesc = new IBody::CylinderMassDesc( radius, length, density,
++			rParentTransform.position_,
++			IBody::QT_DENSITY );
++	    }
++	    else if ( nodeName == &quot;sphere&quot; )
++	    {
++		real radius; readSphere( *it, radius );
++
++		physicsMassDesc = new IBody::SphereMassDesc(radius, density,
++			rParentTransform.position_,
++			IBody::QT_DENSITY );
++	    }
++	    else if ( nodeName == &quot;box&quot; )
++	    {
++		real sX, sY, sZ;
++		readBox( *it, sX, sY, sZ );
++
++		physicsMassDesc = new IBody::BoxMassDesc( sX, sY, sZ, density,
++			rParentTransform.position_,
++			IBody::QT_DENSITY );
++	    }
++	    else if ( nodeName == &quot;cappedCylinder&quot; )
++	    {
++		real radius, length;
++		readCappedCylinder( *it, radius, length );
++
++		physicsMassDesc = new IBody::CapsuleMassDesc( radius, length, density,
++			rParentTransform.position_,
++			IBody::QT_DENSITY );
++	    }
++
++	    if ( physicsMassDesc != NULL )
++	    {
++
++		MassDesc desc;
++		desc.mass_.reset( physicsMassDesc );
++		desc.parentName_ = parent;
++
++		// TODO set the other mass params!
++		// parent name, etc.
++		sigMass_( desc );
++		// TODO needed?? massDescriptions_[ name ] = desc;
++	    }
++	}
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readMassAdjust( const NodeSharedPtr pMAdjustNode, const String&amp; parent )
++    {
++	real total = StringUtil::parseReal( pMAdjustNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;total&quot; ) );
++
++	YAKE_LOG_INFORMATION( &quot;XODE: read mass adjust - &quot; + pMAdjustNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;total&quot; ) );
++
++	MassDesc desc;
++	desc.parentName_ = parent;
++	desc.mass_.reset( new IBody::MassDesc( total, math::Vector3::kZero, IBody::QT_MASS ) );
++
++	sigMass_( desc );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readMass( const NodeSharedPtr pMassNode, const String&amp; parent, const Transform&amp; rParentTransform )
++    {
++	const dom::NodeList&amp; nodes = pMassNode-&gt;getNodes();
++
++	// Seek transform
++	Transform massTransform;
++
++	NodeHunter hunter( &quot;transform&quot; );
++	NodeListIter iTrans =
++	    std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
++
++	if ( iTrans != nodes.end() )
++	{
++	    readTransform( *iTrans, massTransform );
++	}
++
++	if ( !rParentTransform.isIdentity() )
++	{
++	    massTransform = massTransform.getDerivedTransform( rParentTransform );
++	}
++
++	for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it)
++	{
++	    String nodeName =
++		StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    if ( nodeName == &quot;mass_shape&quot; )
++	    {
++		readMassShape( *it, parent, massTransform );
++	    }
++	    else if ( nodeName == &quot;adjust&quot; )
++	    {
++		readMassAdjust( *it, parent );
++	    }
++	    else if ( nodeName == &quot;mass&quot; )
++	    {
++		readMass( *it, parent, massTransform );
++	    }
++	}
++
++    }
++
++    //------------------------------------------------------
++    // This method is called on any unknown extension
++    void XODEParser::readExtension( const NodeSharedPtr, 
++	    const String&amp; parent, 
++	    const Transform&amp; parentTransformIfAny )
++    {
++	// this virtual method should be overriden by any parser that wants to parse xode extensions
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readBody( const NodeSharedPtr pBodyNode, const String&amp; parent )
++    {
++	const String name = pBodyNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
++	YAKE_LOG( &quot;XODE: reading body &quot; + name );
++
++	// Setting up body description...
++	BodyDesc desc;
++	desc.name_ = name;
++	desc.parentName_ = parent;
++
++	const dom::NodeList&amp; nodes = pBodyNode-&gt;getNodes();
++
++	// Seek transform
++	NodeHunter hunter( &quot;transform&quot; );
++	NodeListIter iTrans =
++	    std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
++
++	Transform bodyTransform;
++	if ( iTrans != nodes.end() )
++	{
++	    YAKE_LOG( &quot;XODE: body &quot; + name + &quot; has transform &quot; );
++
++	    readTransform( *iTrans, bodyTransform );
++
++	    if ( !bodyTransform.isIdentity() )
++	    {
++		desc.transform_ = bodyTransform;
++	    }
++	}
++
++	// fire signal!
++	sigBody_( desc );
++	// TODO add to collection?
++
++	for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
++	{
++	    String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    YAKE_LOG( &quot;XODE: body &quot; + name + &quot; has node #&quot; + nodeName );
++
++	    if ( nodeName == &quot;geom&quot; )
++	    {
++		readGeom( *it, name, bodyTransform );
++	    }
++	    else if ( nodeName == &quot;mass&quot; )
++	    {
++		readMass( *it, name, bodyTransform );
++	    }
++	    else if ( nodeName == &quot;joint&quot; )
++	    {
++		readJoint( *it, name, bodyTransform );
++	    }
++	    else if ( nodeName == &quot;ext&quot; )
++	    {
++		readExtension( *it, name, bodyTransform );
++	    }
++	}
++    }
++
++    //------------------------------------------------------
++    /**
++     *	 Searches for &lt;ext name=&quot;material&quot;&gt; node, parses it, creates material and returns ptr to created material
++     * If no node, returns NULL
++     * @param pNode - node to search
++     */
++    void XODEParser::readMaterialExt( const NodeSharedPtr pNode, const String&amp; parent )
++    {
++	YAKE_LOG( &quot;XODE: entered readMaterialExt...&quot; );
++
++	const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
++
++	// Looking for ext
++	// TODO maybe we need some advanced searching here?
++	// like finding all ext nodes or finding &lt;ext name=&quot;material&quot;&gt;?
++	// For now finding ext would be enough
++	NodeHunter hunter( &quot;ext&quot; );
++	NodeListIter iExt =
++	    std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
++
++	if ( iExt == nodes.end() )
++	{
++	    YAKE_LOG( &quot;XODE: didn't find extension... &quot; );
++	    return;
++	}
++
++	YAKE_LOG( &quot;XODE: found extension... processing... :) &quot; );
++
++	if ( (*iExt)-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; ) != &quot;material&quot; )
++	{
++	    YAKE_LOG( &quot;XODE: extension is not material&quot; );
++	}
++
++	YAKE_LOG( &quot;XODE: the extension IS material! Parsing...&quot; );
++
++	const dom::NodeList&amp; extNodes = (*iExt)-&gt;getNodes();
++	//HACK assuming first node is &quot;params&quot;
++	NodeSharedPtr pParamsNode = *extNodes.begin();
++
++	// parsing
++	IMaterial::Desc desc;
++
++	String strFriction = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;friction&quot; );
++	String strRestitution = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;bouncecoeff&quot; );
++	String strSoftness = pParamsNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;soften&quot; );
++
++	YAKE_LOG( &quot;XODE: read friction = &quot; + strFriction );
++	YAKE_LOG( &quot;XODE: read restitution = &quot; + strRestitution );
++	YAKE_LOG( &quot;XODE: read softness = &quot; + strSoftness );
++
++	desc.mFriction = StringUtil::parseReal( strFriction );
++	desc.mRestitution = StringUtil::parseReal( strRestitution );
++	desc.mSoftness = StringUtil::parseReal( strSoftness );
++
++	//TODO fill in all other description params!
++	// parent name, etc
++	MaterialDesc matDesc;
++	matDesc.name_ = parent + &quot;material&quot;; // TODO make something totally yake::Unique here?
++	matDesc.material_ = desc;
++	matDesc.parentName_ = parent;
++
++	sigMaterial_( matDesc );
++    }
++
++    //------------------------------------------------------
++    /**
++     * Reads geom xode node
++     * No folded bodies, geoms, spaces processed.
++     * @param pGeomNode
++     * @param pParentObject
++     */
++    void XODEParser::readGeom(	const NodeSharedPtr pGeomNode, const String&amp; parent, 
++	    const Transform&amp; rParentTransform, bool absoluteTransform )
++    {
++	const String name = pGeomNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
++	YAKE_LOG( &quot;XODE: reading geom &quot; + name );
++
++	const dom::NodeList&amp; nodes = pGeomNode-&gt;getNodes();
++
++	// Looking for transform
++	NodeHunter hunter( &quot;transform&quot; );
++	NodeListIter iTrans =
++	    std::find_if&lt;NodeListIter,NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
++
++	Transform geomTransform;
++
++	if ( iTrans != nodes.end() )
++	{
++	    YAKE_LOG( &quot;XODE: readGeom() [&quot; + name + &quot;] : geom has transform &quot; );
++
++	    readTransform( *iTrans, geomTransform );
++	}
++
++	// if transform is absolute, we need to provide derived transform
++	if ( absoluteTransform )
++	    geomTransform = geomTransform.getDerivedTransform( rParentTransform );
++
++	YAKE_LOG( &quot;XODE: scanning other geom properties...&quot; );
++
++	for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
++	{
++	    String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    YAKE_LOG( &quot;XODE: geom [&quot; + name + &quot;] has node #&quot; + nodeName );
++
++	    IShape::Desc* shapeDesc = NULL;
++
++	    if ( nodeName == &quot;geom&quot; )
++	    {
++		// reading folded geom -&gt; absolute transform is provided
++		// parent ( actor ) remains the same
++		readGeom( *it, parent, geomTransform, true );
++	    }
++	    if ( nodeName == &quot;box&quot; )
++	    {
++		real sizeX, sizeY, sizeZ;
++		readBox( *it, sizeX, sizeY, sizeZ );
++
++		sizeX *= rParentTransform.scale_.x;
++		sizeY *= rParentTransform.scale_.y;
++		sizeZ *= rParentTransform.scale_.z;
++
++		String strSizeX; strSizeX &lt;&lt; sizeX;
++		String strSizeY; strSizeY &lt;&lt; sizeY;
++		String strSizeZ; strSizeZ &lt;&lt; sizeZ;
++
++		YAKE_LOG( &quot;XODE: box with sizes: &quot; + strSizeX + &quot;, &quot; + strSizeY + &quot;, &quot; + strSizeZ );
++
++		shapeDesc = new IShape::BoxDesc( math::Vector3( sizeX, sizeY, sizeZ ), &quot;&quot;,
++			geomTransform.position_, geomTransform.rotation_ );
++	    }
++	    else if ( nodeName == &quot;cappedCylinder&quot; )
++	    {
++		real radius, length;
++		readCappedCylinder( *it, radius, length );
++
++		real scale = ( rParentTransform.scale_.x
++			+ rParentTransform.scale_.y
++			+ rParentTransform.scale_.z ) /3;
++
++		radius *= scale;
++		length *= scale;
++
++		shapeDesc = new IShape::CapsuleDesc( length,
++			radius,
++			&quot;&quot;,
++			geomTransform.position_,
++			geomTransform.rotation_ );
++	    }
++	    else if ( nodeName == &quot;cone&quot; )
++	    {
++		real radius, length;
++		readCone( *it, radius, length );
++
++		real scale = ( rParentTransform.scale_.x
++			+ rParentTransform.scale_.y
++			+ rParentTransform.scale_.z ) /3;
++
++		radius *= scale;
++		length *= scale;
++
++		YAKE_ASSERT( false ).error( &quot;NOT implemented in Yake&quot; ); //TODO
++	    }
++	    else if ( nodeName == &quot;cylinder&quot; )
++	    {
++		real radius, length;
++		readCylinder( *it, radius, length );
++
++		real scale = ( rParentTransform.scale_.x
++			+ rParentTransform.scale_.y
++			+ rParentTransform.scale_.z ) /3;
++
++		radius *= scale;
++		length *= scale;
++
++		shapeDesc = new IShape::CapsuleDesc( length,
++			radius,
++			&quot;&quot;,
++			geomTransform.position_,
++			geomTransform.rotation_ );
++	    }
++	    else if ( nodeName == &quot;plane&quot; )
++	    {
++		real a, b, c, d;
++		readPlane( *it, a, b, c, d );
++		shapeDesc = new IShape::PlaneDesc( math::Vector3( a, b, c ),
++			d,
++			&quot;&quot;,
++			geomTransform.position_,
++			geomTransform.rotation_ );
++	    }
++	    else if ( nodeName == &quot;ray&quot; )
++	    {
++		real length;
++		readRay( *it, length );
++
++		real scale = ( rParentTransform.scale_.x
++			+ rParentTransform.scale_.y
++			+ rParentTransform.scale_.z ) /3;
++
++		length *= scale;
++
++		YAKE_ASSERT( false ).error( &quot;NOT implemented in Yake&quot; ); //TODO
++	    }
++	    else if ( nodeName == &quot;sphere&quot; )
++	    {
++		real radius;
++		readSphere( *it, radius );
++
++		real scale = ( rParentTransform.scale_.x
++			+ rParentTransform.scale_.y
++			+ rParentTransform.scale_.z ) /3;
++
++		radius *= scale;
++
++		shapeDesc = new IShape::SphereDesc(
++			radius,
++			&quot;&quot;,
++			geomTransform.position_,
++			geomTransform.rotation_ );
++	    }
++	    else if ( nodeName == &quot;trimesh&quot; )
++	    {
++		TriangleMeshDesc::VertexVector vertices;
++		TriangleMeshDesc::IndexVector indices;
++
++		readTrimesh( *it, vertices, indices );
++
++		TriangleMeshDesc::VertexVector scaledVertices;
++
++		ConstVectorIterator&lt; TriangleMeshDesc::VertexVector &gt; iV( vertices.begin(), vertices.end() );
++
++		while ( iV.hasMoreElements() )
++		{
++		    const math::Vector3&amp; vertex = iV.getNext();
++		    scaledVertices.push_back( vertex * rParentTransform.scale_ );
++		}
++
++		TriangleMeshDesc dataDesc( vertices, indices );
++
++		shapeDesc = new IShape::TriMeshDesc( dataDesc, &quot;&quot;,
++			geomTransform.position_, geomTransform.rotation_ );
++	    }
++	    else if ( nodeName == &quot;ext&quot; )
++	    {
++		readExtension( *it, name, rParentTransform );
++	    }
++
++	    if ( shapeDesc != NULL )
++	    {
++		//TODO fill in all other description params!
++		// parent name, etc
++		GeomDesc geomDesc;
++		geomDesc.name_ = name;
++		geomDesc.parentName_ = parent;
++		geomDesc.shape_.reset( shapeDesc );
++
++		sigGeom_( geomDesc );
++
++		// read material after geom definition was found.
++		// TODO is this a right place to read material?
++		// 
++		readMaterialExt( *it, name );
++	    }
++	}
++
++	YAKE_LOG( &quot;XODE: Leaving readGeom()&quot; );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readBox( const NodeSharedPtr pNode, real&amp; sizeX, real&amp; sizeY, real&amp; sizeZ )
++    {
++	sizeX = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;sizex&quot; ) );
++	sizeY = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;sizey&quot; ) );
++	sizeZ = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;sizez&quot; ) );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readCappedCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length )
++    {
++	radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
++	length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readCone( const NodeSharedPtr pNode, real&amp; radius, real&amp; length )
++    {
++	radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
++	length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readCylinder( const NodeSharedPtr pNode, real&amp; radius, real&amp; length )
++    {
++	radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
++	length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readPlane( const NodeSharedPtr pNode, real&amp; a, real&amp; b, real&amp; c, real&amp; d )
++    {
++	a = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;a&quot; ) );
++	b = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;b&quot; ) );
++	c = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;c&quot; ) );
++	d = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;d&quot; ) );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readRay( const NodeSharedPtr pNode, real&amp; length )
++    {
++	length = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;length&quot; ) );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readSphere( const NodeSharedPtr pNode, real&amp; radius )
++    {
++	radius = StringUtil::parseReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readTrimesh( const NodeSharedPtr pMeshNode,
++	    TriangleMeshDesc::VertexVector&amp; rVertices,
++	    TriangleMeshDesc::IndexVector&amp; rIndices )
++    {
++	const dom::NodeList&amp; nodes = pMeshNode-&gt;getNodes();
++
++	for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
++	{
++	    String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    YAKE_LOG( &quot;XODE: reading &quot; + nodeName + &quot; trimesh now...&quot; );
++
++	    if ( nodeName == &quot;vertices&quot; )
++	    {
++		readVertices( *it, rVertices );
++	    }
++	    else if ( nodeName == &quot;triangles&quot; )
++	    {
++		readIndices( *it, rIndices );
++	    }
++	}
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readVertices( const NodeSharedPtr pNode, TriangleMeshDesc::VertexVector&amp; rVertices )
++    {
++	const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
++
++	for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
++	{
++	    String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    if ( nodeName == &quot;v&quot; )
++	    {
++		real x = StringUtil::parseReal( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;x&quot; ) );
++		real y = StringUtil::parseReal( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;y&quot; ) );
++		real z = StringUtil::parseReal( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;z&quot; ) );
++
++		rVertices.push_back( math::Vector3( x, y, z ) );
++	    }
++	}
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readIndices( const NodeSharedPtr pNode, TriangleMeshDesc::IndexVector&amp; rIndices )
++    {
++	const dom::NodeList&amp; nodes = pNode-&gt;getNodes();
++
++	typedef int32 IndexT;
++
++	for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
++	{
++	    String nodeName =
++		StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    if ( nodeName == &quot;t&quot; )
++	    {
++		IndexT ia = StringUtil::parseInt( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;ia&quot; ) );
++		IndexT ib = StringUtil::parseInt( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;ib&quot; ) );
++		IndexT ic = StringUtil::parseInt( (*it)-&gt;getAttributeValueAs&lt; String &gt;( &quot;ic&quot; ) );
++
++		rIndices.push_back( ia );
++		rIndices.push_back( ib );
++		rIndices.push_back( ic );
++	    }
++	}
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readJoint( const NodeSharedPtr pJointNode,
++	    const String&amp; parent,
++	    const Transform&amp; rParentTransform )
++    {
++	JointDesc desc;
++	desc.parentName_ = parent;
++	desc.transform_ = rParentTransform;
++
++	// reading joint... creating description.
++
++	const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
++	const String name = pJointNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
++
++	desc.name_ = name;
++
++	YAKE_LOG( &quot;XODE: reading joint '&quot; + name + &quot;' ...&quot; );
++
++	// Looking for link1
++	NodeHunter link1Hunter( &quot;link1&quot; );
++	NodeListIter iLink1 =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), link1Hunter );
++
++	String body1Name;
++	// &lt;link1 .. can be omitted. Parent is then considered 
++	// to be the first body.
++	// See .xode description for explanation.
++	if ( iLink1 == nodes.end() )
++	    body1Name = parent;
++	else
++	    body1Name = (*iLink1)-&gt;getAttributeValueAs&lt;String&gt;( &quot;body&quot; );
++
++	desc.body1_ = body1Name;
++
++	// Looking for link2
++	NodeHunter linkHunter( &quot;link2&quot; );
++	NodeListIter iLink =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), linkHunter );
++
++	YAKE_ASSERT( iLink != nodes.end() ).error( &quot;2nd body name is not present in joint definition!&quot; );
++
++	String body2Name = (*iLink)-&gt;getAttributeValueAs&lt;String&gt;( &quot;body&quot; );
++
++	desc.body2_ = body2Name;
++
++	YAKE_LOG( &quot;XODE: the joint connects two actors:&quot; );
++	YAKE_LOG( &quot;XODE: 1:&quot; + body1Name );
++	YAKE_LOG( &quot;XODE: 2:&quot; + body2Name );
++
++	// Looking for transform
++	NodeHunter hunter( &quot;transform&quot; );
++	NodeListIter iTrans =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), hunter );
++
++	Transform jointTransform;
++	if ( iTrans != nodes.end() )
++	{
++	    YAKE_LOG( &quot;XODE: joint has transform &quot; );
++
++	    readTransform( *iTrans, jointTransform );
++	}
++
++	if ( !rParentTransform.isIdentity() )
++	{
++	    jointTransform = jointTransform.getDerivedTransform( rParentTransform );
++	}
++
++	for ( NodeListIter it = nodes.begin(); it != nodes.end(); ++it )
++	{
++	    String nodeName = StringUtil::toLowerCase( (*it)-&gt;getName() );
++
++	    IJoint::DescBase* jointDesc = NULL;
++
++	    YAKE_LOG( &quot;XODE: reading &quot; + nodeName + &quot; now...&quot; );
++
++	    if ( nodeName == &quot;ball&quot; )
++	    {
++		jointDesc = readBall( *it, jointTransform );
++	    }
++	    else if ( nodeName == &quot;fixed&quot; )
++	    {
++		jointDesc = readFixed( *it, jointTransform );
++	    }
++	    else if ( nodeName == &quot;hinge&quot; )
++	    {
++		jointDesc = readHinge( *it, jointTransform );
++	    }
++	    else if ( nodeName == &quot;hinge2&quot; )
++	    {
++		jointDesc = readHinge2( *it, jointTransform );
++	    }
++	    else if ( nodeName == &quot;slider&quot; )
++	    {
++		jointDesc = readSlider( *it, jointTransform );
++	    }
++	    else if ( nodeName == &quot;universal&quot; )
++	    {
++		jointDesc = readUniversal( *it, jointTransform );
++	    }
++	    else if ( nodeName == &quot;amotor&quot; )
++	    {
++		YAKE_ASSERT( false ).error( &quot;amotor joint type is not supported!&quot; );
++	    }
++
++	    if ( jointDesc != NULL )
++	    {
++		desc.joint_.reset( jointDesc );
++
++		sigJoint_( desc );
++	    }
++	}
++
++    }
++
++    //------------------------------------------------------
++    IJoint::DescBase* XODEParser::readBall( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform )
++    {
++	YAKE_LOG( &quot;XODE: reading ball joint description...&quot; );
++
++	const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
++
++	typedef dom::NodeList::const_iterator NodeListIter;
++
++	// Looking for anchor
++	NodeHunter anchorHunter( &quot;anchor&quot; );
++	NodeListIter iAnchor =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
++
++	YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for ball joint!&quot; );
++
++	math::Vector3 anchor;
++
++	readAnchor( *iAnchor, anchor, rJointTransform );
++
++	IJoint::DescBase* desc = new IJoint::DescBall( NULL, NULL, anchor );
++
++	YAKE_LOG( &quot;XODE: Finished processing ball joint description.&quot; );
++
++	return desc;
++    }
++
++    //------------------------------------------------------
++    IJoint::DescBase* XODEParser::readFixed( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform )
++    {
++	YAKE_LOG( &quot;Reading fixed joint description...&quot; );
++
++	IJoint::DescBase* desc = new IJoint::DescFixed( NULL, NULL );
++
++	YAKE_LOG( &quot;Finished processing fixed joint description.&quot; );
++
++	return desc;
++    }
++
++    //------------------------------------------------------
++    IJoint::DescBase* XODEParser::readHinge( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform )
++    {
++	YAKE_LOG( &quot;Reading hinge joint description...&quot; );
++
++	const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
++
++	// Looking for anchor
++	NodeHunter anchorHunter( &quot;anchor&quot; );
++	NodeListIter iAnchor =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
++
++	YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for hinge joint!&quot; );
++
++	// Looking for axis
++	NodeHunter axisHunter( &quot;axis&quot; );
++	NodeListIter iAxis =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
++
++	YAKE_ASSERT( iAxis != nodes.end() ).error( &quot;Axis was not defined for hinge joint!&quot; );
++
++	math::Vector3 anchor;
++	math::Vector3 axis;
++
++	readAnchor( *iAnchor, anchor, rJointTransform );
++	readAxis( *iAxis, axis, rJointTransform );
++
++	IJoint::DescBase* desc = new IJoint::DescHinge( NULL, NULL, axis, anchor );
++
++	YAKE_LOG( &quot;Finished processing hinge joint description.&quot; );
++
++	return desc;
++    }
++
++    //------------------------------------------------------
++    IJoint::DescBase* XODEParser::readHinge2( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform )
++    {
++	YAKE_LOG( &quot;Reading hinge2 joint description...&quot; );
++
++	const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
++
++	// Looking for anchor
++	NodeHunter anchorHunter( &quot;anchor&quot; );
++	NodeListIter iAnchor =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
++
++	YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for hinge2 joint!&quot; );
++
++	// Looking for axis
++	NodeHunter axisHunter( &quot;axis&quot; );
++	NodeListIter iAxis0 =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
++
++	YAKE_ASSERT( iAxis0 != nodes.end() ).error( &quot;Axis0 was not defined for hinge2 joint!&quot; );
++
++	NodeListIter iAxis1 =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( iAxis0 + 1, nodes.end(), axisHunter );
++
++	YAKE_ASSERT( iAxis1 != nodes.end() ).error( &quot;Axis1 was not defined for hinge2 joint!&quot; );
++
++	math::Vector3 anchor;
++	math::Vector3 axis0;
++	math::Vector3 axis1;
++
++	readAnchor( *iAnchor, anchor, rJointTransform );
++	readAxis( *iAxis0, axis0, rJointTransform );
++	readAxis( *iAxis1, axis1, rJointTransform );
++
++	IJoint::DescBase* desc = new IJoint::DescHinge2( NULL, NULL, axis0, axis1, anchor );
++
++	YAKE_LOG( &quot;XODE: finished processing hinge2 joint description.&quot; );
++
++	return desc;
++    }
++
++    //------------------------------------------------------
++    IJoint::DescBase* XODEParser::readSlider( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform )
++    {
++	YAKE_LOG( &quot;XODE: reading slider joint description...&quot; );
++
++	const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
++
++	// Looking for axis
++	NodeHunter axisHunter( &quot;axis&quot; );
++	NodeListIter iAxis =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
++
++	YAKE_ASSERT( iAxis != nodes.end() ).error( &quot;Axis was not defined for slider joint!&quot; );
++
++	math::Vector3 axis;
++
++	readAxis( *iAxis, axis, rJointTransform );
++
++	IJoint::DescBase* desc = new IJoint::DescSlider( NULL, NULL, axis );
++
++	YAKE_LOG( &quot;XODE: finished processing slider joint description.&quot; );
++
++	return desc;
++    }
++
++    //------------------------------------------------------
++    IJoint::DescBase* XODEParser::readUniversal( const NodeSharedPtr pJointNode, const Transform&amp; rJointTransform )
++    {
++	YAKE_LOG( &quot;XODE: reading universal joint description...&quot; );
++
++	const dom::NodeList&amp; nodes = pJointNode-&gt;getNodes();
++
++	// Looking for anchor
++	NodeHunter anchorHunter( &quot;anchor&quot; );
++	NodeListIter iAnchor =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), anchorHunter );
++
++	YAKE_ASSERT( iAnchor != nodes.end() ).error( &quot;Anchor was not defined for universal joint!&quot; );
++
++	// Looking for axis
++	NodeHunter axisHunter( &quot;axis&quot; );
++	NodeListIter iAxis0 =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( nodes.begin(), nodes.end(), axisHunter );
++
++	YAKE_ASSERT( iAxis0 != nodes.end() ).error( &quot;Axis0 was not defined for universal joint!&quot; );
++
++	NodeListIter iAxis1 =
++	    std::find_if&lt;NodeListIter, NodeHunter&gt;( iAxis0 + 1, nodes.end(), axisHunter );
++
++	YAKE_ASSERT( iAxis1 != nodes.end() ).error( &quot;Axis1 was not defined for universal joint!&quot; );
++
++	math::Vector3 anchor;
++	math::Vector3 axis0;
++	math::Vector3 axis1;
++
++	readAnchor( *iAnchor, anchor, rJointTransform );
++	readAxis( *iAxis0, axis0, rJointTransform );
++	readAxis( *iAxis1, axis1, rJointTransform );
++
++	IJoint::DescBase* desc = new IJoint::DescUniversal( NULL, NULL, axis0, axis1, anchor );
++
++	YAKE_LOG( &quot;XODE: finished processing universal joint description.&quot; );
++
++	return desc;
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readAnchor( const NodeSharedPtr pAnchorNode,
++	    math::Vector3&amp; rAnchor,
++	    const Transform&amp; rJointTransform )
++    {
++	YAKE_LOG( &quot;XODE: reading anchor...&quot; );
++
++	rAnchor.x = StringUtil::parseReal( pAnchorNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
++	rAnchor.y = StringUtil::parseReal( pAnchorNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
++	rAnchor.z = StringUtil::parseReal( pAnchorNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
++
++	rAnchor = rJointTransform.position_ + rJointTransform.rotation_*( rJointTransform.scale_*rAnchor );
++    }
++
++    //------------------------------------------------------
++    void XODEParser::readAxis(	const NodeSharedPtr pAxisNode,
++	    math::Vector3&amp; rAxis,
++	    const Transform&amp; rJointTransform )
++    {
++	YAKE_LOG( &quot;XODE: reading axis...&quot; );
++
++	rAxis.x = StringUtil::parseReal( pAxisNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;x&quot; ) );
++	rAxis.y = StringUtil::parseReal( pAxisNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;y&quot; ) );
++	rAxis.z = StringUtil::parseReal( pAxisNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;z&quot; ) );
++
++	/// TODO What about all other axis params?
++
++	rAxis = rJointTransform.rotation_*rAxis;
++    }
++
++} //xode
++} //parser
++} //data
++} //yake
++
+
+Modified: trunk/yake/src/yake/model/yakeComponentCreatorManager.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeComponentCreatorManager.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakeComponentCreatorManager.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -39,11 +39,11 @@
+ 	ComponentCreatorManager::~ComponentCreatorManager()
+ 	{
+ 	}
+-	ModelComponent* ComponentCreatorManager::create(const String&amp; type, const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
++	void ComponentCreatorManager::create(const String&amp; type, const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
+ 	{
+ 		YAKE_ASSERT( !type.empty() )(type)(params).debug(&quot;Invalid type!&quot;);
+ 		if (type.empty())
+-			return 0;
++			return;
+ 
+ 		ComponentCreator* theCreator = 0;
+ 		{
+@@ -60,7 +60,7 @@
+ 				}
+ 				YAKE_ASSERT( creator.get() )(type)(params).debug(&quot;Failed to create component creator! Probably it has not been registered/loaded.&quot;);
+ 				if (!creator.get())
+-					return 0;
++					return;
+ 				creators_.insert( std::make_pair(type,creator) );
+ 				theCreator = creator.get();
+ 			}
+@@ -68,10 +68,10 @@
+ 				theCreator = it-&gt;second.get();
+ 		}
+ 		YAKE_ASSERT( theCreator );
+-		ModelComponent* c = theCreator-&gt;create(ctx,params);
+-		YAKE_ASSERT( c )(type)(params).debug(&quot;Failed to create component!&quot;);
++		theCreator-&gt;create(ctx,params);
++		//YAKE_ASSERT( c )(type)(params).debug(&quot;Failed to create component!&quot;);
+ 
+-		return c;
++		//return c;
+ 	}
+ 
+ } // namespace model
+
+Added: trunk/yake/src/yake/model/yakeDotLinkLoader.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeDotLinkLoader.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakeDotLinkLoader.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -0,0 +1,176 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++#include &quot;yake/model/model_link_dotlink_loader.h&quot;
++
++namespace yake {
++namespace model {
++
++	DotLinkLoader::DotLinkLoader() : mpModel(0)
++	{
++	}
++
++	DotLinkLoader::~DotLinkLoader()
++	{
++	}
++
++	bool DotLinkLoader::load( const String &amp; rDotLinkFilename, Model &amp; rModel, CentralControllerBase&amp; centralController )
++	{
++		using namespace data::dom;
++
++		xml::XmlSerializer ser;
++		ser.parse( rDotLinkFilename, false );
++
++		const SharedPtr&lt;INode&gt; pLinksNode = ser.getDocumentNode();
++		YAKE_ASSERT( pLinksNode )( rDotLinkFilename );
++		if (!pLinksNode)
++			return false;
++
++		return load( *pLinksNode, rModel, centralController );
++	}
++
++	bool DotLinkLoader::load( const data::dom::INode &amp; rLinksNode, Model &amp; rModel, CentralControllerBase&amp; centralController )
++	{
++		using namespace data::dom;
++		using namespace base::templates;
++
++		mpModel = &rModel;
++		mpCentralController = &centralController;
++
++		// parse links
++		const NodeList nodes = rLinksNode.getNodes();
++		ConstVectorIterator&lt; NodeList &gt; itNode( nodes.begin(), nodes.end() );
++		while (itNode.hasMoreElements())
++		{
++			const SharedPtr&lt;INode&gt; &amp; pNode = itNode.getNext();
++			if (!pNode.get())
++				continue;
++			parseLink( *pNode.get() );
++		}
++
++		mpModel = 0;
++		return true;
++	}
++
++	Movable* getMovableFromModel( Model&amp; rModel, const data::dom::INode&amp; rNode )
++	{
++		// parse
++		String sourceType = StringUtil::toLowerCase(rNode.getAttributeValueAs&lt;String&gt;(&quot;type&quot;));
++		String sourceModelName = (rNode.getAttributeValueAs&lt;String&gt;(&quot;submodel&quot;));
++		String sourceMovableType = StringUtil::toLowerCase(rNode.getAttributeValueAs&lt;String&gt;(&quot;elementtype&quot;));
++		String sourceMovableName = (rNode.getAttributeValueAs&lt;String&gt;(&quot;element&quot;));
++		
++		YAKE_LOG( &quot;Searching movable: &quot; ); 
++		YAKE_LOG( &quot;    type: &quot; + sourceType );
++		YAKE_LOG( &quot;    submodel: &quot; + sourceModelName );
++		YAKE_LOG( &quot;    movable type: &quot; + sourceMovableType );
++		YAKE_LOG( &quot;    movable name: &quot; + sourceMovableName );
++		
++		// retrieve source movable
++		Movable* pMovable = 0;
++		if ( sourceType == &quot;graphical&quot; )
++		{
++			YAKE_ASSERT( sourceMovableType == &quot;graphics.scenenode&quot; );
++			YAKE_LOG( &quot;Searching for graphical named '&quot; + sourceModelName + &quot;'&quot; );
++
++			Graphical* pG = dynamic_cast&lt;Graphical*&gt;(rModel.getComponentByTag( sourceModelName ));
++			YAKE_ASSERT( pG )( sourceModelName );
++
++			pMovable = pG-&gt;getSceneNode( sourceMovableName );
++		}
++		else if ( sourceType == &quot;physical&quot; )
++		{
++			YAKE_LOG( &quot;Searching for physical named '&quot; + sourceModelName + &quot;'&quot; );
++
++			Physical* pP = dynamic_cast&lt;Physical*&gt;(rModel.getComponentByTag( sourceModelName ));
++			YAKE_ASSERT( pP )( sourceModelName );
++
++			if (sourceMovableType == &quot;physics.actor&quot; || sourceMovableType == &quot;physics.complex&quot;)
++				pMovable = pP-&gt;getActor( sourceMovableName );
++		}
++
++		YAKE_ASSERT( pMovable != NULL ).error( &quot;Couldn't find movable '&quot; + sourceMovableName + &quot;'. Bailing out.&quot; );
++		return pMovable;
++	}
++
++	void DotLinkLoader::parseLink( const data::dom::INode &amp; rLinkNode )
++	{
++		YAKE_ASSERT( mpModel );
++		if (!mpModel)
++			return;
++
++		YAKE_ASSERT( mpCentralController );
++		if (!mpCentralController)
++			return;
++
++		using namespace data::dom;
++		using namespace yake::templates;
++
++		const String linkType = StringUtil::toLowerCase( rLinkNode.getAttributeValueAs&lt;String&gt;(&quot;type&quot;) );
++		//const String linkName = varGet&lt;String&gt;( rLinkNode.getId(&quot;id&quot;) );
++		const String linkName = &quot;[not_set]&quot;;
++
++		std::cout &lt;&lt; &quot;Creating link of type '&quot;&lt;&lt; linkType &lt;&lt; &quot;'&quot; &lt;&lt; std::endl;
++
++		// source
++		const SharedPtr&lt;INode&gt; pSourceNode = rLinkNode.getNodeByName(&quot;link_source&quot;);
++		YAKE_ASSERT( pSourceNode )( linkName );
++		if (!pSourceNode)
++			return;
++	
++		std::cout &lt;&lt; &quot;Found source for link... Searching for targets &quot; &lt;&lt; std::endl;
++
++		// targets
++		const NodeList targets = rLinkNode.getNodes();
++		ConstVectorIterator&lt; NodeList &gt; itTargetNode( targets.begin(), targets.end() );
++		while (itTargetNode.hasMoreElements())
++		{
++			const SharedPtr&lt;INode&gt; &amp; pTargetNode = itTargetNode.getNext();
++			YAKE_ASSERT( pTargetNode.get() )( linkName );
++			if (!pTargetNode.get())
++				continue;
++
++			const String nodeName = StringUtil::toLowerCase( pTargetNode-&gt;getName() );
++			if (nodeName != &quot;link_target&quot;)
++				continue;
++	
++			Movable* from = getMovableFromModel(*mpModel,*pSourceNode);
++			Movable* to = getMovableFromModel(*mpModel,*pTargetNode);
++
++			std::cout &lt;&lt; &quot;Found source and target. Adding controller to model...&quot; &lt;&lt; std::endl;
++
++			ModelMovableLink* link = mpModel-&gt;createLink( from, to, linkType );
++			YAKE_ASSERT( link );
++			
++			mpCentralController-&gt;subscribeToGraphicsUpdate(boost::bind(&amp;ModelMovableLink::update,link,_1,_2));
++		}
++	}
++
++} // namespace model
++} // namespace yake
+
+Modified: trunk/yake/src/yake/model/yakeGraphical.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeGraphical.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakeGraphical.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -34,6 +34,11 @@
+ 	Graphical::Graphical()
+ 	{
+ 	}
++	/*
++	Graphical::Graphical(Model&amp; owner) : ModelComponent(owner)
++	{
++	}
++	*/
+ 	Graphical::~Graphical()
+ 	{
+ 		/*
+
+Modified: trunk/yake/src/yake/model/yakeGraphicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakeGraphicalCreator.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -34,26 +34,26 @@
+ 
+ 	YAKE_REGISTER_CONCRETE(GraphicalFromDotSceneCreator)
+ 
+-	ModelComponent* GraphicalFromDotSceneCreator::create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
++	void GraphicalFromDotSceneCreator::create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
+ 	{
+ 		// Verify validity of creation context
+ 		graphics::IWorld* pGWorld = ctx.gworld_;
+ 		YAKE_ASSERT( pGWorld );
+ 		if (!pGWorld)
+-			return 0;
++			return;
+ 
+ 		// Extract parameters
+ 
+ 		StringMap::const_iterator itParam = params.find(&quot;file&quot;);
+ 		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'file'.&quot;);
+ 		if (itParam == params.end())
+-			return 0;
++			return;
+ 		const String fn = itParam-&gt;second;
+ 
+ 		itParam = params.find(&quot;name&quot;);
+ 		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
+ 		if (itParam == params.end())
+-			return 0;
++			return;
+ 		const String name = itParam-&gt;second;
+ 
+ 		// Read dotscene file into DOM
+@@ -66,9 +66,11 @@
+ 
+ 		yake::data::parser::dotscene::DotSceneParserV1 dsp;
+ 
+-		Graphical* pGraphical = new Graphical();
++		Graphical* pGraphical = new Graphical(/**ctx.model_*/);
+ 
+-		DotSceneListener dotSceneListener( *pGraphical, name.empty() ? _T(&quot;&quot;) : (name + _T(&quot;/&quot;)) );
++		const String namePrefix = _T(&quot;model:&quot;) + ctx.model_-&gt;getName() + _T(&quot;/&quot;)  // model
++									+ (name.empty() ? _T(&quot;&quot;) : (name + _T(&quot;/&quot;))); // component
++		DotSceneListener dotSceneListener( *pGraphical, namePrefix );
+ 		dotSceneListener.reset( pGWorld );
+ 
+ 		dsp.subscribeToNodeSignal( Bind1( &amp;DotSceneListener::processSceneNode, &amp;dotSceneListener ) );
+@@ -81,7 +83,7 @@
+ 			YAKE_SAFE_DELETE( pGraphical );
+ 		}
+ 
+-		return pGraphical;
++		ctx.model_-&gt;addComponent( pGraphical, name );
+ 	}
+ 
+ } // namespace model
+
+Added: trunk/yake/src/yake/model/yakeLinkCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeLinkCreator.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakeLinkCreator.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -0,0 +1,63 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++#include &quot;yake/model/model_link_dotlink_loader.h&quot;
++
++namespace yake {
++namespace model {
++
++	YAKE_REGISTER_CONCRETE(LinkFromDotLinkCreator)
++
++	void LinkFromDotLinkCreator::create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
++	{
++		// Extract parameters
++
++		StringMap::const_iterator itParam = params.find(&quot;file&quot;);
++		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'file'.&quot;);
++		if (itParam == params.end())
++			return;
++		const String fn = itParam-&gt;second;
++
++		// Read XML file into DOM
++
++		yake::data::dom::xml::XmlSerializer ser;
++		ser.parse( fn, false );
++		YAKE_ASSERT( ser.getDocumentNode() )( fn ).error(&quot;Could not parse XML document!&quot;);
++
++		// Parse DOM and create graphical objects
++
++		DotLinkLoader dotLinkLoader;
++		if (!dotLinkLoader.load( *ser.getDocumentNode(), *ctx.model_, *ctx.centralController_ ))
++		{
++			//@todo Report error!
++		}
++	}
++
++} // namespace model
++} // namespace yake
+
+Modified: trunk/yake/src/yake/model/yakeModel.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModel.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakeModel.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -49,6 +49,20 @@
+ 	{
+ 		return components_.getComponentByTag(tag);
+ 	}
++	ModelMovableLink* Model::createLink(yake::Movable* from, yake::Movable* to, const yake::String &amp;linkType)
++	{
++		//SharedPtr&lt;ModelMovableLink&gt; link = create&lt;ModelMovableLink&gt;(linkType); //@todo USE FACTORY!
++		ModelMovableLink* link = new ModelMovableDirectLink();
++		link-&gt;setSource( from );
++		link-&gt;subscribeToPositionChanged(to);
++		this-&gt;addLink( link );
++		return link;
++	}
++	void Model::addLink(yake::model::ModelLink* link)
++	{
++		YAKE_ASSERT( link );
++		links_.addModelLink( link );
++	}
+ 	/*
+ 	Model* Model::clone() const
+ 	{
+
+Added: trunk/yake/src/yake/model/yakeModelLink.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelLink.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakeModelLink.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -0,0 +1,35 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++	YAKE_IMPLEMENT_REGISTRY(ModelLink)
++} // namespace model
++} // namespace yake
+
+Modified: trunk/yake/src/yake/model/yakeModelManager.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelManager.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakeModelManager.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -50,15 +50,28 @@
+ 			}
+ 		}
+ 	} // namespace detail
++	void ModelManager::clear()
++	{
++		models_.clear();
++	}
+ 	/// graphics/dotScene:name=gfx;file=bla.scene|physics/dotXODE...
+-	Model* ModelManager::createModel(const String&amp; def)
++	Model* ModelManager::createModel(const String&amp; modelName, const String&amp; def)
+ 	{
++		YAKE_ASSERT( !modelName.empty() );
++		YAKE_ASSERT( models_.find(modelName) == models_.end() )(modelName).debug(&quot;Model with that name already exists.&quot;);
++		if (models_.find(modelName) != models_.end())
++			return 0;
++
+ 		Vector&lt;String&gt; defComponents = split&lt;String&gt;(def, &quot;|&quot;);
+-		YAKE_ASSERT(!defComponents.empty());
++		YAKE_ASSERT(!defComponents.empty())(modelName)(def);
+ 		if (defComponents.empty())
+ 			return 0;
++
+ 		Model* m = new Model();
+-		models_.push_back( SharedPtr&lt;Model&gt;(m) );
++		m-&gt;setName( modelName );
++		models_.insert( std::make_pair(modelName,SharedPtr&lt;Model&gt;(m)) );
++		ctx_.model_ = m;
++
+ 		ConstVectorIterator&lt;Vector&lt;String&gt; &gt; itDef( defComponents );
+ 		while (itDef.hasMoreElements())
+ 		{
+@@ -66,23 +79,37 @@
+ 
+ 			// Split e.g. &quot;gfx=graphics/dotScene:file=blah.scene&quot; into &quot;gfx&quot; and &quot;file=graphics/dotScene:blah.scene&quot;
+ 			Vector&lt;String&gt; defTypeRest = split&lt;String&gt;( defC, &quot;:&quot; );
+-			YAKE_ASSERT( defTypeRest.size() == 2 );
++			YAKE_ASSERT( defTypeRest.size() == 2 )(modelName)(def);
+ 
+-			const String type = defTypeRest.front(); // e.g. &quot;graphics/dotScene&quot;
++			const String type = defTypeRest.front(); // e.g. &quot;graphics/dotScene&quot; or &quot;physics/XODE&quot; etc
+ 
++			// Extract parameters.
+ 			StringMap params;
+ 			detail::extractParams( defTypeRest.back(), params );
+ 
++			// Extract parameter 'name'.
+ 			StringMap::const_iterator itParam = params.find(&quot;name&quot;);
+-			YAKE_ASSERT( itParam != params.end() ).debug(&quot;No property 'name' for component!&quot;);
+-			if (itParam == params.end())
+-				continue;
+-			const String name = itParam-&gt;second;
++			const String name = (itParam == params.end()) ? _T(&quot;&quot;) : itParam-&gt;second;
+ 
+-			YAKE_ASSERT( m-&gt;getComponentByTag(name) == 0 ).debug(&quot;Components with duplicate tags are not allowed within the same model!&quot;);
++			// Create component.
+ 
+-			m-&gt;addComponent( creatorMgr_.create( type, ctx_, params ), name );
++#ifdef YAKE_DEBUG
++			if (!name.empty())
++			{
++				YAKE_ASSERT( m-&gt;getComponentByTag(name) == 0 )(name)(type).debug(&quot;Components with duplicate tags are not allowed within the same model!&quot;);
++			}
++#endif
++
++			creatorMgr_.create( type, ctx_, params );
++
++#ifdef YAKE_DEBUG
++			if (!name.empty())
++			{
++				YAKE_ASSERT( m-&gt;getComponentByTag(name) != 0 )(name)(type).debug(&quot;Failed to create component!&quot;);
++			}
++#endif
+ 		}
++		ctx_.model_ = 0;
+ 		return m;
+ 	}
+ 	void ModelManager::setCreationContext_GraphicalWorld(graphics::IWorld* w)
+@@ -93,6 +120,10 @@
+ 	{
+ 		ctx_.pworld_ = w;
+ 	}
++	void ModelManager::setCreationContext_CentralController(CentralControllerBase* c)
++	{
++		ctx_.centralController_ = c;
++	}
+ 
+ } // namespace model
+ } // namespace yake
+
+Added: trunk/yake/src/yake/model/yakeModelMovableLink.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeModelMovableLink.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakeModelMovableLink.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -0,0 +1,112 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++
++namespace yake {
++namespace model {
++	ModelMovableLink::ModelMovableLink()
++	{
++	}
++	void ModelMovableLink::setSource(Movable* src)
++	{
++		mSource = src;
++	}
++	Movable* ModelMovableLink::getSource() const
++	{
++		return mSource;
++	}
++	SignalConnection ModelMovableLink::subscribeToPositionChanged( Movable* pMovable )
++	{	
++		const Vector3 srcPos = getSource()-&gt;getPosition();
++		pMovable-&gt;setPosition( srcPos );
++
++		return mPositionSignal.connect( Bind1( &amp;Movable::setPosition, pMovable ) );
++	}
++
++	SignalConnection ModelMovableLink::subscribeToOrientationChanged( Movable* pMovable )
++	{
++		const Quaternion srcOrientation = getSource()-&gt;getOrientation();
++		pMovable-&gt;setOrientation( srcOrientation );
++
++		return mOrientationSignal.connect( Bind1( &amp;Movable::setOrientation, pMovable ) );
++	}
++
++	YAKE_REGISTER_CONCRETE(ModelMovableDirectLink)
++	ModelMovableDirectLink::ModelMovableDirectLink()
++	{
++	}
++	void ModelMovableDirectLink::update( const uint32, const real timeElapsed )
++	{
++		const Movable* pSource = getSource();
++		YAKE_ASSERT( pSource ).debug(&quot;no update source -&gt; no updates&quot;);
++		if (!pSource)
++			return;
++		Vector3 position = pSource-&gt;getPosition();
++		if (mLastPosition != position)
++		{
++			mPositionSignal( position );
++			mLastPosition = position;
++		}
++		Quaternion orientation = pSource-&gt;getOrientation();
++		if (mLastOrientation != orientation)
++		{
++			mOrientationSignal( orientation );
++			mLastOrientation = orientation;
++		}
++	}
++
++	YAKE_REGISTER_CONCRETE( ModelMovableWorldLink );
++	ModelMovableWorldLink::ModelMovableWorldLink()
++	{
++	}
++	void ModelMovableWorldLink::update( const uint32, real timeElapsed )
++	{
++		const Movable* pSource = getSource();
++
++		YAKE_ASSERT( pSource ).error(&quot;no update source -&gt; no updates&quot;);
++
++		if ( pSource == NULL )
++			return;
++
++		Vector3 position = pSource-&gt;getDerivedPosition();
++		if (mLastPosition != position)
++		{
++			mPositionSignal( position );
++			mLastPosition = position;
++		}
++		Quaternion orientation = pSource-&gt;getDerivedOrientation();
++		if (mLastOrientation != orientation)
++		{
++			mOrientationSignal( orientation );
++			mLastOrientation = orientation;
++		}
++	}
++
++} // namespace model
++} // namespace yake
+
+Modified: trunk/yake/src/yake/model/yakePhysical.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakePhysical.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakePhysical.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -34,6 +34,11 @@
+ 	Physical::Physical()
+ 	{
+ 	}
++	/*
++	Physical::Physical(Model&amp; owner) : ModelComponent(owner)
++	{
++	}
++	*/
+ 	Physical::~Physical()
+ 	{
+ 		for (TagActorMap::iterator itA = actors_.begin(); itA != actors_.end(); ++itA)
+
+Added: trunk/yake/src/yake/model/yakePhysicalCreator.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakePhysicalCreator.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakePhysicalCreator.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -0,0 +1,87 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright (c) The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++#include &quot;yake/model/model_physical_xode_loader.h&quot;
++
++namespace yake {
++namespace model {
++
++	YAKE_REGISTER_CONCRETE(PhysicalFromXODECreator)
++
++	void PhysicalFromXODECreator::create(const ComponentCreationContext&amp; ctx, const StringMap&amp; params)
++	{
++		// Verify validity of creation context
++		physics::IWorld* pPWorld = ctx.pworld_;
++		YAKE_ASSERT( pPWorld );
++		if (!pPWorld)
++			return;
++
++		// Extract parameters
++
++		StringMap::const_iterator itParam = params.find(&quot;file&quot;);
++		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'file'.&quot;);
++		if (itParam == params.end())
++			return;
++		const String fn = itParam-&gt;second;
++
++		itParam = params.find(&quot;name&quot;);
++		YAKE_ASSERT(itParam != params.end()).debug(&quot;Missing parameter 'name'.&quot;);
++		if (itParam == params.end())
++			return;
++		const String name = itParam-&gt;second;
++
++		// Read XML file into DOM
++
++		yake::data::dom::xml::XmlSerializer ser;
++		ser.parse( fn, false );
++		YAKE_ASSERT( ser.getDocumentNode() )( fn ).error(&quot;Could not parse dotScene document!&quot;);
++
++		// Parse DOM and create graphical objects
++
++		yake::data::parser::xode::XODEParserV1 xodeparser;
++
++		Physical* pPhysical = new Physical(/**ctx.model_*/);
++
++		const String namePrefix = _T(&quot;model:&quot;) + ctx.model_-&gt;getName() + _T(&quot;/&quot;)  // model
++									+ (name.empty() ? _T(&quot;&quot;) : (name + _T(&quot;/&quot;))); // component
++		XODEListener xodeListener( *pPhysical, pPWorld, namePrefix );
++
++		xodeparser.subscribeToBodySignal( Bind1( &amp;XODEListener::processBody, &amp;xodeListener ) );
++		xodeparser.subscribeToGeomSignal( Bind1( &amp;XODEListener::processGeom, &amp;xodeListener ) );
++
++		if (!xodeparser.load( ser.getDocumentNode() ))
++		{
++			YAKE_SAFE_DELETE( pPhysical );
++		}
++
++		ctx.model_-&gt;addComponent( pPhysical, name );
++	}
++
++} // namespace model
++} // namespace yake
+
+Added: trunk/yake/src/yake/model/yakeXODEListener.cpp
+===================================================================
+--- trunk/yake/src/yake/model/yakeXODEListener.cpp	2006-06-12 21:26:14 UTC (rev 1333)
++++ trunk/yake/src/yake/model/yakeXODEListener.cpp	2006-06-12 21:27:15 UTC (rev 1334)
+@@ -0,0 +1,214 @@
++/*
++	 ------------------------------------------------------------------------------------
++	 This file is part of YAKE
++	 Copyright	2004 The YAKE Team
++	 For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++	 ------------------------------------------------------------------------------------
++	 This program is free software; you can redistribute it and/or modify it under
++	 the terms of the GNU Lesser General Public License as published by the Free Software
++	 Foundation; either version 2 of the License, or (at your option) any later
++	 version.
++ 
++	 This program is distributed in the hope that it will be useful, but WITHOUT
++	 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++	 FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++ 
++	 You should have received a copy of the GNU Lesser General Public License along with
++	 this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++	 Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++	 <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++	 ------------------------------------------------------------------------------------
++	 If you are interested in another license model contact the Yake Team via
++	 E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++	 For more information see the LICENSE file in the root directory of the
++	 source code distribution.
++	 ------------------------------------------------------------------------------------
++*/
++#include &quot;yake/model/pch.h&quot;
++#include &quot;yake/model/prerequisites.h&quot;
++#include &quot;yake/model/model.h&quot;
++#include &quot;yake/model/model_physical_xode_loader.h&quot;
++
++namespace yake {
++namespace model {
++
++	//-----------------------------------------------------
++	void XODEListener::processBody( const parser_t::BodyDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;XODE listener: processing body description...&quot; );
++
++		// create actor
++		physics::IActorPtr pDynActor = physicalWorld_-&gt;createActor( physics::ACTOR_DYNAMIC );
++
++		// we need to zero out the mass.. @todo fix comment
++		pDynActor-&gt;getBodyPtr()-&gt;setMass( 1. );
++
++		YAKE_ASSERT( pDynActor != NULL ).error( &quot;Failed to create actor!&quot; );
++
++		// set transform. TODO what about scale?
++		pDynActor-&gt;setPosition( desc.transform_.position_ );
++		pDynActor-&gt;setOrientation( desc.transform_.rotation_ );
++
++		// adding to collection
++		ActorInfo info;
++		info.actor_ = pDynActor;
++		info.parentName_ = desc.parentName_;
++
++		actors_[ desc.name_ ] = info;
++
++		// filling owner model
++		owner_.addActor( pDynActor, desc.name_ );
++
++		YAKE_LOG( &quot;XODE listener: Success.&quot; );
++	}
++
++	//-----------------------------------------------------
++	void XODEListener::processGeom( const parser_t::GeomDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;XODE listener: processing geom description...&quot; );
++
++		physics::IActorPtr parentActor = NULL;
++
++		// search for parent in actors
++		ActorMap::iterator actor = actors_.find( desc.parentName_ );
++
++		if ( actor != actors_.end() )
++		{
++			// parent actor found!
++			parentActor = actor-&gt;second.actor_;
++		}
++		else
++		{
++			YAKE_LOG( &quot;XODE listener: geom parent not found... creating static actor. &quot; );
++		    
++			// create static actor
++			parentActor = physicalWorld_-&gt;createActor( physics::ACTOR_STATIC );
++
++			// add to collection
++			ActorInfo info;
++			info.actor_ = parentActor;
++			info.parentName_ = &quot;&quot;; // FIXME what should be here? a space perhaps?
++
++			actors_[ desc.parentName_ ] = info; 
++		}
++
++		physics::IShape* shape = parentActor-&gt;createShape( *desc.shape_ );
++
++		GeomInfo info;
++		info.shape_ = shape;
++		info.parentName_ = desc.parentName_;
++
++		// add to collection 
++		geoms_[ desc.name_ ] = info;
++
++		YAKE_LOG( &quot;XODE listener: Success.&quot; );
++	}
++
++	//-----------------------------------------------------
++	void XODEListener::processMaterial( const parser_t::MaterialDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;XODE listener: processing material description...&quot; );
++
++		physics::IMaterial* material = physicalWorld_-&gt;createMaterial( desc.material_, desc.name_ );
++
++		// find parent
++		GeomMap::iterator shape = geoms_.find( desc.parentName_ );
++
++		if ( shape != geoms_.end() )
++		{
++			YAKE_LOG( &quot;XODE listener: shape found! Applying material...&quot; );
++
++			// apply material to shape
++			shape-&gt;second.shape_-&gt;setMaterial( material );
++		}
++
++		MaterialInfo info;
++		info.material_ = material;
++		info.parentName_ = desc.parentName_;
++
++		// add to collection
++		materials_[ desc.name_ ] = info;
++
++		YAKE_LOG( &quot;XODE listener: Success.&quot; );
++	}
++
++	//-----------------------------------------------------
++	void XODEListener::processMass( const parser_t::MassDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;XODE listener: processing mass description...&quot; );
++
++		// search for parent in actors
++		ActorMap::iterator actor = actors_.find( desc.parentName_ );
++
++		if ( actor != actors_.end() )
++		{
++			// parent actor found!
++			physics::IBody&amp; body = actor-&gt;second.actor_-&gt;getBody();
++
++			YAKE_LOG( &quot;XODE listener: owner body found. Adding mass...&quot; );
++
++			body.addMass( *desc.mass_ );
++
++			// TODO process mass... add to collection etc.
++		}
++
++		YAKE_LOG( &quot;XODE listener: Success.&quot; );
++	}
++
++	//-----------------------------------------------------
++	void XODEListener::processJoint( const parser_t::JointDesc&amp; desc )
++	{
++		YAKE_LOG( &quot;XODE listener: processing joint description...&quot; );
++
++		// storing joint description for further processing...
++		jointDescriptions_.push_back( desc );
++
++		YAKE_LOG( &quot;XODE listener: Success.&quot; );
++	}
++
++	//-----------------------------------------------------
++	void XODEListener::postprocess()
++	{
++		// create joints here
++		YAKE_LOG( &quot;XODE listener: postprocessing...&quot; );
++
++		// TODO only implemented creation of joint connecting dynamic objects
++
++		JointDescVector::iterator end = jointDescriptions_.end();
++		for( JointDescVector::iterator i = jointDescriptions_.begin(); i != end; ++i )
++		{
++			parser_t::JointDesc&amp; desc = *i;
++
++			// search for connected actors
++
++			YAKE_LOG( &quot;XODE listener: processing &quot; + desc.name_ + &quot; ... &quot; );
++			YAKE_LOG( &quot;XODE listener: searching for actors [0]: &quot; + desc.body1_ + &quot;, [1]: &quot; + desc.body2_ );
++
++			ActorMap::iterator actor0 = actors_.find( desc.body1_ );
++			ActorMap::iterator actor1 = actors_.find( desc.body2_ );
++
++			if ( actor0 == actors_.end() || actor1 == actors_.end() )
++			{
++				YAKE_LOG( &quot;XODE listener: Failed to find actors... :( &quot; );
++				continue;
++			}
++
++			desc.joint_-&gt;actor0 = actor0-&gt;second.actor_;
++			desc.joint_-&gt;actor1 = actor1-&gt;second.actor_;
++
++			physics::IJointPtr joint = physicalWorld_-&gt;createJoint( *desc.joint_ );
++
++			JointInfo info;
++			info.joint_ = joint;
++			info.parentName_ = desc.parentName_;
++
++			// add to collection
++			joints_[ desc.name_ ] = info;
++		}
++
++		YAKE_LOG( &quot;XODE listener: finished postprocessing.&quot; );
++	}
++
++} //model
++} //yake
++
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000401.html">[Yake-svn] r1333 - trunk/yake/src/yake/samples/model/dotScene
+</A></li>
+	<LI>Next message: <A HREF="000403.html">[Yake-svn] r1335 - in trunk/yake/yake: loader model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#402">[ date ]</a>
+              <a href="thread.html#402">[ thread ]</a>
+              <a href="subject.html#402">[ subject ]</a>
+              <a href="author.html#402">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

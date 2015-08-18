@@ -1,0 +1,774 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r979 - in trunk/yake/yapp: . vehicle
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r979%20-%20in%20trunk/yake/yapp%3A%20.%20vehicle&In-Reply-To=%3C200509302148.j8ULmZbs009231%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000048.html">
+   <LINK REL="Next"  HREF="000050.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r979 - in trunk/yake/yapp: . vehicle</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r979%20-%20in%20trunk/yake/yapp%3A%20.%20vehicle&In-Reply-To=%3C200509302148.j8ULmZbs009231%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r979 - in trunk/yake/yapp: . vehicle">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:48:35 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000048.html">[Yake-svn] r978 - trunk/yake/src/yapp/samples/base/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000050.html">[Yake-svn] r980 - in trunk/yake/src/yapp: . vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#49">[ date ]</a>
+              <a href="thread.html#49">[ thread ]</a>
+              <a href="subject.html#49">[ subject ]</a>
+              <a href="author.html#49">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:48:34 +0200 (Fri, 30 Sep 2005)
+New Revision: 979
+
+Added:
+   trunk/yake/yapp/vehicle/
+   trunk/yake/yapp/vehicle/yakeInterfaces.h
+   trunk/yake/yapp/vehicle/yakeNativeOde.h
+   trunk/yake/yapp/vehicle/yakePCH.h
+   trunk/yake/yapp/vehicle/yakePrerequisites.h
+   trunk/yake/yapp/vehicle/yakeVehicle.h
+Log:
+refactoring of yake::vehicle
+
+
+Added: trunk/yake/yapp/vehicle/yakeInterfaces.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeInterfaces.h	2005-09-30 21:48:00 UTC (rev 978)
++++ trunk/yake/yapp/vehicle/yakeInterfaces.h	2005-09-30 21:48:34 UTC (rev 979)
+@@ -0,0 +1,363 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_VEHICLE_INTERFACES_H
++#define YAKE_VEHICLE_INTERFACES_H
++
++#include &quot;yakePrerequisites.h&quot;
++
++namespace yake {
++namespace vehicle {
++
++	const size_t MPID_NO_PARENT = 0xffffffff;
++	struct VehicleTemplate
++	{
++		struct MountPointTpl
++		{
++			Vector3		mPosition;
++			Quaternion	mOrientation;
++			Vector3		mDirection;
++			size_t		mParentMountPointIdx;
++			bool		mUseDirection;
++			MountPointTpl(
++				const Vector3&amp; pos = Vector3::kZero,
++				const Quaternion rot = Quaternion::kIdentity,
++				size_t parentMountPoint = MPID_NO_PARENT) :
++				mPosition(pos),
++				mOrientation(rot),
++				mParentMountPointIdx(parentMountPoint),
++				mUseDirection(false)
++			{}
++			MountPointTpl(
++				const Vector3&amp; pos,
++				const Vector3&amp; dir,
++				size_t parentMountPoint = MPID_NO_PARENT) :
++				mPosition(pos),
++				mDirection(dir),
++				mParentMountPointIdx(parentMountPoint),
++				mUseDirection(true)
++			{}
++		};
++		typedef Deque&lt; MountPointTpl &gt; MountPointTplList;
++		enum GearMode
++		{
++			GM_FORWARD,
++			GM_NEUTRAL,
++			GM_REVERSE
++		};
++		struct GearTpl
++		{
++			real				ratio_;
++			GearMode			mode_;
++			GearTpl() : ratio_(1.), mode_(GM_FORWARD) {}
++		};
++		typedef Vector&lt;GearTpl&gt; GearTplList;
++		struct EngineTpl
++		{
++			virtual ~EngineTpl() {}
++		};
++		struct ThrusterTpl : public EngineTpl
++		{
++			real				minForce;
++			real				maxForce;
++			size_t				mountPtIdx;
++			ThrusterTpl(real minF = 0., real maxF = 1., size_t mtPt = 0) : minForce(minF), maxForce(maxF), mountPtIdx(mtPt) {}
++		};
++		struct CarEngineTpl : public EngineTpl
++		{
++			real				rpmMin_;
++			real				rpmMax_;
++			real				rpmRedline_;
++			real				rpmDieOff_;
++			real				rpmRise_;
++			real				minShiftingTime_;
++			GearTplList			gears_;
++			//Curve*			torqueCurve_;
++			real				differentialRatio;
++			CarEngineTpl() :
++				rpmMin_(0.),
++				rpmMax_(8000.),
++				rpmRedline_(6000.),
++				rpmDieOff_(800.),
++				rpmRise_(2000.),
++				minShiftingTime_(0.15),
++				differentialRatio(3.14)
++			{}
++		};
++
++		typedef Deque&lt;EngineTpl*&gt; EngineTplList;
++
++		typedef Deque&lt;physics::IShape::Desc*&gt; ShapeTplList;
++
++		struct ChassisTpl
++		{
++			Vector3			mPosition; // initial position
++			real			mMass;
++			ShapeTplList	mChassisShapes;
++			String			mGfxReference; // e.g. dotScene file
++			ChassisTpl() : 
++				mPosition(Vector3::kZero),
++				mMass(1.6)
++			{}
++		};
++
++		struct WheelTpl
++		{
++			Vector3			mPosition;
++			Quaternion		mOrientation;
++			uint32			mSteeringGroup;
++			real			mRadius;
++			real			mMass;
++			bool			mMassRelativeToChassis;
++			real			mSuspensionSpring;
++			real			mSuspensionDamping;
++			String			mGfxReference; // e.g. dotScene file
++			String			mGfxReferenceType; // e.g. &quot;dotscene&quot;
++			WheelTpl() :
++				mPosition(Vector3::kZero),
++				mOrientation(Quaternion::kIdentity),
++				mSteeringGroup(0),
++				mRadius(0.8),
++				mMass(0.015),
++				mMassRelativeToChassis(true),
++				mSuspensionSpring(1),
++				mSuspensionDamping(0.9)
++			{}
++		};
++
++		typedef Deque&lt; WheelTpl &gt; WheelTplList;
++
++		//
++
++		ChassisTpl		mChassis;
++		MountPointTplList	mMountPoints;
++		EngineTplList	mEngines;
++		uint32			mSteeringGroups;
++		WheelTplList	mWheels;
++
++		VehicleTemplate() : mSteeringGroups(0)
++		{}
++		~VehicleTemplate()
++		{
++			ConstVectorIterator&lt; EngineTplList &gt; itEngine( mEngines );
++			while (itEngine.hasMoreElements())
++				delete itEngine.getNext();
++			mEngines.clear();
++			ConstVectorIterator&lt; ShapeTplList &gt; itShape( mChassis.mChassisShapes );
++			while (itShape.hasMoreElements())
++				delete itShape.getNext();
++			mChassis.mChassisShapes.clear();
++		}
++	};
++
++	/** Base class for objects that can be attached to mount points (MountPoint).
++		@see MountPoint
++	*/
++	class YAKE_VEH_API Mountable
++	{
++		friend class MountPoint;
++	protected:
++		virtual ~Mountable();
++		Mountable();
++	public:
++		MountPoint* getMountPoint() const;
++	protected:
++		void onAttached( MountPoint* mountpoint );
++		void onDetached();
++	private:
++		MountPoint*	mPt;
++	};
++
++	/** Base class for mount points. Mountable objects can be attached to it.
++		@see Mountable
++	*/
++	class YAKE_VEH_API MountPoint : public Mountable, public Movable
++	{
++	public:
++		MountPoint();
++		virtual ~MountPoint();
++
++		void setParent(MountPoint*);
++		void setOverrideParentMovable(Movable*);
++
++		void addChild(MountPoint*,bool transferOwnership = true);
++		MountPoint* createChild() const;
++
++		virtual bool isSuitableFor( const Mountable* mountable ) const;
++		void attach( Mountable* mountable );
++		void detach( Mountable* mountable );
++		void setDirection( const Vector3&amp; dir );
++		Vector3 getDirection() const;
++		virtual void setOrientation( const Quaternion&amp; );
++		virtual Quaternion getOrientation() const;
++		virtual void setPosition(const Vector3&amp; rPosition );
++		virtual Vector3 getPosition() const;
++		Vector3 getDerivedPosition() const;
++		Quaternion getDerivedOrientation() const;
++		void lookAt(const Vector3&amp;);
++	private:
++		typedef Deque&lt; Mountable* &gt; MountablePtrList;
++		MountablePtrList	mMountables;
++		Quaternion			mOrientation;
++		Vector3				mPosition;
++		typedef Deque&lt; std::pair&lt;MountPoint*,bool&gt; &gt; MountPointList;
++		MountPointList		mChildren;
++		MountPoint*			mParent;
++		Movable*			mOverrideParent;
++	};
++
++	class IVehicle;
++	class YAKE_VEH_API IVehicleSystem
++	{
++		YAKE_DECLARE_REGISTRY_0(IVehicleSystem,String);
++	public:
++		virtual IVehicle* create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld) = 0;
++	};
++
++	class IEngine;
++	class IWheel;
++	class YAKE_VEH_API IVehicle
++	{
++	public:
++		virtual ~IVehicle() {}
++
++		virtual void updateSimulation( real timeElapsed ) = 0;
++
++		//virtual void addMountPoint(MountPoint*) = 0;
++		//virtual MountPoint* removeMountPoint(MountPoint*) = 0;
++
++		virtual MountPoint* getMountPoint(size_t index) const = 0;
++		virtual IEngine* getEngineInterface(size_t index) const = 0;
++		virtual IWheel* getWheelInterface(size_t index) const = 0;
++
++		virtual Vector3 getChassisPosition() const = 0;
++		virtual Quaternion getChassisOrientation() const = 0;
++		virtual Movable* getChassisMovable() const = 0;
++	};
++
++	/** Interface to a vehicle engine.
++		@remarks This is work-in-progress and may be revised at any time.
++	*/
++	class YAKE_VEH_API IEngine
++	{
++	public:
++		virtual ~IEngine() 
++		{}
++
++		virtual void updateSimulation( real timeElapsed ) = 0;
++
++		virtual void setThrottle( real throttle ) = 0;
++		virtual real getThrottle() const = 0;
++	};
++
++	/** Interface to a vehicle engine.
++		@remarks This is work-in-progress and may be revised at any time.
++	*/
++	class YAKE_VEH_API ICarEngine : public IEngine
++	{
++	public:
++		virtual ~ICarEngine() 
++		{}
++
++		//virtual void setParameter( const String &amp; name, const String &amp; value );
++		virtual void setParamMinRPM( const real rpm ) = 0;
++		virtual void setParamMaxRPM( const real rpm ) = 0;
++		virtual void setParamRedlineRPM( const real rpm ) = 0;
++
++		virtual real getRPM() const = 0;
++		virtual uint8 getGear() const = 0;
++		virtual void shiftGear( uint8 gear ) = 0;
++		virtual void shiftGearUp() = 0;
++		virtual void shiftGearDown() = 0;
++
++		/** Returns the torque for the current engine data. [Nm] */
++		virtual real getDriveTorque() const = 0;
++	};
++
++	/** A thruster is a special kind of engine. It applies force to the vehicle
++		it's attached to at a specified offset, direction etc.
++		@see MountedThruster
++		@see vehicle::IEngine
++	*/
++	class YAKE_VEH_API IThruster : public IEngine
++	{
++	protected:
++		virtual ~IThruster();
++		IThruster();
++	public:
++		/** At least the following methods are inherited from vehicle::IEngine:
++
++		virtual void updateSimulation( real timeElapsed ) = 0;
++		virtual void setThrottle( real throttle ) = 0;
++		virtual real getThrottle() const = 0;
++		*/
++		void setMinimumForce( real force );
++		real getMinimumForce() const;
++		void setMaximumForce( real force );
++		real getMaximumForce() const;
++		real getForce() const;
++	protected:
++		void setForce( real force );
++	private:
++		real	mMaxForce;
++		real	mMinForce;
++		real	mForce;
++	};
++
++	/** A thruster that can be attached to a mount point.
++		@see Thruster
++	*/
++	class YAKE_VEH_API IMountedThruster : public Mountable
++	{
++	protected:
++		IMountedThruster();
++		virtual ~IMountedThruster();
++	public:
++		void setThruster(IThruster*);
++
++		void addTarget( physics::IBody* );
++		void removeTarget( physics::IBody* );
++		void applyToTargets();
++
++	protected:
++		virtual void onApplyToTargets() = 0;
++	protected:
++		typedef Deque&lt;physics::IBody*&gt; BodyPtrList;
++		BodyPtrList		mTargets;
++		IThruster*		mThruster;
++	};
++
++	class YAKE_VEH_API IWheel : public Movable
++	{
++	public:
++		virtual ~IWheel() {}
++	};
++
++} // namespace vehicle
++} // namespace yake
++
++
++#endif
+
+Added: trunk/yake/yapp/vehicle/yakeNativeOde.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeNativeOde.h	2005-09-30 21:48:00 UTC (rev 978)
++++ trunk/yake/yapp/vehicle/yakeNativeOde.h	2005-09-30 21:48:34 UTC (rev 979)
+@@ -0,0 +1,194 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_VEHICLE_NATIVEODE_H
++#define YAKE_VEHICLE_NATIVEODE_H
++
++#include &quot;yakePrerequisites.h&quot;
++
++namespace yake {
++namespace vehicle {
++
++	class YAKE_VEH_API OdeVehicleSystem : public IVehicleSystem
++	{
++		YAKE_DECLARE_CONCRETE(OdeVehicleSystem,&quot;ode&quot;);
++	public:
++		OdeVehicleSystem();
++		virtual IVehicle* create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld);
++	};
++
++	class OdeWheel;
++	class OdeVehicle : public IVehicle
++	{
++	public:
++		OdeVehicle();
++		virtual ~OdeVehicle();
++
++		virtual void updateSimulation( real timeElapsed );
++
++		//virtual void addMountPoint(MountPoint*);
++		//virtual MountPoint* removeMountPoint(MountPoint*);
++
++		virtual MountPoint* getMountPoint(size_t index) const;
++
++		virtual IEngine* getEngineInterface(size_t index) const;
++		virtual IWheel* getWheelInterface(size_t index) const;
++
++		virtual Vector3 getChassisPosition() const;
++		virtual Quaternion getChassisOrientation() const;
++		virtual Movable* getChassisMovable() const;
++
++		void _create(const VehicleTemplate&amp;, physics::IWorld&amp; PWorld);
++
++		YAKE_MEMBERSIGNAL(private,void(real),UpdateThrusterSimulation);
++		YAKE_MEMBERSIGNAL(private,void(void),ApplyThrusterToTargets);
++	private:
++		typedef Deque&lt;IEngine*&gt; EnginePtrList;
++		EnginePtrList		mEngines; // owner of all engine objects
++
++		physics::IActorPtr	mpChassis;
++
++		typedef AssocVector&lt;uint32,Deque&lt;OdeWheel*&gt; &gt; SteeringGroupList;
++		SteeringGroupList	mSteeringGroups;
++
++		typedef Deque&lt;OdeWheel*&gt; WheelList;
++		WheelList			mWheels;
++
++		typedef Deque&lt;MountPoint*&gt; MountPointList;
++		MountPointList		mMountPoints;
++	};
++
++	class GearBox;
++	class OdeCarEngine : public ICarEngine
++	{
++	public:
++		OdeCarEngine();
++		virtual ~OdeCarEngine();
++
++		virtual void setThrottle(real throttle);
++		virtual real getThrottle() const;
++		virtual void updateSimulation( real timeElapsed );
++
++		//virtual void setParameter( const String &amp; name, const String &amp; value );
++		virtual void setParamMinRPM( const real rpm );
++		virtual void setParamMaxRPM( const real rpm );
++		virtual void setParamRedlineRPM( const real rpm );
++
++		virtual real getRPM() const;
++		virtual uint8 getGear() const;
++		virtual void shiftGear( uint8 gear );
++		virtual void shiftGearUp();
++		virtual void shiftGearDown();
++
++		/** Returns the torque for the current engine data. [Nm] */
++		virtual real getDriveTorque() const;
++
++		//---------------------------
++
++		GearBox&amp; getGearBox();
++
++		real getMinRPM() const;
++		real getMaxRPM() const;
++
++		/** Get the amount the RPM can rise [RPM/sec]. */
++		real getRPMRise() const;
++		/** Amount of RPM when decreasing when throttle is 0. [RPM/sec] */
++		real getRPMDieOff() const;
++		/** Minimum time needed to shift gears. */
++		real getMinShiftingTime() const;
++	private:
++		void updateCurrentRPM( const real timeElapsed );
++		void updateGearRatios();
++		real getMaxTorque( const real rpm );
++	private:
++		real		mCurrentRPM;
++		real		mMaxRPM;
++		real		mMinRPM;
++		real		mThrottle;
++		real		mThrottleRPMRise;
++		real		mRPMDieOff;
++		real		mGearRatio;
++		real		mInvGearRatio;
++		real		mDifferentialRatio;
++		GearBox*	mpGearBox;
++		uint8		mCurrentGear;
++		real		mDriveTorque;
++	};
++
++	class OdeWheel : public IWheel
++	{
++		OdeWheel();
++	public:
++		~OdeWheel();
++		OdeWheel(	physics::IActorPtr chassisObj,
++					const VehicleTemplate::WheelTpl&amp; tpl,
++					physics::IWorld&amp; PWorld );
++
++		virtual void setPosition(const Vector3&amp;) {}
++		virtual Vector3 getPosition() const;
++		virtual void setOrientation(const Quaternion&amp;) {}
++		virtual Quaternion getOrientation() const;
++	private:
++		physics::IJointPtr		mpJoint;
++		physics::IActorPtr		mpWheel;
++	};
++
++	class OdeMountPoint : public MountPoint
++	{
++	public:
++		OdeMountPoint() {}
++
++	private:
++		//typedef Deque&lt;IThruster*&gt; ThrusterPtrList;
++		//ThrusterPtrList		mThrusters; // references thruster engines (does NOT own them!)
++	};
++
++	class OdeThruster : public IThruster
++	{
++	public:
++		OdeThruster();
++
++		virtual void setThrottle( real throttle );
++		virtual real getThrottle() const;
++		virtual void updateSimulation( real timeElapsed );
++
++	private:
++		real	mThrottle;
++	};
++	class OdeMountedThruster : public IMountedThruster
++	{
++	public:
++		OdeMountedThruster();
++
++		virtual void onApplyToTargets();
++	private:
++	};
++
++} // namespace vehicle
++} // namespace yake
++
++
++#endif
+
+Added: trunk/yake/yapp/vehicle/yakePCH.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakePCH.h	2005-09-30 21:48:00 UTC (rev 978)
++++ trunk/yake/yapp/vehicle/yakePCH.h	2005-09-30 21:48:34 UTC (rev 979)
+@@ -0,0 +1,34 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_VEHICLE_PCH_H
++#define YAKE_VEHICLE_PCH_H
++
++#include &lt;yake/base/yake.h&gt;
++#include &lt;yapp/base/yapp.h&gt;
++#include &lt;yapp/msg/yakeMsg.h&gt;
++
++#endif
+
+Added: trunk/yake/yapp/vehicle/yakePrerequisites.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakePrerequisites.h	2005-09-30 21:48:00 UTC (rev 978)
++++ trunk/yake/yapp/vehicle/yakePrerequisites.h	2005-09-30 21:48:34 UTC (rev 979)
+@@ -0,0 +1,37 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_VEHICLE_PREREQUISITES_H
++#define YAKE_VEHICLE_PREREQUISITES_H
++
++#if defined(YAKE_VEHICLE_EXPORTS)
++#	define YAKE_VEH_API DLLEXPORT
++#else
++#	define YAKE_VEH_API DLLIMPORT
++#endif
++
++
++#endif
+
+Added: trunk/yake/yapp/vehicle/yakeVehicle.h
+===================================================================
+--- trunk/yake/yapp/vehicle/yakeVehicle.h	2005-09-30 21:48:00 UTC (rev 978)
++++ trunk/yake/yapp/vehicle/yakeVehicle.h	2005-09-30 21:48:34 UTC (rev 979)
+@@ -0,0 +1,40 @@
++/*
++   ------------------------------------------------------------------------------------
++   This file is part of YAKE
++   Copyright &#169; 2004 The YAKE Team
++   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
++   ------------------------------------------------------------------------------------
++   This program is free software; you can redistribute it and/or modify it under
++   the terms of the GNU Lesser General Public License as published by the Free Software
++   Foundation; either version 2 of the License, or (at your option) any later
++   version.
++
++   This program is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
++   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
++
++   You should have received a copy of the GNU Lesser General Public License along with
++   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
++   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
++   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
++   ------------------------------------------------------------------------------------
++   If you are interested in another license model contact the Yake Team via
++   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
++   For more information see the LICENSE file in the root directory of the
++   source code distribution.
++   ------------------------------------------------------------------------------------
++*/
++#ifndef YAKE_VEHICLE_H
++#define YAKE_VEHICLE_H
++
++#if !defined(YAKE_VEHICLE_EXPORTS)
++#	if YAKE_PLATFORM == PLATFORM_WIN32
++#		pragma	comment(lib, &quot;vehicle.lib&quot;)
++#	endif
++#endif
++
++#include &lt;yake/base/yake.h&gt;
++#include &lt;yapp/base/yapp.h&gt;
++#include &lt;yapp/vehicle/yakeInterfaces.h&gt;
++
++#endif
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000048.html">[Yake-svn] r978 - trunk/yake/src/yapp/samples/base/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000050.html">[Yake-svn] r980 - in trunk/yake/src/yapp: . vehicle
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#49">[ date ]</a>
+              <a href="thread.html#49">[ thread ]</a>
+              <a href="subject.html#49">[ subject ]</a>
+              <a href="author.html#49">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

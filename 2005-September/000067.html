@@ -1,0 +1,1881 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r953 - trunk/yake/src/yapp/model
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-September/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r953%20-%20trunk/yake/src/yapp/model&In-Reply-To=%3C200509302132.j8ULWt5a007108%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000023.html">
+   <LINK REL="Next"  HREF="000024.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r953 - trunk/yake/src/yapp/model</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r953%20-%20trunk/yake/src/yapp/model&In-Reply-To=%3C200509302132.j8ULWt5a007108%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r953 - trunk/yake/src/yapp/model">codeandroid at berlios.de
+       </A><BR>
+    <I>Fri Sep 30 23:32:55 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000023.html">[Yake-svn] r952 - trunk/yake/src/yapp/model
+</A></li>
+        <LI>Next message: <A HREF="000024.html">[Yake-svn] r954 - trunk/yake/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#67">[ date ]</a>
+              <a href="thread.html#67">[ thread ]</a>
+              <a href="subject.html#67">[ subject ]</a>
+              <a href="author.html#67">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-09-30 23:32:54 +0200 (Fri, 30 Sep 2005)
+New Revision: 953
+
+Removed:
+   trunk/yake/src/yapp/model/yakeNativeEngine.cpp
+   trunk/yake/src/yapp/model/yakeNativeVehiclePhysicalComponent.cpp
+   trunk/yake/src/yapp/model/yakeNativeWheel.cpp
+   trunk/yake/src/yapp/model/yakeVehicle.cpp
+   trunk/yake/src/yapp/model/yakeVehiclePhysicalComponent.cpp
+   trunk/yake/src/yapp/model/yakeVehicleSerializerXML.cpp
+   trunk/yake/src/yapp/model/yakeVehicleSystem.cpp
+   trunk/yake/src/yapp/model/yakeVehicleTpl.cpp
+Log:
+refactoring of yake::vehicle
+
+Deleted: trunk/yake/src/yapp/model/yakeNativeEngine.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeNativeEngine.cpp	2005-09-30 21:31:19 UTC (rev 952)
++++ trunk/yake/src/yapp/model/yakeNativeEngine.cpp	2005-09-30 21:32:54 UTC (rev 953)
+@@ -1,240 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright  2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#include &lt;yapp/base/yappPCH.h&gt;
+-#include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/model/yakeVehicleSystem.h&gt;
+-#include &lt;yapp/model/yakeEngine.h&gt;
+-#include &lt;yapp/model/yakeNativeEngine.h&gt;
+-#include &lt;yapp/model/yakeVehiclePhysicalComponent.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-
+-	void NativeGearBox::setSpeed(uint8 numGears)
+-	{
+-		mGears.resize( numGears );
+-	}
+-	uint8 NativeGearBox::getSpeed() const
+-	{
+-		size_t size = mGears.size();
+-		YAKE_ASSERT( size &lt;= 255 );
+-		return static_cast&lt;uint8&gt;(size);
+-	}
+-	void NativeGearBox::setGearRatio(uint8 gear, real ratio)
+-	{
+-		YAKE_ASSERT( gear &lt; getSpeed() );
+-		Gear&amp; g = mGears[gear];
+-		g.ratio_ = ratio;
+-	}
+-	void NativeGearBox::setGearMode( uint8 gear, const GearMode mode )
+-	{
+-		YAKE_ASSERT( gear &lt; getSpeed() );
+-		Gear&amp; g = mGears[gear];
+-		g.mode_ = mode;
+-	}
+-	real NativeGearBox::getGearRatio( uint8 gear )
+-	{
+-		YAKE_ASSERT( gear &lt; getSpeed() );
+-		Gear&amp; g = mGears[gear];
+-		return g.ratio_;
+-	}
+-	void NativeGearBox::setFromTemplate( const VehicleTemplate::GearTemplateList &amp; gears )
+-	{
+-		mGears.clear();
+-		ConstVectorIterator&lt; VehicleTemplate::GearTemplateList &gt; it( gears.begin(), gears.end() );
+-		while (it.hasMoreElements())
+-		{
+-			const VehicleTemplate::GearTemplate &amp; tpl = it.getNext();
+-			Gear g;
+-			switch( tpl.mode_ )
+-			{
+-			case VehicleTemplate::GM_FORWARD:
+-				g.mode_ = GM_FORWARD;
+-				break;
+-			case VehicleTemplate::GM_REVERSE:
+-				g.mode_ = GM_REVERSE;
+-				break;
+-			case VehicleTemplate::GM_NEUTRAL:
+-				g.mode_ = GM_NEUTRAL;
+-				break;
+-			};
+-			g.ratio_ = tpl.ratio_;
+-			mGears.push_back( g );
+-		}
+-	}
+-
+-
+-	NativeCarEngine::NativeCarEngine() :
+-		mDifferentialRatio( real(3.42) ),
+-		mThrottle(0),
+-		mCurrentGear(0),
+-		mDriveTorque(0),
+-		mpGearBox(0),
+-		mMinRPM(0),
+-		mMaxRPM(3500),
+-		mThrottleRPMRise(2500),
+-		mRPMDieOff(3500)
+-	{
+-		mpGearBox = new NativeGearBox();
+-		YAKE_ASSERT( mpGearBox );
+-		mpGearBox-&gt;setSpeed( 6 );
+-		mpGearBox-&gt;setGearRatio( 0, real(-2.90 ) ); mpGearBox-&gt;setGearMode( 0, NativeGearBox::GM_REVERSE );
+-		mpGearBox-&gt;setGearRatio( 1, real( 2.66 ) ); mpGearBox-&gt;setGearMode( 1, NativeGearBox::GM_FORWARD );
+-		mpGearBox-&gt;setGearRatio( 2, real( 1.78 ) ); mpGearBox-&gt;setGearMode( 2, NativeGearBox::GM_FORWARD );
+-		mpGearBox-&gt;setGearRatio( 3, real( 1.30 ) ); mpGearBox-&gt;setGearMode( 3, NativeGearBox::GM_FORWARD );
+-		mpGearBox-&gt;setGearRatio( 4, real( 0.74 ) ); mpGearBox-&gt;setGearMode( 4, NativeGearBox::GM_FORWARD );
+-		mpGearBox-&gt;setGearRatio( 5, real( 0.50 ) ); mpGearBox-&gt;setGearMode( 5, NativeGearBox::GM_FORWARD );
+-	}
+-	NativeCarEngine::~NativeCarEngine()
+-	{
+-		YAKE_SAFE_DELETE( mpGearBox );
+-	}
+-	void NativeCarEngine::setFromTemplate( const VehicleTemplate::EngineTemplate &amp; tpl )
+-	{
+-		const VehicleTemplate::CarEngineTemplate&amp; engineTpl =
+-			static_cast&lt;const VehicleTemplate::CarEngineTemplate&amp;&gt;(tpl);
+-		mMinRPM				= engineTpl.rpmMin_;
+-		mMaxRPM				= engineTpl.rpmMax_;
+-		mThrottleRPMRise	= engineTpl.rpmRise_;
+-		mRPMDieOff			= engineTpl.rpmDieOff_;
+-		mDifferentialRatio	= engineTpl.differentialRatio;
+-		YAKE_ASSERT( mpGearBox );
+-		mpGearBox-&gt;setFromTemplate( engineTpl.gears_ );
+-	}
+-	void NativeCarEngine::updateSimulation( real timeElapsed )
+-	{
+-		updateCurrentRPM( timeElapsed );
+-		updateGearRatios();
+-
+-		//engine torque = throttle position * max torque
+-		//drive torque = engine_torque * gear_ratio * differential_ratio * transmission_efficiency
+-		//drive torque gets delivered to the wheels
+-		real engineTorque = mThrottle * getMaxTorque( mCurrentRPM );
+-		mDriveTorque = engineTorque * mGearRatio * mDifferentialRatio * 0.75/*just a guess*/;
+-	}
+-	void NativeCarEngine::setThrottle( real throttle )
+-	{
+-		mThrottle = throttle;
+-		if (mThrottle &gt; 1)
+-			mThrottle = 1;
+-		else if (mThrottle &lt; 0)
+-			mThrottle = 0;
+-	}
+-	real NativeCarEngine::getThrottle() const
+-	{
+-		return mThrottle;
+-	}
+-	real NativeCarEngine::getRPM() const
+-	{
+-		return mCurrentRPM;
+-	}
+-	uint8 NativeCarEngine::getGear() const
+-	{
+-		return mCurrentGear;
+-	}
+-	void NativeCarEngine::shiftGear( uint8 gear )
+-	{
+-		if (gear &lt; mpGearBox-&gt;getSpeed())
+-			mCurrentGear = gear;
+-	}
+-	void NativeCarEngine::shiftGearUp()
+-	{
+-		if (mCurrentGear+1 &lt; mpGearBox-&gt;getSpeed())
+-			mCurrentGear++;
+-	}
+-	void NativeCarEngine::shiftGearDown()
+-	{
+-		if (mCurrentGear &gt; 0)
+-			mCurrentGear--;
+-	}
+-	real NativeCarEngine::getDriveTorque() const
+-	{
+-		return mDriveTorque;
+-	}
+-	real NativeCarEngine::getMinRPM() const
+-	{
+-		return mMinRPM;
+-	}
+-	real NativeCarEngine::getMaxRPM() const
+-	{
+-		return mMaxRPM;
+-	}
+-	real NativeCarEngine::getRPMRise() const
+-	{
+-		return mThrottleRPMRise;
+-	}
+-	real NativeCarEngine::getRPMDieOff() const
+-	{
+-		return mRPMDieOff;
+-	}
+-	real NativeCarEngine::getMinShiftingTime() const
+-	{
+-		return 0.;
+-	}
+-	real NativeCarEngine::getMaxTorque( const real rpm )
+-	{
+-		//TODO: look up in curve
+-		return 500; // in Nm
+-	}
+-	void NativeCarEngine::updateGearRatios()
+-	{
+-		mGearRatio = mpGearBox-&gt;getGearRatio( mCurrentGear );
+-		mInvGearRatio = (mGearRatio != 0.) ? (1.0 / mGearRatio) : 0.;
+-	}
+-	void NativeCarEngine::updateCurrentRPM(real timeElapsed)
+-	{
+-		if (mThrottle &gt; 0.)
+-		{
+-			mCurrentRPM += mThrottle * (mThrottleRPMRise * timeElapsed);
+-			if (mCurrentRPM &gt; mMaxRPM)
+-				mCurrentRPM = mMaxRPM;
+-		}
+-		else
+-		{
+-			mCurrentRPM -= mRPMDieOff * timeElapsed;
+-			if (mCurrentRPM &lt; mMinRPM)
+-				mCurrentRPM = mMinRPM;
+-		}
+-	}
+-	void NativeCarEngine::setParamMinRPM( const real rpm )
+-	{
+-		mMinRPM = rpm;
+-	}
+-	void NativeCarEngine::setParamMaxRPM( const real rpm )
+-	{
+-		mMaxRPM = rpm;
+-	}
+-	void NativeCarEngine::setParamRedlineRPM( const real rpm )
+-	{
+-	}
+-
+-} // ns vehicle
+-} // ns model
+-} // ns yake
+-
+
+Deleted: trunk/yake/src/yapp/model/yakeNativeVehiclePhysicalComponent.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeNativeVehiclePhysicalComponent.cpp	2005-09-30 21:31:19 UTC (rev 952)
++++ trunk/yake/src/yapp/model/yakeNativeVehiclePhysicalComponent.cpp	2005-09-30 21:32:54 UTC (rev 953)
+@@ -1,381 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#include &lt;yapp/base/yappPCH.h&gt;
+-#include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/model/yakeActor.h&gt;
+-#include &lt;yapp/model/yakeVehicleSystem.h&gt;
+-#include &lt;yapp/model/yakeEngine.h&gt;
+-#include &lt;yapp/model/yakeNativeEngine.h&gt;
+-#include &lt;yapp/model/yakeNativeWheel.h&gt;
+-#include &lt;yapp/model/yakeVehiclePhysicalComponent.h&gt;
+-#include &lt;yapp/model/yakeNativeVehiclePhysicalComponent.h&gt;
+-#include &lt;yapp/model/yakeVehicleSerializerXML.h&gt; // temporarily
+-#include &lt;yake/data/yakeData.h&gt;
+-
+-#ifdef YAKE_DEBUG
+-#	define COUTLN( X ) \
+-		std::cout &lt;&lt; X &lt;&lt; std::endl;
+-#	define COUTLN_V3( X ) \
+-		std::cout &lt;&lt; #X &lt;&lt; &quot; (&quot; &lt;&lt; X.x &lt;&lt; &quot;, &quot; &lt;&lt; X.y &lt;&lt; &quot;, &quot; &lt;&lt; X.z &lt;&lt; &quot;)&quot; &lt;&lt; std::endl;
+-#else
+-#	define COUTLN( X )
+-#	define COUTLN_V3( X )
+-#endif
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	//-----------------------------------------------------
+-	namespace privatePhysCo {
+-		YAKE_REGISTER_CONCRETE( NativePhysicalVehicleComponent );
+-	}
+-
+-	//-----------------------------------------------------
+-	NativePhysicalVehicleComponent::NativePhysicalVehicleComponent(physics::IWorld* pWorld) : 
+-		mpPWorld(pWorld),
+-		mpPhysical(0),
+-		mpChassis(0)
+-	{
+-		YAKE_ASSERT( mpPWorld );
+-	}
+-	//-----------------------------------------------------
+-	NativePhysicalVehicleComponent::~NativePhysicalVehicleComponent()
+-	{
+-		_reset();
+-	}
+-	//-----------------------------------------------------
+-	Movable* NativePhysicalVehicleComponent::getChassisMovable()
+-	{
+-		return mpChassis;
+-	}
+-	//-----------------------------------------------------
+-	Movable* NativePhysicalVehicleComponent::getWheelMovable(const size_t index)
+-	{
+-		return _getWheel( index );
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::_reset()
+-	{
+-		YAKE_SAFE_DELETE( mpPhysical );
+-
+-		// wheels
+-		VectorIterator&lt; WheelList &gt; itWheel( mWheels.begin(), mWheels.end() );
+-		while (itWheel.hasMoreElements())
+-		{
+-			NativeWheel* pW = itWheel.getNext();
+-			if (pW)
+-				delete pW;
+-		}
+-		mWheels.clear();
+-		// steer groups
+-		VectorIterator&lt; SteerGroupList &gt; itSG( mSteerGroups.begin(), mSteerGroups.end() );
+-		while (itSG.hasMoreElements())
+-		{
+-			SteerGroup* pSG = itSG.getNext();
+-			if (pSG)
+-				delete pSG;
+-		}
+-		mSteerGroups.clear();
+-		// axles
+-		VectorIterator&lt; AxleList &gt; itAxle( mAxles.begin(), mAxles.end() );
+-		while (itAxle.hasMoreElements())
+-		{
+-			Axle* pA = itAxle.getNext();
+-			if (pA)
+-				delete pA;
+-		}
+-		mAxles.clear();
+-		// engines
+-		VectorIterator&lt; EngineList &gt; itEngine( mEngines.begin(), mEngines.end() );
+-		while (itEngine.hasMoreElements())
+-		{
+-			IEngine* pEngine = itEngine.getNext();
+-			if (pEngine)
+-				delete pEngine;
+-		}
+-		mEngines.clear();
+-		mCarEngines.clear();
+-		// chassis
+-		YAKE_SAFE_DELETE( mpChassis );
+-	}
+-	//-----------------------------------------------------
+-	bool NativePhysicalVehicleComponent::createFromTemplate( const VehicleTemplate &amp; tpl )
+-	{
+-		COUTLN(&quot;NativePhysicalVehicleComponent::createFromTemplate&quot;);
+-		_reset();
+-
+-		// chassis
+-		YAKE_ASSERT( mpChassis == 0 );
+-		if (mpChassis)
+-			return false;
+-		//mpChassis = mpPWorld-&gt;createBox(1,1,1);
+-		mpChassis = mpPWorld-&gt;createActor( physics::ACTOR_DYNAMIC );
+-		mpChassis-&gt;setPosition( tpl.chassisTpl_.position_ );
+-		mpChassis-&gt;getBody().addMass(
+-			physics::IBody::BoxMassDesc( tpl.chassisTpl_.dimensions_.x, tpl.chassisTpl_.dimensions_.y, tpl.chassisTpl_.dimensions_.z, 1.,
+-			Vector3( 0,-1,0) ) );
+-		mpChassis-&gt;getBody().setMass( tpl.chassisTpl_.mass_ );
+-
+-		//@FIXME material
+-		/*
+-		mpChassis-&gt;setSoftness( 0.01 );
+-		mpChassis-&gt;setFriction( 5 ); // 100
+-		mpChassis-&gt;setFriction2( 0.1 ); // 2
+-		*/
+-
+-		ConstVectorIterator&lt; VehicleTemplate::ShapeTemplateList &gt; geomIt( tpl.chassisTpl_.collisionShapes_ );
+-		while (geomIt.hasMoreElements())
+-		{
+-			const VehicleTemplate::ShapeTemplate &amp; shapeTpl = geomIt.getNext();
+-			COUTLN(	&quot;  shape type=&quot; &lt;&lt; shapeTpl.type_ );
+-			physics::IShape* pShape = mpChassis-&gt;createShape( *shapeTpl.pDesc_ );
+-			YAKE_ASSERT( pShape );
+-			if (!pShape)
+-				continue;
+-		}
+-
+-		YAKE_ASSERT( mpPhysical == 0 );
+-		mpPhysical = new Physical();
+-		YAKE_ASSERT( mpPhysical );
+-
+-		// engines
+-		for (size_t i=0; i&lt;tpl.getNumEngines(); ++i)
+-		{
+-			COUTLN(&quot;engine&quot;);
+-			const VehicleTemplate::EngineTemplate&amp; engineTpl = tpl.getEngine(i);
+-
+-			try {
+-				const VehicleTemplate::CarEngineTemplate&amp; carEngineTpl =
+-					static_cast&lt;const VehicleTemplate::CarEngineTemplate&amp;&gt;( engineTpl );
+-				NativeCarEngine* pEngine = new NativeCarEngine();
+-				if (!pEngine)
+-					continue;
+-				mEngines.push_back( pEngine );
+-				mCarEngines.push_back( pEngine );
+-
+-				pEngine-&gt;setFromTemplate( engineTpl );
+-			}
+-			catch(...)
+-			{
+-				YAKE_ASSERT(&quot;Only car engine creators supported currently.&quot;);
+-				YAKE_EXCEPT(&quot;Only car engine creators supported currently.&quot;);
+-			}
+-		}
+-
+-		// axles
+-		for (size_t i=0; i&lt;tpl.getNumAxles(); ++i)
+-		{
+-			const VehicleTemplate::AxleTemplate&amp; axleTpl = tpl.getAxle(i);
+-			COUTLN(&quot;  axle &quot; &lt;&lt; i &lt;&lt; &quot; engine= &quot; &lt;&lt; axleTpl.idxEngine_);
+-
+-			YAKE_ASSERT( _getCarEngine( axleTpl.idxEngine_ ) != 0 );
+-			// create axle
+-			Axle* pAxle = new Axle();
+-			YAKE_ASSERT( pAxle );
+-			pAxle-&gt;engine = _getCarEngine(axleTpl.idxEngine_);
+-			YAKE_ASSERT( pAxle-&gt;engine );
+-			// store axle
+-			mAxles.push_back( pAxle );
+-		}
+-
+-		// steer groups
+-		for (size_t i=0; i&lt;tpl.getNumSteeringGroups(); ++i)
+-		{
+-			COUTLN(&quot;  steer group &quot; &lt;&lt; i);
+-			mSteerGroups.push_back( new SteerGroup() );
+-		}
+-
+-		// wheels
+-		for (size_t i=0; i&lt;tpl.getNumWheels(); ++i)
+-		{
+-			const VehicleTemplate::WheelTemplate&amp; wheelTpl = tpl.getWheel(i);
+-			COUTLN(&quot;  wheel &quot; &lt;&lt; i);
+-
+-			YAKE_ASSERT( _getAxle( wheelTpl.idxAxle_ ) != 0 );
+-
+-			// create wheel
+-			NativeWheel* pW = new NativeWheel(mpPWorld);
+-			YAKE_ASSERT( pW );
+-			pW-&gt;setPosition( wheelTpl.position_ );
+-			pW-&gt;setRadius( wheelTpl.radius_ );
+-			// add wheel to steering group
+-			if (wheelTpl.idxSteeringGroup_ &gt;= 0)
+-			{
+-				SteerGroup* pSG = _getSteerGroup(wheelTpl.idxSteeringGroup_);
+-				YAKE_ASSERT( pSG );
+-				pSG-&gt;wheels.push_back( pW );
+-			}
+-			// add wheel to axle
+-			Axle* pAxle = _getAxle(wheelTpl.idxAxle_);
+-			YAKE_ASSERT( pAxle );
+-			pAxle-&gt;wheels.push_back( pW );
+-			// store wheel
+-			mWheels.push_back( pW );
+-			// create wheel joint
+-			physics::IJointPtr pJ = mpPWorld-&gt;createJoint( physics::IJoint::DescHinge2(
+-				mpChassis, pW-&gt;getPhysicsComplex(), Vector3::kUnitY, Vector3::kUnitX, pW-&gt;getPosition() ) );
+-			YAKE_ASSERT( pJ );
+-			pJ-&gt;setLimits( 0, 0.f, 0.f );
+-			//@FIXME
+-			/*
+-			pJ-&gt;setSpring( 100 );
+-			pJ-&gt;setDamping( 10 );
+-			*/
+-			//
+-			pW-&gt;setJoint( pJ );
+-			mpPhysical-&gt;addJoint( pJ );
+-			//
+-			pW-&gt;setSuspension( wheelTpl.suspensionSpring_, wheelTpl.suspensionDamping_ );
+-		}
+-
+-		return true;
+-	}
+-	//-----------------------------------------------------
+-	NativePhysicalVehicleComponent::SteerGroup* 
+-		NativePhysicalVehicleComponent::_getSteerGroup(const size_t index) const
+-	{
+-		if (index &gt;= mSteerGroups.size())
+-			return 0;
+-		return mSteerGroups[index];
+-	}
+-	//-----------------------------------------------------
+-	IEngine* 
+-		NativePhysicalVehicleComponent::_getEngine(const size_t index) const
+-	{
+-		if (index &gt;= mEngines.size())
+-			return 0;
+-		return mEngines.at(index);
+-	}
+-	//-----------------------------------------------------
+-	NativeCarEngine* 
+-		NativePhysicalVehicleComponent::_getCarEngine(const size_t index) const
+-	{
+-		if (index &gt;= mCarEngines.size())
+-			return 0;
+-		return mCarEngines.at(index);
+-	}
+-	//-----------------------------------------------------
+-	NativePhysicalVehicleComponent::Axle* 
+-		NativePhysicalVehicleComponent::_getAxle(const size_t index) const
+-	{
+-		if (index &gt;= mAxles.size())
+-			return 0;
+-		return mAxles[index];
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::update(const real timeElapsed)
+-	{
+-		//YAKE_ASSERT( mpModel );
+-		//mpModel-&gt;updatePhysics( timeElapsed );
+-		//mpModel-&gt;updateControllers( timeElapsed );
+-	}
+-	//-----------------------------------------------------
+-	IEngine* NativePhysicalVehicleComponent::getEngine(const size_t index)
+-	{
+-		return _getEngine(index);
+-	}
+-	//-----------------------------------------------------
+-	NativeWheel* NativePhysicalVehicleComponent::_getWheel(const size_t index) const
+-	{
+-		if (index &gt;= mWheels.size())
+-			return 0;
+-		return mWheels[index];
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::setWheelMass(const size_t index, const real mass)
+-	{
+-		NativeWheel* pWheel = _getWheel( index );
+-		YAKE_ASSERT( pWheel );
+-		pWheel-&gt;setMass( mass );
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::setWheelRadius(const size_t index, const real r)
+-	{
+-		NativeWheel* pWheel = _getWheel( index );
+-		YAKE_ASSERT( pWheel );
+-		pWheel-&gt;setRadius( r );
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::setWheelPosition(const size_t index, const Vector3 &amp; position)
+-	{
+-		NativeWheel* pWheel = _getWheel( index );
+-		YAKE_ASSERT( pWheel );
+-		pWheel-&gt;setPosition( position );
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::setWheelSuspension(const size_t index, const real stiffness) 
+-	{
+-		NativeWheel* pWheel = _getWheel( index );
+-		YAKE_ASSERT( pWheel );
+-		YAKE_ASSERT( 1== 0 );
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::setWheelFriction(const size_t index, const real f) 
+-	{
+-		NativeWheel* pWheel = _getWheel( index );
+-		YAKE_ASSERT( pWheel );
+-		YAKE_ASSERT( 1== 0 );
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::setWheelLateralFriction(const size_t index, const real f)
+-	{
+-		NativeWheel* pWheel = _getWheel( index );
+-		YAKE_ASSERT( pWheel );
+-		YAKE_ASSERT( 1== 0 );
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::setSteer(const size_t index, const real steerValue) 
+-	{
+-		SteerGroup* pSG = _getSteerGroup(index);
+-		YAKE_ASSERT( pSG );
+-		pSG-&gt;steer = steerValue;
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::setBrake(const size_t index, const real brakeValue)
+-	{
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::setEngineThrottle(const size_t index, const real throttle)
+-	{
+-		IEngine* pEngine = _getEngine(index);
+-		YAKE_ASSERT( pEngine );
+-		pEngine-&gt;setThrottle( throttle );
+-	}
+-	//-----------------------------------------------------
+-	void NativePhysicalVehicleComponent::translate( const Vector3 &amp; d )
+-	{
+-		YAKE_ASSERT( mpChassis );
+-		mpChassis-&gt;translate( d );
+-		VectorIterator&lt; WheelList &gt; itW( mWheels.begin(), mWheels.end() );
+-		while (itW.hasMoreElements())
+-			itW.getNext()-&gt;translate( d );
+-	}
+-
+-} // ns vehicle
+-} // ns model
+-} // ns yake
+
+Deleted: trunk/yake/src/yapp/model/yakeNativeWheel.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeNativeWheel.cpp	2005-09-30 21:31:19 UTC (rev 952)
++++ trunk/yake/src/yapp/model/yakeNativeWheel.cpp	2005-09-30 21:32:54 UTC (rev 953)
+@@ -1,229 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#include &lt;yapp/base/yappPCH.h&gt;
+-#include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/model/yakeNativeWheel.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	//-----------------------------------------------------
+-	NativeWheel::NativeWheel(physics::IWorld* pPWorld) : mCO(0), mJoint(0)
+-	{
+-		YAKE_ASSERT( pPWorld );
+-		mCO = pPWorld-&gt;createActor( physics::ACTOR_DYNAMIC );
+-		YAKE_ASSERT( mCO );
+-
+-		mCO-&gt;createShape( physics::IShape::SphereDesc(1) );
+-
+-		mCO-&gt;getBody().setMass( physics::IBody::SphereMassDesc(1,1) );
+-		mCO-&gt;getBody().setMass( 1 );
+-
+-		mCO-&gt;setPosition(Vector3::kZero);
+-		mCO-&gt;setOrientation(Quaternion::kIdentity);
+-
+-		//@fixme lateral slip
+-		//mCO-&gt;setLateralSlipEnabled( true );
+-		//mCO-&gt;setSlipCoefficients( 0.1, 0. );
+-		//mCO-&gt;setSlipNormalSource( this );
+-
+-	}
+-	//-----------------------------------------------------
+-	NativeWheel::~NativeWheel()
+-	{
+-		YAKE_ASSERT( mCO );
+-		if (mJoint)
+-			mCO-&gt;getCreator()-&gt;destroyJoint( mJoint );
+-		mCO-&gt;getCreator()-&gt;destroyActor( mCO );
+-		mCO = 0;
+-	}
+-	//-----------------------------------------------------
+-	void NativeWheel::setRadius( const real radius )
+-	{
+-		YAKE_ASSERT( mCO );
+-		physics::IShapePtrList v = mCO-&gt;getShapes();
+-		YAKE_ASSERT( v.size() == 1 );
+-		physics::IShape* pShape = v.front();
+-		mCO-&gt;destroyShape( pShape );
+-
+-		mCO-&gt;createShape( physics::IShape::SphereDesc(radius) );
+-	}
+-	//-----------------------------------------------------
+-	void NativeWheel::setMass( const real mass )
+-	{
+-		YAKE_ASSERT( mCO );
+-		mCO-&gt;getBody().setMass( mass );
+-	}
+-	//-----------------------------------------------------
+-	void NativeWheel::setPosition(const Vector3 &amp; rPosition)
+-	{
+-		YAKE_ASSERT( mCO );
+-		mCO-&gt;setPosition( rPosition );
+-	}
+-	//-----------------------------------------------------
+-	void NativeWheel::setOrientation(const Quaternion&amp; rOrientation)
+-	{
+-		YAKE_ASSERT( mCO );
+-		mCO-&gt;setOrientation( rOrientation );
+-	}
+-	//-----------------------------------------------------
+-	Vector3 NativeWheel::getPosition() const
+-	{
+-		YAKE_ASSERT( mCO );
+-		return mCO-&gt;getPosition();
+-	}
+-	//-----------------------------------------------------
+-	Quaternion NativeWheel::getOrientation() const
+-	{
+-		YAKE_ASSERT( mCO );
+-		return mCO-&gt;getOrientation();
+-	}
+-	//-----------------------------------------------------
+-	SharedPtr&lt;model::CachedInterpolator&lt;real&gt; &gt; NativeWheel::_getLinSkidCache()
+-	{
+-		if (mLinSkidCache.get() == 0)
+-		{
+-			mLinSkidCache.reset( new model::CachedInterpolator&lt;real&gt;(8) );
+-			mLinSkidCache-&gt;setWeight(0, real(1.0));
+-			mLinSkidCache-&gt;setWeight(0, real(0.8));
+-			mLinSkidCache-&gt;setWeight(0, real(0.6));
+-			mLinSkidCache-&gt;setWeight(0, real(0.5));
+-			mLinSkidCache-&gt;setWeight(0, real(0.4));
+-			mLinSkidCache-&gt;setWeight(0, real(0.3));
+-			mLinSkidCache-&gt;setWeight(0, real(0.2));
+-			mLinSkidCache-&gt;setWeight(0, real(0.1));
+-		}
+-		return mLinSkidCache;
+-	}
+-	//-----------------------------------------------------
+-	SharedPtr&lt;model::CachedInterpolator&lt;real&gt; &gt; NativeWheel::_getAngSkidCache()
+-	{
+-		if (mAngSkidCache.get() == 0)
+-		{
+-			mAngSkidCache.reset( new model::CachedInterpolator&lt;real&gt;(8) );
+-			mAngSkidCache-&gt;setWeight(0, real(1.0));
+-			mAngSkidCache-&gt;setWeight(0, real(0.8));
+-			mAngSkidCache-&gt;setWeight(0, real(0.6));
+-			mAngSkidCache-&gt;setWeight(0, real(0.5));
+-			mAngSkidCache-&gt;setWeight(0, real(0.4));
+-			mAngSkidCache-&gt;setWeight(0, real(0.3));
+-			mAngSkidCache-&gt;setWeight(0, real(0.2));
+-			mAngSkidCache-&gt;setWeight(0, real(0.1));
+-		}
+-		return mAngSkidCache;
+-	}
+-	//-----------------------------------------------------
+-	physics::IActor* NativeWheel::getPhysicsComplex() const
+-	{
+-		return mCO;
+-	}
+-	//-----------------------------------------------------
+-	Vector3 NativeWheel::getLateralSlipNormal() const
+-	{
+-		//YAKE_ASSERT( mJoint );
+-		//return mJoint-&gt;getAxis2();
+-		YAKE_ASSERT( 1==0 &amp;&amp; &quot;NEEDS IMPLEMENTATION!&quot; ).warning(&quot;NEEDS IMPLEMENTATION&quot;);
+-		return Vector3();
+-	}
+-	//-----------------------------------------------------
+-	void NativeWheel::setJoint( physics::IJointPtr jt )
+-	{
+-		mJoint = jt;
+-	}
+-	//-----------------------------------------------------
+-	void NativeWheel::setSuspension( const real spring, const real damping )
+-	{
+-		YAKE_ASSERT( mJoint );
+-		mJoint-&gt;setSpring( spring );
+-		mJoint-&gt;setDamping( damping );
+-	}
+-	//-----------------------------------------------------
+-	real NativeWheel::getSuspensionSpring() const
+-	{
+-		YAKE_ASSERT( mJoint );
+-		return mJoint-&gt;getSpring();
+-	}
+-	//-----------------------------------------------------
+-	real NativeWheel::getSuspensionDamping() const
+-	{
+-		YAKE_ASSERT( mJoint );
+-		return mJoint-&gt;getDamping();
+-	}
+-	//-----------------------------------------------------
+-	void NativeWheel::applySteer( real steer )
+-	{
+-		real epsilon = real(0.015);
+-		//if (steer &lt; 0) epsilon *= -1;
+-		if (steer &gt; -0.04 &amp;&amp; steer &lt; 0.04)
+-		{
+-			steer = 0;
+-			epsilon = 0;
+-		}
+-		//mJoint-&gt;setLowStop( steer - epsilon );
+-		//mJoint-&gt;setHighStop( steer + epsilon );
+-		mJoint-&gt;setLimits( 0, steer - epsilon, steer + epsilon );
+-	}
+-	//-----------------------------------------------------
+-	void NativeWheel::applyTq( const Vector3 &amp; torque )
+-	{
+-		mCO-&gt;getBody().addTorque( mCO-&gt;getOrientation() * torque );
+-	}
+-	//-----------------------------------------------------
+-	void NativeWheel::applyBrakeTq( const Vector3 &amp; torque )
+-	{
+-		Vector3 linVel = mCO-&gt;getBody().getLinearVelocity();
+-		Vector3 dir = mCO-&gt;getOrientation() * Vector3::kUnitZ;
+-		if (dir.dotProduct(linVel) &gt; 0)
+-			mCO-&gt;getBody().addLocalTorque( torque );
+-		else
+-			mCO-&gt;getBody().addLocalTorque( -torque );
+-	}
+-	//-----------------------------------------------------
+-	void NativeWheel::apply( real velocity, real fmax )
+-	{
+-		if (mJoint-&gt;getType() == physics::JT_HINGE)
+-		{
+-			mJoint-&gt;setMotorEnabled(0,true);
+-			mJoint-&gt;setMotor(0, velocity, fmax );
+-		}
+-		else
+-		{
+-			mJoint-&gt;setMotorEnabled(1,true);
+-			mJoint-&gt;setMotor(1, velocity, fmax );
+-		}
+-	}
+-	//-----------------------------------------------------
+-	physics::IJoint* NativeWheel::getJoint() const
+-	{
+-		return mJoint;
+-	}
+-
+-
+-}
+-}
+-}
+
+Deleted: trunk/yake/src/yapp/model/yakeVehicle.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeVehicle.cpp	2005-09-30 21:31:19 UTC (rev 952)
++++ trunk/yake/src/yapp/model/yakeVehicle.cpp	2005-09-30 21:32:54 UTC (rev 953)
+@@ -1,86 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#include &lt;yapp/base/yappPCH.h&gt;
+-#include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/model/yakeVehiclePhysicalComponent.h&gt;
+-//#include &lt;yake/samples/common/yakeTrailGeometryCreator.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	//-----------------------------------------------------
+-	Vehicle::Vehicle() : mComplex(0), mPhysics(0)
+-	{
+-	}
+-	//-----------------------------------------------------
+-	Vehicle::~Vehicle()
+-	{
+-		YAKE_SAFE_DELETE( mComplex );
+-		YAKE_SAFE_DELETE( mPhysics );
+-	}
+-	//-----------------------------------------------------
+-	void Vehicle::setPhysicalComponent(IPhysicalVehicleComponent* pPhysical)
+-	{
+-		YAKE_ASSERT( !mPhysics );
+-		mPhysics = pPhysical;
+-	}
+-	//-----------------------------------------------------
+-	void Vehicle::update(real timeElapsed)
+-	{
+-		if (mPhysics)
+-			mPhysics-&gt;update(timeElapsed);
+-		if (mComplex)
+-		{
+-			mComplex-&gt;updatePhysics(timeElapsed);
+-			mComplex-&gt;updateGraphics(timeElapsed);
+-		}
+-	}
+-	//-----------------------------------------------------
+-	//void Vehicle::onAct()
+-	//{
+-	//	IPhysicalVehicleComponent* pPC = 
+-	//		static_cast&lt;IPhysicalVehicleComponent*&gt;(getComponent(&quot;core&quot;));
+-	//	if (!pPC)
+-	//		return;
+-	//	pPC-&gt;update(real(0.01)); //@todo use elapsed time!
+-
+-	//	YAKE_ASSERT( mComplex );
+-	//	mComplex-&gt;updatePhysics( real(0.01) ); //@todo use elapsed time!
+-	//	mComplex-&gt;updateGraphics( real(0.01) ); //@todo use elapsed time!
+-	//}
+-	//-----------------------------------------------------
+-	void Vehicle::setModel( complex::Model* pComplex )
+-	{
+-		YAKE_ASSERT( pComplex );
+-		mComplex = pComplex;
+-	}
+-
+-
+-}
+-}
+-}
+
+Deleted: trunk/yake/src/yapp/model/yakeVehiclePhysicalComponent.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeVehiclePhysicalComponent.cpp	2005-09-30 21:31:19 UTC (rev 952)
++++ trunk/yake/src/yapp/model/yakeVehiclePhysicalComponent.cpp	2005-09-30 21:32:54 UTC (rev 953)
+@@ -1,45 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#include &lt;yapp/base/yappPCH.h&gt;
+-#include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/model/yakeActor.h&gt;
+-#include &lt;yapp/model/yakeVehicleSystem.h&gt;
+-#include &lt;yapp/model/yakeVehiclePhysicalComponent.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	//-----------------------------------------------------
+-	YAKE_IMPLEMENT_REGISTRY( IPhysicalVehicleComponent );
+-	YAKE_IMPLEMENT_REGISTRY( IVehicleSystem );
+-	YAKE_REGISTER_CONCRETE( NativeVehicleSystem );
+-
+-} // ns vehicle
+-} // ns model
+-} // ns yake
+-
+
+Deleted: trunk/yake/src/yapp/model/yakeVehicleSerializerXML.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeVehicleSerializerXML.cpp	2005-09-30 21:31:19 UTC (rev 952)
++++ trunk/yake/src/yapp/model/yakeVehicleSerializerXML.cpp	2005-09-30 21:32:54 UTC (rev 953)
+@@ -1,447 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright  2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-
+-#include &lt;yapp/base/yappPCH.h&gt;
+-#include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yake/data/yakeData.h&gt;
+-#include &lt;yapp/model/yakeVehicleSerializerXML.h&gt;
+-
+-#pragma warning(disable: 4244)
+-
+-#ifdef YAKE_DEBUG
+-#	define COUTLN( X ) \
+-		std::cout &lt;&lt; X &lt;&lt; std::endl;
+-#	define COUTLN_V3( X ) \
+-		std::cout &lt;&lt; #X &lt;&lt; &quot; (&quot; &lt;&lt; X.x &lt;&lt; &quot;, &quot; &lt;&lt; X.y &lt;&lt; &quot;, &quot; &lt;&lt; X.z &lt;&lt; &quot;)&quot; &lt;&lt; std::endl;
+-#else
+-#	define COUTLN( X )
+-#	define COUTLN_V3( X )
+-#endif
+-
+-namespace yake {
+-namespace data {
+-namespace serializer {
+-namespace vehicle {
+-	
+-	//------------------------------------------------------
+-	VehicleSerializer::VehicleSerializer() : mpTpl(0)
+-	{
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::reset()
+-	{
+-		mDocNode.reset();
+-		mpTpl = 0;
+-	}
+-
+-	//------------------------------------------------------
+-	bool VehicleSerializer::load(	const SharedPtr&lt;dom::INode&gt; &amp; docNode,
+-									model::vehicle::VehicleTemplate&amp; tpl)
+-	{
+-		COUTLN( &quot;load()&quot; );
+-		YAKE_ASSERT( docNode.get() );
+-		if (!docNode.get())
+-			return false;
+-		mDocNode = docNode;
+-		mpTpl = &tpl;
+-		//
+-		COUTLN( &quot;parsing vehicle...&quot; );
+-		readVehicle( mDocNode );
+-
+-		//
+-		return true;
+-	}
+-
+-	//------------------------------------------------------
+-	void VehicleSerializer::readVehicle( const SharedPtr&lt;dom::INode&gt; &amp; pNode )
+-	{
+-		
+-		const String name = pNode-&gt;getName();
+-		COUTLN( &quot;readVehicle() [&quot; &lt;&lt; name &lt;&lt; &quot;]&quot; );
+-		YAKE_ASSERT( pNode );
+-
+-		SharedPtr&lt;dom::INode&gt; pNodes = pNode-&gt;getNodeByName( &quot;chassis&quot; );
+-		COUTLN( &quot;scene: found chassis = &quot; &lt;&lt; (pNodes.get() ? &quot;yes&quot; : &quot;no&quot;) );
+-		if (pNodes.get())
+-			readChassis( pNodes );
+-
+-		pNodes = pNode-&gt;getNodeByName(&quot;engines&quot;);
+-		COUTLN( &quot;scene: found engines = &quot; &lt;&lt; (pNodes.get() ? &quot;yes&quot; : &quot;no&quot;) );
+-		if (pNodes.get())
+-			readEngines( pNodes );
+-
+-		pNodes = pNode-&gt;getNodeByName(&quot;axles&quot;);
+-		COUTLN( &quot;scene: found axles = &quot; &lt;&lt; (pNodes.get() ? &quot;yes&quot; : &quot;no&quot;) );
+-		if (pNodes.get())
+-			readAxles( pNodes );
+-
+-		pNodes = pNode-&gt;getNodeByName(&quot;wheels&quot;);
+-		COUTLN( &quot;scene: found wheels = &quot; &lt;&lt; (pNodes.get() ? &quot;yes&quot; : &quot;no&quot;) );
+-		if (pNodes.get())
+-			readWheels( pNodes );
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readEngines( const SharedPtr&lt;dom::INode&gt; &amp; pNodes )
+-	{
+-		COUTLN( &quot;readEngines()&quot; );
+-		YAKE_ASSERT( pNodes );
+-		const dom::NodeList &amp; nodes = pNodes-&gt;getNodes();
+-		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+-		{
+-			readEngine( (*it) );
+-		}
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readEngine( const SharedPtr&lt;dom::INode&gt; &amp; pNode )
+-	{
+-		String id = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;id&quot; );
+-		String tag = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;tag&quot; );
+-		COUTLN( &quot;readEngine() [id=&quot; &lt;&lt; id &lt;&lt; &quot; tag=&quot; &lt;&lt; tag &lt;&lt; &quot;]&quot; );
+-		YAKE_ASSERT( pNode );
+-
+-		// create template
+-		model::vehicle::VehicleTemplate::CarEngineTemplate engineTpl;
+-
+-		const dom::NodeList &amp; nodes = pNode-&gt;getNodes();
+-		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+-		{
+-			String childNodeName = (*it)-&gt;getName();
+-			childNodeName = ::yake::StringUtil::toLowerCase(childNodeName);
+-			COUTLN( &quot;   (child: &quot; &lt;&lt;  childNodeName &lt;&lt; &quot;)&quot; );
+-
+-			const SharedPtr&lt;dom::INode&gt; &amp; pChild = (*it);
+-			if (childNodeName == &quot;rpm&quot;)
+-			{
+-				readRPM( pChild, engineTpl );
+-			}
+-		}
+-
+-		YAKE_ASSERT( mpTpl );
+-		mpTpl-&gt;addEngine( engineTpl );
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readRPM( const SharedPtr&lt;dom::INode&gt; &amp; pNode, model::vehicle::VehicleTemplate::CarEngineTemplate&amp; engineTpl )
+-	{
+-		COUTLN( &quot;  readRPM()&quot; );
+-		YAKE_ASSERT( pNode );
+-
+-		engineTpl.rpmMin_ = StringUtil::toReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;min&quot; ) );
+-		engineTpl.rpmMax_ = StringUtil::toReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;max&quot; ) );
+-		engineTpl.rpmRedline_ = StringUtil::toReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;redline&quot; ) );
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readGearbox( const SharedPtr&lt;dom::INode&gt; &amp; pNode, model::vehicle::VehicleTemplate::CarEngineTemplate&amp; engineTpl )
+-	{
+-		using namespace model::vehicle;
+-		COUTLN( &quot;  readGearbox()&quot; );
+-		YAKE_ASSERT( pNode );
+-		const dom::NodeList &amp; nodes = pNode-&gt;getNodes();
+-		ConstVectorIterator&lt; dom::NodeList &gt; it( nodes.begin(), nodes.end() );
+-		while (it.hasMoreElements())
+-		{
+-			const SharedPtr&lt;dom::INode&gt; &amp; pGearNode = it.getNext();
+-			VehicleTemplate::GearTemplate gear;
+-			String mode = pGearNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;mode&quot;);
+-			if (mode == &quot;reverse&quot;)
+-				gear.mode_ = VehicleTemplate::GM_REVERSE;
+-			else if (mode == &quot;neutral&quot;)
+-				gear.mode_ = VehicleTemplate::GM_NEUTRAL;
+-			else
+-				gear.mode_ = VehicleTemplate::GM_FORWARD;
+-			if (gear.mode_ != VehicleTemplate::GM_NEUTRAL)
+-				gear.ratio_ = StringUtil::toReal( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;ratio&quot;) );
+-			else
+-				gear.ratio_ = 0.;
+-
+-			engineTpl.gears_.push_back( gear );
+-		}
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readAxles( const SharedPtr&lt;dom::INode&gt; &amp; pNodes )
+-	{
+-		COUTLN( &quot;readAxles()&quot; );
+-		YAKE_ASSERT( pNodes );
+-		const dom::NodeList &amp; nodes = pNodes-&gt;getNodes();
+-		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+-		{
+-			readAxle( (*it) );
+-		}
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readAxle( const SharedPtr&lt;dom::INode&gt; &amp; pNode )
+-	{
+-		String id = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;id&quot; );
+-		String tag = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;tag&quot; );
+-		String engineId = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;engine&quot; );
+-		COUTLN( &quot;readAxle() [id=&quot; &lt;&lt; id &lt;&lt; &quot; tag=&quot; &lt;&lt; tag &lt;&lt; &quot; engine=&quot; &lt;&lt; engineId &lt;&lt; &quot;]&quot; );
+-		YAKE_ASSERT( pNode );
+-
+-		model::vehicle::VehicleTemplate::AxleTemplate axleTpl;
+-		axleTpl.efficiency_ = 0.75;
+-		axleTpl.idxEngine_ = StringUtil::toInt32(engineId);
+-
+-		YAKE_ASSERT( mpTpl );
+-		mpTpl-&gt;addAxle( axleTpl );
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readWheels( const SharedPtr&lt;dom::INode&gt; &amp; pNodes )
+-	{
+-		COUTLN( &quot;readWheels()&quot; );
+-		YAKE_ASSERT( pNodes );
+-		const dom::NodeList &amp; nodes = pNodes-&gt;getNodes();
+-		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+-		{
+-			readWheel( (*it) );
+-		}
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readWheel( const SharedPtr&lt;dom::INode&gt; &amp; pNode )
+-	{
+-		String id = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;id&quot; );
+-		String tag = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;tag&quot; );
+-		String axleId = pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;axle&quot; );
+-		COUTLN( &quot;readWheel() [id=&quot; &lt;&lt; id &lt;&lt; &quot; tag=&quot; &lt;&lt; tag &lt;&lt; &quot; axle=&quot; &lt;&lt; axleId &lt;&lt; &quot;]&quot; );
+-		YAKE_ASSERT( pNode );
+-
+-		model::vehicle::VehicleTemplate::WheelTemplate wheelTpl;
+-
+-		// physical representation of the wheel
+-		wheelTpl.radius_ = StringUtil::toReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;radius&quot; ) );
+-		wheelTpl.mass_ = StringUtil::toReal( pNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;mass&quot; ) );
+-		Vector3 position(0,0,0);
+-		SharedPtr&lt;dom::INode&gt; pPosNode = pNode-&gt;getNodeByName(&quot;position&quot;);
+-		if (pPosNode.get())
+-		{
+-			readPosition( pPosNode, position );
+-		}
+-
+-		String gfxName;
+-		SharedPtr&lt;dom::INode&gt; pGfxNode = pNode-&gt;getNodeByName(&quot;gfx&quot;);
+-		if (pGfxNode.get())
+-		{
+-			gfxName = pGfxNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+-			COUTLN( &quot;  gfx = &quot; &lt;&lt; gfxName );
+-		}
+-
+-		wheelTpl.position_ = position;
+-		wheelTpl.bMassIsRelativeToChassisMass_ = 
+-					( pGfxNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; ) == &quot;relative&quot;);
+-		wheelTpl.gfxDescriptor_ = gfxName;
+-		wheelTpl.gfxDescriptorType_ = &quot;scene&quot;;
+-		wheelTpl.idxAxle_ = StringUtil::toInt32( axleId );
+-		//wheelTpl.idxSteeringGroup_ = StringUtil::toInt32( steerId );
+-		wheelTpl.idxSteeringGroup_ = -1;
+-
+-		SharedPtr&lt;dom::INode&gt; pSuspNode = pNode-&gt;getNodeByName(&quot;suspension&quot;);
+-		if (pSuspNode.get())
+-		{
+-			readSuspension( pSuspNode, wheelTpl.suspensionSpring_, wheelTpl.suspensionDamping_ );
+-		}
+-		else
+-		{
+-			wheelTpl.suspensionSpring_ = 30;
+-			wheelTpl.suspensionDamping_ = 3;
+-		}
+-
+-		YAKE_ASSERT( mpTpl );
+-		mpTpl-&gt;addWheel( wheelTpl );
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readSuspension( const SharedPtr&lt;dom::INode&gt; &amp; pNode, real &amp; spring, real &amp; damping )
+-	{
+-		COUTLN( &quot;readSuspension()&quot; );
+-		YAKE_ASSERT( pNode );
+-		spring = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;spring&quot;).c_str() );
+-		damping = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;damping&quot;).c_str() );
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readChassis( const SharedPtr&lt;dom::INode&gt; &amp; pNode )
+-	{
+-		COUTLN( &quot;readChassis()&quot; );
+-		YAKE_ASSERT( pNode );
+-
+-		model::vehicle::VehicleTemplate::ChassisTemplate chassisTpl;
+-		chassisTpl.mass_ = 1.5;
+-
+-		const dom::NodeList &amp; nodes = pNode-&gt;getNodes();
+-		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+-		{
+-			String childNodeName = (*it)-&gt;getName();
+-			childNodeName = ::yake::StringUtil::toLowerCase(childNodeName);
+-			COUTLN( &quot;   (child: &quot; &lt;&lt;  childNodeName &lt;&lt; &quot;)&quot; );
+-
+-			const SharedPtr&lt;dom::INode&gt; &amp; pChild = (*it);
+-			if (childNodeName == &quot;physics&quot;)
+-			{
+-				chassisTpl.mass_ = StringUtil::toReal( pChild-&gt;getAttributeValueAs&lt;String&gt;( &quot;mass&quot; ) );
+-			}
+-		}
+-
+-		String gfxName;
+-		SharedPtr&lt;dom::INode&gt; pGfxNode = pNode-&gt;getNodeByName(&quot;gfx&quot;);
+-		if (pGfxNode.get())
+-		{
+-			gfxName = pGfxNode-&gt;getAttributeValueAs&lt;String&gt;( &quot;name&quot; );
+-		}
+-
+-		chassisTpl.gfxDescriptor_ = gfxName;
+-
+-		chassisTpl.position_ = Vector3(0,0,0);
+-		SharedPtr&lt;dom::INode&gt; pPosNode = pNode-&gt;getNodeByName(&quot;position&quot;);
+-		if (pPosNode.get())
+-			readPosition( pPosNode, chassisTpl.position_ );
+-
+-		SharedPtr&lt;dom::INode&gt; pDimNode = pNode-&gt;getNodeByName(&quot;dimensions&quot;);
+-		if (pDimNode.get())
+-			readGeomDimensions( pDimNode, chassisTpl.dimensions_ );
+-
+-		SharedPtr&lt;dom::INode&gt; pGeomsNode = pNode-&gt;getNodeByName(&quot;geoms&quot;);
+-		if (pGeomsNode.get())
+-			readGeoms( pGeomsNode, chassisTpl );
+-
+-		YAKE_ASSERT( mpTpl );
+-		mpTpl-&gt;chassisTpl_ = chassisTpl;
+-
+-		COUTLN(	&quot; pos=&quot; &lt;&lt; chassisTpl.position_.x &lt;&lt; &quot;, &quot; &lt;&lt; chassisTpl.position_.y &lt;&lt; &quot;, &quot; &lt;&lt; chassisTpl.position_.z &lt;&lt;
+-				&quot; dim=&quot; &lt;&lt; chassisTpl.dimensions_.x &lt;&lt; &quot;, &quot; &lt;&lt; chassisTpl.dimensions_.y &lt;&lt; &quot;, &quot; &lt;&lt; chassisTpl.dimensions_.z );
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readGeoms( const SharedPtr&lt;dom::INode&gt; &amp; pNodes, model::vehicle::VehicleTemplate::ChassisTemplate &amp; chassisTpl )
+-	{
+-		YAKE_ASSERT( pNodes );
+-		COUTLN(&quot;readGeoms() (children=&quot; &lt;&lt; pNodes-&gt;getNodes().size() &lt;&lt; &quot;)&quot;);
+-		const dom::NodeList &amp; nodes = pNodes-&gt;getNodes();
+-		for (dom::NodeList::const_iterator it = nodes.begin(); it != nodes.end(); ++it)
+-		{
+-			readGeom( (*it), chassisTpl );
+-			const model::vehicle::VehicleTemplate::ShapeTemplate &amp; geomTpl = chassisTpl.collisionShapes_.back();
+-			COUTLN(	&quot;  geom type=&quot; &lt;&lt; geomTpl.type_ &lt;&lt;
+-					&quot; pos=&quot; &lt;&lt; geomTpl.position_.x &lt;&lt; &quot;, &quot; &lt;&lt; geomTpl.position_.y &lt;&lt; &quot;, &quot; &lt;&lt; geomTpl.position_.z );
+-//					&quot; dim=&quot; &lt;&lt; geomTpl.dimensions_.x &lt;&lt; &quot;, &quot; &lt;&lt; geomTpl.dimensions_.y &lt;&lt; &quot;, &quot; &lt;&lt; geomTpl.dimensions_.z );
+-		}
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readGeom( const SharedPtr&lt;dom::INode&gt; &amp; pNode, model::vehicle::VehicleTemplate::ChassisTemplate &amp; chassisTpl )
+-	{
+-		YAKE_ASSERT( pNode );
+-		COUTLN(&quot;readGeom() == &quot; &lt;&lt; pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;type&quot;));
+-		model::vehicle::VehicleTemplate::ShapeTemplate geomTpl;
+-
+-		// dimensions
+-		SharedPtr&lt;dom::INode&gt; pTmpNode = pNode-&gt;getNodeByName(&quot;dimensions&quot;);
+-		//if (pTmpNode.get())
+-		//{
+-		//	readGeomDimensions( pTmpNode, geomTpl.dimensions_ );
+-		//	String mode = StringUtil::toLowerCase( pTmpNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;mode&quot;) );
+-		//	if (mode == &quot;relative&quot;)
+-		//	{
+-		//		geomTpl.dimensions_.x *= chassisTpl.dimensions_.x;
+-		//		geomTpl.dimensions_.y *= chassisTpl.dimensions_.y;
+-		//		geomTpl.dimensions_.z *= chassisTpl.dimensions_.z;
+-		//	}
+-		//}
+-		//else
+-		//	geomTpl.dimensions_ = Vector3(0.1,0.1,0.1);
+-
+-		geomTpl.position_ = Vector3(0,0,0);
+-		pTmpNode = pNode-&gt;getNodeByName(&quot;position&quot;);
+-		if (pTmpNode.get())
+-			readPosition( pTmpNode, geomTpl.position_ );
+-
+-		String geomType = StringUtil::toLowerCase( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;type&quot;) );
+-		if (geomType == &quot;sphere&quot;)
+-		{
+-			geomTpl.type_ = physics::ST_SPHERE;
+-			real radius = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;radius&quot;).c_str() );
+-			geomTpl.pDesc_.reset( new physics::IShape::SphereDesc(radius) );
+-		}
+-		else if (geomType == &quot;box&quot;)
+-		{
+-			geomTpl.type_ = physics::ST_BOX;
+-			Vector3 dimensions(1,1,1);
+-			dimensions.x = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;boxx&quot;).c_str() );
+-			dimensions.y = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;boxy&quot;).c_str() );
+-			dimensions.z = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;boxz&quot;).c_str() );
+-			geomTpl.pDesc_.reset( new physics::IShape::BoxDesc(dimensions) );
+-		}
+-
+-		COUTLN(&quot;  -&gt; type= &quot; &lt;&lt; geomType );
+-
+-		chassisTpl.collisionShapes_.push_back( geomTpl );
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readGeomDimensions( const SharedPtr&lt;dom::INode&gt; &amp; pNode, Vector3 &amp; dimensions )
+-	{
+-		COUTLN(&quot;  readGeomDimensions()&quot;);
+-		YAKE_ASSERT( pNode );
+-		dimensions.x = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;x&quot;).c_str() );
+-		dimensions.y = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;y&quot;).c_str() );
+-		dimensions.z = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;z&quot;).c_str() );
+-	}
+-	//------------------------------------------------------
+-	void VehicleSerializer::readPosition( const SharedPtr&lt;dom::INode&gt; &amp; pNode, Vector3 &amp; position )
+-	{
+-		YAKE_ASSERT( pNode );
+-		position.x = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;x&quot;).c_str() );
+-		position.y = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;y&quot;).c_str() );
+-		position.z = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;z&quot;).c_str() );
+-	}
+-
+-	//------------------------------------------------------
+-	void VehicleSerializer::readOrientation( const SharedPtr&lt;dom::INode&gt; &amp; pNode, Quaternion &amp; orientation )
+-	{
+-		YAKE_ASSERT( pNode );
+-		if (pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qx&quot;) != &quot;&quot;)
+-		{
+-			orientation.x = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qx&quot;).c_str() );
+-			orientation.y = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qy&quot;).c_str() );
+-			orientation.z = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qz&quot;).c_str() );
+-			orientation.w = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;qw&quot;).c_str() );
+-		}
+-		if (pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisx&quot;) != &quot;&quot;)
+-		{
+-			Vector3 axis;
+-			axis.x = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisx&quot;).c_str() );
+-			axis.y = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisy&quot;).c_str() );
+-			axis.z = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;axisz&quot;).c_str() );
+-			orientation.FromAxes( &amp;axis );
+-		}
+-		if (pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;anglex&quot;) != &quot;&quot;)
+-		{
+-			Vector3 axis;
+-			axis.x = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;anglex&quot;).c_str() );
+-			axis.y = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;anglex&quot;).c_str() );
+-			axis.z = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;anglex&quot;).c_str() );
+-			real angle = atof( pNode-&gt;getAttributeValueAs&lt;String&gt;(&quot;angle&quot;).c_str() );;
+-			orientation.FromAngleAxis( angle, axis );
+-		}
+-	}
+-
+-} // dotscene
+-} // serializer
+-} // data
+-} // yake
+
+Deleted: trunk/yake/src/yapp/model/yakeVehicleSystem.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeVehicleSystem.cpp	2005-09-30 21:31:19 UTC (rev 952)
++++ trunk/yake/src/yapp/model/yakeVehicleSystem.cpp	2005-09-30 21:32:54 UTC (rev 953)
+@@ -1,237 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#include &lt;yapp/base/yappPCH.h&gt;
+-#include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/model/yakeActor.h&gt;
+-#include &lt;yapp/model/yakeVehicleSystem.h&gt;
+-#include &lt;yapp/model/yakeEngine.h&gt;
+-#include &lt;yapp/model/yakeNativeEngine.h&gt;
+-#include &lt;yapp/model/yakeNativeWheel.h&gt;
+-#include &lt;yapp/model/yakeVehiclePhysicalComponent.h&gt;
+-#include &lt;yapp/model/yakeNativeVehiclePhysicalComponent.h&gt;
+-#include &lt;yapp/model/yakeVehicleSerializerXML.h&gt; // temporarily
+-#include &lt;yake/data/yakeData.h&gt;
+-
+-#ifdef YAKE_DEBUG
+-#	define COUTLN( X ) \
+-		std::cout &lt;&lt; X &lt;&lt; std::endl;
+-#	define COUTLN_V3( X ) \
+-		std::cout &lt;&lt; #X &lt;&lt; &quot; (&quot; &lt;&lt; X.x &lt;&lt; &quot;, &quot; &lt;&lt; X.y &lt;&lt; &quot;, &quot; &lt;&lt; X.z &lt;&lt; &quot;)&quot; &lt;&lt; std::endl;
+-#else
+-#	define COUTLN( X )
+-#	define COUTLN_V3( X )
+-#endif
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	//-----------------------------------------------------
+-	YAKE_REGISTER_CONCRETE( NativeVehicleSystem );
+-
+-	//-----------------------------------------------------
+-	class VehicleCreatorHelperV1
+-	{
+-	public:
+-		VehicleCreatorHelperV1( VehicleTemplate &amp; tpl, IPhysicalVehicleComponent* pPC, model::complex::Model* pComplex, graphics::IWorld* pGWorld );
+-		bool create();
+-	protected:
+-		virtual void onChassis( VehicleTemplate::ChassisTemplate &amp; tpl );
+-		virtual void onEngine( const size_t index, const VehicleTemplate::EngineTemplate &amp; tpl );
+-		virtual void onAxle( const size_t index, const VehicleTemplate::AxleTemplate &amp; tpl );
+-		virtual void onWheel( const size_t index, const VehicleTemplate::WheelTemplate &amp; tpl );
+-	private:
+-		model::complex::Model*				mComplex;
+-		graphics::IWorld*			mGWorld;
+-		VehicleTemplate						mTpl;
+-		IPhysicalVehicleComponent*			mPC;
+-	};	
+-	//-----------------------------------------------------
+-	VehicleCreatorHelperV1::VehicleCreatorHelperV1(VehicleTemplate &amp; tpl, IPhysicalVehicleComponent* pPC, model::complex::Model* pComplex, graphics::IWorld* pGWorld ) :
+-			mTpl( tpl ),
+-			mComplex( pComplex ),
+-			mGWorld( pGWorld ),
+-			mPC( pPC )
+-	{
+-		YAKE_ASSERT( mComplex );
+-		YAKE_ASSERT( mGWorld );
+-		YAKE_ASSERT( mPC );
+-	}
+-	//-----------------------------------------------------
+-	bool VehicleCreatorHelperV1::create()
+-	{
+-		// physical representation of the wheel
+-		YAKE_ASSERT( mPC );
+-		mPC-&gt;createFromTemplate( mTpl );
+-
+-		// graphics representation
+-		onChassis( mTpl.chassisTpl_ );
+-
+-		for (size_t i=0; i&lt;mTpl.getNumEngines(); ++i)
+-			onEngine( i, mTpl.getEngine(i) );
+-		for (size_t i=0; i&lt;mTpl.getNumWheels(); ++i)
+-			onWheel( i, mTpl.getWheel(i) );
+-
+-		return true;
+-	}
+-	//-----------------------------------------------------
+-	void VehicleCreatorHelperV1::onChassis( VehicleTemplate::ChassisTemplate &amp; tpl )
+-	{
+-		COUTLN(&quot;onChassis&quot;);
+-		// graphics representation
+-		model::Graphical* pGraphical = new model::Graphical();
+-		YAKE_ASSERT( pGraphical );
+-		pGraphical-&gt;fromDotScene( tpl.gfxDescriptor_, mGWorld );
+-		mComplex-&gt;addGraphical( SharedPtr&lt;model::Graphical&gt;(pGraphical) );
+-
+-		// tie all root scene nodes to the physics object
+-		const model::Graphical::SceneNodeList &amp; nodes = pGraphical-&gt;getSceneNodes();
+-		ConstVectorIterator&lt; model::Graphical::SceneNodeList &gt; it(nodes.begin(), nodes.end());
+-		while (it.hasMoreElements())
+-		{
+-			graphics::ISceneNode* pSN = it.getNext();
+-			YAKE_ASSERT( pSN );
+-
+-			Movable* pM = mPC-&gt;getChassisMovable();
+-			COUTLN(&quot;  binding sn to chassis (pos=&quot; &lt;&lt; pM-&gt;getPosition().x &lt;&lt; &quot;, &quot; &lt;&lt; pM-&gt;getPosition().y &lt;&lt; &quot;, &quot; &lt;&lt; pM-&gt;getPosition().z &lt;&lt; &quot;)&quot;);
+-
+-			model::MovableUpdateController* pMUC = new model::MovableUpdateController();
+-			YAKE_ASSERT( pMUC );
+-			mComplex-&gt;addGraphicsController( SharedPtr&lt;model::IObjectController&gt;(pMUC) );
+-			pMUC-&gt;setUpdateSource( mPC-&gt;getChassisMovable() );
+-			pMUC-&gt;subscribeToPositionChanged( pSN );
+-			pMUC-&gt;subscribeToOrientationChanged( pSN );
+-		}
+-	}
+-	//-----------------------------------------------------
+-	void VehicleCreatorHelperV1::onEngine( const size_t index, const VehicleTemplate::EngineTemplate &amp; tpl )
+-	{
+-	}
+-	//-----------------------------------------------------
+-	void VehicleCreatorHelperV1::onAxle( const size_t index, const VehicleTemplate::AxleTemplate &amp; tpl )
+-	{
+-	}
+-	//-----------------------------------------------------
+-	void VehicleCreatorHelperV1::onWheel( const size_t index, const VehicleTemplate::WheelTemplate &amp; tpl )
+-	{
+-		COUTLN(&quot;onWheel&quot;);
+-
+-		YAKE_ASSERT( mPC );
+-		YAKE_ASSERT( mComplex );
+-
+-		// graphics representation
+-		model::Graphical* pGraphical = new model::Graphical();
+-		YAKE_ASSERT( pGraphical );
+-		pGraphical-&gt;fromDotScene( tpl.gfxDescriptor_, mGWorld );
+-		mComplex-&gt;addGraphical( SharedPtr&lt;model::Graphical&gt;(pGraphical) );
+-
+-		// tie all root scene nodes to the physics object
+-		const model::Graphical::SceneNodeList &amp; nodes = pGraphical-&gt;getSceneNodes();
+-		ConstVectorIterator&lt; model::Graphical::SceneNodeList &gt; it(nodes.begin(), nodes.end());
+-		while (it.hasMoreElements())
+-		{
+-			graphics::ISceneNode* pSN = it.getNext();
+-			YAKE_ASSERT( pSN );
+-
+-			Movable* pM = mPC-&gt;getWheelMovable(index);
+-			COUTLN(&quot;  binding sn to wheel (pos=&quot; &lt;&lt; pM-&gt;getPosition().x &lt;&lt; &quot;, &quot; &lt;&lt; pM-&gt;getPosition().y &lt;&lt; &quot;, &quot; &lt;&lt; pM-&gt;getPosition().z &lt;&lt; &quot;)&quot;);
+-
+-			model::MovableUpdateController* pMUC = new model::MovableUpdateController();
+-			YAKE_ASSERT( pMUC );
+-			mComplex-&gt;addGraphicsController( SharedPtr&lt;model::IObjectController&gt;(pMUC) );
+-			pMUC-&gt;setUpdateSource( mPC-&gt;getWheelMovable(index) );
+-			pMUC-&gt;subscribeToPositionChanged( pSN );
+-			pMUC-&gt;subscribeToOrientationChanged( pSN );
+-		}
+-	}
+-
+-	//-----------------------------------------------------
+-	Vehicle* NativeVehicleSystem::createVehicle(const ::yake::String &amp; rTemplate, physics::IWorld* pPWorld, graphics::IWorld* pGWorld)
+-	{
+-		YAKE_ASSERT( pPWorld );
+-		YAKE_ASSERT( pGWorld );
+-		Vehicle* pVehicle = new Vehicle();
+-		YAKE_ASSERT( pVehicle );
+-
+-		::yake::model::complex::Model* pModel = new ::yake::model::complex::Model();
+-		YAKE_ASSERT( pModel );
+-
+-		// create physics component
+-		pVehicle-&gt;setModel( pModel );
+-		NativePhysicalVehicleComponent* pPhysicsComponent = //create&lt;IPhysicalVehicleComponent&gt;(&quot;yake.native&quot;);
+-			new NativePhysicalVehicleComponent( pPWorld );
+-		YAKE_ASSERT( pPhysicsComponent );
+-		pVehicle-&gt;setPhysicalComponent( pPhysicsComponent );
+-
+-		// load vehicle (physics + graphics)
+-		_loadModelFromDotVehicle( pModel, rTemplate, pPWorld, pGWorld, pPhysicsComponent );
+-
+-		// create input component
+-		// create control component
+-
+-		pPhysicsComponent-&gt;translate( Vector3(0,10,0) );
+-
+-		return pVehicle;
+-	}
+-	//-----------------------------------------------------
+-	bool NativeVehicleSystem::_loadModelFromDotVehicle(::yake::model::complex::Model* pModel,
+-								const ::yake::String &amp; rFN, 
+-								physics::IWorld* pPWorld,
+-								graphics::IWorld* pGWorld,
+-								IPhysicalVehicleComponent* pPC
+-								)
+-	{
+-		using namespace data;
+-		YAKE_ASSERT( pPWorld );
+-		YAKE_ASSERT( pGWorld );
+-		YAKE_ASSERT( pModel );
+-
+-		// 1. read DOM
+-
+-		dom::xml::XmlSerializer ser;
+-		ser.parse(rFN, false);
+-
+-		// 2. parse DOM - load vehicle template
+-
+-		VehicleTemplate tpl;
+-		serializer::vehicle::VehicleSerializerV1 vs1;
+-		YAKE_ASSERT( ser.getDocumentNode().get() );
+-		vs1.load( ser.getDocumentNode(), tpl );
+-
+-		VehicleCreatorHelperV1 vc( tpl, static_cast&lt;NativePhysicalVehicleComponent*&gt;(pPC), pModel, pGWorld );
+-		bool bRet = vc.create();
+-		YAKE_ASSERT( bRet );
+-		if (!bRet)
+-			return false;
+-
+-		return true;
+-	}
+-
+-}// ns vehicle
+-} // ns model
+-} // ns yake
+-
+
+Deleted: trunk/yake/src/yapp/model/yakeVehicleTpl.cpp
+===================================================================
+--- trunk/yake/src/yapp/model/yakeVehicleTpl.cpp	2005-09-30 21:31:19 UTC (rev 952)
++++ trunk/yake/src/yapp/model/yakeVehicleTpl.cpp	2005-09-30 21:32:54 UTC (rev 953)
+@@ -1,91 +0,0 @@
+-/*
+-   ------------------------------------------------------------------------------------
+-   This file is part of YAKE
+-   Copyright &#169; 2004 The YAKE Team
+-   For the latest information visit <A HREF="http://www.yake.org">http://www.yake.org</A> 
+-   ------------------------------------------------------------------------------------
+-   This program is free software; you can redistribute it and/or modify it under
+-   the terms of the GNU Lesser General Public License as published by the Free Software
+-   Foundation; either version 2 of the License, or (at your option) any later
+-   version.
+-
+-   This program is distributed in the hope that it will be useful, but WITHOUT
+-   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+-   FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+-
+-   You should have received a copy of the GNU Lesser General Public License along with
+-   this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+-   Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+-   <A HREF="http://www.gnu.org/copyleft/lesser.txt.">http://www.gnu.org/copyleft/lesser.txt.</A>
+-   ------------------------------------------------------------------------------------
+-   If you are interested in another license model contact the Yake Team via
+-   E-Mail: <A HREF="https://lists.berlios.de/mailman/listinfo/yake-svn">team at yake.org.</A>
+-   For more information see the LICENSE file in the root directory of the
+-   source code distribution.
+-   ------------------------------------------------------------------------------------
+-*/
+-#include &lt;yapp/base/yappPCH.h&gt;
+-#include &lt;yapp/base/yapp.h&gt;
+-#include &lt;yapp/model/yakeVehicleTpl.h&gt;
+-
+-namespace yake {
+-namespace model {
+-namespace vehicle {
+-
+-	VehicleTemplate::VehicleTemplate() : mNumSteerGroups(1)
+-	{
+-	}
+-	VehicleTemplate::~VehicleTemplate()
+-	{
+-	}
+-	size_t VehicleTemplate::getNumEngines() const
+-	{
+-		return mEngines.size();
+-	}
+-	const VehicleTemplate::EngineTemplate&amp; VehicleTemplate::getEngine(const size_t index) const
+-	{
+-		YAKE_ASSERT( index &lt; mEngines.size() );
+-		return mEngines[ index ];
+-	}
+-	void VehicleTemplate::addEngine( const EngineTemplate &amp; tpl)
+-	{
+-		mEngines.push_back( tpl );
+-	}
+-	size_t VehicleTemplate::getNumAxles() const
+-	{
+-		return mAxles.size();
+-	}
+-	const VehicleTemplate::AxleTemplate&amp; VehicleTemplate::getAxle(const size_t index) const
+-	{
+-		YAKE_ASSERT( index &lt; mAxles.size() );
+-		return mAxles[ index ];
+-	}
+-	void VehicleTemplate::addAxle( const AxleTemplate &amp; tpl)
+-	{
+-		mAxles.push_back( tpl );
+-	}
+-	size_t VehicleTemplate::getNumSteeringGroups() const
+-	{
+-		return mNumSteerGroups;
+-	}
+-	void VehicleTemplate::addSteeringGroup()
+-	{
+-		mNumSteerGroups++;
+-	}
+-	size_t VehicleTemplate::getNumWheels() const
+-	{
+-		return mWheels.size();
+-	}
+-	const VehicleTemplate::WheelTemplate&amp; VehicleTemplate::getWheel(const size_t index) const
+-	{
+-		YAKE_ASSERT( index &lt; mWheels.size() );
+-		return mWheels[ index ];
+-	}
+-	void VehicleTemplate::addWheel( const WheelTemplate &amp; tpl)
+-	{
+-		mWheels.push_back( tpl );
+-	}
+-
+-}
+-}
+-}
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000023.html">[Yake-svn] r952 - trunk/yake/src/yapp/model
+</A></li>
+	<LI>Next message: <A HREF="000024.html">[Yake-svn] r954 - trunk/yake/yapp/model
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#67">[ date ]</a>
+              <a href="thread.html#67">[ thread ]</a>
+              <a href="subject.html#67">[ subject ]</a>
+              <a href="author.html#67">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

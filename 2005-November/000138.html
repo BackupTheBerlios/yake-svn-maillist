@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1068 - in trunk/yake/scripts: . msvc71 msvc71/plugins msvc71/samples msvc71/samples/base msvc71/samples/graphics
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-November/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1068%20-%20in%20trunk/yake/scripts%3A%20.%20msvc71%20msvc71/plugins%20msvc71/samples%20msvc71/samples/base%20msvc71/samples/graphics&In-Reply-To=%3C200511022017.jA2KHVks023726%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000137.html">
+   <LINK REL="Next"  HREF="000139.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1068 - in trunk/yake/scripts: . msvc71 msvc71/plugins msvc71/samples msvc71/samples/base msvc71/samples/graphics</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1068%20-%20in%20trunk/yake/scripts%3A%20.%20msvc71%20msvc71/plugins%20msvc71/samples%20msvc71/samples/base%20msvc71/samples/graphics&In-Reply-To=%3C200511022017.jA2KHVks023726%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1068 - in trunk/yake/scripts: . msvc71 msvc71/plugins msvc71/samples msvc71/samples/base msvc71/samples/graphics">codeandroid at berlios.de
+       </A><BR>
+    <I>Wed Nov  2 21:17:31 CET 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000137.html">[Yake-svn] r1067 - branches
+</A></li>
+        <LI>Next message: <A HREF="000139.html">[Yake-svn] r1069 - in trunk/yake/scripts/msvc71: . samples
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#138">[ date ]</a>
+              <a href="thread.html#138">[ thread ]</a>
+              <a href="subject.html#138">[ subject ]</a>
+              <a href="author.html#138">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-11-02 21:17:30 +0100 (Wed, 02 Nov 2005)
+New Revision: 1068
+
+Added:
+   trunk/yake/scripts/msvc71/
+   trunk/yake/scripts/msvc71/audio.vcproj
+   trunk/yake/scripts/msvc71/base.vcproj
+   trunk/yake/scripts/msvc71/data.vcproj
+   trunk/yake/scripts/msvc71/ent.vcproj
+   trunk/yake/scripts/msvc71/graphics.vcproj
+   trunk/yake/scripts/msvc71/input.vcproj
+   trunk/yake/scripts/msvc71/physics.vcproj
+   trunk/yake/scripts/msvc71/plugins/
+   trunk/yake/scripts/msvc71/plugins/ent/
+   trunk/yake/scripts/msvc71/plugins/gui/
+   trunk/yake/scripts/msvc71/plugins/model/
+   trunk/yake/scripts/msvc71/raf.vcproj
+   trunk/yake/scripts/msvc71/reflection.vcproj
+   trunk/yake/scripts/msvc71/samples/
+   trunk/yake/scripts/msvc71/samples/base/base/
+   trunk/yake/scripts/msvc71/samples/graphics/graphics/
+   trunk/yake/scripts/msvc71/samples/gui.vcproj
+   trunk/yake/scripts/msvc71/samples/gui_adapter.vcproj
+   trunk/yake/scripts/msvc71/samples/misc/
+   trunk/yake/scripts/msvc71/samples/model/
+   trunk/yake/scripts/msvc71/samples/msg.vcproj
+   trunk/yake/scripts/msvc71/samples/raf/
+   trunk/yake/scripts/msvc71/samples/state/
+   trunk/yake/scripts/msvc71/scripting.vcproj
+   trunk/yake/scripts/msvc71/thread.vcproj
+   trunk/yake/scripts/msvc71/vehicle.vcproj
+   trunk/yake/scripts/msvc71/yake.sln
+   trunk/yake/scripts/msvc71/yake.suo
+   trunk/yake/scripts/msvc71/yapp.sln
+   trunk/yake/scripts/msvc71/yapp.suo
+   trunk/yake/scripts/msvc71/yapp.vcproj
+Log:
+restructured script/build files
+
+Copied: trunk/yake/scripts/msvc71/audio.vcproj (from rev 1067, trunk/yake/scripts/yake/audio.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/base.vcproj (from rev 1067, trunk/yake/scripts/yake/base.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/data.vcproj (from rev 1067, trunk/yake/scripts/yake/data.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/ent.vcproj (from rev 1067, trunk/yake/scripts/yapp/ent.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/graphics.vcproj (from rev 1067, trunk/yake/scripts/yake/graphics.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/input.vcproj (from rev 1067, trunk/yake/scripts/yake/input.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/physics.vcproj (from rev 1067, trunk/yake/scripts/yake/physics.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/plugins (from rev 1067, trunk/yake/scripts/yake/plugins)
+
+Copied: trunk/yake/scripts/msvc71/plugins/ent (from rev 1067, trunk/yake/scripts/yapp/plugins/ent)
+
+Copied: trunk/yake/scripts/msvc71/plugins/gui (from rev 1067, trunk/yake/scripts/yapp/plugins/gui)
+
+Copied: trunk/yake/scripts/msvc71/plugins/model (from rev 1067, trunk/yake/scripts/yapp/plugins/model)
+
+Copied: trunk/yake/scripts/msvc71/raf.vcproj (from rev 1067, trunk/yake/scripts/yapp/raf.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/reflection.vcproj (from rev 1067, trunk/yake/scripts/yake/reflection.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/samples (from rev 1067, trunk/yake/scripts/yake/samples)
+
+Copied: trunk/yake/scripts/msvc71/samples/base/base (from rev 1067, trunk/yake/scripts/yapp/samples/base)
+
+Copied: trunk/yake/scripts/msvc71/samples/graphics/graphics (from rev 1067, trunk/yake/scripts/yapp/samples/graphics)
+
+Copied: trunk/yake/scripts/msvc71/samples/gui.vcproj (from rev 1067, trunk/yake/scripts/yapp/gui.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/samples/gui_adapter.vcproj (from rev 1067, trunk/yake/scripts/yapp/gui_adapter.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/samples/misc (from rev 1067, trunk/yake/scripts/yapp/samples/misc)
+
+Copied: trunk/yake/scripts/msvc71/samples/model (from rev 1067, trunk/yake/scripts/yapp/samples/model)
+
+Copied: trunk/yake/scripts/msvc71/samples/msg.vcproj (from rev 1067, trunk/yake/scripts/yapp/msg.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/samples/raf (from rev 1067, trunk/yake/scripts/yapp/samples/raf)
+
+Copied: trunk/yake/scripts/msvc71/samples/state (from rev 1067, trunk/yake/scripts/yapp/samples/state)
+
+Copied: trunk/yake/scripts/msvc71/scripting.vcproj (from rev 1067, trunk/yake/scripts/yake/scripting.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/thread.vcproj (from rev 1067, trunk/yake/scripts/yake/thread.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/vehicle.vcproj (from rev 1067, trunk/yake/scripts/yapp/vehicle.vcproj)
+
+Copied: trunk/yake/scripts/msvc71/yake.sln (from rev 1067, trunk/yake/scripts/yake/yake.sln)
+
+Copied: trunk/yake/scripts/msvc71/yake.suo (from rev 1067, trunk/yake/scripts/yake/yake.suo)
+===================================================================
+(Binary files differ)
+
+Copied: trunk/yake/scripts/msvc71/yapp.sln (from rev 1067, trunk/yake/scripts/yapp/yapp.sln)
+
+Copied: trunk/yake/scripts/msvc71/yapp.suo (from rev 1067, trunk/yake/scripts/yapp/yapp.suo)
+===================================================================
+(Binary files differ)
+
+Copied: trunk/yake/scripts/msvc71/yapp.vcproj (from rev 1067, trunk/yake/scripts/yapp/yapp.vcproj)
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000137.html">[Yake-svn] r1067 - branches
+</A></li>
+	<LI>Next message: <A HREF="000139.html">[Yake-svn] r1069 - in trunk/yake/scripts/msvc71: . samples
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#138">[ date ]</a>
+              <a href="thread.html#138">[ thread ]</a>
+              <a href="subject.html#138">[ subject ]</a>
+              <a href="author.html#138">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>

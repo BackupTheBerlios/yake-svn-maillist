@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Yake-svn] r1049 - trunk/yake/src/yapp/samples/misc/car
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/yake-svn/2005-October/index.html" >
+   <LINK REL="made" HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1049%20-%20trunk/yake/src/yapp/samples/misc/car&In-Reply-To=%3C200510292227.j9TMRLN7021085%40sheep.berlios.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000119.html">
+   <LINK REL="Next"  HREF="000121.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Yake-svn] r1049 - trunk/yake/src/yapp/samples/misc/car</H1>
+    <B>Stephan Kaiser at BerliOS</B> 
+    <A HREF="mailto:yake-svn%40lists.berlios.de?Subject=Re%3A%20%5BYake-svn%5D%20r1049%20-%20trunk/yake/src/yapp/samples/misc/car&In-Reply-To=%3C200510292227.j9TMRLN7021085%40sheep.berlios.de%3E"
+       TITLE="[Yake-svn] r1049 - trunk/yake/src/yapp/samples/misc/car">codeandroid at berlios.de
+       </A><BR>
+    <I>Sun Oct 30 00:27:21 CEST 2005</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000119.html">[Yake-svn] r1048 - trunk/yake/src/yapp/vehicle
+</A></li>
+        <LI>Next message: <A HREF="000121.html">[Yake-svn] r1050 - trunk/yake/common/media/vehicles
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#120">[ date ]</a>
+              <a href="thread.html#120">[ thread ]</a>
+              <a href="subject.html#120">[ subject ]</a>
+              <a href="author.html#120">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Author: codeandroid
+Date: 2005-10-30 00:27:21 +0200 (Sun, 30 Oct 2005)
+New Revision: 1049
+
+Modified:
+   trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp
+Log:
+various small improvements
+
+Modified: trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp
+===================================================================
+--- trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp	2005-10-29 22:26:16 UTC (rev 1048)
++++ trunk/yake/src/yapp/samples/misc/car/yakeDemo.cpp	2005-10-29 22:27:21 UTC (rev 1049)
+@@ -57,6 +57,7 @@
+ 	{
+ 		graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode();
+ 		graphics::IEntity* pE = getGraphicalWorld()-&gt;createEntity(&quot;wheel1.mesh&quot;);
++		pE-&gt;setCastsShadow( true );
+ 		pSN-&gt;attachEntity( pE );
+ 		mComplex-&gt;addLink( mVehicle-&gt;getWheelInterface(wheelId), pSN );
+ 	}
+@@ -71,6 +72,8 @@
+ 		pLight-&gt;setDirection( Vector3(0,-1,1) );
+ 		getGraphicalWorld()-&gt;createSceneNode(&quot;lightnode0&quot;)-&gt;attachLight( pLight );
+ 
++		getGraphicalWorld()-&gt;setShadowsEnabled( true );
++
+ 		// position camera and look at the ninja
+ 		getDefaultCamera()-&gt;setNearClipDistance( 1 );
+ 		getDefaultCamera()-&gt;setFixedYawAxis(Vector3::kUnitY);
+@@ -79,13 +82,15 @@
+ 		// create ground
+ 		mGround = new model::complex::Model();
+ 		{
++			const real groundHeight = -2;
+ 			// visual
+ 			graphics::ISceneNode* pGroundSN = getGraphicalWorld()-&gt;createSceneNode();
+ 			graphics::IEntity* pGroundE = getGraphicalWorld()-&gt;createEntity(&quot;plane_1x1.mesh&quot;);
+ 			pGroundE-&gt;setMaterial(&quot;box&quot;);
++			pGroundE-&gt;setCastsShadow( false );
+ 			pGroundSN-&gt;attachEntity( pGroundE );
+ 			pGroundSN-&gt;setScale( Vector3(200,1,200) );
+-			pGroundSN-&gt;setPosition( Vector3(0,-10,0) );
++			pGroundSN-&gt;setPosition( Vector3(0,groundHeight,0) );
+ 
+ 			model::Graphical* pG = new model::Graphical();
+ 			pG-&gt;addSceneNode( pGroundSN );
+@@ -93,13 +98,18 @@
+ 
+ 			// physical
+ 			physics::IActorPtr pGroundPlane = getPhysicalWorld()-&gt;createActor( physics::ACTOR_STATIC );
+-			pGroundPlane-&gt;createShape( physics::IShape::PlaneDesc( Vector3(0,1,0), -2 ) );
++			pGroundPlane-&gt;createShape( physics::IShape::PlaneDesc( Vector3(0,1,0), groundHeight ) );
+ 
+ 			model::Physical* pP = new model::Physical();
+ 			pP-&gt;addActor( pGroundPlane, &quot;groundPlane&quot; );
+ 			mGround-&gt;addPhysical( pP );
+ 		}
+ 
++		// materials @todo read from .physics:
++		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.1, 0.01, 0.01 ), &quot;chassis&quot; );
++		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.1, 0.01, 0.2 ), &quot;chassisTop&quot; );
++		getPhysicalWorld()-&gt;createMaterial( physics::IMaterial::Desc( 0.1, 0.01, 0.25 ), &quot;wheel&quot; );
++
+ 		// vehicle
+ 		SharedPtr&lt;vehicle::IVehicleSystem&gt; pVS = //create&lt;vehicle::IVehicleSystem&gt;(&quot;generic&quot;);
+ 			SharedPtr&lt;vehicle::IVehicleSystem&gt;(new vehicle::GenericVehicleSystem());
+@@ -113,6 +123,8 @@
+ 		// instantiate
+ 		mVehicle = pVS-&gt;create(&quot;delorean&quot;, *getPhysicalWorld() );
+ 
++		//mVehicle-&gt;enableDebugGeometry( *getGraphicalWorld() );
++
+ 		// create container (e.g. for graphical objects and links)
+ 		mComplex = new model::complex::Model();
+ 		model::Graphical* pG = new model::Graphical();
+@@ -121,7 +133,9 @@
+ 		// create visuals
+ 		// - ship body
+ 		graphics::ISceneNode* pSN = getGraphicalWorld()-&gt;createSceneNode(&quot;root&quot;);
+-		pSN-&gt;attachEntity( getGraphicalWorld()-&gt;createEntity(&quot;delorean.mesh&quot;) );
++		graphics::IEntity* pE = getGraphicalWorld()-&gt;createEntity(&quot;delorean.mesh&quot;);
++		pE-&gt;setCastsShadow( true );
++		pSN-&gt;attachEntity( pE );
+ 		//pSN-&gt;setScale( Vector3::kUnitScale * razorMeshScale );
+ 		pG-&gt;addSceneNode(pSN);
+ 
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000119.html">[Yake-svn] r1048 - trunk/yake/src/yapp/vehicle
+</A></li>
+	<LI>Next message: <A HREF="000121.html">[Yake-svn] r1050 - trunk/yake/common/media/vehicles
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#120">[ date ]</a>
+              <a href="thread.html#120">[ thread ]</a>
+              <a href="subject.html#120">[ subject ]</a>
+              <a href="author.html#120">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/yake-svn">More information about the Yake-svn
+mailing list</a><br>
+</body></html>
